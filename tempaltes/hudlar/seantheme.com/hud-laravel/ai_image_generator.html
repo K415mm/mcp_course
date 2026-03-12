@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<!-- Mirrored from seantheme.com/hud-laravel/ai_image_generator.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 09 Mar 2026 22:28:54 GMT -->
+<head>
+	<meta charset="utf-8">
+	<title>HUD LARAVEL | AI Image Generator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="assets/css/vendor.min.css" rel="stylesheet">
+	<link href="assets/css/app.min.css" rel="stylesheet">
+	<!-- ================== END core-css ================== -->
+	
+</head>
+<body>
+	<!-- BEGIN #app -->
+	<div id="app" class="app">
+		<!-- BEGIN #header -->
+		<div id="header" class="app-header">
+			
+			<!-- BEGIN desktop-toggler -->
+			<div class="desktop-toggler">
+				<button type="button" class="menu-toggler" data-toggle-class="app-sidebar-collapsed" data-dismiss-class="app-sidebar-toggled" data-toggle-target=".app">
+					<span class="bar"></span>
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
+			<!-- BEGIN desktop-toggler -->
+			
+			<!-- BEGIN mobile-toggler -->
+			<div class="mobile-toggler">
+				<button type="button" class="menu-toggler" data-toggle-class="app-sidebar-mobile-toggled" data-toggle-target=".app">
+					<span class="bar"></span>
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
+			<!-- END mobile-toggler -->
+			
+			
+			
+			<!-- BEGIN brand -->
+			<div class="brand">
+				<a href="index-2.html" class="brand-logo">
+					<span class="brand-img">
+						<span class="brand-img-text text-theme">H</span>
+					</span>
+					<span class="brand-text">
+						HUD ADMIN 
+						<span style="font-size: 9px; letter-spacing: 1px; font-weight: bold; position: absolute; opacity: .5; top: 5px; margin-left: -15px;">LARAVEL 12.X</span>
+					</span>
+				</a>
+			</div>
+			<!-- END brand -->
+			
+			<!-- BEGIN menu -->
+			<div class="menu">
+				<div class="menu-item dropdown">
+					<a href="#" data-toggle-class="app-header-menu-search-toggled" data-toggle-target=".app" class="menu-link">
+						<div class="menu-icon"><i class="bi bi-search nav-icon"></i></div>
+					</a>
+				</div>
+				<div class="menu-item dropdown dropdown-mobile-full">
+					<a href="#" data-bs-toggle="dropdown" data-bs-display="static" class="menu-link">
+						<div class="menu-icon"><i class="bi bi-grid-3x3-gap nav-icon"></i></div>
+					</a>
+					<div class="dropdown-menu fade dropdown-menu-end w-300px text-center p-0 mt-1">
+						<div class="row row-grid gx-0">
+							<div class="col-4">
+								<a href="email_inbox.html" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div class="position-relative">
+										<i class="bi bi-circle-fill position-absolute text-theme top-0 mt-n2 me-n2 fs-6px d-block text-center w-100"></i>
+										<i class="bi bi-envelope h2 opacity-5 d-block my-1"></i>
+									</div>
+									<div class="fw-500 fs-10px text-inverse">INBOX</div>
+								</a>
+							</div>
+							<div class="col-4">
+								<a href="pos_customer_order.html" target="_blank" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div><i class="bi bi-hdd-network h2 opacity-5 d-block my-1"></i></div>
+									<div class="fw-500 fs-10px text-inverse">POS SYSTEM</div>
+								</a>
+							</div>
+							<div class="col-4">
+								<a href="calendar.html" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div><i class="bi bi-calendar4 h2 opacity-5 d-block my-1"></i></div>
+									<div class="fw-500 fs-10px text-inverse">CALENDAR</div>
+								</a>
+							</div>
+						</div>
+						<div class="row row-grid gx-0">
+							<div class="col-4">
+								<a href="helper.html" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div><i class="bi bi-terminal h2 opacity-5 d-block my-1"></i></div>
+									<div class="fw-500 fs-10px text-inverse">HELPER</div>
+								</a>
+							</div>
+							<div class="col-4">
+								<a href="settings.html" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div class="position-relative">
+										<i class="bi bi-circle-fill position-absolute text-theme top-0 mt-n2 me-n2 fs-6px d-block text-center w-100"></i>
+										<i class="bi bi-sliders h2 opacity-5 d-block my-1"></i>
+									</div>
+									<div class="fw-500 fs-10px text-inverse">SETTINGS</div>
+								</a>
+							</div>
+							<div class="col-4">
+								<a href="widgets.html" class="dropdown-item text-decoration-none p-3 bg-none">
+									<div><i class="bi bi-collection-play h2 opacity-5 d-block my-1"></i></div>
+									<div class="fw-500 fs-10px text-inverse">WIDGETS</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="menu-item dropdown dropdown-mobile-full">
+					<a href="#" data-bs-toggle="dropdown" data-bs-display="static" class="menu-link">
+						<div class="menu-icon"><i class="bi bi-bell nav-icon"></i></div>
+						<div class="menu-badge bg-theme"></div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end mt-1 w-300px fs-11px pt-1">
+						<h6 class="dropdown-header fs-10px mb-1">NOTIFICATIONS</h6>
+						<div class="dropdown-divider mt-1"></div>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px">
+								<i class="bi bi-bag text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">NEW ORDER RECEIVED ($1,299)</div>
+								<div class="small text-inverse text-opacity-50">JUST NOW</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-person-circle text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">3 NEW ACCOUNT CREATED</div>
+								<div class="small text-inverse text-opacity-50">2 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-gear text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">SETUP COMPLETED</div>
+								<div class="small text-inverse text-opacity-50">3 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-grid text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">WIDGET INSTALLATION DONE</div>
+								<div class="small text-inverse text-opacity-50">5 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="d-flex align-items-center py-10px dropdown-item text-wrap fw-semibold">
+							<div class="fs-20px w-20px">
+								<i class="bi bi-credit-card text-theme"></i>
+							</div>
+							<div class="flex-1 flex-wrap ps-3">
+								<div class="mb-1 text-inverse">PAYMENT METHOD ENABLED</div>
+								<div class="small text-inverse text-opacity-50">10 MINUTES AGO</div>
+							</div>
+							<div class="ps-2 fs-16px">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</a>
+						<hr class="my-0">
+						<div class="py-10px mb-n2 text-center">
+							<a href="#" class="text-decoration-none fw-bold">SEE ALL</a>
+						</div>
+					</div>
+				</div>
+				<div class="menu-item dropdown dropdown-mobile-full">
+					<a href="#" data-bs-toggle="dropdown" data-bs-display="static" class="menu-link">
+						<div class="menu-img online">
+							<img src="assets/img/user/profile.jpg" alt="Profile" height="60">
+						</div>
+						<div class="menu-text d-sm-block d-none w-170px"><span class="__cf_email__" data-cfemail="4b3e382e39252a262e0b2a2828243e253f65282426">[email&#160;protected]</span></div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3 fs-11px mt-1">
+						<a class="dropdown-item d-flex align-items-center" href="profile.html">PROFILE <i class="bi bi-person-circle ms-auto text-theme fs-16px my-n1"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="email_inbox.html">INBOX <i class="bi bi-envelope ms-auto text-theme fs-16px my-n1"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="calendar.html">CALENDAR <i class="bi bi-calendar ms-auto text-theme fs-16px my-n1"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="settings.html">SETTINGS <i class="bi bi-gear ms-auto text-theme fs-16px my-n1"></i></a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item d-flex align-items-center" href="page_login.html">LOGOUT <i class="bi bi-toggle-off ms-auto text-theme fs-16px my-n1"></i></a>
+					</div>
+				</div>
+			</div>
+			<!-- END menu -->
+			
+			<!-- BEGIN menu-search -->
+			<form class="menu-search" method="POST" name="header_search_form">
+				<div class="menu-search-container">
+					<div class="menu-search-icon"><i class="bi bi-search"></i></div>
+					<div class="menu-search-input">
+						<input type="text" class="form-control form-control-lg" placeholder="Search menu...">
+					</div>
+					<div class="menu-search-icon">
+						<a href="#" data-toggle-class="app-header-menu-search-toggled" data-toggle-target=".app"><i class="bi bi-x-lg"></i></a>
+					</div>
+				</div>
+			</form>
+			<!-- END menu-search -->
+		</div>
+		<!-- END #header -->
+		<!-- BEGIN #sidebar -->
+		<div id="sidebar" class="app-sidebar">
+			<!-- BEGIN scrollbar -->
+			<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+				<!-- BEGIN menu -->
+				<div class="menu">
+					<div class="menu-header">Navigation</div>
+					<div class="menu-item">
+						<a href="index-2.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-cpu"></i></span>
+							<span class="menu-text">Dashboard</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="analytics.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-bar-chart"></i></span>
+							<span class="menu-text">Analytics</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon">
+								<i class="bi bi-envelope"></i>
+							</span>
+							<span class="menu-text">Email</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="email_inbox.html" class="menu-link">
+									<span class="menu-text">Inbox</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_compose.html" class="menu-link">
+									<span class="menu-text">Compose</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_detail.html" class="menu-link">
+									<span class="menu-text">Detail</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-header">Components</div>
+					<div class="menu-item">
+						<a href="widgets.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-columns-gap"></i></span>
+							<span class="menu-text">Widgets</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub active">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon"><i class="bi bi-stars"></i></div>
+							<div class="menu-text">AI Studio</div>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ai_chat.html" class="menu-link">
+									<div class="menu-text">AI Chat</div>
+								</a>
+							</div>
+							<div class="menu-item active">
+								<a href="ai_image_generator.html" class="menu-link">
+									<div class="menu-text">AI Image Generator</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon">
+								<i class="bi bi-bag-check"></i>
+								<span class="w-5px h-5px rounded-3 bg-theme position-absolute top-0 end-0 mt-3px me-3px"></span>
+							</div>
+							<div class="menu-text d-flex align-items-center">POS System</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="pos_customer_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Customer Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_kitchen_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Kitchen Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_counter_checkout.html" target="_blank" class="menu-link">
+									<div class="menu-text">Counter Checkout</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_table_booking.html" target="_blank" class="menu-link">
+									<div class="menu-text">Table Booking</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_menu_stock.html" target="_blank" class="menu-link">
+									<div class="menu-text">Menu Stock</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-controller"></i></span>
+							<span class="menu-text">UI Kits</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ui_bootstrap.html" class="menu-link">
+									<span class="menu-text">Bootstrap</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_buttons.html" class="menu-link">
+									<span class="menu-text">Buttons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_card.html" class="menu-link">
+									<span class="menu-text">Card</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_icons.html" class="menu-link">
+									<span class="menu-text">Icons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_modal_notification.html" class="menu-link">
+									<span class="menu-text">Modal & Notification</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_typography.html" class="menu-link">
+									<span class="menu-text">Typography</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_tabs_accordions.html" class="menu-link">
+									<span class="menu-text">Tabs & Accordions</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-pen"></i></span>
+							<span class="menu-text">Forms</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="form_elements.html" class="menu-link">
+									<span class="menu-text">Form Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_plugins.html" class="menu-link">
+									<span class="menu-text">Form Plugins</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_wizards.html" class="menu-link">
+									<span class="menu-text">Wizards</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-grid-3x3"></i></span>
+							<span class="menu-text">Tables</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="table_elements.html" class="menu-link">
+									<span class="menu-text">Table Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="table_plugins.html" class="menu-link">
+									<span class="menu-text">Table Plugins</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-pie-chart"></i></span>
+							<span class="menu-text">Charts</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="chart_js.html" class="menu-link">
+									<span class="menu-text">Chart.js</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="chart_apex.html" class="menu-link">
+									<span class="menu-text">Apexcharts.js</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="map.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-compass"></i></span>
+							<span class="menu-text">Map</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-layout-sidebar"></i></span>
+							<span class="menu-text">Layout</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="layout_starter.html" class="menu-link">
+									<span class="menu-text">Starter Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_fixed_footer.html" class="menu-link">
+									<span class="menu-text">Fixed Footer</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_height.html" class="menu-link">
+									<span class="menu-text">Full Height</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_width.html" class="menu-link">
+									<span class="menu-text">Full Width</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Boxed Layout</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_collapsed_sidebar.html" class="menu-link">
+									<span class="menu-text">Collapsed Sidebar</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_top_nav.html" class="menu-link">
+									<span class="menu-text">Top Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav.html" class="menu-link">
+									<span class="menu-text">Mixed Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Mixed Nav Boxed Layout</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-collection"></i></span>
+							<span class="menu-text">Pages</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="page_scrum_board.html" class="menu-link">
+									<span class="menu-text">Scrum Board</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_products.html" class="menu-link">
+									<span class="menu-text">Products</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_product_details.html" class="menu-link">
+									<span class="menu-text">Product Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_orders.html" class="menu-link">
+									<span class="menu-text">Orders</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_order_details.html" class="menu-link">
+									<span class="menu-text">Order Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_gallery.html" class="menu-link">
+									<span class="menu-text">Gallery</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_search_results.html" class="menu-link">
+									<span class="menu-text">Search Results</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_coming_soon.html" class="menu-link">
+									<span class="menu-text">Coming Soon Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_404_error.html" class="menu-link">
+									<span class="menu-text">404 Error Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_login.html" class="menu-link">
+									<span class="menu-text">Login</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_register.html" class="menu-link">
+									<span class="menu-text">Register</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_messenger.html" class="menu-link">
+									<span class="menu-text">Messenger</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_data_management.html" class="menu-link">
+									<span class="menu-text">Data Management</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_file_manager.html" class="menu-link">
+									<span class="menu-text">File Manager</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_pricing_page.html" class="menu-link">
+									<span class="menu-text">Pricing Page</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="landing.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-diagram-3"></i></span>
+							<span class="menu-text">Landing Page</span>
+						</a>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Users</div>
+					<div class="menu-item">
+						<a href="profile.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-people"></i></span>
+							<span class="menu-text">Profile</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="calendar.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-calendar4"></i></span>
+							<span class="menu-text">Calendar</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="settings.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-gear"></i></span>
+							<span class="menu-text">Settings</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="helper.html" class="menu-link">
+							<span class="menu-icon"><i class="bi bi-gem"></i></span>
+							<span class="menu-text">Helper</span>
+						</a>
+					</div>
+				</div>
+				<!-- END menu -->
+				<div class="p-3 px-4 mt-auto">
+					<a href="documentation/index.html" target="_blank" class="btn d-block btn-outline-theme">
+						<i class="fa fa-code-branch me-2 ms-n2 opacity-5"></i> Documentation
+					</a>
+				</div>
+			</div>
+			<!-- END scrollbar -->
+		</div>
+		<!-- END #sidebar -->
+			
+		<!-- BEGIN mobile-sidebar-backdrop -->
+		<button class="app-sidebar-mobile-backdrop" data-toggle-target=".app" data-toggle-class="app-sidebar-mobile-toggled"></button>
+		<!-- END mobile-sidebar-backdrop -->
+		
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<!-- BEGIN ai-generator -->
+			<div class="card mb-4">
+				<!-- BEGIN ai-content -->
+				<div class="position-relative p-3 p-md-4">
+					<!-- BEGIN ai-badge -->
+					<span class="position-absolute top-0 start-0 m-3 px-2 fw-bold fs-12px">
+						AI IMAGE GENERATOR
+					</span>
+					<!-- END ai-badge -->
+					
+					<!-- BEGIN ai-title -->
+					<div class="text-center fs-1 fw-500 mt-5 pt-3 text-body">
+						Describe your ideas and generate
+					</div>
+					<!-- END ai-title -->
+					
+					<!-- BEGIN ai-desc -->
+					<div class="text-center fs-5 text-body text-opacity-50 mb-4">Transform your words into visual masterpieces: Leverage AI technology to craft breathtaking images.</div>
+					<!-- END ai-desc -->
+					
+					<!-- BEGIN ai-form -->
+					<div class="position-relative mx-auto h-100 w-100 mb-2" style="max-width: 520px;">
+						<form action="#" method="POST" data-form-submit="generate-image">
+							<input type="text" class="form-control form-control-lg border-1 shadow-none rounded-3 h-60px" id="userInput" placeholder="Write a prompt to generate" />
+							<div class="position-absolute end-0 top-0 bottom-0 d-flex p-10px">
+								<button id="sendButton" class="d-flex align-items-center btn btn-lg btn-outline-theme rounded-3 h-auto">
+									Generate <i class="fa fa-arrow-right ms-2 mt-1px"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+					<!-- END ai-form -->
+					
+					<!-- BEGIN ai-option -->
+					<div class="position-relative h-100 w-100 mb-5 pb-3 mx-auto d-flex" style="max-width: 520px;">
+						<div class="dropdown me-2">
+							<label class="btn btn-sm bg-light bg-opacity-25 border-0 d-flex align-items-center rounded-2 py-5px px-9px">
+								<input type="file" class="d-none" accept="image/*" onchange="if (!window.__cfRLUnblockHandlers) return false; previewImage(event)" data-cf-modified-3cbaa36494d85653b5d54c27-="" />
+								<i id="previewIcon" class="fa fa-fw fa-plus me-4px"></i> Upload Image
+								<img id="previewImage" src="#" alt="" class="w-20px h-20px me-n1 ms-2 d-none my-n1" />
+							</label>
+						</div>
+						<div class="dropdown me-2 ms-auto">
+							<button type="button" data-bs-toggle="dropdown" class="btn btn-sm bg-light bg-opacity-25 border-0 d-flex align-items-center rounded-2 py-5px px-9px"><i class="fa fa-fw fa-globe me-1"></i> <span id="aiRatioText">Ratio</span> <i class="fa fa-chevron-down fa-fw opacity-50 ms-1"></i></button>
+							<div class="dropdown-menu dropdown-menu-end rounded-3">
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="Ratio">None</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="1:1 (Square)">1:1 (Square)</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="16:9 (Widescreen)">16:9 (Widescreen)</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="4:3 (Standard)">4:3 (Standard)</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="3:2 (Classic)">3:2 (Classic)</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="21:9 (Ultra Wide)">21:9 (Ultra Wide)</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiRatioText" data-value="9:16 (Portrait)">9:16 (Portrait)</a>
+							</div>
+						</div>
+						<div class="dropdown">
+							<button type="button" data-bs-toggle="dropdown" class="btn btn-sm bg-light bg-opacity-25 border-0 d-flex align-items-center rounded-2 py-5px px-9px"><i class="fa fa-fw fa-palette me-1"></i> <span id="aiStyleText">Style</span> <i class="fa fa-chevron-down fa-fw opacity-50 ms-1"></i></button>
+							<div class="dropdown-menu dropdown-menu-end rounded-3">
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Style">None</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Realistic">Realistic</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Anime">Anime</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Cyberpunk">Cyberpunk</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Pixel Art">Pixel Art</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Cartoon">Cartoon</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Sketch">Sketch</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Fantasy">Fantasy</a>
+								<a class="dropdown-item" href="#" data-select="ai-dropdown-selection" data-target="#aiStyleText" data-value="Neon">Neon</a>
+							</div>
+						</div>
+					</div>
+					<!-- END ai-option -->
+					
+					<hr />
+					
+					<!-- BEGIN ai-gen-tools -->
+					<div class="fs-12px fw-bold mb-3">IMAGE GENERATION TOOLS</div>
+					<div class="row g-3 g-lg-4">
+						<div class="col-sm-6 col-xl-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div data-bs-theme="dark">
+									<img class="card-img object-fit-cover rounded-0" height="160" src="assets/img/ai/tools-1.jpg" alt="" />
+									<div class="card-img-overlay p-2 d-flex align-items-end bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div>
+											<iconify-icon icon="solar:volleyball-2-bold-duotone" class="fs-26px text-body"></iconify-icon>
+											<div class="fw-bold text-body fs-13px">Text to Image</div>
+											<div class="fw-500 fs-11px lh-14 text-body text-opacity-60">Turn your words into stunning visuals with AI-generated artwork.</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<div class="col-sm-6 col-xl-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div data-bs-theme="dark">
+									<img class="card-img object-fit-cover rounded-0" height="160" src="assets/img/ai/tools-2.jpg" alt="" />
+									<div class="card-img-overlay p-2 d-flex align-items-end bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div>
+											<iconify-icon icon="solar:layers-minimalistic-bold-duotone" class="fs-26px text-body"></iconify-icon>
+											<div class="fw-bold text-body fs-13px">Text to PNG</div>
+											<div class="fw-500 fs-11px lh-14 text-body text-opacity-60">Create high-quality PNG images from text with transparency support.</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<div class="col-sm-6 col-xl-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div data-bs-theme="dark">
+									<img class="card-img object-fit-cover rounded-0" height="160" src="assets/img/ai/tools-3.jpg" alt="" />
+									<div class="card-img-overlay p-2 d-flex align-items-end bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div>
+											<iconify-icon icon="solar:gallery-edit-bold-duotone" class="fs-26px text-body"></iconify-icon>
+											<div class="fw-bold text-body fs-13px">Image Editor</div>
+											<div class="fw-500 fs-11px lh-14 text-body text-opacity-60">Enhance, modify, and perfect your images with powerful editing tools.</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<div class="col-sm-6 col-xl-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div data-bs-theme="dark">
+									<img class="card-img object-fit-cover rounded-0" height="160" src="assets/img/ai/tools-4.jpg" alt="" />
+									<div class="card-img-overlay p-2 d-flex align-items-end bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div>
+											<iconify-icon icon="solar:refresh-bold-duotone" class="fs-26px text-body"></iconify-icon>
+											<div class="fw-bold text-body fs-13px">Reimagine</div>
+											<div class="fw-500 fs-11px lh-14 text-body text-opacity-60">Transform and regenerate images with fresh, AI-powered creativity.</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+					</div>
+					<!-- END ai-gen-tools -->
+				</div>
+				<!-- END ai-content -->
+				
+				<!-- BEGIN card-arrow -->
+				<div class="card-arrow">
+					<div class="card-arrow-top-left"></div>
+					<div class="card-arrow-top-right"></div>
+					<div class="card-arrow-bottom-left"></div>
+					<div class="card-arrow-bottom-right"></div>
+				</div>
+				<!-- END card-arrow -->
+			</div>
+			<!-- END ai-generator -->
+			
+			<!-- BEGIN ai-generated-result -->
+			<div id="aiGeneratedContainer" class="mb-4 pt-2 d-none">
+				<div id="aiGeneratingResult" class="fade d-none">
+					<h4 class="mb-2">Generating</h4>
+					<div class="mb-3 fw-bold d-flex align-items-center">
+						<iconify-icon icon="solar:info-circle-bold-duotone" class="fs-4"></iconify-icon>
+						<div class="ps-1">
+							This is a simulated AI-generated response. Please note that the image was not created by an actual AI model.
+						</div>
+					</div>
+					<!-- BEGIN row -->
+					<div class="row g-3 g-lg-4">
+						<!-- BEGIN col-6 -->
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div class="ratio" style="--bs-aspect-ratio: 68.46%;">
+									<div><div class="shimmer-loader h-100"></div></div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<!-- END col-6 -->
+						<!-- BEGIN col-6 -->
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div class="ratio" style="--bs-aspect-ratio: 68.46%;">
+									<div><div class="shimmer-loader h-100"></div></div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<!-- END col-6 -->
+						<!-- BEGIN col-6 -->
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div class="ratio" style="--bs-aspect-ratio: 68.46%;">
+									<div><div class="shimmer-loader h-100"></div></div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<!-- END col-6 -->
+						<!-- BEGIN col-6 -->
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card p-2">
+								<div class="ratio" style="--bs-aspect-ratio: 68.46%;">
+									<div><div class="shimmer-loader h-100"></div></div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<!-- END col-6 -->
+					</div>
+					<!-- END row -->
+				</div>
+				<div id="aiGeneratedResult" class="d-none">
+					<h4 class="mb-2">AI-Generated Result</h4>
+					<div class="mb-3 fw-bold d-flex align-items-center">
+						<iconify-icon icon="solar:info-circle-bold-duotone" class="fs-4"></iconify-icon>
+						<div class="ps-1">
+							This is a simulated AI-generated response. Please note that the image was not created by an actual AI model.
+						</div>
+					</div>
+					<div class="row g-3 g-lg-4">
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card hover-show p-2" data-bs-theme="dark">
+								<div>
+									<img src="assets/img/ai/generated-1.jpg" class="card-img rounded-0" alt="Generated Image" />
+									<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div class="h-100 d-flex align-items-end">
+											<div class="w-100">
+												<div class="text-body text-truncate fs-13px fw-bold">Variant 1</div>
+												<div class="d-flex fs-11px fw-500">
+													<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+													<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card hover-show p-2" data-bs-theme="dark">
+								<div>
+									<img src="assets/img/ai/generated-2.jpg" class="card-img rounded-0" alt="Generated Image" />
+									<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div class="h-100 d-flex align-items-end">
+											<div class="w-100">
+												<div class="text-body text-truncate fs-13px fw-bold">Variant 2</div>
+												<div class="d-flex fs-11px fw-500">
+													<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+													<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card hover-show p-2" data-bs-theme="dark">
+								<div>
+									<img src="assets/img/ai/generated-3.jpg" class="card-img rounded-0" alt="Generated Image" />
+									<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div class="h-100 d-flex align-items-end">
+											<div class="w-100">
+												<div class="text-body text-truncate fs-13px fw-bold">Variant 3</div>
+												<div class="d-flex fs-11px fw-500">
+													<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+													<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+						<div class="col-sm-6 col-lg-3">
+							<!-- BEGIN card -->
+							<div class="card hover-show p-2" data-bs-theme="dark">
+								<div>
+									<img src="assets/img/ai/generated-4.jpg" class="card-img rounded-0" alt="Generated Image" />
+									<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+										<div class="h-100 d-flex align-items-end">
+											<div class="w-100">
+												<div class="text-body text-truncate fs-13px fw-bold">Variant 4</div>
+												<div class="d-flex fs-11px fw-500">
+													<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+													<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- BEGIN card-arrow -->
+								<div class="card-arrow">
+									<div class="card-arrow-top-left"></div>
+									<div class="card-arrow-top-right"></div>
+									<div class="card-arrow-bottom-left"></div>
+									<div class="card-arrow-bottom-right"></div>
+								</div>
+								<!-- END card-arrow -->
+							</div>
+							<!-- END card -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END ai-generated-result -->
+			
+			<!-- BEGIN ai-imagine -->
+			<div class="mb-4 pt-2">
+				<h6 class="mb-3">EXPLORE IMAGINE</h6>
+				<ul class="nav nav-pills mb-3 d-flex gap-1 fw-bold fs-11px text-uppercase">
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body bg-light" aria-current="page" href="#">All</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Fantasy</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Art</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Nature</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Popculture</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Futuristic</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Architecture</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Animals</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">People</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Food</a></li>
+					<li class="nav-item"><a class="nav-link rounded-5 px-4 py-7px hover-bg-light bg-opacity-50 text-body" href="#">Horror</a></li>
+				</ul>
+				<div class="row g-4" data-masonry='{"percentPosition": true }'>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-1.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Psychedelic girl illustration</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-2.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Fantasy water character</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-3.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Anime character using virtual reality glasses in the metaverse</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-4.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Fantasy water character</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-5.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Space adventure artwork</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-6.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Futuristic half-robot tiger in nature</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-7.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Psychedelic girl illustration</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-8.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">View of airplane flying through a fantasy world</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-9.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Fantasy style clouds with animal</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-10.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Psychedelic girl illustration</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-11.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Fantasy bird illustration</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-12.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Vibrant colored autumn trees on fiery backdrop generated by AI</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-13.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">View of rhinoceros animal with futuristic robotic parts</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-14.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Robot and human silhouettes</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-15.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Neon hologram of tiger</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-16.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Fantasy house on the moon illustration</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-17.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">People hanging out with robot</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-18.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Off-road car in fantasy scenario</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-19.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Cyberpunk city street at night with neon lights and futuristic aesthetic</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-20.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Cartoon ai robot scene</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-21.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Blockchain technology cartoon illustration</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-22.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Cartoon ai robot scene</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+					<div class="col-sm-6 col-md-3">
+						<!-- BEGIN card -->
+						<div class="card hover-show p-2">
+							<div data-bs-theme="dark">
+								<img src="assets/img/ai/imagine-23.jpg" class="card-img rounded-0" alt="Generated Image" />
+								<div class="card-img-overlay p-2 d-none hover-show-elm h-100 bg-gradient-to-t bg-gradient-from-black bg-gradient-to-transparent">
+									<div class="h-100 d-flex align-items-end">
+										<div class="w-100">
+											<h5 class="card-title mb-0 lh-base text-truncate fs-13px text-body">Cartoon ai robot scene</h5>
+											<div class="d-flex fs-11px fw-500">
+												<a href="#" class="text-decoration-none text-body text-opacity-60 me-3"><i class="fa fa-fw fa-pen opacity-75"></i> Edit</a>
+												<a href="#" class="text-decoration-none text-body text-opacity-60"><i class="fa fa-fw fa-repeat opacity-75"></i> Variation</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- BEGIN card-arrow -->
+							<div class="card-arrow">
+								<div class="card-arrow-top-left"></div>
+								<div class="card-arrow-top-right"></div>
+								<div class="card-arrow-bottom-left"></div>
+								<div class="card-arrow-bottom-right"></div>
+							</div>
+							<!-- END card-arrow -->
+						</div>
+						<!-- END card -->
+					</div>
+				</div>
+			</div>
+			<!-- END ai-imagine -->
+		</div>
+		<!-- END #content -->
+		
+		<!-- BEGIN theme-panel -->
+		<div class="app-theme-panel">
+			<div class="app-theme-panel-container">
+				<a href="javascript:;" data-toggle="theme-panel-expand" class="app-theme-toggle-btn"><i class="bi bi-sliders"></i></a>
+				<div class="app-theme-panel-content">
+					<div class="small fw-bold text-inverse mb-1">Display Mode</div>
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body p-2">
+							<div class="row gx-2">
+								<div class="col-6">
+									<a href="javascript:;" data-toggle="theme-mode-selector" data-theme-mode="dark" class="app-theme-mode-link active">
+										<div class="img"><img src="assets/img/mode/dark.jpg" class="object-fit-cover" height="76" width="76" alt="Dark Mode"></div>
+										<div class="text">Dark</div>
+									</a>
+								</div>
+								<div class="col-6">
+									<a href="javascript:;" data-toggle="theme-mode-selector" data-theme-mode="light" class="app-theme-mode-link">
+										<div class="img"><img src="assets/img/mode/light.jpg" class="object-fit-cover" height="76" width="76" alt="Light Mode"></div>
+										<div class="text">Light</div>
+									</a>
+								</div>
+							</div>
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					
+					<div class="small fw-bold text-inverse mb-1">Direction Mode</div>
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body p-2">
+							<div class="row gx-2">
+								<div class="col-6">
+									<a href="#" class="btn active btn-sm btn-outline-light d-flex align-items-center justify-content-center gap-2 w-100 rounded-0 fw-bold fs-12px" data-toggle="theme-direction-selector" data-theme-direction="ltr">
+										<i class="bi bi-text-left fs-16px my-n1 ms-n2"></i> LTR
+									</a>
+								</div>
+								<div class="col-6">
+									<a href="#" class="btn btn-sm btn-outline-light d-flex align-items-center justify-content-center gap-2 w-100 rounded-0 fw-bold fs-12px" data-toggle="theme-direction-selector" data-theme-direction="rtl">
+										<i class="bi bi-text-right fs-16px my-n1 ms-n2"></i> RTL
+									</a>
+								</div>
+							</div>
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					
+					<div class="small fw-bold text-inverse mb-1">Theme Color</div>
+					<div class="card mb-3">
+						<!-- BEGIN card-body -->
+						<div class="card-body p-2">
+							<!-- BEGIN theme-list -->
+							<div class="app-theme-list">
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-pink" data-theme-class="theme-pink" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Pink">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-red" data-theme-class="theme-red" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Red">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-warning" data-theme-class="theme-warning" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Orange">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-yellow" data-theme-class="theme-yellow" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Yellow">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-lime" data-theme-class="theme-lime" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Lime">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-green" data-theme-class="theme-green" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Green">&nbsp;</a></div>
+								<div class="app-theme-list-item active"><a href="javascript:;" class="app-theme-list-link bg-teal" data-theme-class="" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-info" data-theme-class="theme-info"  data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cyan">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-primary" data-theme-class="theme-primary"  data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Blue">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-purple" data-theme-class="theme-purple" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Purple">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-indigo" data-theme-class="theme-indigo" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Indigo">&nbsp;</a></div>
+								<div class="app-theme-list-item"><a href="javascript:;" class="app-theme-list-link bg-gray-100" data-theme-class="theme-gray-200" data-toggle="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Gray">&nbsp;</a></div>
+							</div>
+							<!-- END theme-list -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+					
+					<div class="small fw-bold text-inverse mb-1">Theme Cover</div>
+					<div class="card">
+						<!-- BEGIN card-body -->
+						<div class="card-body p-2">
+							<!-- BEGIN theme-cover -->
+							<div class="app-theme-cover">
+								<div class="app-theme-cover-item active">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-1.jpg);" data-theme-cover-class="" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-2.jpg);" data-theme-cover-class="bg-cover-2" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 2">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-3.jpg);" data-theme-cover-class="bg-cover-3" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 3">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-4.jpg);" data-theme-cover-class="bg-cover-4" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 4">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-5.jpg);" data-theme-cover-class="bg-cover-5" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 5">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-6.jpg);" data-theme-cover-class="bg-cover-6" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 6">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-7.jpg);" data-theme-cover-class="bg-cover-7" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 7">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-8.jpg);" data-theme-cover-class="bg-cover-8" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 8">&nbsp;</a>
+								</div>
+								<div class="app-theme-cover-item">
+									<a href="javascript:;" class="app-theme-cover-link" style="background-image: url(assets/img/cover/cover-thumb-9.jpg);" data-theme-cover-class="bg-cover-9" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 9">&nbsp;</a>
+								</div>
+							</div>
+							<!-- END theme-cover -->
+						</div>
+						<!-- END card-body -->
+						
+						<!-- BEGIN card-arrow -->
+						<div class="card-arrow">
+							<div class="card-arrow-top-left"></div>
+							<div class="card-arrow-top-right"></div>
+							<div class="card-arrow-bottom-left"></div>
+							<div class="card-arrow-bottom-right"></div>
+						</div>
+						<!-- END card-arrow -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END theme-panel -->
+		<!-- BEGIN btn-scroll-top -->
+		<a href="#" data-toggle="scroll-to-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+		<!-- END btn-scroll-top -->
+	</div>
+	<!-- END #app -->
+	
+	<!-- ================== BEGIN core-js ================== -->
+	<script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/vendor.min.js" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+	<script src="assets/js/app.min.js" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+	<!-- ================== END core-js ================== -->
+	
+	<!-- ================== BEGIN page-js ================== -->
+	<script src="../../code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+	<script src="assets/plugins/masonry-layout/dist/masonry.pkgd.min.js" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+	<script src="assets/js/demo/ai-image-generator.demo.js" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+	<!-- ================== END page-js ================== -->
+	
+	
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-53034621-1" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+	<script type="3cbaa36494d85653b5d54c27-text/javascript">
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-53034621-1');
+	</script>
+
+<!-- Google Analytics Code -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6KZ93349XS" type="3cbaa36494d85653b5d54c27-text/javascript"></script>
+<script type="3cbaa36494d85653b5d54c27-text/javascript">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-6KZ93349XS");
+</script>
+<script src="../cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="3cbaa36494d85653b5d54c27-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4db8c6ef997743fda032d4f73cfeff63","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+<!-- Mirrored from seantheme.com/hud-laravel/ai_image_generator.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 09 Mar 2026 22:29:07 GMT -->
+</html>

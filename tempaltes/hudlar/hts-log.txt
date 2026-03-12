@@ -1,0 +1,172 @@
+HTTrack3.49-2+htsswf+htsjava launched on Mon, 09 Mar 2026 23:27:01 at https://seantheme.com/hud-laravel/ https://seantheme.com/hud/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2t%Pns2u1%s%uN0%I0p7DaK0H0%kf2A250000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://seantheme.com/hud-laravel/ https://seantheme.com/hud/ -O1 "C:\My Web Sites\hudlar" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+23:33:55	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js
+23:33:55	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/vendor.min.js
+23:33:55	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/app.min.js
+23:33:56	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/jvectormap-next/jquery-jvectormap.min.js
+23:33:56	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/jvectormap-content/world-mill.js
+23:33:56	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/apexcharts/dist/apexcharts.min.js
+23:33:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/dashboard.demo.js
+23:33:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js
+23:34:10	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/vendor.min.js
+23:34:10	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/app.min.js
+23:34:10	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/jvectormap-next/jquery-jvectormap.min.js
+23:34:12	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/jvectormap-content/world-mill.js
+23:34:13	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/apexcharts/dist/apexcharts.min.js
+23:34:13	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/dashboard.demo.js
+23:34:20	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/pos-customer-order.demo.js
+23:34:20	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/moment/moment.js
+23:34:22	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@fullcalendar/core/index.global.min.js
+23:34:22	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@fullcalendar/daygrid/index.global.min.js
+23:34:22	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@fullcalendar/timegrid/index.global.min.js
+23:34:22	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@fullcalendar/list/index.global.min.js
+23:34:23	Warning: 	HTML file (82139 bytes) retransferred due to lack of cache: https://seantheme.com/hud-laravel/profile.html
+23:34:23	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@fullcalendar/bootstrap/index.global.min.js
+23:34:25	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/calendar.demo.js
+23:34:25	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@fullcalendar/interaction/index.global.min.js
+23:34:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/@highlightjs/cdn-assets/highlight.min.js
+23:34:27	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/highlightjs.demo.js
+23:34:28	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/sidebar-scrollspy.demo.js
+23:34:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/lity/dist/lity.min.js
+23:34:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/chart.js/dist/chart.umd.js
+23:34:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/widgets.demo.js
+23:35:05	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/masonry-layout/dist/masonry.pkgd.min.js
+23:35:05	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/moment/min/moment.min.js
+23:35:05	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/bootstrap-daterangepicker/daterangepicker.js
+23:35:06	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/analytics.demo.js
+23:35:06	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/jquery-migrate/dist/jquery-migrate.min.js
+23:35:07	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/tag-it/js/tag-it.min.js
+23:35:07	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/summernote/dist/summernote-lite.min.js
+23:35:08	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/email-compose.demo.js
+23:35:08	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/ai-chat.demo.js
+23:36:29	Warning: 	HTML file (81542 bytes) retransferred due to lack of cache: https://seantheme.com/hud/profile.html
+23:40:36	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js
+23:40:36	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/ai-image-generator.demo.js
+23:40:36	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/pos-kitchen-order.demo.js
+23:40:37	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/pos-counter-checkout.demo.js
+23:40:38	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/pos-table-booking.demo.js
+23:40:40	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/pos-menu-stock.demo.js
+23:40:40	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/ui-modal-notification.demo.js
+23:40:40	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js
+23:40:41	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/bootstrap-slider/dist/bootstrap-slider.min.js
+23:40:41	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js
+23:40:42	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/jquery-typeahead/dist/jquery.typeahead.min.js
+23:40:43	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/jquery.maskedinput/src/jquery.maskedinput.js
+23:40:43	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/vendor/jquery.ui.widget.js
+23:40:44	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-tmpl/js/tmpl.min.js
+23:40:44	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-load-image/js/load-image.all.min.js
+23:40:45	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-canvas-to-blob/js/canvas-to-blob.min.js
+23:40:45	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-gallery/js/jquery.blueimp-gallery.min.js
+23:40:46	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.iframe-transport.js
+23:40:46	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload.js
+23:40:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload-process.js
+23:40:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload-image.js
+23:40:48	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload-audio.js
+23:40:48	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload-video.js
+23:40:49	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload-validate.js
+23:40:50	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/spectrum-colorpicker2/dist/spectrum.min.js
+23:40:50	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/blueimp-file-upload/js/jquery.fileupload-ui.js
+23:40:50	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/select-picker/dist/picker.min.js
+23:40:51	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net/js/dataTables.min.js
+23:40:51	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/form-plugins.demo.js
+23:40:52	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js
+23:40:52	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js
+23:40:53	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-buttons/js/buttons.colVis.min.js
+23:40:53	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js
+23:40:54	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-buttons/js/buttons.print.min.js
+23:40:54	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js
+23:40:55	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js
+23:40:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/bootstrap-table/dist/bootstrap-table.min.js
+23:40:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/table-plugins.demo.js
+23:40:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js
+23:40:58	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/chart-apex.demo.js
+23:40:58	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/chart-js.demo.js
+23:41:00	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/page-scrum-board.demo.js
+23:41:00	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/map.demo.js
+23:42:05	Warning: 	Warning: store image/svg+xml without scan: C:/My Web Sites/hudlar/placehold.co/728x400/c9d2e3/212837.svg
+23:43:45	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/page-product-details.demo.js
+23:49:07	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/kbw-countdown/dist/js/jquery.plugin.js
+23:49:09	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/kbw-countdown/dist/js/jquery.countdown.js
+23:50:10	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/plugins/jszip/dist/jszip.min.js
+23:50:19	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/assets/js/demo/file-manager.demo.js
+23:50:23	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/jquery.js
+23:50:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-transition.js
+23:50:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-dropdown.js
+23:50:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-modal.js
+23:50:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-alert.js
+23:50:25	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-scrollspy.js
+23:50:25	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-tab.js
+23:50:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-tooltip.js
+23:50:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-popover.js
+23:50:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-button.js
+23:50:27	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-collapse.js
+23:50:27	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-carousel.js
+23:50:28	Warning: 	HTML file (12562 bytes) retransferred due to lack of cache: https://seantheme.com/hud-laravel/documentation/change_log.html
+23:50:28	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-typeahead.js
+23:50:28	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/bootstrap-affix.js
+23:50:30	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/pos-customer-order.demo.js
+23:50:30	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud-laravel/documentation/assets/bootstrap/js/holder/holder.js
+23:50:32	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/masonry-layout/dist/masonry.pkgd.min.js
+23:50:32	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/moment/min/moment.min.js
+23:50:35	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/tag-it/js/tag-it.min.js
+23:50:35	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/jquery-migrate/dist/jquery-migrate.min.js
+23:50:37	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/summernote/dist/summernote-lite.min.js
+23:50:37	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/email-compose.demo.js
+23:50:38	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/ai-chat.demo.js
+23:50:44	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/pos-menu-stock.demo.js
+23:50:44	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js
+23:50:44	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/pos-table-booking.demo.js
+23:50:45	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js
+23:50:45	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js
+23:50:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/bootstrap-slider/dist/bootstrap-slider.min.js
+23:50:47	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/jquery-typeahead/dist/jquery.typeahead.min.js
+23:50:48	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/jquery.maskedinput/src/jquery.maskedinput.js
+23:50:49	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-file-upload/js/vendor/jquery.ui.widget.js
+23:50:49	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-tmpl/js/tmpl.min.js
+23:50:49	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-load-image/js/load-image.all.min.js
+23:50:50	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-canvas-to-blob/js/canvas-to-blob.min.js
+23:50:51	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-gallery/js/jquery.blueimp-gallery.min.js
+23:50:51	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-file-upload/js/jquery.iframe-transport.js
+23:50:52	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-file-upload/js/jquery.fileupload.js
+23:50:53	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-file-upload/js/jquery.fileupload-process.js
+23:50:53	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-file-upload/js/jquery.fileupload-image.js
+23:50:54	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/blueimp-file-upload/js/jquery.fileupload-audio.js
+23:50:54	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net/js/dataTables.min.js
+23:50:55	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js
+23:50:55	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js
+23:50:56	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-buttons/js/buttons.colVis.min.js
+23:50:56	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js
+23:50:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-buttons/js/buttons.print.min.js
+23:50:57	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js
+23:50:58	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js
+23:50:59	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/kbw-countdown/dist/js/jquery.plugin.js
+23:51:01	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/kbw-countdown/dist/js/jquery.countdown.js
+23:52:01	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/plugins/jszip/dist/jszip.min.js
+23:52:04	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/assets/js/demo/file-manager.demo.js
+23:52:22	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/jquery.js
+23:52:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-modal.js
+23:52:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-transition.js
+23:52:24	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-alert.js
+23:52:25	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-dropdown.js
+23:52:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-scrollspy.js
+23:52:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-tab.js
+23:52:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-tooltip.js
+23:52:26	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-popover.js
+23:52:27	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-button.js
+23:52:27	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-collapse.js
+23:52:27	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-carousel.js
+23:52:28	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-typeahead.js
+23:52:28	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/bootstrap-affix.js
+23:52:28	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/holder/holder.js
+23:52:29	Warning: 	HTML file (12841 bytes) retransferred due to lack of cache: https://seantheme.com/hud/documentation/change_log.html
+23:52:29	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/google-code-prettify/prettify.js
+23:52:30	Warning: 	File seems complete (same size), but there was a cache read error (4294967295): https://seantheme.com/hud/documentation/assets/bootstrap/js/application.js
+
+HTTrack Website Copier/3.49-2 mirror complete in 25 minutes 31 seconds : 831 links scanned, 1207 files written (91500350 bytes overall) [52684193 bytes received at 34411 bytes/sec], 29223357 bytes transferred using HTTP compression in 558 files, ratio 25%, 4.6 requests per connection
+(No errors, 161 warnings, 0 messages)

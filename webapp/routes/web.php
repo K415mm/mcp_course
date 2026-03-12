@@ -1,0 +1,98 @@
+<?php
+
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\ContentController as AdminContent;
+use App\Http\Controllers\Admin\MediaController as AdminMedia;
+use App\Http\Controllers\Admin\UserController as AdminUsers;
+use App\Http\Controllers\Admin\QuizController as AdminQuiz;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Route;
+
+// ── Guest-only routes ──────────────────────────────────────────────────────
+Route::get('/2fa-challenge', [\App\Http\Controllers\TwoFactorController::class, 'challenge'])->name('2fa.challenge');
+Route::post('/2fa-challenge', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('2fa.verify');
+
+
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+// ── Auth-required routes ───────────────────────────────────────────────────
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Email Verification Routes
+    Route::get('/email/verify', [AuthController::class, 'verifyNotice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyHandler'])->middleware('signed')->name('verification.verify');
+    Route::post('/email/verification-notification', [AuthController::class, 'verifyResend'])->middleware('throttle:6,1')->name('verification.send');
+
+    // ── Verified Auth routes ───────────────────────────────────────────────
+    Route::middleware('verified')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Dashboard
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+
+    // Course
+    Route::prefix('course')->name('course.')->group(function () {
+        Route::get('/', [CourseController::class, 'index'])->name('index');
+        Route::get('/{moduleSlug}', [CourseController::class, 'module'])->name('module');
+        Route::get('/{moduleSlug}/{section}/{lessonSlug}', [CourseController::class, 'lesson'])->name('lesson');
+        Route::post('/progress', [CourseController::class, 'markProgress'])->name('progress');
+        Route::post('/quiz-grade', [CourseController::class, 'gradeQuiz'])->name('quiz.grade');
+    });
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // 2FA Management
+    Route::post('/user/two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('/user/confirmed-two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+    Route::delete('/user/two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('two-factor.disable');
+
+    // ── Admin-only routes ──────────────────────────────────────────────────
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
+
+        // Content (CRUD .md files)
+        Route::prefix('content')->name('content.')->group(function () {
+            Route::get('/', [AdminContent::class, 'index'])->name('index');
+            Route::get('/create', [AdminContent::class, 'create'])->name('create');
+            Route::post('/', [AdminContent::class, 'store'])->name('store');
+            Route::post('/toggle-status', [AdminContent::class, 'toggleStatus'])->name('toggleStatus');
+            Route::post('/bulk-publish', [AdminContent::class, 'bulkPublish'])->name('bulkPublish');
+            Route::get('/{module}/{file}/edit', [AdminContent::class, 'edit'])->name('edit');
+            Route::put('/{module}/{file}', [AdminContent::class, 'update'])->name('update');
+            Route::delete('/destroy', [AdminContent::class, 'destroy'])->name('destroy');
+        });
+
+        // Media Library
+        Route::prefix('media')->name('media.')->group(function () {
+            Route::get('/', [AdminMedia::class, 'index'])->name('index');
+            Route::post('/upload', [AdminMedia::class, 'upload'])->name('upload');
+            Route::delete('/{media}', [AdminMedia::class, 'destroy'])->name('destroy');
+        });
+
+        // Users
+        Route::get('/users', [AdminUsers::class, 'index'])->name('users.index');
+        Route::post('/users/{user}/role', [AdminUsers::class, 'updateRole'])->name('users.role');
+
+        // Quiz Builder
+        Route::get('/quiz/{module}/{lesson}', [AdminQuiz::class, 'edit'])->name('quiz.edit');
+        Route::put('/quiz/{module}/{lesson}', [AdminQuiz::class, 'update'])->name('quiz.update');
+    });
+    
+    }); // End verified middleware group
+});

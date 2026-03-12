@@ -1,1 +1,6 @@
-.venv/
+/*
+!/webapp/
+!/webapp/**
+!/corse/
+!/corse/**
+!.gitignore

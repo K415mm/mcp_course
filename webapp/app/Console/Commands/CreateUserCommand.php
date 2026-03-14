@@ -46,6 +46,7 @@ class CreateUserCommand extends Command
             'email' => $email,
             'password' => Hash::make($password),
             'is_admin' => $isAdmin,
+            'role' => $isAdmin ? User::ROLE_ADMIN : User::ROLE_STUDENT,
             'email_verified_at' => null, // Let them verify via email
         ]);
 

@@ -68,6 +68,7 @@ class ImportUsersCommand extends Command
                 'email' => $email,
                 'password' => Hash::make($password),
                 'is_admin' => false, // Bulk imported users are strictly normal users
+                'role' => User::ROLE_STUDENT,
                 'email_verified_at' => null,
             ]);
 

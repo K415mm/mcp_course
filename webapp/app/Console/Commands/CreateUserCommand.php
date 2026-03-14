@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -45,8 +46,10 @@ class CreateUserCommand extends Command
             'email' => $email,
             'password' => Hash::make($password),
             'is_admin' => $isAdmin,
-            'email_verified_at' => now(), // Auto-verify accounts created via CLI
+            'email_verified_at' => null, // Let them verify via email
         ]);
+
+        event(new Registered($user));
 
         $this->info("User created successfully!");
         $this->line("----------------------------------------");

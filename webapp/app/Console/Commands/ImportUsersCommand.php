@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -62,13 +63,15 @@ class ImportUsersCommand extends Command
 
             $password = Str::password(12, true, true, true, false);
 
-            User::create([
+            $user = User::create([
                 'name' => $name,
                 'email' => $email,
                 'password' => Hash::make($password),
                 'is_admin' => false, // Bulk imported users are strictly normal users
-                'email_verified_at' => now(),
+                'email_verified_at' => null,
             ]);
+
+            event(new Registered($user));
 
             $this->line("Created: {$name} ({$email}) -> PWD: {$password}");
             $createdCount++;

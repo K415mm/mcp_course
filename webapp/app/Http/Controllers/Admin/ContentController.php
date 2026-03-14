@@ -63,7 +63,7 @@ class ContentController extends Controller
     {
         $data = $request->validate([
             'module_slug' => 'required|string',
-            'section' => 'required|string',
+            'section' => 'required|string|in:theoretical,practical,examples,slides_prompt',
             'filename' => 'required|string|regex:/^[\w\-]+$/',
             'content' => 'required|string',
         ]);
@@ -84,6 +84,9 @@ class ContentController extends Controller
     /** Show editor for existing .md file */
     public function edit(string $moduleSlug, string $filename)
     {
+        // Security: Strip out any attempted directory separators
+        $filename = basename($filename);
+
         $items = $this->courseService->getAllItems();
         $sections = ['theoretical', 'practical', 'examples', 'slides_prompt'];
         $section = 'theoretical';
@@ -106,8 +109,11 @@ class ContentController extends Controller
     /** Save edited .md file */
     public function update(Request $request, string $moduleSlug, string $filename)
     {
+        // Security: Strip out any attempted directory separators
+        $filename = basename($filename);
+
         $data = $request->validate([
-            'section' => 'required|string',
+            'section' => 'required|string|in:theoretical,practical,examples,slides_prompt',
             'content' => 'required|string',
         ]);
 

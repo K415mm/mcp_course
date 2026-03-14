@@ -21,7 +21,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #0d1117;
         }
 
         .login-content,
@@ -64,9 +63,16 @@
     </style>
 </head>
 
-<body class="pace-top">
+<body class="pace-top theme-teal bg-cover-5">
     <div id="app" class="app app-full-height app-without-header">
         @yield('content')
+        <!-- BEGIN theme-cover -->
+        <div class="app-theme-cover" style="z-index: -1;">
+            <div class="app-theme-cover-item active">
+                <a href="javascript:;" class="app-theme-cover-link" style="background-image: url({{ asset('hud/img/cover/cover-thumb-5.jpg') }});" data-theme-cover-class="bg-cover-5" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 5">&nbsp;</a>
+            </div>
+        </div>
+        <!-- END theme-cover -->
     </div>
     <!-- HUD Core JS -->
     <script src="{{ asset('hud/js/vendor.min.js') }}"></script>

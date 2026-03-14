@@ -5,54 +5,51 @@
 @section('content')
     <div class="register">
         <div class="register-content">
-            <!-- Brand -->
-            <a href="{{ route('login') }}" class="brand-logo">
-                <span class="brand-img"><span>R</span></span>
-                <span class="brand-text">RGSOC Academy</span>
-            </a>
-
-            <h1 class="text-center h3 fw-bold mb-1">Create Account</h1>
-            <p class="text-inverse text-opacity-50 text-center mb-4 fs-13px">
-                Join RGSOC Academy to access all course modules and workshops.
-            </p>
-
-            @if ($errors->any())
-                <div class="alert alert-danger fs-13px py-2 mb-3">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    {{ $errors->first() }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('register') }}" name="register_form">
                 @csrf
+                <h1 class="text-center">Sign Up</h1>
+                <p class="text-inverse text-opacity-50 text-center">One Admin ID is all you need to access all the Admin services.</p>
+
+                @if ($errors->any())
+                    <div class="alert alert-danger fs-13px py-2 mb-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
                 <div class="mb-3">
-                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" value="{{ old('name') }}"
-                        class="form-control form-control-lg bg-inverse bg-opacity-5 @error('name') is-invalid @enderror"
-                        placeholder="John Smith" required autofocus>
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control form-control-lg bg-inverse bg-opacity-5 @error('name') is-invalid @enderror" placeholder="e.g John Smith" value="{{ old('name') }}" required autofocus>
                 </div>
+                
                 <div class="mb-3">
                     <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" name="email" value="{{ old('email') }}"
-                        class="form-control form-control-lg bg-inverse bg-opacity-5 @error('email') is-invalid @enderror"
-                        placeholder="your@email.com" required>
+                    <input type="email" name="email" class="form-control form-control-lg bg-inverse bg-opacity-5 @error('email') is-invalid @enderror" placeholder="username@address.com" value="{{ old('email') }}" required>
                 </div>
+                
                 <div class="mb-3">
                     <label class="form-label">Password <span class="text-danger">*</span></label>
-                    <input type="password" name="password"
-                        class="form-control form-control-lg bg-inverse bg-opacity-5 @error('password') is-invalid @enderror"
-                        placeholder="Min. 8 characters" required>
+                    <input type="password" name="password" class="form-control form-control-lg bg-inverse bg-opacity-5 @error('password') is-invalid @enderror" value="" required>
                 </div>
-                <div class="mb-4">
+                
+                <div class="mb-3">
                     <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                    <input type="password" name="password_confirmation"
-                        class="form-control form-control-lg bg-inverse bg-opacity-5" placeholder="Repeat password" required>
+                    <input type="password" name="password_confirmation" class="form-control form-control-lg bg-inverse bg-opacity-5" value="" required>
                 </div>
-                <button type="submit" class="btn btn-outline-theme btn-lg d-block w-100 fw-semibold mb-3">
-                    <i class="bi bi-person-plus me-2"></i>Create Account
-                </button>
-                <div class="text-center text-inverse text-opacity-50 fs-13px">
-                    Already have an account? <a href="{{ route('login') }}" class="text-theme">Sign in</a>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="customCheck1" required>
+                        <label class="form-check-label" for="customCheck1">I have read and agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-outline-theme btn-lg d-block w-100">Sign Up</button>
+                </div>
+                
+                <div class="text-inverse text-opacity-50 text-center">
+                    Already have an Admin ID? <a href="{{ route('login') }}">Sign In</a>
                 </div>
             </form>
         </div>

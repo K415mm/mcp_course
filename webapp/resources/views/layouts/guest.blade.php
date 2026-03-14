@@ -63,14 +63,14 @@
     </style>
 </head>
 
-<body class="pace-top theme-teal bg-cover-5">
+<body class="pace-top theme-teal" style="background-image: url({{ asset('hud/img/cover/cover-raiseguard.png') }}); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
     <div id="app" class="app app-full-height app-without-header">
         @yield('content')
         
         <!-- BEGIN theme-cover -->
         <div class="app-theme-cover border-0">
             <div class="app-theme-cover-item active">
-                <a href="javascript:;" class="app-theme-cover-link" style="background-image: url({{ asset('hud/img/cover/cover-thumb-5.jpg') }});" data-theme-cover-class="bg-cover-5" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 5">&nbsp;</a>
+                <a href="javascript:;" class="app-theme-cover-link" style="background-image: url({{ asset('hud/img/cover/cover-raiseguard.png') }});" data-theme-cover-class="" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default">&nbsp;</a>
             </div>
         </div>
         <!-- END theme-cover -->

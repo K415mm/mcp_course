@@ -44,9 +44,7 @@
                 
                 <button type="submit" class="btn btn-outline-theme btn-lg d-block w-100 fw-500 mb-3">Sign In</button>
                 
-                <div class="text-center text-inverse text-opacity-50">
-                    Don't have an account yet? <a href="{{ route('register') }}">Sign up</a>.
-                </div>
+
             </form>
         </div>
     </div>

@@ -137,4 +137,47 @@
             @endforeach
         </div>
     @endif
+
+    <!-- Cinematic CTI Automation Deep Scan Animation -->
+    <img id="cinematic-cti" src="{{ asset('img/workshops/cti_automation.png') }}" 
+         alt="CTI Radar" 
+         style="position: fixed; bottom: 10%; right: -400px; width: 350px; z-index: 0; pointer-events: none; opacity: 0; filter: drop-shadow(0 0 50px rgba(59,130,246,0.5));" />
+
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof gsap !== 'undefined') {
+            const ctiRadar = document.getElementById('cinematic-cti');
+            if (ctiRadar) {
+                // Fade in and slide into view
+                gsap.to(ctiRadar, {
+                    right: "50px",
+                    opacity: 0.2,
+                    duration: 3,
+                    ease: "power3.out",
+                    delay: 0.5
+                });
+                
+                // Continuous slow rotation like a radar scanning
+                gsap.to(ctiRadar, {
+                    rotation: 360,
+                    duration: 60,
+                    repeat: -1,
+                    ease: "linear"
+                });
+                
+                // Subtle pulse up and down
+                gsap.to(ctiRadar, {
+                    y: -30,
+                    duration: 4,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            }
+        }
+    });
+</script>
+@endpush

@@ -200,10 +200,15 @@
         </div>
     @endif
 
+    <!-- Cinematic Network Analysis Background Stream -->
+    <img id="cinematic-network" src="{{ asset('img/workshops/network_analysis.png') }}" 
+         alt="Data Stream" 
+         style="position: fixed; top: -100px; right: -200px; width: 500px; z-index: 0; pointer-events: none; filter: drop-shadow(0 0 40px rgba(16,185,129,0.3)); opacity: 0;" />
+
     <!-- Cinematic Plane Animation Overlay -->
     <img id="cinematic-plane" src="{{ asset('img/workshops/fastmcp_deploy.png') }}" 
          alt="AI Plane" 
-         style="position: fixed; bottom: -300px; left: -300px; width: 400px; z-index: 9999; pointer-events: none; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8)); opacity: 0; transform: rotate(15deg);" />
+         style="position: fixed; bottom: -300px; left: -300px; width: 350px; z-index: 9999; pointer-events: none; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8)); opacity: 0; transform: rotate(15deg);" />
 
 @endsection
 
@@ -211,26 +216,60 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof gsap !== 'undefined') {
-            const plane = document.getElementById('cinematic-plane');
             
-            // GSAP Timeline for the cinematic flyover
-            gsap.to(plane, {
-                opacity: 0.9,
-                duration: 0.5,
-                ease: "power2.inOut"
-            });
+            // 1. Network Analysis - Slow Floating Background
+            const network = document.getElementById('cinematic-network');
+            if (network) {
+                gsap.to(network, { opacity: 0.15, duration: 2, ease: "power1.inOut" });
+                gsap.to(network, {
+                    y: 100,
+                    x: -50,
+                    rotation: 10,
+                    duration: 15,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            }
 
-            gsap.to(plane, {
-                x: window.innerWidth + 600,
-                y: -(window.innerHeight + 600),
-                scale: 1.5,
-                duration: 3.5,
-                ease: "power1.inOut",
-                delay: 0.2,
-                onComplete: () => {
-                    plane.style.display = 'none'; // hide when done
-                }
-            });
+            // 2. FastMCP Plane - Multi-step Cinematic Flyby
+            const plane = document.getElementById('cinematic-plane');
+            if (plane) {
+                // Calculate center screen coordinates based on starting position
+                const centerX = (window.innerWidth / 2) + 150;
+                const centerY = -(window.innerHeight / 2) - 150;
+
+                let tl = gsap.timeline({ delay: 0.5 });
+                
+                // Sweep into the center of the screen
+                tl.to(plane, {
+                    x: centerX,
+                    y: centerY,
+                    opacity: 1,
+                    scale: 1.2,
+                    duration: 2.5,
+                    ease: "power2.out"
+                })
+                // The "Look at the user" pause (slight hover/scale)
+                .to(plane, {
+                    scale: 1.4,
+                    rotation: 12,
+                    duration: 1.5,
+                    ease: "sine.inOut"
+                })
+                // Shoot off the screen quickly
+                .to(plane, {
+                    x: window.innerWidth + 800,
+                    y: -(window.innerHeight + 800),
+                    scale: 0.8,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.in",
+                    onComplete: () => {
+                        plane.style.display = 'none';
+                    }
+                });
+            }
         }
     });
 </script>

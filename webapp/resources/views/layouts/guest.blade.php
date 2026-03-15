@@ -9,7 +9,8 @@
     <!-- HUD Core CSS -->
     <link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
     <link href="{{ asset('hud/css/app.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('hud/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">
+    <!-- Bootstrap Icons (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
             --bs-breadcrumb-divider: "/";

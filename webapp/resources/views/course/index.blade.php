@@ -82,23 +82,41 @@
             @foreach($workshops as $ws)
                 <div class="col-xl-4 col-md-6 mb-4">
                     <a href="{{ route('course.module', $ws['slug']) }}" class="text-decoration-none">
-                        <div class="card module-card h-100 position-relative" style="border-color:rgba(245,158,11,.2);">
+                        <div class="card module-card h-100 position-relative" style="border-color:rgba(245,158,11,.2); overflow: hidden;">
+                            @php
+                                $cinematic = match(true) {
+                                    str_contains($ws['slug'], 'cti-automation') => 'cti_automation.png',
+                                    str_contains($ws['slug'], 'threat-hunting') => 'threat_hunting.png',
+                                    str_contains($ws['slug'], 'network-analysis') => 'network_analysis.png',
+                                    str_contains($ws['slug'], 'malware-analysis') => 'malware_analysis.png',
+                                    str_contains($ws['slug'], 'fastmcp-deploy') => 'fastmcp_deploy.png',
+                                    default => null
+                                };
+                            @endphp
+                            
+                            @if($cinematic)
+                                <!-- Cinematic Header Image -->
+                                <div style="height: 150px; background: url('{{ asset('img/workshops/' . $cinematic) }}') center/cover; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative;">
+                                    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);"></div>
+                                </div>
+                            @endif
+
                             @if($ws['locked'])
-                                <div class="position-absolute w-100 h-100 top-0 start-0 d-flex flex-column align-items-center justify-content-center rounded"
-                                    style="background: rgba(0,0,0,0.75); z-index: 10;">
-                                    <i class="bi bi-lock-fill fs-2 text-white mb-2" style="opacity: 0.9;"></i>
+                                <div class="position-absolute w-100 h-100 top-0 start-0 d-flex flex-column align-items-center justify-content-center"
+                                    style="background: rgba(0,0,0,0.85); z-index: 10;">
+                                    <i class="bi bi-lock-fill text-white mb-2" style="opacity: 0.9; font-size: 2.5rem;"></i>
                                     <span class="badge bg-dark border border-secondary px-3 py-2">Requires Upgrade</span>
                                 </div>
                             @endif
                             <div class="card-body {{ $ws['locked'] ? 'opacity-25' : '' }}">
                                 <div class="d-flex gap-3 mb-3">
-                                    <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-3"
-                                        style="width:48px;height:48px;background:rgba(245,158,11,.12);">
+                                    <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-3 shadow-sm"
+                                        style="width:48px;height:48px;background:rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,0.3);">
                                         <i class="bi bi-tools" style="color:#f59e0b;font-size:1.3rem;"></i>
                                     </div>
-                                    <div>
-                                        <span class="badge module-badge" style="background:#f59e0b;color:#000;">WORKSHOP</span>
-                                        <h6 class="mt-1 mb-0 fw-semibold text-inverse">{{ $ws['title'] }}</h6>
+                                    <div style="z-index: 2;">
+                                        <span class="badge module-badge shadow-sm" style="background:#f59e0b;color:#000;">WORKSHOP</span>
+                                        <h6 class="mt-1 mb-0 fw-bold text-inverse" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">{{ $ws['title'] }}</h6>
                                     </div>
                                 </div>
                             </div>

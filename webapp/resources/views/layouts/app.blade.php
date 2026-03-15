@@ -12,11 +12,11 @@
     <link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
     <link href="{{ asset('hud/css/app.min.css') }}" rel="stylesheet">
 
-    <!-- Bootstrap Icons (explicit font link to fix missing bi-* icons) -->
-    <link href="{{ asset('hud/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">
+    <!-- Bootstrap Icons (CDN to fix local font 404s) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Highlight.js for code syntax highlighting -->
-    <link rel="stylesheet" href="{{ asset('hud/plugins/@highlightjs/cdn-assets/styles/github-dark.min.css') }}">
+    <!-- Highlight.js for code syntax highlighting (CDN to fix 404s) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 
     <!-- Custom course styles -->
     <style>
@@ -442,7 +442,7 @@
                         <div class="card-body p-2">
                             <div class="app-theme-cover">
                                 <div class="app-theme-cover-item active">
-                                    <a href="javascript:;" class="app-theme-cover-link" style="background-image: url({{ asset('hud/img/cover/cover-thumb-1.jpg') }});" data-theme-cover-class="" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default">&nbsp;</a>
+                                    <a href="javascript:;" class="app-theme-cover-link" style="background-image: url({{ asset('hud/img/cover/cover-raiseguard.png') }});" data-theme-cover-class="" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="RaiseGuard Default">&nbsp;</a>
                                 </div>
                                 <div class="app-theme-cover-item">
                                     <a href="javascript:;" class="app-theme-cover-link" style="background-image: url({{ asset('hud/img/cover/cover-thumb-2.jpg') }});" data-theme-cover-class="bg-cover-2" data-toggle="theme-cover-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Cover 2">&nbsp;</a>

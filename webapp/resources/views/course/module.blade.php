@@ -111,4 +111,33 @@
             </div>
         </div>
     </div>
+
+    <!-- Cinematic Threat Hunting Animation Overlay (for Advanced Modules/Workshops) -->
+    @if(in_array($module['slug'], ['workshop-02-threat-hunting', 'workshop-04-malware-analysis']) || $module['number'] >= 3)
+        <img id="cinematic-threat" src="{{ asset('img/workshops/threat_hunting.png') }}" 
+             alt="Cyber Operations" 
+             style="position: fixed; bottom: -800px; right: -50px; width: 600px; z-index: 0; pointer-events: none; opacity: 0; filter: drop-shadow(0 -20px 40px rgba(0,0,0,0.8)); transform: rotate(-5deg);" />
+    @endif
+
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof gsap !== 'undefined') {
+            const threatImg = document.getElementById('cinematic-threat');
+            if (threatImg) {
+                // GSAP Timeline for the cinematic rising effect
+                gsap.to(threatImg, {
+                    bottom: "-100px",  // Rise up from the bottom
+                    opacity: 0.12,     // Keep it subtle as a background layer
+                    rotation: 0,       // Straighten out as it rises
+                    duration: 3,
+                    ease: "power3.out",
+                    delay: 0.2
+                });
+            }
+        }
+    });
+</script>
+@endpush

@@ -30,4 +30,12 @@ return [
         'slides_prompt' => 'Slides & Prompts',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | GitHub Repository for Workshops
+    |--------------------------------------------------------------------------
+    | The base URL connecting the Course App to the Colab Notebooks.
+    */
+    'workshop_github_base_url' => env('WORKSHOP_GITHUB_BASE_URL', 'https://colab.research.google.com/github/K415mm/mcp_course_workshops/blob/main/'),
+
 ];

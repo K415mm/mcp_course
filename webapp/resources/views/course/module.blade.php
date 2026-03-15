@@ -14,7 +14,7 @@
 
     <!-- Module Header -->
     <div class="card mb-4" style="border-color:rgba(var(--bs-theme-rgb),.3);">
-        <div class="card-body d-flex align-items-center gap-3 p-3">
+        <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3 p-3">
             <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                 style="width:56px;height:56px;background:rgba(var(--bs-theme-rgb),.12);">
                 <i class="bi {{ $module['icon'] }}" style="font-size:1.6rem;color:var(--bs-theme);"></i>
@@ -31,6 +31,20 @@
                 </div>
                 <h1 class="h4 fw-bold mb-0 text-inverse">{{ $module['title'] }}</h1>
             </div>
+            
+            @if($module['type'] === 'workshop')
+                @php
+                    $notebookFilename = sprintf('%02d', $module['number']) . '_' . substr($module['folder'], 12) . '.ipynb';
+                    $colabUrl = config('course.workshop_github_base_url') . $module['folder'] . '/' . $notebookFilename;
+                @endphp
+                <div class="flex-shrink-0 mt-3 mt-md-0">
+                    <a href="{{ $colabUrl }}" target="_blank" class="btn btn-outline-warning d-flex align-items-center gap-2" 
+                       style="border-color:#f59e0b; color:#f59e0b; font-weight: 600;">
+                        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" style="height: 20px;" />
+                        Launch Interactive Environment
+                    </a>
+                </div>
+            @endif
         </div>
         <div class="card-arrow">
             <div class="card-arrow-top-left"></div>

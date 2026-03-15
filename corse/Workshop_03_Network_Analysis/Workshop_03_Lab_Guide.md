@@ -261,3 +261,4 @@ RECOMMENDED ACTIONS:
 ## Extension Challenge
 
 Add a tool `get_dns_queries(domain_filter: str = "") -> dict` that extracts all DNS (UDP port 53) events and optionally filters by a domain keyword. Re-run the investigation to include DNS query analysis.
+

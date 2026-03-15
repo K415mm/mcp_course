@@ -12,7 +12,7 @@ Build an MCP-powered threat hunting workflow that takes a hypothesis, generates 
 
 - Workshop 1 complete (CTI server running and registered).
 - Access to a SIEM or log source (Elastic, Splunk, or the provided sample log file).
-- Python packages: `mcp`, `fastmcp`, `requests`, `anthropic`.
+- Python packages: `mcp`, `fastmcp`, `requests`, `groq`, `langchain-groq`.
 
 ---
 
@@ -255,3 +255,4 @@ RECOMMENDED ACTIONS:
 ## Extension Challenge
 
 Add a tool `search_logs_by_user(username: str) -> dict` that returns all events for a given user across all hosts. Run a hunt for the user `alee` to profile all their activity during the suspicious window.
+

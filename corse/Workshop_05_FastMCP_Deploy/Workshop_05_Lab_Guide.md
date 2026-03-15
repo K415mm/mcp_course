@@ -11,9 +11,9 @@ Go from zero to a fully deployed, tested, and IDE-integrated MCP server — cove
 ## Prerequisites
 
 - All modules 1–7 and Workshops 1–4 reviewed.
-- Python environment: `mcp`, `fastmcp`, `requests`, `anthropic`.
+- Python environment: `mcp`, `fastmcp`, `requests`, `groq`, `langchain-groq`.
 - Node.js (for MCP Inspector): `npm`, `npx`.
-- Trae AI or Claude Desktop installed.
+- Google Colab or Langchain Copilot configured.
 
 ---
 
@@ -349,7 +349,8 @@ After completing Workshop 5 you should be able to:
 - [ ] Write a FastMCP server with multiple tools from scratch.
 - [ ] Apply input validation, error handling, and output normalization.
 - [ ] Test any MCP server with the Inspector before connecting an AI.
-- [ ] Register servers in Trae AI or Claude Desktop.
+- [ ] Register servers in Google Colab or Langchain Copilot.
 - [ ] Build a multi-server AI workflow that chains tools across servers.
 - [ ] Design human-in-the-loop gates for destructive tools.
 - [ ] Read an audit log and trace every tool call back to its input and approver.
+

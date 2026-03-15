@@ -11,9 +11,9 @@ Build a working MCP-powered CTI enrichment workflow that ingests IOCs from a raw
 ## Prerequisites
 
 - Modules 1–6 complete.
-- Python 3.10+ installed with `mcp`, `fastmcp`, `requests`, and `anthropic` packages.
+- Python 3.10+ installed with `mcp`, `fastmcp`, `requests`, and `groq`, `langchain-groq` packages.
 - API keys: VirusTotal (free tier), AbuseIPDB (free tier).
-- Trae AI or Claude Desktop configured (Module 7).
+- Google Colab configured for running Langchain / Groq Autonomous Agents.
 
 ---
 
@@ -256,3 +256,4 @@ Add a fourth tool: `get_whois(domain: str) -> dict` using the `python-whois` lib
 - Flag `newly_registered: true` if creation date is under 30 days ago.
 
 Register it and re-run the triage to see how the brief changes.
+

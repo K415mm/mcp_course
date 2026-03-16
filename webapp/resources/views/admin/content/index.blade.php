@@ -39,6 +39,14 @@
         </div>
     @endif
 
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fs-13px mb-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>Error:</strong> {{ $errors->first('error') ?: $errors->first() }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body p-0">
             <table id="contentTable" class="table table-hover mb-0 align-middle" style="width:100%">

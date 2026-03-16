@@ -149,7 +149,9 @@
             </div>
         </div>
 
-        <div id="drawer-editor" style="flex: 1; overflow-y: auto; padding: 1rem; outline: none; font-size: 14px; line-height: 1.7;"></div>
+        <div id="drawer-editor" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+            <div id="quill-drawer-editor" style="flex: 1;"></div>
+        </div>
 
         <div class="px-3 py-2 border-top border-secondary d-flex justify-content-between align-items-center">
             <span id="drawer-save-status" class="text-muted fs-11px">Auto-saved</span>
@@ -197,72 +199,83 @@
 @endif
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/@tiptap/core@2.2.4/dist/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@2.2.4/dist/index.umd.js"></script>
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <style>
     .btn-xs { padding: 2px 8px; font-size: 12px; }
-    #drawer-editor .ProseMirror { outline: none; min-height: 200px; color: rgba(255,255,255,.85); }
-    #drawer-editor p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; color: rgba(255,255,255,.2); pointer-events: none; height: 0; }
     #notes-fab:hover { transform: scale(1.1); }
+    #drawer-editor .ql-container { border: none !important; }
+    #drawer-editor .ql-editor { color: rgba(255,255,255,.87); font-size: 14px; min-height: 150px; }
+    #drawer-editor .ql-editor.ql-blank::before { color: rgba(255,255,255,.25); font-style: normal; }
+    #drawer-editor .ql-toolbar { background: rgba(0,0,0,.3); border-color: rgba(255,255,255,.1) !important; }
+    #drawer-editor .ql-toolbar button, #drawer-editor .ql-picker { color: rgba(255,255,255,.7); }
 </style>
 <script>
 (function() {
-    const { Editor } = window['@tiptap/core'];
-    const StarterKit = window['@tiptap/starter-kit'].StarterKit;
-
     const fab = document.getElementById('notes-fab');
     const drawer = document.getElementById('notes-drawer');
     const closeBtn = document.getElementById('notes-drawer-close');
     const moduleSlug = '{{ $module["slug"] }}';
     const csrf = '{{ csrf_token() }}';
-    let drawerEditor = null;
+    let quill = null;
     let drawerNoteId = null;
     let saveTimer = null;
 
-    // Toggle drawer
+    // Toggle drawer open/close
     fab.addEventListener('click', () => {
-        const isOpen = drawer.style.transform === 'translateY(0px)';
-        drawer.style.transform = isOpen ? 'translateY(110%)' : 'translateY(0px)';
-        if (!isOpen && !drawerEditor) initDrawerEditor();
+        const isOpen = drawer.dataset.open === '1';
+        if (!isOpen) {
+            drawer.style.transform = 'translateY(0px)';
+            drawer.dataset.open = '1';
+            if (!quill) initDrawer();
+        } else {
+            drawer.style.transform = 'translateY(110%)';
+            drawer.dataset.open = '0';
+        }
     });
-    closeBtn.addEventListener('click', () => { drawer.style.transform = 'translateY(110%)'; });
+    closeBtn.addEventListener('click', () => {
+        drawer.style.transform = 'translateY(110%)';
+        drawer.dataset.open = '0';
+    });
 
-    async function initDrawerEditor() {
-        // Try to load an existing note for this module, else create one
+    async function initDrawer() {
+        // Init Quill on the inner wrapper div
+        quill = new Quill('#quill-drawer-editor', {
+            theme: 'snow',
+            placeholder: 'Jot down notes for this lesson…',
+            modules: { toolbar: [
+                ['bold','italic','underline'],
+                [{ header: [1,2,3,false] }],
+                [{ list:'bullet' }, { list:'ordered' }],
+                ['code-block', 'blockquote'],
+                ['clean']
+            ]}
+        });
+
+        // Load or create note for this module
         const res = await fetch(`/notes/module/${moduleSlug}`);
         const notes = await res.json();
         if (notes.length) {
             drawerNoteId = notes[0].id;
-            const noteRes = await fetch(`/notes/view/${drawerNoteId}`);
-            // Redirect is not needed — fetch the JSON data instead
         } else {
-            // Create a new note scoped to this module
-            const createRes = await fetch('/notes/create', {
+            const cr = await fetch('/notes/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-                body: JSON.stringify({ title: 'Notes for {{ $module["title"] }}', module_slug: moduleSlug })
+                body: JSON.stringify({ title: 'Notes: {{ $module["title"] }}', module_slug: moduleSlug })
             });
-            if (createRes.ok) {
-                const data = await createRes.json();
-                drawerNoteId = data.id;
-            }
+            if (cr.ok) { const d = await cr.json(); drawerNoteId = d.id; }
         }
 
-        drawerEditor = new Editor({
-            element: document.getElementById('drawer-editor'),
-            extensions: [ StarterKit ],
-            content: '',
-            onUpdate: () => {
-                clearTimeout(saveTimer);
-                document.getElementById('drawer-save-status').textContent = 'Saving...';
-                saveTimer = setTimeout(saveDrawer, 1500);
-            }
+        quill.on('text-change', () => {
+            clearTimeout(saveTimer);
+            document.getElementById('drawer-save-status').textContent = 'Saving…';
+            saveTimer = setTimeout(saveDrawer, 1500);
         });
     }
 
     async function saveDrawer() {
-        if (!drawerNoteId || !drawerEditor) return;
-        const body = JSON.stringify(drawerEditor.getJSON());
+        if (!drawerNoteId || !quill) return;
+        const body = quill.root.innerHTML;
         const res = await fetch(`/notes/${drawerNoteId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
@@ -271,13 +284,12 @@
         if (res.ok) document.getElementById('drawer-save-status').textContent = 'Saved';
     }
 
-    // Markdown export from drawer
     document.getElementById('drawer-md-export').addEventListener('click', () => {
-        if (!drawerEditor) return;
-        const html = document.getElementById('drawer-editor').innerHTML;
-        const md = html.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n').replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n').replace(/<[^>]+>/g, '');
-        const blob = new Blob([md], { type: 'text/markdown' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lesson-notes.md'; a.click();
+        if (!quill) return;
+        const md = quill.root.innerHTML.replace(/<[^>]+>/g, '');
+        const b = new Blob([md], {type:'text/markdown'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+        a.download = 'lesson-notes.md'; a.click();
     });
 })();
 </script>

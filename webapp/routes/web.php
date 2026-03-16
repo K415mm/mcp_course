@@ -65,6 +65,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/module/{moduleSlug}', [\App\Http\Controllers\NoteController::class, 'forModule'])->name('forModule');
     });
 
+    // Diagrams (instructor creates, students view)
+    Route::prefix('diagrams')->name('diagrams.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\DiagramController::class, 'index'])->name('index');
+        Route::get('/new', [\App\Http\Controllers\DiagramController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\DiagramController::class, 'store'])->name('store');
+        Route::get('/{diagram}/edit', [\App\Http\Controllers\DiagramController::class, 'edit'])->name('edit');
+        Route::put('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'update'])->name('update');
+        Route::post('/{diagram}/publish', [\App\Http\Controllers\DiagramController::class, 'publish'])->name('publish');
+        Route::delete('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'destroy'])->name('destroy');
+        Route::get('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'show'])->name('show');
+    });
+
     // 2FA Management
     Route::post('/user/two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('two-factor.enable');
     Route::post('/user/confirmed-two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');

@@ -315,6 +315,14 @@
                         </a>
                     </div>
 
+                    <!-- Diagrams -->
+                    <div class="menu-item {{ request()->routeIs('diagrams.*') ? 'active' : '' }}">
+                        <a href="{{ route('diagrams.index') }}" class="menu-link">
+                            <span class="menu-icon"><i class="bi bi-bezier2"></i></span>
+                            <span class="menu-text">Diagrams</span>
+                        </a>
+                    </div>
+
                     @if(isset($allItems) && count($allItems))
                         <!-- Modules section -->
                         @php $modules = array_filter($allItems, fn($i) => $i['type'] === 'module'); @endphp

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 02 — Multi-Server Client and Agent Loop

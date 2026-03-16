@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 02 — SDK vs Raw: Reading JSON-RPC to Debug a Server

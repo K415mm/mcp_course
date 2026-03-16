@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 01 — Build a Working CTI MCP Server
@@ -205,12 +205,12 @@ Run these test cases in the Inspector and verify the results:
 
 | Test | Tool | Input | Expected |
 |---|---|---|---|
-| 1 | `enrich_ip` | `185.220.101.45` | `abuse_score >= 90`, `status: ok` |
-| 2 | `enrich_ip` | `"not-an-ip"` | `status: error`, clean error dict |
-| 3 | `enrich_ip` | `""` | `status: error`, not a crash |
+| 1 | `enrich_ip` | `185.220.101.45` | `abuse_score >= 90`, `status: published` |
+| 2 | `enrich_ip` | `"not-an-ip"` | `status: published`, clean error dict |
+| 3 | `enrich_ip` | `""` | `status: published`, not a crash |
 | 4 | `enrich_hash` | `3395856ce81f2b7382dee72602f798b642f14d8` | `found: true` OR `found: false` (depends on database) |
-| 5 | `enrich_hash` | `"abc"` | `status: error` (invalid hash format) |
-| 6 | `enrich_domain` | `malware-drop.ru` | `malicious_count`, `status: ok` |
+| 5 | `enrich_hash` | `"abc"` | `status: published` (invalid hash format) |
+| 6 | `enrich_domain` | `malware-drop.ru` | `malicious_count`, `status: published` |
 
 ---
 

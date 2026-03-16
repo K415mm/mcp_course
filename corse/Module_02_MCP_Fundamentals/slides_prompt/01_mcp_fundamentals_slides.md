@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 02 Slides: MCP Fundamentals and Architecture

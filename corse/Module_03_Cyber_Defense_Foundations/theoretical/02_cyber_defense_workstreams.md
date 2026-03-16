@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 02 — The Four Cyber Defense Workstreams

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 01 — Phishing Alert: Full Sense-Think-Act Walkthrough
@@ -10,7 +10,7 @@ status: draft
 
 ## Scenario Overview
 
-This walkthrough traces a complete AI agent response to a phishing alert from the first signal to the final disposition. It is annotated at each step to show which part of the Sense-Think-Act loop is active and which Cynefin domain applies.
+This walkthrough traces a complete AI agent response to a phishing alert from the first signal to the final disposition. It is annotated at each step to show which part of the Sense-Think-Act loop is active and which complexity domain applies.
 
 **Starting conditions:**
 - SIEM fires alert `ALT-20260309-0042`.
@@ -131,7 +131,7 @@ Attachment hash: 3395856c...
   - 41/68 vendor detections
   - Known as FormBook (credential stealer) and AgentTesla
 
-CYNEFIN DOMAIN TRANSITION: Complicated → Clear
+complexity domain TRANSITION: Complicated → Clear
   Evidence is unambiguous. Multiple independent corroborating sources.
 
 RECOMMENDED ACTIONS (all require your approval to execute):

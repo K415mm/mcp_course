@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Guardrails for Safe MCP Automation
@@ -93,7 +93,7 @@ Define clear categories for what can be automated vs. what requires human approv
 
 ## Principle 3: Human-in-the-Loop for High-Risk Actions
 
-For Complicated or Complex domain actions (from Module 01's Cynefin framework):
+For Complicated or Complex domain actions (from Module 01's decision-complexity framework):
 
 ```python
 @mcp.tool()

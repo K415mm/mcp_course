@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # MCP Core Architecture: Hosts, Clients, and Servers

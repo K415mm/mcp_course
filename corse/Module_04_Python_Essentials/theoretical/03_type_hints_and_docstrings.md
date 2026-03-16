@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 03 — Type Hints and Docstrings

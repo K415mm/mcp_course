@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 01 — CTI Enrichment Chain: From Raw Alert to Structured Brief
@@ -94,7 +94,7 @@ Agent scope set by analyst automation policy:
 
 **Reasoning cycle 2:**  
 "Abuse score 98 — top percentile. Confirmed Tor exit node. 412 reports. Port 9001 is commonly used for Tor and C2 traffic. The same host has connected 4 times in 7 days, always to the same IP. This is a strong pattern.  
-Cynefin domain assessment: **Clear**. Multiple independent corroborating indicators. The pattern is unambiguous."
+complexity domain assessment: **Clear**. Multiple independent corroborating indicators. The pattern is unambiguous."
 
 ---
 
@@ -132,7 +132,7 @@ Generated: 2026-03-10T23:51:02Z
 Agent: CTI Enrichment Bot | Duration: 4m 02s
 
 VERDICT: HIGH CONFIDENCE — C2 COMMUNICATION SUSPECTED
-Cynefin Domain: CLEAR (evidence unambiguous, multiple independent sources)
+AUTOMATION LEVEL: CLEAR (evidence unambiguous, multiple independent sources)
 
 EVIDENCE:
 1. Destination IP 185.220.101.45

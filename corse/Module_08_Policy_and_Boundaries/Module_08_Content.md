@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 8: Policy, Guardrails, and Safe Autonomy
@@ -10,7 +10,7 @@ Define where and where not to use MCP in cyber defense, design human-in-the-loop
 
 ## Learning Objectives
 
-1. Apply the Cynefin autonomy matrix to classify SOC decisions by safe automation level.
+1. Apply the automation decision matrix to classify SOC decisions by safe automation level.
 2. Design human-in-the-loop gates for destructive MCP tool actions.
 3. Implement guardrails at the tool, server, and workflow levels.
 4. Define audit logging requirements for MCP-enabled security automation.
@@ -20,9 +20,9 @@ Define where and where not to use MCP in cyber defense, design human-in-the-loop
 
 ## Theoretical Section
 
-### 8.1 The Autonomy Matrix (Cynefin Applied to MCP)
+### 8.1 The Autonomy Matrix (Complexity Applied to MCP)
 
-Not every SOC decision is safe to automate. The Cynefin framework gives us a principled way to decide:
+Not every SOC decision is safe to automate. our automation-safety framework gives us a principled way to decide:
 
 | Domain | Situation Type | AI Role | Max Safe MCP Action |
 |---|---|---|---|
@@ -182,7 +182,7 @@ def log_tool_call(tool_name: str, inputs: dict, output: dict, approved_by: str =
 
 ### Exercise 8.1 — Classify the Alert
 
-For each alert, assign a Cynefin domain and state the maximum safe MCP action:
+For each alert, assign a complexity domain and state the maximum safe MCP action:
 
 1. An IP matching a known Tor exit node list attempts SSH brute force.
 2. An executable PE file shares no hash with known malware families, but imports `CreateRemoteThread`.
@@ -205,7 +205,7 @@ Before approving any MCP tool for production use:
 - [ ] Input validation rejects malformed inputs with clear error messages.
 - [ ] Output normalization applied to all raw tool results.
 - [ ] Every tool call logged to SIEM with input, output, and actor.
-- [ ] Cynefin domain classification documented for each workflow using the tool.
+- [ ] complexity domain classification documented for each workflow using the tool.
 - [ ] Approval gate exists for every tool classified above Clear.
 - [ ] Shutdown procedure documented and tested.
 - [ ] Rate limits configured on the server.
@@ -252,7 +252,7 @@ MCP Agentic AI Operational Policy — v1.0
 
 ## Knowledge Check
 
-1. In which Cynefin domain is it safe to automate a full containment action (e.g., blocking an IP)?
+1. In which complexity domain is it safe to automate a full containment action (e.g., blocking an IP)?
 2. Name the four levels at which guardrails should be implemented.
 3. Why is output normalization critical before returning raw tool results to the LLM?
 4. What should an AI agent emit instead of directly calling a destructive tool?
@@ -262,7 +262,7 @@ MCP Agentic AI Operational Policy — v1.0
 
 ## Reading List (Module 8 Source Files)
 
-- [Agentic AI Integration and the Cynefin Framework for SOC Operations (1).md](file:///d:/mcp_course/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md)
+- [Agentic AI Integration and the automation-safety framework for SOC Operations (1).md](file:///d:/mcp_course/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md)
 - [Governing_SOC_Agentic_AI.pdf](file:///d:/mcp_course/Governing_SOC_Agentic_AI.pdf)
 - [Strategic_Agentic_Autonomy.pdf](file:///d:/mcp_course/Strategic_Agentic_Autonomy.pdf)
 - [Strategic_Agentic_Autonomy_(2).pdf](file:///d:/mcp_course/Strategic_Agentic_Autonomy_(2).pdf)

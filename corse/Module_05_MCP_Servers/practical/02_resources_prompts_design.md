@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 02 — Add Resources, Prompts, and Multi-Tool Design
@@ -73,7 +73,7 @@ REQUIRED STEPS:
 1. Call enrich_ip("{ip_address}") to get the threat intelligence score
 2. Read threat://triage-policy to determine the action tier
 3. Check threat://known-safe-ips — if the IP is listed, close as false positive
-4. Write a triage brief with: evidence summary, Cynefin domain, and recommended actions
+4. Write a triage brief with: evidence summary, complexity domain, and recommended actions
 
 CONSTRAINTS:
 - Do NOT block or quarantine without my explicit approval
@@ -101,7 +101,7 @@ Docstring line 2:    [when should the agent call it]
 Docstring line 3:    [what it returns]
 Docstring line 4:    [safety classification]
 Tool type:           [Sense / Act]
-Cynefin threshold:   [Clear / Complicated / Forbidden-without-approval]
+decision-complexity threshold:   [Clear / Complicated / Forbidden-without-approval]
 ```
 
 Design at least 4 tools for the Malware Analysis server:

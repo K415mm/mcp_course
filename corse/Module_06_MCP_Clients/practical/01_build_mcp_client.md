@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 01 — Build and Use the MCPClient

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 02 — Designing Autonomy Guardrails
@@ -31,7 +31,7 @@ This exercise focuses on Levels 1 and 3 — the tool-level and workflow-level gu
 
 You are deploying an AI agent for your SOC. The agent will have access to the following 12 potential actions. For each action:
 - Classify it as **Sense** (read-only) or **Act** (state-changing).
-- Assign the minimum Cynefin domain at which this action is ever safe to automate.
+- Assign the minimum complexity domain at which this action is ever safe to automate.
 - Write the **guardrail level** for that action (None / Tool marker / Approval gate / Forbidden).
 
 | Action | Sense or Act | Min Safe Domain | Guardrail Level |

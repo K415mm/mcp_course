@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 06 — Google NotebookLM Slides Generation Prompt
@@ -255,7 +255,7 @@ Left: Brief description of Example 02:
   - NO AUTOMATED ACTIONS TAKEN
 Right: Output snippet showing the brief header:
   VERDICT: HIGH
-  Cynefin Domain: Clear
+  AUTOMATION LEVEL: Clear
   EVIDENCE (2 indicators):
     • Abuse score 98/100
     • Confirmed Tor exit node

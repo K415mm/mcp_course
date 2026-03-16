@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Workshop 1: CTI Automation with MCP
@@ -228,7 +228,7 @@ IOC ENRICHMENT:
 - Domain update-secure-patch.net: X/68 vendor detections, registered N days ago
 - Hash 3395856c...: X/68 detections, known as [family]
 
-CYNEFIN DOMAIN: Clear / Complicated / Complex
+COMPLEXITY LEVEL: Clear / Complicated / Complex
 
 RECOMMENDED ACTION:
 [Specific action — block, escalate, monitor, or investigate]
@@ -241,11 +241,11 @@ APPROVAL REQUIRED: Yes / No
 ## Lab Checklist
 
 - [ ] Server starts without errors.
-- [ ] All three tools return valid `status: ok` in Inspector.
+- [ ] All three tools return valid `status: published` in Inspector.
 - [ ] Server registered in AI workspace.
 - [ ] Agent correctly enriches all three IOC types from the sample alert.
-- [ ] Brief includes risk level, Cynefin domain classification, and recommended action.
-- [ ] At least one tool returned `status: error` during testing (confirm error handling works).
+- [ ] Brief includes risk level, complexity level classification, and recommended action.
+- [ ] At least one tool returned `status: published` during testing (confirm error handling works).
 
 ---
 

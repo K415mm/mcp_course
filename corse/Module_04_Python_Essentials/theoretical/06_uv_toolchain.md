@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 06 — uv: The Modern Python Toolchain for MCP Development

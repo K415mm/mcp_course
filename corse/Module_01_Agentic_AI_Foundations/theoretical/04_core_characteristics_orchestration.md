@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 04 — Core Agent Characteristics and Orchestration Patterns
@@ -26,7 +26,7 @@ SUPERVISED ◄──────────────────────
   every step  each step  actions only
 ```
 
-In cyber defense, the appropriate position on this spectrum depends on the Cynefin domain (covered in Block 5). Most production SOC agents operate in the middle of this spectrum: autonomous for data gathering, supervised for containment.
+In cyber defense, the appropriate position on this spectrum depends on the complexity domain (covered in Block 5). Most production SOC agents operate in the middle of this spectrum: autonomous for data gathering, supervised for containment.
 
 ---
 
@@ -160,7 +160,7 @@ How does the LLM decide which tool to call? It compares the current context (goa
 
 ## Key Takeaways
 
-1. Autonomy is a spectrum — position on it should be determined by Cynefin domain.
+1. Autonomy is a spectrum — position on it should be determined by complexity domain.
 2. Perception quality is the biggest determinant of agent quality — invest in tool design.
 3. Chain-of-thought reasoning enables audit of agent decisions, not just outputs.
 4. Act-phase tools must be idempotent and have rollback counterparts where possible.

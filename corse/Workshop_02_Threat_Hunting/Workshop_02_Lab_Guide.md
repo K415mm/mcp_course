@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Workshop 2: Threat Hunting with MCP
@@ -229,7 +229,7 @@ MITRE ATT&CK TTPs OBSERVED:
 
 IMPACTED HOSTS: WIN-DESK-04, WIN-DESK-07, WIN-DESK-12
 
-CYNEFIN DOMAIN: Complicated (multiple TTPs, unclear if coordinated)
+COMPLEXITY LEVEL: Complicated (multiple TTPs, unclear if coordinated)
 
 RECOMMENDED ACTIONS:
 1. [HUMAN REQUIRED] Isolate WIN-DESK-04 — active C2 communication confirmed.

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 02 — Agent Loop: MCPClient + LLM-Driven Triage
@@ -102,7 +102,7 @@ def apply_triage_rules(enrichments: dict) -> dict:
         "verdict": verdict,
         "evidence": evidence,
         "recommended_actions": actions,
-        "cynefin": "Clear" if verdict == "HIGH" and len(evidence) >= 2 else "Complicated"
+        "decision-complexity": "Clear" if verdict == "HIGH" and len(evidence) >= 2 else "Complicated"
     }
 
 
@@ -120,7 +120,7 @@ Generated:  {timestamp}
 Agent:      AutonomousTriageAgent v1.0
 
 VERDICT: {analysis['verdict']}
-Cynefin Domain: {analysis['cynefin']}
+AUTOMATION LEVEL: {analysis['decision-complexity']}
 
 EVIDENCE ({len(analysis['evidence'])} indicators):
 """ + "\n".join(f"  • {e}" for e in analysis["evidence"]) + """
@@ -241,7 +241,7 @@ uv run autonomous_triage.py
 ║          AUTONOMOUS TRIAGE BRIEF                     ║
 ...
 VERDICT: HIGH
-Cynefin Domain: Clear
+AUTOMATION LEVEL: Clear
 
 EVIDENCE (2 indicators):
   • Abuse score 98/100 — top percentile

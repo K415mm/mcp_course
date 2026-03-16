@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 4: Python Essentials for MCP and Agentic AI

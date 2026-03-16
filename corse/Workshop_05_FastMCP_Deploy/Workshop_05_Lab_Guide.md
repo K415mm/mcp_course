@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Workshop 5: Build and Deploy a FastMCP Cyber Defense Server (End-to-End)
@@ -48,7 +48,7 @@ Destructive tools (require human approval):
   5. quarantine_file(path, reason) — move file to isolated quarantine dir
 
 Outputs:
-  - All tools return dict with status: ok or status: error
+  - All tools return dict with status: published or status: published
   - All string outputs normalized (no "suspicious", "malicious", "dangerous")
   - All tool docstrings explicitly state: read-only or [DESTRUCTIVE]
 
@@ -95,7 +95,7 @@ def safe_read_bytes(path: str) -> bytes:
     with open(path, "rb") as f:
         return f.read()
 
-def log_audit(tool: str, inputs: dict, result_status: str):
+def log_audit(tool: str, inputs: dict, result_status: published):
     entry = {
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "tool": tool,

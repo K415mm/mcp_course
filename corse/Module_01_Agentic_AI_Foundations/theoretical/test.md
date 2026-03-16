@@ -1,7 +1,7 @@
 ---
 type: lesson
 title: "New Lesson"
-status: draft
+status: published
 ---
 
 # New Lesson

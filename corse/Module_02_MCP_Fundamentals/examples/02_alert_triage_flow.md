@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example: Alert Triage Flow with MCP

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Workshop 3: Network Analysis with MCP
@@ -237,7 +237,7 @@ HIGH-RISK FINDINGS:
 
 IMPACTED INTERNAL HOSTS: 192.168.1.55 (primary), 192.168.1.77
 
-CYNEFIN DOMAIN: Clear (192.168.1.55) — known bad IP with active C2 indicators
+COMPLEXITY LEVEL: Clear (192.168.1.55) — known bad IP with active C2 indicators
 
 RECOMMENDED ACTIONS:
 [HUMAN REQUIRED] Isolate 192.168.1.55 immediately

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # MCP in Cyber Defense Workflows

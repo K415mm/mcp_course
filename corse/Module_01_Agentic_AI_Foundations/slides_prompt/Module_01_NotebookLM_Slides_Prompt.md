@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 01 — Google NotebookLM Slides Generation Prompt
@@ -32,7 +32,7 @@ Tone: Authoritative but accessible. No unnecessary jargon. Explain acronyms on f
 This is Module: [01]
 Module Title: [Agentic AI Foundations for Cyber Defense]
 Number of core topics in this module: [5]
-Topics: [What Is an AI Agent | The Sense-Think-Act Loop | Memory Goals and State | Core Characteristics and Orchestration | Safe Autonomy: The Cynefin Lens]
+Topics: [What Is an AI Agent | The Sense-Think-Act Loop | Memory Goals and State | Core Characteristics and Orchestration | Safe Autonomy: The decision-complexity Lens]
 
 ═══════════════════════════════════════════════════
 DESIGN SYSTEM — APPLY TO EVERY SLIDE
@@ -61,7 +61,7 @@ LOGO / BRANDING:
 
 VISUAL LANGUAGE:
 - Use minimal, flat-style icons (not 3D, not illustrations)
-- Diagrams use the electric blue / cyan palette — no red/green traffic light color coding except for the Cynefin matrix
+- Diagrams use the electric blue / cyan palette — no red/green traffic light color coding except for the automation decision matrix
 - Arrows: thin, white or cyan
 - Tables: striped rows (navy/charcoal), header row in electric blue, text white
 - Code blocks: rounded corners, dark panel background, line numbers shown
@@ -136,7 +136,7 @@ Content:
 - Right panel: context window illustration — a fixed-size box filling up as tool results accumulate
 - Callout: "A tool that returns 10,000 lines of raw log text may consume the entire memory budget."
 
-SLIDE 08 — THE CYNEFIN FRAMEWORK (Overview)
+SLIDE 08 — the automation-safety framework (Overview)
 Content:
 - Full-slide 2x2 matrix diagram:
   - Top-left: COMPLICATED (blue) — Expert domain
@@ -149,7 +149,7 @@ Content:
 
 SLIDE 09 — CLEAR DOMAIN: THE EXECUTOR
 Content:
-- Left: Cynefin matrix with CLEAR quadrant highlighted in bright emerald
+- Left: automation decision matrix with CLEAR quadrant highlighted in bright emerald
 - Right (3 bullets):
   - Cause and effect are self-evident
   - Agent role: EXECUTOR — full autonomous action permitted
@@ -186,7 +186,7 @@ Content:
 
 SLIDE 13 — THE CONFUSION STATE (Special Warning Slide)
 Content:
-- Full-slide design: dark background, Cynefin center (confusion) — red/grey vortex icon
+- Full-slide design: dark background, decision-complexity center (confusion) — red/grey vortex icon
 - Title in amber: "The Most Dangerous State for AI Agents"
 - 3 points:
   - LLMs cannot recognize confusion — they force patterns on ambiguous situations
@@ -280,7 +280,7 @@ Key source files to prioritize:
 - theoretical/05_cynefin_autonomy_matrix.md
 - examples/01_phishing_alert_walkthrough.md
 - examples/02_apt_complex_domain_walkthrough.md
-- Agentic AI Integration and the Cynefin Framework for SOC Operations (1).md
+- Agentic AI Integration and the automation-safety framework for SOC Operations (1).md
 
 Generate the full 20-slide deck now.
 ```

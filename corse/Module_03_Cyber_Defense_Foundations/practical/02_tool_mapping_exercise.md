@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 02 — Tool Mapping Exercise
@@ -10,7 +10,7 @@ status: draft
 
 ## Exercise Goal
 
-Map specific cyber defense tasks to the correct MCP tool type, server, and workstream. Then evaluate whether each task is appropriate for automation based on the Cynefin framework.
+Map specific cyber defense tasks to the correct MCP tool type, server, and workstream. Then evaluate whether each task is appropriate for automation based on the automation-safety framework.
 
 ---
 
@@ -22,12 +22,12 @@ For each of the 15 cyber defense tasks below, complete the mapping:
 |---|---|
 | **Workstream** | CTI / Threat Hunting / Network Analysis / Malware Analysis |
 | **MCP Tool Type** | Sense (read-only) / Act (state-changing) |
-| **Cynefin Threshold** | Clear / Complicated / Forbidden |
+| **decision-complexity Threshold** | Clear / Complicated / Forbidden |
 | **Example Tool Function Name** | `function_name(params)` |
 
 ---
 
-| # | Task | Workstream | Tool Type | Cynefin Threshold | Tool Name |
+| # | Task | Workstream | Tool Type | decision-complexity Threshold | Tool Name |
 |---|---|---|---|---|---|
 | 1 | Check if an IP address has been reported for abuse | ? | ? | ? | ? |
 | 2 | Look up the registration date of a newly seen domain | ? | ? | ? | ? |
@@ -90,7 +90,7 @@ PERMISSION MATRIX
 
 ## Reference Answers (Instructor)
 
-| # | Workstream | Type | Cynefin | Tool Name |
+| # | Workstream | Type | decision-complexity | Tool Name |
 |---|---|---|---|---|
 | 1 | CTI | Sense | Clear | `enrich_ip(ip_address)` |
 | 2 | CTI | Sense | Clear | `get_whois(domain)` |

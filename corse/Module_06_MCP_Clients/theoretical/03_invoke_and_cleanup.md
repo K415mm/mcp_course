@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 03 — Invoking Tools, Cleanup, and Building a Full Agent Loop

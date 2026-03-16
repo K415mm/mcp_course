@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 03 — Knowledge Check and Module Checklist

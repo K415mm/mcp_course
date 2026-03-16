@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Why MCP Exists: The Problem of AI-Tool Integration

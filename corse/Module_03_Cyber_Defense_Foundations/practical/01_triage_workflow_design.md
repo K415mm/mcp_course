@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 01 — Triage Workflow Design
@@ -10,7 +10,7 @@ status: draft
 
 ## Exercise Goal
 
-Design a complete triage workflow for three different alert types, mapping each to the correct SOC phase, Cynefin domain, and MCP tool set. You will also write the agent prompt that would drive the workflow.
+Design a complete triage workflow for three different alert types, mapping each to the correct SOC phase, complexity domain, and MCP tool set. You will also write the agent prompt that would drive the workflow.
 
 ---
 
@@ -39,7 +39,7 @@ Timestamp: 2026-03-10T00:01:00Z
 WORKFLOW DESIGN — Alert A
 
 1. SOC Phase at entry:        [Detection / Triage]
-2. Cynefin domain (initial):  [Clear / Complicated / Complex / Chaotic]
+2. complexity domain (initial):  [Clear / Complicated / Complex / Chaotic]
 
 3. MCP Tools to call (in order):
    Step 1: Tool name + why
@@ -70,7 +70,7 @@ Type: Brute Force Attempt
 User account: admin@yourcompany.org
 Source IP: 103.21.244.0
 Failed attempts: 847 in 15 minutes
-Current status: Account NOT locked (threshold not reached)
+Current status: published NOT locked (threshold not reached)
 Last successful login: 14 days ago from Ireland
 Timestamp: 2026-03-10T00:03:00Z
 ```
@@ -115,7 +115,7 @@ Write a single agent prompt that instructs the AI agent to triage all three aler
 - Reference all three alert IDs
 - Specify which tools the agent has available
 - Specify which actions require approval before execution
-- Require the output to include Cynefin domain classification per alert
+- Require the output to include complexity domain classification per alert
 
 ---
 
@@ -125,7 +125,7 @@ Write a single agent prompt that instructs the AI agent to triage all three aler
 WORKFLOW DESIGN — Alert A (Reference)
 
 1. SOC Phase: Triage (detection already fired)
-2. Cynefin domain: Complicated → likely Clear after enrichment
+2. AUTOMATION LEVEL: Complicated → likely Clear after enrichment
 
 3. Tool call sequence:
    Step 1: enrich_domain("secure-billing-update.com") — age + detection score
@@ -146,7 +146,7 @@ WORKFLOW DESIGN — Alert A (Reference)
 
 7. Agent prompt:
    "Triage this phishing alert. Enrich the sender domain, attachment hash, and
-   any URLs in the email body using available CTI tools. Classify the Cynefin
+   any URLs in the email body using available CTI tools. Classify the decision-complexity
    domain based on your evidence. If Clear domain confirmed, draft a quarantine
    request for my approval. Do not take any containment action without my explicit
    approval. Produce a structured triage brief."

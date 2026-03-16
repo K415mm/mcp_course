@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 03 — Knowledge Check and Operational Checklist
@@ -38,11 +38,11 @@ Answer each question in 2–4 sentences. Do not look at your notes — this test
 
 ---
 
-**Q7.** Name the four Cynefin domains and match each to one SOC scenario. The scenario can be one you've seen or written earlier.
+**Q7.** Name the four complexity domains and match each to one SOC scenario. The scenario can be one you've seen or written earlier.
 
 ---
 
-**Q8.** Why is the "Confusion" domain in the Cynefin framework more dangerous than the "Chaotic" domain specifically for AI agents — and not just for humans?
+**Q8.** Why is the "Confusion" domain in the automation-safety framework more dangerous than the "Chaotic" domain specifically for AI agents — and not just for humans?
 
 ---
 
@@ -64,11 +64,11 @@ Before deploying any MCP-enabled AI agent in a SOC environment, complete this ch
 - [ ] Every Act tool has a defined approval gate or is forbidden entirely.
 - [ ] Every Act tool has a documented rollback procedure.
 
-### Cynefin Classification
-- [ ] All alert types the agent will handle have been Cynefin-classified.
+### decision-complexity Classification
+- [ ] All alert types the agent will handle have been decision-complexity-classified.
 - [ ] Act permissions exist only for alerts classified as Clear or (with approval gate) Complicated.
 - [ ] Complex and Chaotic alert types have a documented "agent pauses, human decides" protocol.
-- [ ] A procedure exists for what happens if the Cynefin domain cannot be determined (Confusion): agent is deactivated, human classifies first.
+- [ ] A procedure exists for what happens if the complexity domain cannot be determined (Confusion): agent is deactivated, human classifies first.
 
 ### Tool Safety
 - [ ] All tools have type hints and descriptive docstrings.
@@ -111,4 +111,4 @@ Keep your exit ticket. At the end of the course, compare what you wrote here to 
 
 **Q5 examples:** (1) A novel attack pattern that has no training data analogue — the LLM produces a plausible-looking analysis that is statistically reasonable but empirically wrong. (2) Amplification of emotionally-loaded tool outputs — an AI will read "suspicious API call" and increase its risk verdict even when the API is commonly used by legitimate software.
 
-**Q9:** Requires knowing: (a) What Cynefin domain is associated with the alert type triggering isolation? (b) Are those 3 corroborating signals independently sourced (3 sources) or from the same data source (less reliable)? (c) Is the endpoint production-critical? The proposal is plausible for Clear-domain alerts — risky for Complicated, unacceptable for Complex.
+**Q9:** Requires knowing: (a) What complexity domain is associated with the alert type triggering isolation? (b) Are those 3 corroborating signals independently sourced (3 sources) or from the same data source (less reliable)? (c) Is the endpoint production-critical? The proposal is plausible for Clear-domain alerts — risky for Complicated, unacceptable for Complex.

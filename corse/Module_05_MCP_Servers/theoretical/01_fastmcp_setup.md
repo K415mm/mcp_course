@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 01 — What is an MCP Server? FastMCP Setup with uv

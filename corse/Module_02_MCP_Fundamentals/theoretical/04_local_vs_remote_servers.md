@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Local vs. Remote MCP Servers

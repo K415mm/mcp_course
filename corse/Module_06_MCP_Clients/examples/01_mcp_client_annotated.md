@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 01 — Complete MCPClient: Connecting, Discovering, Invoking

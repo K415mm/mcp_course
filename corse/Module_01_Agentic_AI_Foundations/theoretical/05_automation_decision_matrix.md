@@ -1,8 +1,8 @@
 ---
-status: draft
+status: published
 ---
 
-# 05 — Safe Autonomy: The Cynefin Lens
+# 05 — Safe Autonomy: The decision-complexity Lens
 
 > **Theoretical Block 5 of 5 | Module 01: Agentic AI Foundations**
 
@@ -12,11 +12,11 @@ status: draft
 
 The central risk of AI agents in cybersecurity is not that they will fail — it is that they will confidently fail. A bored analyst who auto-closes a false positive is a known, manageable problem. An AI agent that confidently isolates a production payment server at 11:55 PM on a Friday because it matched a threat pattern with 94% confidence is a different category of incident entirely.
 
-We need a principled framework for deciding *when* and *how much* to trust an AI agent to act. The **Cynefin Framework**, originally developed by Dave Snowden at IBM, provides exactly that — a decision-making model that classifies operating environments by the predictability of cause-and-effect relationships.
+We need a principled framework for deciding *when* and *how much* to trust an AI agent to act. The **decision-complexity framework**, originally developed by Dave Snowden at IBM, provides exactly that — a decision-making model that classifies operating environments by the predictability of cause-and-effect relationships.
 
 ---
 
-## 5.2 The Four Cynefin Domains
+## 5.2 The Four complexity domains
 
 ```
                     ORDERED                    UNORDERED
@@ -168,13 +168,13 @@ The root cause is the nature of LLM "thinking." An LLM is trained on historical 
 
 - The LLM's confidence in Complex domains is not lower — it is the same. But the confidence is no longer a reliable signal.
 - An LLM will present a plausible-sounding hypothesis about a novel APT campaign with the same apparent confidence as it classifies a known phishing kit. The analyst cannot tell the difference from the output alone.
-- This is why the Cynefin domain classification must happen **before** interpreting the agent's output, not after.
+- This is why the complexity domain classification must happen **before** interpreting the agent's output, not after.
 
 ---
 
 ## Key Takeaways
 
-1. The Cynefin framework provides a principled basis for deciding AI agent autonomy levels.
+1. the automation-safety framework provides a principled basis for deciding AI agent autonomy levels.
 2. Clear domain: full autonomy, act without human approval.
 3. Complicated domain: autonomous analysis, human approves all actions.
 4. Complex domain: hypothesis generation only, no autonomous action.
@@ -186,7 +186,7 @@ The root cause is the nature of LLM "thinking." An LLM is trained on historical 
 
 ## Discussion Questions
 
-1. A new, unclassified malware is discovered spreading in your environment. Which Cynefin domain is this, and what is the agent's role?
+1. A new, unclassified malware is discovered spreading in your environment. Which complexity domain is this, and what is the agent's role?
 2. Why is the Confusion domain more dangerous than the Chaotic domain specifically for AI agents?
 3. An analyst disagrees with the autonomy matrix — they want to give the agent act permissions in the Complicated domain for routine tasks. What is the strongest counter-argument?
 
@@ -194,5 +194,5 @@ The root cause is the nature of LLM "thinking." An LLM is trained on historical 
 
 ## Further Reading
 
-- [Agentic AI Integration and the Cynefin Framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md) — Full synthesis and executive presentation
+- [Agentic AI Integration and the automation-safety framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md) — Full synthesis and executive presentation
 - [Strategic_Agentic_Autonomy_(2).pdf](file:///d:/mcp_course/Strategic_Agentic_Autonomy_(2).pdf)

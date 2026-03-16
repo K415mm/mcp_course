@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 02 — The Sense-Think-Act Loop
@@ -105,7 +105,7 @@ Sense error → wasted compute, recoverable
 Act error   → irreversible system change, potentially catastrophic
 ```
 
-This asymmetry is why the Cynefin-based autonomy matrix (Block 4) is a core module topic, not a footnote. An agent that Senses incorrectly misses context. An agent that Acts incorrectly isolates the wrong server during a critical payment window.
+This asymmetry is why the decision-complexity-based autonomy matrix (Block 4) is a core module topic, not a footnote. An agent that Senses incorrectly misses context. An agent that Acts incorrectly isolates the wrong server during a critical payment window.
 
 ---
 
@@ -167,4 +167,4 @@ In security automation, **human approval gates** are the most important terminat
 ## Further Reading
 
 - [The Anatomy of Agentic Systems_ Mechanics and Orchestration.md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/The%20Anatomy%20of%20Agentic%20Systems_%20Mechanics%20and%20Orchestration.md)
-- [Agentic AI Integration and the Cynefin Framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md) — Part 1
+- [Agentic AI Integration and the automation-safety framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md) — Part 1

@@ -116,4 +116,4 @@ With MCP:
 ## Further Reading
 
 - [The Anatomy of Agentic Systems_ Mechanics and Orchestration.md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/The%20Anatomy%20of%20Agentic%20Systems_%20Mechanics%20and%20Orchestration.md) — Chapter 2 summary, core mechanics of the agent loop
-- [Agentic AI Integration and the Cynefin Framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md) — Part 3 FAQ, myth vs. reality
+- [Agentic AI Integration and the automation-safety framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md) — Part 3 FAQ, myth vs. reality

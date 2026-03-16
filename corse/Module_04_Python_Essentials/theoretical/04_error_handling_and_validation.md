@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 04 — Error Handling and Input Validation

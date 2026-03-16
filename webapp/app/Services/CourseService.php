@@ -111,7 +111,9 @@ class CourseService
             ->values();
 
         if ($rootMds->isNotEmpty()) {
-            $overview = $rootMds->first();
+            // Prefer the canonical Module_XX_Content.md file if it exists
+            $overview = $rootMds->first(fn($f) => preg_match('/Module_\d+_Content\.md$/i', $f->getFilename()))
+                ?? $rootMds->first();
             $item['overview_path'] = $overview->getRealPath();
         }
 
@@ -154,7 +156,11 @@ class CourseService
             ->filter(fn($f) => strtolower($f->getExtension()) === 'md')
             ->values();
 
-        return $rootMds->isNotEmpty() ? $rootMds->first()->getRealPath() : null;
+        if ($rootMds->isEmpty()) return null;
+
+        // Prefer the canonical Module_XX_Content.md
+        $preferred = $rootMds->first(fn($f) => preg_match('/Module_\d+_Content\.md$/i', $f->getFilename()));
+        return ($preferred ?? $rootMds->first())->getRealPath();
     }
 
     /**

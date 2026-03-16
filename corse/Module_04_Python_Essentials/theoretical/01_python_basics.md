@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 01 — Python Basics: Variables, Functions, and Types

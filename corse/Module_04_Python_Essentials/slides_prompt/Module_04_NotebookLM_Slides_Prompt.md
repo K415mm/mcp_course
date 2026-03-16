@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 04 — Google NotebookLM Slides Generation Prompt

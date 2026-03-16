@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 02 — The MCPClient Class: Connecting and Discovering Tools

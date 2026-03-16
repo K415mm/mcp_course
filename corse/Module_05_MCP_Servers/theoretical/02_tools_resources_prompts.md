@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 02 — Tools, Resources, and Prompts
@@ -137,7 +137,7 @@ Alert type: {alert_type}
 
 Use the available CTI tools to:
 1. Enrich all IPs, domains, and hashes in the alert
-2. Classify the Cynefin domain based on evidence
+2. Classify the complexity domain based on evidence
 3. Draft a triage brief with recommended actions
 
 Do NOT take any containment actions without my explicit approval."""

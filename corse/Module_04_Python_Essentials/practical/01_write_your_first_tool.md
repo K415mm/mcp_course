@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 01 — Write Your First MCP Tool
@@ -196,7 +196,7 @@ Domain malware-drop.ru: X detections → HIGH RISK
 Hash 3395856c...: found=True, family=Mirai → MALWARE CONFIRMED
 
 VERDICT: HIGH — recommend quarantine and domain block
-CYNEFIN: Clear (multiple corroborating indicators)
+decision-complexity: Clear (multiple corroborating indicators)
 ACTION REQUIRED: Analyst approval to quarantine and block
 ```
 

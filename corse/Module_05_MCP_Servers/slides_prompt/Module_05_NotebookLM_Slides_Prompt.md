@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 05 — Google NotebookLM Slides Generation Prompt
@@ -219,9 +219,9 @@ Center: Input form for enrich_ip with ip_address field
 Right: Result panel showing the JSON response
 Below: Testing checklist (5 items, green checkboxes):
   ✅ All tools visible
-  ✅ Valid input → status: ok
-  ✅ Invalid input → status: error (not crash)
-  ✅ Key missing → status: error
+  ✅ Valid input → status: published
+  ✅ Invalid input → status: published (not crash)
+  ✅ Key missing → status: published
   ✅ No print() corruption
 Callout: "Every tool must pass Inspector before Claude Desktop. No exceptions."
 

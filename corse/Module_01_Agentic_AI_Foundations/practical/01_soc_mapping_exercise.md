@@ -1,8 +1,8 @@
 ---
-status: draft
+status: published
 ---
 
-# Practical 01 — SOC Mapping: Classify Alerts on the Cynefin Framework
+# Practical 01 — SOC Mapping: Classify Alerts on the automation-safety framework
 
 > **Practical Block 1 of 3 | Module 01: Agentic AI Foundations**
 
@@ -10,8 +10,8 @@ status: draft
 
 ## Exercise Goal
 
-Apply the Cynefin autonomy matrix to realistic SOC alert scenarios. For each alert, you will:
-1. Identify the Cynefin domain.
+Apply the automation decision matrix to realistic SOC alert scenarios. For each alert, you will:
+1. Identify the complexity domain.
 2. Define the maximum safe AI agent role.
 3. Design the human-AI interaction model for that alert type.
 
@@ -188,7 +188,7 @@ After completing Part A individually, compare answers with a partner or the grou
 
 ## Part C: Build an Alert Classification SOP
 
-Based on the Cynefin matrix, write a 5-step Standard Operating Procedure for classifying a new alert into the correct Cynefin domain at the start of a triage process. Each step should be a yes/no question the analyst asks before engaging the AI agent.
+Based on the automation decision matrix, write a 5-step Standard Operating Procedure for classifying a new alert into the correct complexity domain at the start of a triage process. Each step should be a yes/no question the analyst asks before engaging the AI agent.
 
 ---
 

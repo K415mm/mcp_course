@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 02 — Novel APT Campaign: Where the Agent Stops
@@ -201,7 +201,7 @@ The analyst reads the report and:
 
 | Dimension | Example 01 (Phishing) | Example 02 (APT Campaign) |
 |---|---|---|
-| Cynefin domain | Complicated → Clear | Complex |
+| complexity domain | Complicated → Clear | Complex |
 | Agent verdict | High confidence: phishing | Cannot determine — hypotheses only |
 | Agent act calls | Yes, with approval | None |
 | Human role | Approver | Investigator |

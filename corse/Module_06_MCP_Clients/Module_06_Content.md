@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 6: Build MCP Clients with Python

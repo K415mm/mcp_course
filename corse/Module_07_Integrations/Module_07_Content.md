@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 7: Integrate MCP into AI Workspaces

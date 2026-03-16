@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 5: Build MCP Servers with Python

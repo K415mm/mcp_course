@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 03 — Transport, Deployment, and Claude Desktop Integration

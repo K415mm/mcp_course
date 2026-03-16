@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 03 — Real-World MCP Servers for Cyber Defense

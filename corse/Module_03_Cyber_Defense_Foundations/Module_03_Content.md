@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 3: Cyber Defense Foundations for MCP Use
@@ -31,7 +31,7 @@ Modern SOC operations follow a repeating cycle of five phases. MCP enables AI ag
 | Containment | Block IPs, isolate hosts, quarantine files | Act — invoke destructive tools | 🚫 Human approval required |
 | Recovery | Restore systems, close alerts, document findings | Act — generate reports, close tickets | ⚠️ Analyst reviews |
 
-**Key principle:** MCP tools that only read data (enrichment, queries, analysis) can be automated safely. MCP tools that modify state (block, isolate, patch) must require human approval in all but the Clear Cynefin domain.
+**Key principle:** MCP tools that only read data (enrichment, queries, analysis) can be automated safely. MCP tools that modify state (block, isolate, patch) must require human approval in all but the Clear complexity domain.
 
 ---
 
@@ -153,7 +153,7 @@ Before deploying any MCP security tool, verify:
 
 2. **Think (LLM correlates):**
    - Multiple indicators align: new domain + hash detections + phishing page.
-   - Cynefin domain: **Clear** (known phishing kit signature).
+   - AUTOMATION LEVEL: **Clear** (known phishing kit signature).
 
 3. **Act (auto-action, no human needed):**
    - Quarantine email from all inboxes.
@@ -167,7 +167,7 @@ Before deploying any MCP security tool, verify:
 
 1. **Sense:** REMnux server detects PE type, runs strings, PE header parser, import table analysis.
 2. **Neutral output:** "The file imports `VirtualAlloc`, `CreateRemoteThread`, and `WriteProcessMemory`. These are APIs commonly observed in shellcode injection workflows."
-3. **Think:** LLM notes injection-capable imports + no known hash → Cynefin **Complicated**.
+3. **Think:** LLM notes injection-capable imports + no known hash → decision-complexity **Complicated**.
 4. **Act (human required):** Analyst reviews evidence → approves sandbox detonation → MCP triggers sandbox API → behavioral report returned.
 
 ---
@@ -178,7 +178,7 @@ Before deploying any MCP security tool, verify:
 2. What is the purpose of neutral language normalization in the REMnux MCP server?
 3. Why does the Pentest MCP server use tmux instead of a standard terminal?
 4. Name one MCP tool you would classify as read-only and one that would need an approval gate.
-5. In which Cynefin domain is it safe to let an MCP agent take containment action autonomously?
+5. In which complexity domain is it safe to let an MCP agent take containment action autonomously?
 
 ---
 

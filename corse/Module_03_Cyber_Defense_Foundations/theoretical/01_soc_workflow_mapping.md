@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 01 — SOC Workflow Mapping
@@ -40,7 +40,7 @@ They do not always happen in strict order. In practice, an investigation often r
 
 **MCP role:** An MCP tool can be triggered automatically when a new alert arrives to perform initial data enrichment — pulling additional context without any analyst involvement.
 
-**Cynefin domain:** Varies by alert type (see practical exercises).
+**AUTOMATION LEVEL:** Varies by alert type (see practical exercises).
 
 **Safe automation level:** Full — fetching alert details is a read-only Sense operation.
 
@@ -62,7 +62,7 @@ They do not always happen in strict order. In practice, an investigation often r
 3. Look up asset criticality from a CMDB.
 4. Produce a structured triage verdict in seconds.
 
-**Cynefin domain:** Clear for known threats. Complicated for mixed signals.
+**AUTOMATION LEVEL:** Clear for known threats. Complicated for mixed signals.
 
 **Safe automation level:** High — all triage operations are Sense + Think. No Act calls required until the verdict is delivered.
 
@@ -80,7 +80,7 @@ They do not always happen in strict order. In practice, an investigation often r
 
 **MCP role:** Automated data gathering at scale. A human analyst would spend 30–90 minutes manually pulling logs across systems. An agent can run those queries in parallel in under 60 seconds, producing a structured evidence timeline.
 
-**Cynefin domain:** Complicated (known APT patterns) to Complex (novel attack).
+**AUTOMATION LEVEL:** Complicated (known APT patterns) to Complex (novel attack).
 
 **Safe automation level:** Medium — Sense operations are fully safe. Think outputs (hypotheses, timelines) require analyst review before any action is taken.
 
@@ -98,7 +98,7 @@ They do not always happen in strict order. In practice, an investigation often r
 
 **MCP role:** Containment tools *can* be built as MCP Act tools — but they are the highest-risk tools in the stack.
 
-**Cynefin domain:** Clear domain actions can be automated (known bad IP + 98 abuse score + human approval). Complicated domain actions require analyst decision. Complex/Chaotic actions require senior analyst/SOC lead.
+**AUTOMATION LEVEL:** Clear domain actions can be automated (known bad IP + 98 abuse score + human approval). Complicated domain actions require analyst decision. Complex/Chaotic actions require senior analyst/SOC lead.
 
 **Safe automation level:** Low — every containment action needs a human approval gate. No exceptions except in pre-defined Clear domain playbooks.
 

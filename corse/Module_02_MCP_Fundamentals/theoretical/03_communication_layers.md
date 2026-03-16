@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # MCP Communication Layers: Data and Transport

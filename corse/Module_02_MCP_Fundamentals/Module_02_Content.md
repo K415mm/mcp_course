@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 2: MCP Fundamentals and Architecture

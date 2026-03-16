@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 02 — Hash Lookup Tool: Complete and Tested

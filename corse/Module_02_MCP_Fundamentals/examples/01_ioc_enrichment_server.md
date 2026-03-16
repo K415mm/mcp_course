@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example: IOC Enrichment MCP Server

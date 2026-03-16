@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 02 — JSON and Data Exercises

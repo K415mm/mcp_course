@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Example 01 — From Zero to Running CTI Server in 10 Minutes

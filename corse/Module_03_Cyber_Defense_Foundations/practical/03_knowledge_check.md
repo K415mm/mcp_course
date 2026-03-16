@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Practical 03 — Knowledge Check and Module Checklist
@@ -14,7 +14,7 @@ Answer each question in 2–4 sentences without looking at your notes.
 
 **Q1.** Name the five SOC phases in order. For which two phases does MCP provide the highest ROI, and why?
 
-**Q2.** A colleague says: "Phase 3 (Investigation) should be fully automated — it's just log queries." Provide the strongest counter-argument using Cynefin reasoning.
+**Q2.** A colleague says: "Phase 3 (Investigation) should be fully automated — it's just log queries." Provide the strongest counter-argument using complexity-based reasoning.
 
 **Q3.** What is the difference between a Sense tool and an Act tool? Why does this distinction matter for which tools you build first?
 
@@ -28,7 +28,7 @@ Answer each question in 2–4 sentences without looking at your notes.
 
 **Q8.** You are prioritizing which MCP server to build first. You have resources for one. CTI enrichment server or network analysis server — which do you build first? Justify using ROI, risk, and complexity arguments.
 
-**Q9.** A Metasploit MCP tool offers `run_exploit(target, module)`. At what Cynefin level is this tool appropriate, and what guardrails are absolutely required?
+**Q9.** A Metasploit MCP tool offers `run_exploit(target, module)`. At what decision-complexity level is this tool appropriate, and what guardrails are absolutely required?
 
 **Q10.** What is the difference between "passive" and "active" tools in the Kali Linux MCP server context? Give one example of each.
 

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # Module 1: Agentic AI Foundations for Cyber Defense
@@ -13,7 +13,7 @@ Build a clear mental model of what an AI agent is, how it differs from a chatbot
 1. Define an AI agent using core characteristics such as autonomy and perception.
 2. Distinguish agents from chatbots using concrete security examples.
 3. Explain the Sense‑Think‑Act loop and how MCP enables Sense and Act.
-4. Apply the Cynefin‑informed autonomy matrix to security operations.
+4. Apply the decision-complexity‑informed autonomy matrix to security operations.
 
 ## Theoretical Section
 
@@ -40,7 +40,7 @@ Build a clear mental model of what an AI agent is, how it differs from a chatbot
 - Context windows and memory systems preserve goals and state across long tasks.
 - Evaluation uses human feedback, automated metrics, and benchmarks to control errors.
 
-### Safe Autonomy with the Cynefin Lens
+### Safe Autonomy with the decision-complexity Lens
 
 - Clear: autonomous execution is safe.
 - Complicated: assisted analysis with human validation.
@@ -73,7 +73,7 @@ Build a clear mental model of what an AI agent is, how it differs from a chatbot
 - Think: correlate sender reputation and campaign indicators.
 - Act: quarantine the email and notify the user only if the alert is in the Clear domain.
 
-### Cynefin Decision
+### decision-complexity Decision
 
 - Clear: known phishing kit indicators → automate quarantine.
 - Complicated: mixed indicators → escalate for analyst validation.
@@ -87,7 +87,7 @@ Build a clear mental model of what an AI agent is, how it differs from a chatbot
 
 ## Reading List (Module 1 Source Files)
 
-- [Agentic AI Integration and the Cynefin Framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md)
+- [Agentic AI Integration and the automation-safety framework for SOC Operations (1).md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/Agentic%20AI%20Integration%20and%20the%20Cynefin%20Framework%20for%20SOC%20Operations%20(1).md)
 - [The Anatomy of Agentic Systems_ Mechanics and Orchestration.md](file:///d:/mcp_course/corse/Module_01_Agentic_AI_Foundations/The%20Anatomy%20of%20Agentic%20Systems_%20Mechanics%20and%20Orchestration.md)
 - [9781806116478.pdf](file:///d:/mcp_course/9781806116478.pdf)
 - [Strategic_Agentic_Autonomy_(2).pdf](file:///d:/mcp_course/Strategic_Agentic_Autonomy_(2).pdf)

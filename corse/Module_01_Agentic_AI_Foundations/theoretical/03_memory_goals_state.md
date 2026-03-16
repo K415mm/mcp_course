@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 03 — Memory, Goals, and State in Agentic Systems
@@ -80,7 +80,7 @@ An agent's goal is set by the user's prompt. But complex security tasks require 
 **Sub-goals the agent must generate internally:**
 1. Extract IOCs from the alert (IP, domain, hash).
 2. Enrich each IOC with threat intelligence.
-3. Determine the Cynefin domain for the resulting evidence picture.
+3. Determine the complexity domain for the resulting evidence picture.
 4. If Clear domain: recommend automated action.
 5. If Complicated: produce analyst brief with recommended action pending approval.
 6. If Complex/Chaotic: flag for human review only.

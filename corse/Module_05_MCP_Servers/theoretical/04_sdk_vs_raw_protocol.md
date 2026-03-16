@@ -1,5 +1,5 @@
 ---
-status: draft
+status: published
 ---
 
 # 04 — SDK vs Raw Protocol: Why You Should Always Use the SDK

@@ -127,19 +127,64 @@ class ContentController extends Controller
     public function toggleStatus(Request $request)
     {
         $data = $request->validate([
-            'path' => 'required|string',
+            'path'   => 'required|string',
             'status' => 'required|string|in:draft,published',
         ]);
 
-        $real = realpath($data['path']);
+        // ── Path security check ───────────────────────────────────
         $base = realpath(config('course.content_path'));
 
-        if (!$real || !str_starts_with($real, $base)) {
-            abort(403, 'Invalid path.');
+        if (!$base) {
+            \Illuminate\Support\Facades\Log::error('toggle-status: COURSE_CONTENT_PATH could not be resolved', [
+                'course.content_path' => config('course.content_path'),
+            ]);
+            return redirect()->route('admin.content.index')
+                ->withErrors(['error' => 'Course content path is not configured correctly on this server.']);
         }
 
-        $this->courseService->setFileStatus($real, $data['status']);
-        return redirect()->route('admin.content.index')->with('success', 'File status updated to ' . $data['status'] . '.');
+        $real = realpath($data['path']);
+
+        if (!$real) {
+            // realpath() returns false if the file doesn't exist OR the path is wrong format
+            // Fall back: trust the path if it's inside the base directory (string check)
+            $normalized = str_replace('\\', '/', $data['path']);
+            $normalizedBase = str_replace('\\', '/', $base);
+
+            if (!str_starts_with($normalized, $normalizedBase)) {
+                \Illuminate\Support\Facades\Log::warning('toggle-status: path outside base dir', [
+                    'path' => $data['path'], 'base' => $base,
+                ]);
+                abort(403, 'Invalid file path.');
+            }
+
+            $real = $data['path'];
+        }
+
+        if (!str_starts_with(str_replace('\\', '/', $real), str_replace('\\', '/', $base))) {
+            \Illuminate\Support\Facades\Log::warning('toggle-status: path traversal attempt', ['path' => $real]);
+            abort(403, 'Invalid file path.');
+        }
+
+        // ── Attempt write ─────────────────────────────────────────
+        try {
+            $result = $this->courseService->setFileStatus($real, $data['status']);
+
+            if (!$result) {
+                return redirect()->route('admin.content.index')
+                    ->withErrors(['error' => "File not found or could not be updated: {$real}"]);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('toggle-status: file write failed', [
+                'path'  => $real,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('admin.content.index')
+                ->withErrors(['error' => 'Could not update the file. Check server file permissions on the course content directory. Error: ' . $e->getMessage()]);
+        }
+
+        return redirect()->route('admin.content.index')
+            ->with('success', 'File status updated to ' . $data['status'] . '.');
     }
 
     /** Bulk publish all draft files */

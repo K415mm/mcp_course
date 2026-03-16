@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/2fa-challenge', [\App\Http\Controllers\TwoFactorController::class, 'challenge'])->name('2fa.challenge');
 Route::post('/2fa-challenge', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('2fa.verify');
 
+// ── Public Invitation routes (no auth required) ──────────────────────────────
+Route::get('/invite/{token}', [\App\Http\Controllers\InvitationController::class, 'accept'])->name('invite.accept');
+Route::post('/invite/{token}', [\App\Http\Controllers\InvitationController::class, 'register'])->name('invite.register');
+
 
 
 Route::middleware('guest')->group(function () {
@@ -77,6 +81,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'show'])->name('show');
     });
 
+    // Module Completion
+    Route::post('/modules/{moduleSlug}/complete', [\App\Http\Controllers\ModuleCompletionController::class, 'mark'])->name('modules.complete');
+    Route::get('/my-completions', [\App\Http\Controllers\ModuleCompletionController::class, 'index'])->name('modules.completions');
+
     // 2FA Management
     Route::post('/user/two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('two-factor.enable');
     Route::post('/user/confirmed-two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
@@ -116,6 +124,15 @@ Route::middleware('auth')->group(function () {
         // Quiz Builder
         Route::get('/quiz/{module}/{lesson}', [AdminQuiz::class, 'edit'])->name('quiz.edit');
         Route::put('/quiz/{module}/{lesson}', [AdminQuiz::class, 'update'])->name('quiz.update');
+
+        // Invitations
+        Route::prefix('invitations')->name('invitations.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\InvitationController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\InvitationController::class, 'store'])->name('store');
+            Route::post('/bulk', [\App\Http\Controllers\Admin\InvitationController::class, 'bulkStore'])->name('bulk');
+            Route::post('/{invitation}/resend', [\App\Http\Controllers\Admin\InvitationController::class, 'resend'])->name('resend');
+            Route::delete('/{invitation}', [\App\Http\Controllers\Admin\InvitationController::class, 'destroy'])->name('destroy');
+        });
     });
     
     }); // End verified middleware group

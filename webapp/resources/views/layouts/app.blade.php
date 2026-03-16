@@ -365,10 +365,16 @@
                     @auth
                         @if(Auth::user()->isAdmin())
                             <div class="menu-header mt-3">Administration</div>
-                            <div class="menu-item {{ request()->is('admin*') ? 'active' : '' }}">
+                            <div class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                                 <a href="{{ route('admin.dashboard') }}" class="menu-link">
                                     <span class="menu-icon"><i class="bi bi-shield-lock"></i></span>
                                     <span class="menu-text">Admin Panel</span>
+                                </a>
+                            </div>
+                            <div class="menu-item {{ request()->routeIs('admin.invitations.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.invitations.index') }}" class="menu-link">
+                                    <span class="menu-icon"><i class="bi bi-envelope-plus"></i></span>
+                                    <span class="menu-text">Invitations</span>
                                 </a>
                             </div>
                         @endif

@@ -109,44 +109,48 @@
                 @endif
             </div>
         </div>
-    <!-- Cinematic Malware Glitch Effect -->
-    <img id="cinematic-malware" src="{{ asset('img/workshops/malware_analysis.png') }}" 
-         alt="Malware Analysis" 
-         style="position: fixed; top: 20%; right: -5%; width: 500px; z-index: 0; pointer-events: none; opacity: 0; filter: drop-shadow(0 0 30px rgba(220,38,38,0.4)) grayscale(80%) contrast(150%); mix-blend-mode: screen;" />
+    @if($cinematicAnimationsEnabled ?? true)
+        <!-- Cinematic Malware Glitch Effect -->
+        <img id="cinematic-malware" src="{{ asset('img/workshops/malware_analysis.png') }}" 
+             alt="Malware Analysis" 
+             style="position: fixed; top: 20%; right: -5%; width: 500px; z-index: 0; pointer-events: none; opacity: 0; filter: drop-shadow(0 0 30px rgba(220,38,38,0.4)) grayscale(80%) contrast(150%); mix-blend-mode: screen;" />
+    @endif
 
 @endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof gsap !== 'undefined') {
-            const malwareImg = document.getElementById('cinematic-malware');
-            if (malwareImg) {
-                // Fade in slowly to a base opacity
-                gsap.to(malwareImg, { opacity: 0.08, duration: 2, delay: 1 });
-                
-                // Glitch effect loop: random snappy jumps in position, opacity, and skew
-                gsap.to(malwareImg, {
-                    x: "random(-15, 15)",
-                    y: "random(-15, 15)",
-                    skewX: "random(-20, 20)",
-                    opacity: "random(0.03, 0.2)",
-                    duration: 0.15,
-                    repeat: -1,
-                    repeatRefresh: true,
-                    ease: "steps(1)"
-                });
-                
-                // Very slow ambient rotation
-                gsap.to(malwareImg, {
-                    rotation: 3,
-                    duration: 4,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut"
-                });
+@if($cinematicAnimationsEnabled ?? true)
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof gsap !== 'undefined') {
+                const malwareImg = document.getElementById('cinematic-malware');
+                if (malwareImg) {
+                    // Fade in slowly to a base opacity
+                    gsap.to(malwareImg, { opacity: 0.08, duration: 2, delay: 1 });
+                    
+                    // Glitch effect loop: random snappy jumps in position, opacity, and skew
+                    gsap.to(malwareImg, {
+                        x: "random(-15, 15)",
+                        y: "random(-15, 15)",
+                        skewX: "random(-20, 20)",
+                        opacity: "random(0.03, 0.2)",
+                        duration: 0.15,
+                        repeat: -1,
+                        repeatRefresh: true,
+                        ease: "steps(1)"
+                    });
+                    
+                    // Very slow ambient rotation
+                    gsap.to(malwareImg, {
+                        rotation: 3,
+                        duration: 4,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                }
             }
-        }
-    });
-</script>
-@endpush
+        });
+    </script>
+    @endpush
+@endif

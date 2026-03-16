@@ -64,6 +64,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
 
+        // Global Settings
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+
         // Content (CRUD .md files)
         Route::prefix('content')->name('content.')->group(function () {
             Route::get('/', [AdminContent::class, 'index'])->name('index');

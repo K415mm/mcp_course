@@ -6,155 +6,108 @@
 <title>Module Complete — RAISEGUARD Academy</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#050a14; font-family:'Segoe UI',Arial,sans-serif; color:#c9d6e3; }
-  .wrapper { max-width: 600px; margin: 0 auto; padding: 32px 16px; }
+  body { background:#0b1117; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; color:#a4b2c1; }
+  .wrapper { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+
+  /* HUD Panel */
+  .hud-panel {
+    background: #111822; border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative; padding: 40px 40px; border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
+  }
+
+  /* HUD Brackets */
+  .hud-bracket { position: absolute; width: 10px; height: 10px; border-color: rgba(4, 236, 240, 0.4); border-style: solid; }
+  .bracket-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .bracket-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .bracket-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .bracket-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
   /* Header */
-  .header { background: linear-gradient(135deg,#071628,#091f3a,#0a1e30);
-    border:1px solid rgba(0,212,255,.15); border-radius:16px 16px 0 0;
-    padding:36px 40px 28px; text-align:center; }
-  .logo { font-size:13px; font-weight:700; color:#00d4ff; letter-spacing:3px;
-    text-transform:uppercase; margin-bottom:24px; }
-  .badge-wrap { margin: 0 auto 24px; width:120px; height:120px; position:relative; }
-  .badge-circle { width:120px; height:120px; border-radius:50%;
-    background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(0,102,204,.1));
-    border:3px solid rgba(0,212,255,.4); display:flex; align-items:center;
-    justify-content:center; font-size:48px; box-shadow:0 0 40px rgba(0,212,255,.2); }
-  .module-num-badge { position:absolute; bottom:-6px; right:-6px;
-    background:linear-gradient(135deg,#00d4ff,#0066cc); color:#000; font-weight:800;
-    font-size:11px; padding:3px 10px; border-radius:20px; }
-  .header h1 { font-size:24px; font-weight:800; color:#fff; line-height:1.3; margin-bottom:6px; }
-  .header h1 span { color:#00d4ff; }
-  .header p { font-size:14px; color:#7a9bb5; }
+  .brand-text { font-size: 13px; font-weight: 700; color: #04ecf0; letter-spacing: 2px; margin-bottom: 30px; }
+  
+  /* Badge display */
+  .badge-display { width: 100px; height: 100px; margin: 0 auto 25px; border: 1px solid rgba(4, 236, 240, 0.3);
+    background: rgba(4, 236, 240, 0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; position: relative; }
+  .badge-tag { position: absolute; bottom: -8px; background: #04ecf0; color: #000;
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 2px; font-family: monospace; }
 
-  .divider { height:2px; background:linear-gradient(90deg,transparent,#00d4ff,#0066cc,transparent); }
+  h1 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: #6c7e93; margin-bottom: 30px; }
 
-  /* Body */
-  .body { background:#081121; border:1px solid rgba(0,212,255,.1); border-top:none; padding:36px 40px; }
+  /* Progress Bar */
+  .progress-wrap { margin: 30px 0; text-align: left; }
+  .progress-head { display: flex; justify-content: space-between; font-size: 12px; color: #04ecf0;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 600; }
+  .progress-track { background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; overflow: hidden; }
+  .progress-fill { background: #04ecf0; height: 100%; box-shadow: 0 0 10px rgba(4,236,240,0.5); }
 
-  .congrats { font-size:16px; color:#a0b8c8; line-height:1.7; margin-bottom:24px; }
-  .congrats strong { color:#00d4ff; }
+  /* Content */
+  .message { font-size: 15px; color: #cbd5e1; line-height: 1.6; text-align: left; margin-bottom: 30px; }
 
-  /* Progress bar */
-  .progress-section { margin: 24px 0; }
-  .progress-label { font-size:12px; color:#7a9bb5; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
-    display:flex; justify-content:space-between; }
-  .progress-bar-bg { background:rgba(255,255,255,.06); border-radius:50px; height:8px; overflow:hidden; }
-  .progress-bar-fill { height:100%; border-radius:50px;
-    background:linear-gradient(90deg,#00d4ff,#0066cc); }
-
-  /* Achievement box */
-  .achievement { background:rgba(0,212,255,.04); border:1px solid rgba(0,212,255,.15);
-    border-radius:12px; padding:20px 24px; margin:24px 0; text-align:center; }
-  .achievement h3 { font-size:16px; font-weight:700; color:#e0eaf5; margin-bottom:6px; }
-  .achievement p { font-size:13px; color:#7a9bb5; }
-  .badge-label { display:inline-block; margin-top:12px; background:linear-gradient(135deg,#00d4ff20,#0066cc20);
-    border:1px solid rgba(0,212,255,.3); border-radius:8px; padding:6px 18px;
-    font-size:12px; font-weight:700; color:#00d4ff; letter-spacing:1px; }
-
-  /* Next steps */
-  .next-section { margin:28px 0; }
-  .next-section h3 { font-size:14px; font-weight:700; color:#fff; margin-bottom:12px;
-    text-transform:uppercase; letter-spacing:1px; }
-  .next-card { background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(0,102,204,.04));
-    border:1px solid rgba(0,212,255,.15); border-radius:10px; padding:16px 20px;
-    display:flex; align-items:center; gap:14px; }
-  .next-arrow { font-size:24px; }
-  .next-card-title { font-size:14px; font-weight:700; color:#e0eaf5; }
-  .next-card-sub { font-size:12px; color:#7a9bb5; margin-top:3px; }
+  /* Next Step Box */
+  .next-box { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 4px; padding: 20px; text-align: left; margin-bottom: 30px; }
+  .next-header { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .next-title { font-size: 15px; font-weight: 700; color: #fff; }
 
   /* CTA */
-  .cta-wrap { text-align:center; margin:32px 0; }
-  .cta-btn { display:inline-block; background:linear-gradient(135deg,#00d4ff,#0066cc);
-    color:#000; font-size:15px; font-weight:800; text-decoration:none;
-    padding:14px 40px; border-radius:50px; box-shadow:0 8px 28px rgba(0,212,255,.25); }
-
-  /* Certificate teaser */
-  .cert-box { background:linear-gradient(135deg,rgba(251,191,36,.06),transparent);
-    border:1px solid rgba(251,191,36,.2); border-radius:10px;
-    padding:16px 20px; margin:24px 0; display:flex; align-items:center; gap:16px; }
-  .cert-box .icon { font-size:28px; flex-shrink:0; }
-  .cert-box p { font-size:13px; color:#9ca3af; line-height:1.5; }
-  .cert-box strong { color:#fbbf24; }
+  .cta-btn { display: inline-block; background: #04ecf0; color: #000; font-size: 14px; font-weight: 700;
+    text-decoration: none; padding: 14px 35px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
 
   /* Footer */
-  .footer { background:#040c18; border:1px solid rgba(0,212,255,.08); border-top:none;
-    border-radius:0 0 16px 16px; padding:24px 40px; text-align:center; }
-  .footer p { font-size:12px; color:#3a5060; line-height:1.7; }
-  .footer a { color:#00d4ff; text-decoration:none; }
+  .footer { margin-top: 30px; font-size: 12px; color: #475569; line-height: 1.6; text-align: center; }
+  .footer a { color: #04ecf0; text-decoration: none; }
 </style>
 </head>
 <body>
 <div class="wrapper">
 
-  <div class="header">
-    <div class="logo">RAISEGUARD ACADEMY</div>
-    <div class="badge-wrap">
-      <div class="badge-circle">🏅</div>
-      <span class="module-num-badge">M{{ $moduleNum }}</span>
+  <div class="hud-panel">
+    <div class="hud-bracket bracket-tl"></div>
+    <div class="hud-bracket bracket-tr"></div>
+    <div class="hud-bracket bracket-bl"></div>
+    <div class="hud-bracket bracket-br"></div>
+
+    <div class="brand-text">RAISEGUARD ACADEMY</div>
+    
+    <div class="badge-display">
+      🎖️
+      <div class="badge-tag">M{{ $moduleNum }}</div>
     </div>
-    <h1>Module Complete!<br><span>{{ $module['title'] }}</span></h1>
-    <p>Achievement unlocked — keep going!</p>
-  </div>
-  <div class="divider"></div>
 
-  <div class="body">
-    <p class="congrats">
-      Hi <strong>{{ $user->name }}</strong>,<br><br>
-      Congratulations! You have successfully completed <strong>{{ $module['title'] }}</strong>.
-      This is a significant milestone in your journey to becoming an AI-powered cyber defence
-      professional. You're building real, deployable skills that matter.
-    </p>
+    <h1>Module Complete</h1>
+    <div class="subtitle">{{ $module['title'] }}</div>
 
-    <!-- Progress bar -->
-    <div class="progress-section">
-      <div class="progress-label">
-        <span>Course Progress</span>
-        <span style="color:#00d4ff;">Module {{ $moduleNum }}/08 Complete</span>
+    <div class="progress-wrap">
+      <div class="progress-head">
+        <span>System Progress</span>
+        <span>{{ intval($moduleNum)/8*100 }}%</span>
       </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" style="width:{{ intval($moduleNum)/8*100 }}%;"></div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:{{ intval($moduleNum)/8*100 }}%;"></div>
       </div>
     </div>
 
-    <!-- Achievement -->
-    <div class="achievement">
-      <h3>🏆 Achievement Unlocked</h3>
-      <p>You have earned the badge for completing this module:</p>
-      <div class="badge-label">{{ $badgeLabel }}</div>
+    <div class="message">
+      Operation successful, <strong>{{ $user->name }}</strong>.<br><br>
+      You have successfully completed the <strong>{{ $module['title'] }}</strong> training module and earned the <em>{{ $badgeLabel }}</em> achievement badge. Your HUD transcript has been updated.
     </div>
 
-    <!-- Next module suggestion -->
     @if($nextModule)
-    <div class="next-section">
-      <h3>▶ Your Next Step</h3>
-      <div class="next-card">
-        <div class="next-arrow">🚀</div>
-        <div>
-          <div class="next-card-title">Continue to: {{ $nextModule['title'] }}</div>
-          <div class="next-card-sub">Keep your momentum — the next module builds directly on what you just learned.</div>
-        </div>
-      </div>
+    <div class="next-box">
+      <div class="next-header">▶ Ready for next sequence</div>
+      <div class="next-title">{{ $nextModule['title'] }}</div>
     </div>
     @endif
 
-    <!-- CTA -->
-    <div class="cta-wrap">
-      <a href="{{ $continueUrl }}" class="cta-btn">Continue Learning →</a>
-    </div>
-
-    <!-- Certificate teaser -->
-    <div class="cert-box">
-      <div class="icon">🎓</div>
-      <p>Complete all 8 modules and 5 workshops to earn your <strong>RAISEGUARD Academy Certificate of Achievement</strong> in AI-Powered Cyber Defence — plus an exclusive gift for graduates! You're {{ intval($moduleNum)/8*100 }}% of the way there.</p>
-    </div>
+    <a href="{{ $continueUrl }}" class="cta-btn">Resume Training</a>
   </div>
 
   <div class="footer">
-    <p>
-      © {{ date('Y') }} RAISEGUARD Academy · <a href="{{ url('/') }}">tunai.cloud</a><br>
-      You received this email because you are enrolled in RAISEGUARD Academy.
-    </p>
+    <p>Automated progression alert from RAISEGUARD Academy.<br>
+       <a href="{{ url('/') }}">tunai.cloud</a></p>
   </div>
 
 </div>

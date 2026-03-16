@@ -55,6 +55,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
+    // Notes
+    Route::prefix('notes')->name('notes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\NoteController::class, 'index'])->name('index');
+        Route::get('/view/{note}', [\App\Http\Controllers\NoteController::class, 'show'])->name('show');
+        Route::post('/create', [\App\Http\Controllers\NoteController::class, 'store'])->name('store');
+        Route::put('/{note}', [\App\Http\Controllers\NoteController::class, 'update'])->name('update');
+        Route::delete('/{note}', [\App\Http\Controllers\NoteController::class, 'destroy'])->name('destroy');
+        Route::get('/module/{moduleSlug}', [\App\Http\Controllers\NoteController::class, 'forModule'])->name('forModule');
+    });
+
     // 2FA Management
     Route::post('/user/two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('two-factor.enable');
     Route::post('/user/confirmed-two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');

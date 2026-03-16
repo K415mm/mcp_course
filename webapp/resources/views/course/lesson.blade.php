@@ -111,10 +111,51 @@
         </div>
     @if($cinematicAnimationsEnabled ?? true)
         <!-- Cinematic Malware Glitch Effect -->
-        <img id="cinematic-malware" src="{{ asset('img/workshops/malware_analysis.png') }}" 
-             alt="Malware Analysis" 
+        <img id="cinematic-malware" src="{{ asset('img/workshops/malware_analysis.png') }}"
+             alt="Malware Analysis"
              style="position: fixed; top: 20%; right: -5%; width: 500px; z-index: 0; pointer-events: none; opacity: 0; filter: drop-shadow(0 0 30px rgba(220,38,38,0.4)) grayscale(80%) contrast(150%); mix-blend-mode: screen;" />
     @endif
+
+    {{-- ── Floating Notes Drawer ───────────────────────────────────── --}}
+    <!-- FAB Toggle Button -->
+    <button id="notes-fab" title="My Notes"
+            style="position: fixed; bottom: 2rem; right: 2rem; z-index: 5000;
+                   width: 56px; height: 56px; border-radius: 50%; border: none;
+                   background: var(--bs-theme); color: #000; font-size: 1.4rem;
+                   box-shadow: 0 4px 20px rgba(0,0,0,.5); cursor: pointer;
+                   display: flex; align-items: center; justify-content: center;
+                   transition: transform .2s;">
+        <i class="bi bi-journal-text"></i>
+    </button>
+
+    <!-- Slide-in Note Drawer -->
+    <div id="notes-drawer"
+         style="position: fixed; bottom: 0; right: 0; width: 420px; max-width: 100vw; height: 60vh;
+                z-index: 4999; background: #1a1f2e; border-top: 1px solid rgba(255,255,255,.08);
+                border-left: 1px solid rgba(255,255,255,.08); border-radius: 12px 0 0 0;
+                box-shadow: -4px -4px 30px rgba(0,0,0,.5); transform: translateY(110%);
+                transition: transform .3s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column;">
+
+        <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+            <span class="fw-bold fs-13px"><i class="bi bi-journal-text me-2 text-theme"></i>Quick Notes</span>
+            <div class="d-flex gap-2">
+                <a href="{{ route('notes.index') }}" class="btn btn-xs btn-outline-theme" target="_blank">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>Open Full Notes
+                </a>
+                <button id="drawer-md-export" class="btn btn-xs btn-outline-success" title="Export .md">
+                    <i class="bi bi-markdown"></i>
+                </button>
+                <button id="notes-drawer-close" class="btn btn-xs btn-outline-secondary"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </div>
+
+        <div id="drawer-editor" style="flex: 1; overflow-y: auto; padding: 1rem; outline: none; font-size: 14px; line-height: 1.7;"></div>
+
+        <div class="px-3 py-2 border-top border-secondary d-flex justify-content-between align-items-center">
+            <span id="drawer-save-status" class="text-muted fs-11px">Auto-saved</span>
+            <a href="{{ route('notes.index') }}" class="fs-11px text-theme">View all my notes →</a>
+        </div>
+    </div>
 
 @endsection
 
@@ -154,3 +195,90 @@
     </script>
     @endpush
 @endif
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/@tiptap/core@2.2.4/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@2.2.4/dist/index.umd.js"></script>
+<style>
+    .btn-xs { padding: 2px 8px; font-size: 12px; }
+    #drawer-editor .ProseMirror { outline: none; min-height: 200px; color: rgba(255,255,255,.85); }
+    #drawer-editor p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; color: rgba(255,255,255,.2); pointer-events: none; height: 0; }
+    #notes-fab:hover { transform: scale(1.1); }
+</style>
+<script>
+(function() {
+    const { Editor } = window['@tiptap/core'];
+    const StarterKit = window['@tiptap/starter-kit'].StarterKit;
+
+    const fab = document.getElementById('notes-fab');
+    const drawer = document.getElementById('notes-drawer');
+    const closeBtn = document.getElementById('notes-drawer-close');
+    const moduleSlug = '{{ $module["slug"] }}';
+    const csrf = '{{ csrf_token() }}';
+    let drawerEditor = null;
+    let drawerNoteId = null;
+    let saveTimer = null;
+
+    // Toggle drawer
+    fab.addEventListener('click', () => {
+        const isOpen = drawer.style.transform === 'translateY(0px)';
+        drawer.style.transform = isOpen ? 'translateY(110%)' : 'translateY(0px)';
+        if (!isOpen && !drawerEditor) initDrawerEditor();
+    });
+    closeBtn.addEventListener('click', () => { drawer.style.transform = 'translateY(110%)'; });
+
+    async function initDrawerEditor() {
+        // Try to load an existing note for this module, else create one
+        const res = await fetch(`/notes/module/${moduleSlug}`);
+        const notes = await res.json();
+        if (notes.length) {
+            drawerNoteId = notes[0].id;
+            const noteRes = await fetch(`/notes/view/${drawerNoteId}`);
+            // Redirect is not needed — fetch the JSON data instead
+        } else {
+            // Create a new note scoped to this module
+            const createRes = await fetch('/notes/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+                body: JSON.stringify({ title: 'Notes for {{ $module["title"] }}', module_slug: moduleSlug })
+            });
+            if (createRes.ok) {
+                const data = await createRes.json();
+                drawerNoteId = data.id;
+            }
+        }
+
+        drawerEditor = new Editor({
+            element: document.getElementById('drawer-editor'),
+            extensions: [ StarterKit ],
+            content: '',
+            onUpdate: () => {
+                clearTimeout(saveTimer);
+                document.getElementById('drawer-save-status').textContent = 'Saving...';
+                saveTimer = setTimeout(saveDrawer, 1500);
+            }
+        });
+    }
+
+    async function saveDrawer() {
+        if (!drawerNoteId || !drawerEditor) return;
+        const body = JSON.stringify(drawerEditor.getJSON());
+        const res = await fetch(`/notes/${drawerNoteId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+            body: JSON.stringify({ body })
+        });
+        if (res.ok) document.getElementById('drawer-save-status').textContent = 'Saved';
+    }
+
+    // Markdown export from drawer
+    document.getElementById('drawer-md-export').addEventListener('click', () => {
+        if (!drawerEditor) return;
+        const html = document.getElementById('drawer-editor').innerHTML;
+        const md = html.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n').replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n').replace(/<[^>]+>/g, '');
+        const blob = new Blob([md], { type: 'text/markdown' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'lesson-notes.md'; a.click();
+    });
+})();
+</script>
+@endpush

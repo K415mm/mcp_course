@@ -87,6 +87,7 @@
                     autoSave(msg.xml, true);
                 }
                 break;
+        }
     });
 
     function postToDrawio(payload) {

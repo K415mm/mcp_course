@@ -118,8 +118,14 @@ Route::middleware('auth')->group(function () {
         });
 
         // Users
-        Route::get('/users', [AdminUsers::class, 'index'])->name('users.index');
-        Route::post('/users/{user}/role', [AdminUsers::class, 'updateRole'])->name('users.role');
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [AdminUsers::class, 'index'])->name('index');
+            Route::post('/{user}/role', [AdminUsers::class, 'updateRole'])->name('role');
+            Route::put('/{user}', [AdminUsers::class, 'update'])->name('update');
+            Route::post('/{user}/password', [AdminUsers::class, 'updatePassword'])->name('password');
+            Route::post('/{user}/toggle-ban', [AdminUsers::class, 'toggleBan'])->name('toggleBan');
+            Route::delete('/{user}', [AdminUsers::class, 'destroy'])->name('destroy');
+        });
 
         // Quiz Builder
         Route::get('/quiz/{module}/{lesson}', [AdminQuiz::class, 'edit'])->name('quiz.edit');

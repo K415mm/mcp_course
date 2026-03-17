@@ -24,6 +24,17 @@
                 class="bi bi-check-circle me-2"></i>{{ session('success') }}<button type="button" class="btn-close"
                 data-bs-dismiss="alert"></button></div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fs-13px mb-4"><i
+                class="bi bi-x-circle me-2"></i>{{ session('error') }}<button type="button" class="btn-close"
+                data-bs-dismiss="alert"></button></div>
+    @endif
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fs-13px mb-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ $errors->first() }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
     <div class="card">
         <div class="card-body p-0">
@@ -33,70 +44,162 @@
                         <th class="px-3 py-3">User</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Progress</th>
+                        <th>Status</th>
                         <th>Joined</th>
                         <th class="text-end pe-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($users as $user)
-                        <tr>
+                        <tr class="{{ $user->banned_at ? 'opacity-50' : '' }}">
                             <td class="px-3">
                                 <div class="d-flex align-items-center gap-2">
                                     <img src="{{ $user->avatarUrl() }}" alt="" class="rounded-circle"
-                                        style="width:32px;height:32px;object-fit:cover;">
+                                        style="width:32px;height:32px;object-fit:cover; {{ $user->banned_at ? 'filter: grayscale(1);' : '' }}">
                                     <div>
-                                        <div class="fw-semibold text-inverse fs-13px">{{ $user->name }}</div>
+                                        <div class="fw-semibold text-inverse fs-13px">
+                                            {{ $user->name }}
+                                            @if($user->banned_at)
+                                                <i class="bi bi-slash-circle text-danger ms-1" title="Banned"></i>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="fs-13px text-muted">{{ $user->email }}</td>
                             <td>
-                                <span
-                                    class="badge {{ $user->roleBadgeClass() }} fs-10px px-2 py-1">{{ $user->roleLabel() }}</span>
-                            </td>
-                            <td>
-                                @php $seen = count($user->modules_viewed ?? []); @endphp
-                                <span class="fs-12px text-muted">{{ $seen }} lesson{{ $seen === 1 ? '' : 's' }} completed</span>
-                            </td>
-                            <td class="fs-12px text-muted">{{ $user->created_at->format('M d, Y') }}</td>
-                            <td class="text-end pe-3">
                                 @if($user->id !== auth()->id())
-                                    <form method="POST" action="{{ route('admin.users.role', $user) }}"
-                                        class="d-flex align-items-center justify-content-end gap-2">
+                                    <form method="POST" action="{{ route('admin.users.role', $user) }}">
                                         @csrf
                                         <select name="role"
                                             class="form-select form-select-sm w-auto bg-dark border-secondary fs-12px"
                                             onchange="this.form.submit()">
                                             @foreach(\App\Models\User::ROLES as $role)
-                                                                    <option value="{{ $role }}" {{ $user->role === $role ? 'selected' : '' }}>
-                                                                        {{ match ($role) {
-                                                    'guest' => 'Guest',
-                                                    'preenrol' => 'Pre-Enrolled',
-                                                    'student' => 'Student',
-                                                    'cstudent' => 'Certified Student',
-                                                    'admin' => 'Admin',
-                                                    default => ucfirst($role)
-                                                } }}
-                                                                    </option>
+                                                <option value="{{ $role }}" {{ $user->role === $role ? 'selected' : '' }}>
+                                                    {{ match ($role) {
+                                                        'guest' => 'Guest',
+                                                        'preenrol' => 'Pre-Enrolled',
+                                                        'student' => 'Student',
+                                                        'cstudent' => 'Certified Student',
+                                                        'admin' => 'Admin',
+                                                        default => ucfirst($role)
+                                                    } }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </form>
                                 @else
-                                    <span class="fs-12px text-muted">You</span>
+                                    <span class="badge {{ $user->roleBadgeClass() }} fs-10px px-2 py-1">{{ $user->roleLabel() }}</span>
                                 @endif
+                            </td>
+                            <td>
+                                @if($user->banned_at)
+                                    <span class="badge bg-danger fs-10px px-2 py-1">Banned</span>
+                                @elseif($user->email_verified_at)
+                                    <span class="badge border border-success text-success fs-10px px-2 py-1">Verified</span>
+                                @else
+                                    <span class="badge border border-warning text-warning fs-10px px-2 py-1">Unverified</span>
+                                @endif
+                            </td>
+                            <td class="fs-12px text-muted">{{ $user->created_at->format('M d, Y') }}</td>
+                            <td class="text-end pe-3">
+                                <div class="btn-group">
+                                    {{-- Edit User Modal Trigger --}}
+                                    <button class="btn btn-xs btn-outline-theme" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $user->id }}" title="Edit Details">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    
+                                    {{-- Reset Password Modal Trigger --}}
+                                    <button class="btn btn-xs btn-outline-warning" data-bs-toggle="modal" data-bs-target="#pwdUserModal-{{ $user->id }}" title="Reset Password">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+
+                                    @if($user->id !== auth()->id())
+                                        {{-- Toggle Ban --}}
+                                        <form method="POST" action="{{ route('admin.users.toggleBan', $user) }}" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-xs btn-outline-{{ $user->banned_at ? 'success' : 'danger' }}" title="{{ $user->banned_at ? 'Unban User' : 'Ban User' }}">
+                                                <i class="bi bi-{{ $user->banned_at ? 'check-circle' : 'slash-circle' }}"></i>
+                                            </button>
+                                        </form>
+
+                                        {{-- Delete User --}}
+                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="d-inline" onsubmit="return confirm('WARNING: This will permanently delete this user and all their progress. Continue?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-xs btn-outline-danger" title="Delete Account">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+
+                                {{-- Edit Modal --}}
+                                <div class="modal fade" id="editUserModal-{{ $user->id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content bg-dark border-secondary text-start">
+                                            <div class="modal-header border-bottom border-secondary">
+                                                <h6 class="modal-title text-inverse"><i class="bi bi-pencil-square me-2 text-theme"></i>Edit User: {{ $user->name }}</h6>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="POST" action="{{ route('admin.users.update', $user) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted fs-12px">Full Name</label>
+                                                        <input type="text" name="name" class="form-control bg-dark border-secondary text-inverse" value="{{ $user->name }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted fs-12px">Email Address</label>
+                                                        <input type="email" name="email" class="form-control bg-dark border-secondary text-inverse" value="{{ $user->email }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-top border-secondary">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-theme">Save Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Password Modal --}}
+                                <div class="modal fade" id="pwdUserModal-{{ $user->id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content bg-dark border-secondary text-start">
+                                            <div class="modal-header border-bottom border-secondary">
+                                                <h6 class="modal-title text-inverse"><i class="bi bi-key me-2 text-warning"></i>Reset Password: {{ $user->name }}</h6>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="POST" action="{{ route('admin.users.password', $user) }}">
+                                                @csrf
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted fs-12px">New Password</label>
+                                                        <input type="password" name="password" class="form-control bg-dark border-secondary text-inverse" placeholder="Min 8 characters" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted fs-12px">Confirm Password</label>
+                                                        <input type="password" name="password_confirmation" class="form-control bg-dark border-secondary text-inverse" placeholder="Repeat password" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-top border-secondary">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-warning text-dark fw-bold">Reset Password</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <div class="card-arrow">
-            <div class="card-arrow-top-left"></div>
-            <div class="card-arrow-top-right"></div>
-            <div class="card-arrow-bottom-left"></div>
-            <div class="card-arrow-bottom-right"></div>
-        </div>
+        <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
     </div>
 @endsection
 
@@ -105,9 +208,6 @@
     <script src="{{ asset('hud/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script>$(document).ready(() => $('#usersTable').DataTable({ pageLength: 25 }));</script>
     <style>
-        .btn-xs {
-            padding: .2rem .5rem;
-            font-size: .75rem;
-        }
+        .btn-xs { padding: .2rem .5rem; font-size: .75rem; }
     </style>
 @endpush

@@ -9,13 +9,17 @@ use Illuminate\Support\Facades\Auth;
 class DiagramController extends Controller
 {
     /**
-     * List all diagrams for the authenticated instructor/admin.
+     * List diagrams. Admins see all their diagrams. Students see all published diagrams.
      */
     public function index()
     {
-        $diagrams = Diagram::where('user_id', Auth::id())
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        $query = Diagram::query();
+        if (Auth::user()->isAdmin()) {
+            $query->where('user_id', Auth::id());
+        } else {
+            $query->where('is_published', true);
+        }
+        $diagrams = $query->orderBy('updated_at', 'desc')->get();
         return view('diagrams.index', compact('diagrams'));
     }
 
@@ -24,6 +28,7 @@ class DiagramController extends Controller
      */
     public function create()
     {
+        abort_if(!Auth::user()->isAdmin(), 403, 'Only admins can create diagrams.');
         return view('diagrams.editor', ['diagram' => null]);
     }
 
@@ -32,7 +37,7 @@ class DiagramController extends Controller
      */
     public function edit(Diagram $diagram)
     {
-        abort_if($diagram->user_id !== Auth::id(), 403);
+        abort_if(!Auth::user()->isAdmin() || $diagram->user_id !== Auth::id(), 403);
         return view('diagrams.editor', compact('diagram'));
     }
 
@@ -41,6 +46,8 @@ class DiagramController extends Controller
      */
     public function store(Request $request)
     {
+        abort_if(!Auth::user()->isAdmin(), 403);
+
         $request->validate([
             'title'       => 'nullable|string|max:255',
             'xml_data'    => 'required|string',
@@ -62,7 +69,7 @@ class DiagramController extends Controller
      */
     public function update(Request $request, Diagram $diagram)
     {
-        abort_if($diagram->user_id !== Auth::id(), 403);
+        abort_if(!Auth::user()->isAdmin() || $diagram->user_id !== Auth::id(), 403);
 
         $diagram->update($request->only('title', 'xml_data', 'module_slug', 'is_published'));
 
@@ -74,7 +81,7 @@ class DiagramController extends Controller
      */
     public function publish(Diagram $diagram)
     {
-        abort_if($diagram->user_id !== Auth::id(), 403);
+        abort_if(!Auth::user()->isAdmin() || $diagram->user_id !== Auth::id(), 403);
         $diagram->update(['is_published' => !$diagram->is_published]);
         $label = $diagram->is_published ? 'published' : 'unpublished';
         return response()->json(['status' => $label]);
@@ -85,7 +92,7 @@ class DiagramController extends Controller
      */
     public function destroy(Diagram $diagram)
     {
-        abort_if($diagram->user_id !== Auth::id(), 403);
+        abort_if(!Auth::user()->isAdmin() || $diagram->user_id !== Auth::id(), 403);
         $diagram->delete();
         return redirect()->route('diagrams.index')->with('success', 'Diagram deleted.');
     }

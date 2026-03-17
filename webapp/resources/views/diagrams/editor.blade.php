@@ -80,8 +80,13 @@
                 break;
 
             case 'export':
+                // The requested export XML comes here
+                if (msg.data) {
+                    autoSave(msg.data, true);
+                } else if (msg.xml) {
+                    autoSave(msg.xml, true);
+                }
                 break;
-        }
     });
 
     function postToDrawio(payload) {
@@ -125,8 +130,8 @@
 
     // Save button
     document.getElementById('btn-save').addEventListener('click', () => {
-        postToDrawio({ action: 'export', format: 'xml' });
-        // Fallback: request current XML via export action
+        postToDrawio({ action: 'export', format: 'xmlxml' });
+        // Fallback: request current XML via save action
         postToDrawio({ action: 'save' });
     });
 })();

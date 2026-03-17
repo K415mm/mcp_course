@@ -323,6 +323,14 @@
                         </a>
                     </div>
 
+                    <!-- My Achievements -->
+                    <div class="menu-item {{ request()->routeIs('modules.completions') ? 'active' : '' }}">
+                        <a href="{{ route('modules.completions') }}" class="menu-link">
+                            <span class="menu-icon"><i class="bi bi-award"></i></span>
+                            <span class="menu-text">My Achievements</span>
+                        </a>
+                    </div>
+
                     @if(isset($allItems) && count($allItems))
                         <!-- Modules section -->
                         @php $modules = array_filter($allItems, fn($i) => $i['type'] === 'module'); @endphp

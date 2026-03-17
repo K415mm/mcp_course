@@ -6,12 +6,19 @@
 <title>Module Complete — RAISEGUARD Academy</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#0b1117; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; color:#a4b2c1; }
+  body { 
+    background-color: #0b1117; 
+    background-image: url('{{ $message->embed(public_path("hud/img/cover/cover-raiseguard.png")) }}');
+    background-size: cover;
+    background-position: center;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; 
+    color:#a4b2c1; 
+  }
   .wrapper { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
 
   /* HUD Panel */
   .hud-panel {
-    background: #111822; border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.08);
     position: relative; padding: 40px 40px; border-radius: 4px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
   }

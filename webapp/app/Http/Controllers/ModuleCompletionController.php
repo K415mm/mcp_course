@@ -56,15 +56,19 @@ class ModuleCompletionController extends Controller
     }
 
     /**
-     * Return all completions for the current user (used on the profile page).
+     * Return all completions for the current user (My Achievements page).
      */
     public function index()
     {
-        $completions = ModuleCompletion::where('user_id', Auth::id())
+        $user = Auth::user();
+        $completions = ModuleCompletion::where('user_id', $user->id)
             ->orderBy('completed_at')
-            ->pluck('module_slug')
-            ->toArray();
+            ->get()
+            ->keyBy('module_slug');
 
-        return response()->json($completions);
+        $allItems = $this->courseService->getAllItems();
+        $modules = array_filter($allItems, fn($i) => $i['type'] === 'module');
+
+        return view('profile.completions', compact('user', 'completions', 'modules'));
     }
 }

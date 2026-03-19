@@ -27,7 +27,7 @@
                     {{-- draw.io thumbnail preview --}}
                     <div class="mb-3 rounded overflow-hidden" style="background: rgba(255,255,255,.04); height:160px; display:flex; align-items:center; justify-content:center;">
                         @if($diagram->xml_data)
-                            <img src="https://kroki.io/drawio/svg/{{ base64_encode(gzcompress($diagram->xml_data)) }}"
+                            <img src="{{ $diagram->kroki_url }}"
                                  alt="{{ $diagram->title }}"
                                  style="max-height:150px;max-width:100%;object-fit:contain;"
                                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">

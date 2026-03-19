@@ -24,18 +24,17 @@
         <div class="col-xl-4 col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-                    {{-- draw.io thumbnail preview --}}
-                    <div class="mb-3 rounded overflow-hidden" style="background: rgba(255,255,255,.04); height:160px; display:flex; align-items:center; justify-content:center;">
-                        @if($diagram->xml_data)
-                            <img src="{{ $diagram->kroki_url }}"
-                                 alt="{{ $diagram->title }}"
-                                 style="max-height:150px;max-width:100%;object-fit:contain;"
-                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                            <div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
-                                <i class="bi bi-diagram-3 text-muted" style="font-size:2.5rem;opacity:.3;"></i>
+                    {{-- Preview placeholder — click to open diagram --}}
+                    <div class="mb-3 rounded overflow-hidden d-flex align-items-center justify-content-center"
+                         style="background:rgba(255,255,255,.04); height:160px; cursor:pointer;"
+                         onclick="window.location='{{ route('diagrams.show', $diagram->id) }}'">
+                        @if($diagram->hasContent())
+                            <div class="text-center text-muted">
+                                <i class="bi bi-diagram-3" style="font-size:3.5rem;opacity:.35;"></i>
+                                <p class="mt-2 fs-11px mb-0 text-theme">Click to open</p>
                             </div>
                         @else
-                            <i class="bi bi-diagram-3 text-muted" style="font-size:2.5rem;opacity:.3;"></i>
+                            <i class="bi bi-diagram-3 text-muted" style="font-size:2.5rem;opacity:.2;"></i>
                         @endif
                     </div>
 
@@ -60,10 +59,16 @@
                             </a>
                             <form method="POST" action="{{ route('diagrams.publish', $diagram->id) }}" class="d-inline">
                                 @csrf
-                                <button type="submit" class="btn btn-sm {{ $diagram->is_published ? 'btn-outline-warning' : 'btn-outline-success' }}"
+                                <button type="submit"
+                                        class="btn btn-sm {{ $diagram->is_published ? 'btn-outline-warning' : 'btn-outline-success' }}"
                                         title="{{ $diagram->is_published ? 'Unpublish' : 'Publish' }}">
                                     <i class="bi {{ $diagram->is_published ? 'bi-eye-slash' : 'bi-send' }}"></i>
                                 </button>
+                            </form>
+                            <form method="POST" action="{{ route('diagrams.destroy', $diagram->id) }}"
+                                  onsubmit="return confirm('Delete this diagram?')" class="d-inline">
+                                @csrf @method('DELETE')
+                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
                             </form>
                         @endif
                     </div>

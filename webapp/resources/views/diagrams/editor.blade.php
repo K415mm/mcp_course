@@ -6,7 +6,7 @@
     <div>
         <h1 class="page-header mb-0">
             <i class="bi bi-pencil-square me-2 text-theme"></i>
-            {{ isset($diagram) ? 'Edit Diagram' : 'New Diagram' }}
+            {{ isset($diagram) ? 'Edit: '.$diagram->title : 'New Diagram' }}
         </h1>
     </div>
     <div class="d-flex gap-2">
@@ -39,18 +39,23 @@
 
 <input type="hidden" id="diagram-id" value="{{ $diagram->id ?? '' }}">
 <input type="hidden" id="csrf-token" value="{{ csrf_token() }}">
-<input type="hidden" id="initial-xml" value="{{ isset($diagram) ? htmlspecialchars($diagram->xml_data ?? '', ENT_QUOTES) : '' }}">
 @endsection
 
 @push('scripts')
 <script>
 (function () {
     const frame = document.getElementById('drawio-frame');
-    const diagramId = document.getElementById('diagram-id').value;
+    let diagramId = document.getElementById('diagram-id').value;
     const csrf = document.getElementById('csrf-token').value;
-    let initialized = false;
 
-    // ── Handle messages from draw.io iframe ──────────────────────
+    // ── Load existing XML from server if we have a diagram ID ─────────
+    @if(isset($xmlContent) && $xmlContent)
+    const initialXml = {!! json_encode($xmlContent) !!};
+    @else
+    const initialXml = null;
+    @endif
+
+    // ── Handle messages from draw.io iframe ──────────────────────────
     window.addEventListener('message', function (evt) {
         if (evt.source !== frame.contentWindow) return;
 
@@ -60,32 +65,21 @@
         switch (msg.event) {
             case 'init':
                 // draw.io is ready — load existing XML or start fresh
-                initialized = true;
-                const xmlVal = document.getElementById('initial-xml').value;
-                if (xmlVal) {
-                    postToDrawio({ action: 'load', xml: xmlVal, autosave: 1 });
+                if (initialXml) {
+                    postToDrawio({ action: 'load', xml: initialXml, autosave: 1 });
                 } else {
                     postToDrawio({ action: 'load', xml: '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>', autosave: 1 });
                 }
                 break;
 
             case 'autosave':
-                // Auto-triggered on every change — save silently
+            case 'save':
                 if (msg.xml) autoSave(msg.xml);
                 break;
 
-            case 'save':
-                // Explicit Ctrl+S
-                if (msg.xml) autoSave(msg.xml, true);
-                break;
-
             case 'export':
-                // The requested export XML comes here
-                if (msg.data) {
-                    autoSave(msg.data, true);
-                } else if (msg.xml) {
-                    autoSave(msg.xml, true);
-                }
+                const xmlData = msg.xml || msg.data;
+                if (xmlData) autoSave(xmlData);
                 break;
         }
     });
@@ -94,46 +88,38 @@
         frame.contentWindow.postMessage(JSON.stringify(payload), '*');
     }
 
-    // ── Save to Server ────────────────────────────────────────────
-    async function autoSave(xml, explicit = false) {
+    // ── Save XML to Server as a .drawio file ─────────────────────────
+    async function autoSave(xml) {
         const title = document.getElementById('diagram-title').value || 'Untitled';
         const moduleSlug = document.getElementById('diagram-module').value;
         const status = document.getElementById('save-status');
         status.textContent = 'Saving…';
 
-        if (diagramId) {
-            // UPDATE existing
-            const res = await fetch(`/diagrams/${diagramId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-                body: JSON.stringify({ title, xml_data: xml, module_slug: moduleSlug })
-            });
-            if (res.ok) {
-                const d = await res.json();
-                status.textContent = `Saved ${d.updated_at}`;
-            }
-        } else {
-            // CREATE new on first save
-            const res = await fetch('/diagrams', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-                body: JSON.stringify({ title, xml_data: xml, module_slug: moduleSlug })
-            });
-            if (res.ok) {
-                const d = await res.json();
-                // Redirect to edit URL (so subsequent saves use PUT)
-                window.history.replaceState({}, '', `/diagrams/${d.id}/edit`);
+        const url = diagramId ? `/diagrams/${diagramId}` : '/diagrams';
+        const method = diagramId ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+            body: JSON.stringify({ title, xml_data: xml, module_slug: moduleSlug })
+        });
+
+        if (res.ok) {
+            const d = await res.json();
+            if (!diagramId && d.id) {
+                diagramId = d.id;
                 document.getElementById('diagram-id').value = d.id;
-                status.textContent = 'Created & saved!';
+                window.history.replaceState({}, '', `/diagrams/${d.id}/edit`);
             }
+            status.textContent = d.updated_at ? `Saved ${d.updated_at}` : 'Saved!';
+        } else {
+            status.textContent = 'Save failed. Please try again.';
         }
     }
 
-    // Save button
+    // Save button triggers diagram XML export
     document.getElementById('btn-save').addEventListener('click', () => {
-        postToDrawio({ action: 'export', format: 'xmlsvg' });
-        // Fallback: request current XML via save action
-        postToDrawio({ action: 'save' });
+        postToDrawio({ action: 'export', format: 'xml' });
     });
 })();
 </script>

@@ -13,6 +13,15 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
 // ── Guest-only routes ──────────────────────────────────────────────────────
+Route::get('/run-migration', function () {
+    if (!\Illuminate\Support\Facades\Schema::hasColumn('diagrams', 'file_path')) {
+        \Illuminate\Support\Facades\Schema::table('diagrams', function (\Illuminate\Database\Schema\Blueprint $t) {
+            $t->string('file_path')->nullable()->after('xml_data');
+        });
+        return 'file_path column added.';
+    }
+    return 'Already exists.';
+});
 Route::get('/2fa-challenge', [\App\Http\Controllers\TwoFactorController::class, 'challenge'])->name('2fa.challenge');
 Route::post('/2fa-challenge', [\App\Http\Controllers\TwoFactorController::class, 'verify'])->name('2fa.verify');
 
@@ -78,6 +87,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'update'])->name('update');
         Route::post('/{diagram}/publish', [\App\Http\Controllers\DiagramController::class, 'publish'])->name('publish');
         Route::delete('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'destroy'])->name('destroy');
+        Route::get('/{diagram}/file', [\App\Http\Controllers\DiagramController::class, 'file'])->name('file');
         Route::get('/{diagram}', [\App\Http\Controllers\DiagramController::class, 'show'])->name('show');
     });
 

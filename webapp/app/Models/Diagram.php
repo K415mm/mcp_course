@@ -24,8 +24,16 @@ class Diagram extends Model
             return null;
         }
         
+        $xml = $this->xml_data;
+        
+        // Kroki strictly expects the `<mxfile>` root wrapper.
+        // If our diagram editor exported raw `<mxGraphModel>`, wrap it securely.
+        if (strpos($xml, '<mxfile') === false) {
+            $xml = '<mxfile><diagram id="diagram" name="Page-1">' . $xml . '</diagram></mxfile>';
+        }
+
         // Compress using zlib level 9
-        $compressed = gzcompress($this->xml_data, 9);
+        $compressed = gzcompress($xml, 9);
         $base64 = base64_encode($compressed);
         
         // Make Base64 URL and Filename Safe (Kroki requirement)

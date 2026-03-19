@@ -1,12 +1,17 @@
 @extends('layouts.app')
-@section('title', $diagram->title)
+@section('title', $diagram->title . ' — Diagram Viewer')
 
 @section('content')
 <div class="d-flex align-items-center justify-content-between mb-3">
     <div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('diagrams.index') }}">Diagrams</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('diagrams.index') }}" class="text-theme">Diagrams</a></li>
+                @if($diagram->module_slug)
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('course.module', $diagram->module_slug) }}" class="text-theme">{{ $diagram->module_slug }}</a>
+                    </li>
+                @endif
                 <li class="breadcrumb-item active">{{ $diagram->title }}</li>
             </ol>
         </nav>
@@ -26,10 +31,10 @@
 </div>
 
 <div class="card" style="height: calc(100vh - 220px); overflow:hidden;">
-    {{-- Embed draw.io in lightbox/viewer mode (read-only using ?lightbox=1) --}}
-    @if($diagram->xml_data)
+    @if($diagram->hasContent())
+        {{-- Read-only viewer: embed.diagrams.net with lightbox=1 and load via PostMessage --}}
         <iframe id="drawio-view"
-                src="https://embed.diagrams.net/?lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title={{ urlencode($diagram->title) }}"
+                src="https://embed.diagrams.net/?embed=1&proto=json&ui=dark&lang=en&spin=1&nav=1&lightbox=1"
                 style="width:100%;height:100%;border:none;"></iframe>
     @else
         <div class="d-flex align-items-center justify-content-center h-100">
@@ -44,21 +49,31 @@
 @endsection
 
 @push('scripts')
-@if($diagram->xml_data)
+@if($diagram->hasContent())
 <script>
-// Load XML into the viewer iframe via PostMessage
-const viewFrame = document.getElementById('drawio-view');
-window.addEventListener('message', function(evt) {
-    if (evt.source !== viewFrame.contentWindow) return;
-    let msg;
-    try { msg = JSON.parse(evt.data); } catch(e) { return; }
-    if (msg.event === 'init') {
-        viewFrame.contentWindow.postMessage(JSON.stringify({
-            action: 'load',
-            xml: {!! json_encode($diagram->xml_data) !!}
-        }), '*');
-    }
-});
+(function() {
+    const frame = document.getElementById('drawio-view');
+    const fileUrl = "{{ route('diagrams.file', $diagram->id) }}";
+
+    window.addEventListener('message', function(evt) {
+        if (evt.source !== frame.contentWindow) return;
+        let msg;
+        try { msg = JSON.parse(evt.data); } catch(e) { return; }
+
+        if (msg.event === 'init') {
+            // Fetch the .drawio file from our server and load it into the viewer
+            fetch(fileUrl, { headers: { 'Accept': 'application/xml, text/xml' } })
+                .then(r => r.text())
+                .then(xml => {
+                    frame.contentWindow.postMessage(JSON.stringify({
+                        action: 'load',
+                        xml: xml,
+                        autosave: 0
+                    }), '*');
+                });
+        }
+    });
+})();
 </script>
 @endif
 @endpush

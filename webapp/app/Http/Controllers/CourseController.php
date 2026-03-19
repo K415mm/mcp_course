@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\CourseService;
 use App\Services\MarkdownService;
 use App\Services\QuizService;
+use App\Models\Diagram;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -109,6 +110,15 @@ class CourseController extends Controller
             }
         }
 
+        // Fetch published diagrams linked to this module (for embed at bottom of lesson)
+        $moduleDiagrams = Diagram::where('module_slug', $moduleSlug)
+            ->where(function($q) use ($user) {
+                $q->where('is_published', true);
+                if ($user->isAdmin()) $q->orWhere('user_id', $user->id);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
         return view('course.lesson', [
             'module' => $module,
             'section' => $section,
@@ -122,6 +132,7 @@ class CourseController extends Controller
             'allItems' => $this->courseService->getAllItems(),
             'prevLesson' => $currentIdx > 0 ? $flatLessons[$currentIdx - 1] : null,
             'nextLesson' => $currentIdx < count($flatLessons) - 1 ? $flatLessons[$currentIdx + 1] : null,
+            'moduleDiagrams' => $moduleDiagrams,
         ]);
     }
 

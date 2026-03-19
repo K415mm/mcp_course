@@ -90,7 +90,19 @@
                     </div>
             @endswitch
 
-            <!-- Prev / Next Navigation -->
+            {{-- ── Module Diagrams Section ─────────────────────────────────── --}}
+            @if(!empty($moduleDiagrams) && $moduleDiagrams->count() > 0)
+                <div class="mt-4 mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-bezier2 text-theme"></i>
+                    <span class="fw-semibold text-inverse">Module Diagrams</span>
+                    <span class="badge bg-dark text-muted fs-11px">{{ $moduleDiagrams->count() }}</span>
+                </div>
+                @foreach($moduleDiagrams as $embeddedDiagram)
+                    @include('course.partials.diagram-embed')
+                @endforeach
+            @endif
+
+            {{-- ── Prev / Next Navigation ──────────────────────────────────── --}}
             <div class="d-flex justify-content-between align-items-center mt-2">
                 @if($prevLesson)
                     <a href="{{ route('course.lesson', [$module['slug'], $prevLesson['section'], $prevLesson['slug']]) }}"

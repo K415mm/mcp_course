@@ -131,7 +131,7 @@
 
     // Save button
     document.getElementById('btn-save').addEventListener('click', () => {
-        postToDrawio({ action: 'export', format: 'xmlxml' });
+        postToDrawio({ action: 'export', format: 'xmlsvg' });
         // Fallback: request current XML via save action
         postToDrawio({ action: 'save' });
     });

@@ -100,6 +100,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
 
+        // Courses & Classes (Assignment)
+        Route::get('courses', [\App\Http\Controllers\Admin\AdminCourseController::class, 'index'])->name('courses.index');
+        Route::post('courses/assign-class', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToClass'])->name('courses.assignClasses');
+        Route::post('courses/assign-user', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToUser'])->name('courses.assignUser');
+        
+        Route::resource('classes', \App\Http\Controllers\Admin\AdminClassController::class);
+        Route::post('classes/{class}/add-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'addUser'])->name('classes.addUser');
+        Route::post('classes/{class}/remove-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'removeUser'])->name('classes.removeUser');
+
         // Global Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');

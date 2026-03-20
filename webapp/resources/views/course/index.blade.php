@@ -29,44 +29,58 @@
         @foreach($modules as $mod)
             <div class="col-xl-4 col-md-6 mb-4">
                 <a href="{{ route('course.module', $mod['slug']) }}" class="text-decoration-none">
-                    <div class="card module-card h-100 position-relative">
-                        @if($mod['locked'])
-                            <div class="position-absolute w-100 h-100 top-0 start-0 d-flex flex-column align-items-center justify-content-center rounded"
-                                style="background: rgba(0,0,0,0.75); z-index: 10;">
-                                <i class="bi bi-lock-fill fs-2 text-white mb-2" style="opacity: 0.9;"></i>
-                                <span class="badge bg-dark border border-secondary px-3 py-2">Requires Upgrade</span>
-                            </div>
-                        @endif
-                        <div class="card-body {{ $mod['locked'] ? 'opacity-25' : '' }}">
-                            <div class="d-flex gap-3 mb-3">
-                                <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-3"
-                                    style="width:48px;height:48px;background:rgba(var(--bs-theme-rgb),.12);">
-                                    <span class="fw-bold fs-18px text-theme">{{ sprintf('%02d', $mod['number']) }}</span>
+                    <div class="card h-100 module-card border-0 {{ $mod['locked'] ? 'opacity-50' : '' }}">
+                        <div class="m-1 bg-inverse bg-opacity-10 h-100 d-flex flex-column">
+                            <div class="position-relative overflow-hidden" style="height: 150px">
+                                @php
+                                    $coverImage = match(true) {
+                                        str_contains($mod['slug'], 'soc') => asset('img/workshops/network_analysis.png'),
+                                        str_contains($mod['slug'], 'malware') => asset('img/workshops/malware_analysis.png'),
+                                        str_contains($mod['slug'], 'cti') => asset('img/workshops/cti_automation.png'),
+                                        str_contains($mod['slug'], 'fastmcp') => asset('img/workshops/fastmcp_deploy.png'),
+                                        str_contains($mod['slug'], 'threat') => asset('img/workshops/threat_hunting.png'),
+                                        default => null
+                                    };
+                                @endphp
+                                @if($coverImage)
+                                    <img src="{{ $coverImage }}" class="card-img rounded-0 w-100 h-100" style="object-fit: cover;" alt="">
+                                @else
+                                    <div class="w-100 h-100 bg-dark" style="background: linear-gradient(135deg, rgba(30,32,34,1) 0%, rgba(20,21,22,1) 100%);"></div>
+                                @endif
+                                
+                                <div class="card-img-overlay text-white text-center bg-gray-900 bg-opacity-50 d-flex flex-column align-items-center justify-content-center">
+                                    
+                                    @if($mod['locked'])
+                                        <div class="position-absolute top-0 end-0 m-3 text-danger" title="Locked">
+                                            <i class="bi bi-lock-fill fs-4" style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></i>
+                                        </div>
+                                    @endif
+
+                                    <div class="my-2">
+                                        <div class="{{ $mod['locked'] ? 'bg-secondary' : 'bg-theme' }} text-dark rounded-circle d-flex align-items-center justify-content-center mx-auto shadow" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                            <span class="fw-bold fs-18px">{{ sprintf('%02d', $mod['number']) }}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold fs-6 text-shadow px-2">{{ $mod['title'] }}</div>
+                                        <div class="small fw-semibold text-white text-opacity-75 letter-spacing-1 mt-1">MODULE</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="badge bg-theme text-dark module-badge">MODULE</span>
-                                    <h6 class="mt-1 mb-0 fw-semibold text-inverse">{{ $mod['title'] }}</h6>
+                            </div>
+                            <div class="card-body py-3 px-3 fs-6 d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+                                <div class="row w-100 text-center">
+                                    <div class="col-6 border-end border-secondary">
+                                        <div class="fw-bold fs-5 text-inverse">{{ count(config("course.sections")) }}</div>
+                                        <div class="fs-10px fw-semibold text-muted text-uppercase">SECTIONS</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="fw-bold fs-5 text-inverse">--</div>
+                                        <div class="fs-10px fw-semibold text-muted text-uppercase">MINS</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="d-flex gap-2 flex-wrap">
-                                @foreach(config('course.sections') as $key => $label)
-                                    <span class="badge bg-dark text-muted border border-secondary fs-10px">
-                                        <i class="bi bi-file-text me-1"></i>{{ $label }}
-                                    </span>
-                                @endforeach
-                            </div>
                         </div>
-                        <div class="card-footer bg-transparent border-0 pt-0">
-                            <span class="text-theme fs-12px fw-semibold">
-                                <i class="bi bi-arrow-right-circle me-1"></i>View Module
-                            </span>
-                        </div>
-                        <div class="card-arrow">
-                            <div class="card-arrow-top-left"></div>
-                            <div class="card-arrow-top-right"></div>
-                            <div class="card-arrow-bottom-left"></div>
-                            <div class="card-arrow-bottom-right"></div>
-                        </div>
+                        <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                     </div>
                 </a>
             </div>
@@ -82,55 +96,59 @@
             @foreach($workshops as $ws)
                 <div class="col-xl-4 col-md-6 mb-4">
                     <a href="{{ route('course.module', $ws['slug']) }}" class="text-decoration-none">
-                        <div class="card module-card h-100 position-relative" style="border-color:rgba(245,158,11,.2); overflow: hidden;">
-                            @php
-                                $cinematic = match(true) {
-                                    str_contains($ws['slug'], 'cti-automation') => 'cti_automation.png',
-                                    str_contains($ws['slug'], 'threat-hunting') => 'threat_hunting.png',
-                                    str_contains($ws['slug'], 'network-analysis') => 'network_analysis.png',
-                                    str_contains($ws['slug'], 'malware-analysis') => 'malware_analysis.png',
-                                    str_contains($ws['slug'], 'fastmcp-deploy') => 'fastmcp_deploy.png',
-                                    default => null
-                                };
-                            @endphp
-                            
-                            @if($cinematic)
-                                <!-- Cinematic Header Image -->
-                                <div style="height: 150px; background: url('{{ asset('img/workshops/' . $cinematic) }}') center/cover; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative;">
-                                    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);"></div>
-                                </div>
-                            @endif
+                        <div class="card h-100 module-card border-0 {{ $ws['locked'] ? 'opacity-50' : '' }}">
+                            <div class="m-1 bg-inverse bg-opacity-10 h-100 d-flex flex-column">
+                                <div class="position-relative overflow-hidden" style="height: 150px">
+                                    @php
+                                        $cinematic = match(true) {
+                                            str_contains($ws['slug'], 'cti-automation') => 'cti_automation.png',
+                                            str_contains($ws['slug'], 'threat-hunting') => 'threat_hunting.png',
+                                            str_contains($ws['slug'], 'network-analysis') => 'network_analysis.png',
+                                            str_contains($ws['slug'], 'malware-analysis') => 'malware_analysis.png',
+                                            str_contains($ws['slug'], 'fastmcp-deploy') => 'fastmcp_deploy.png',
+                                            default => null
+                                        };
+                                    @endphp
+                                    
+                                    @if($cinematic)
+                                        <img src="{{ asset('img/workshops/' . $cinematic) }}" class="card-img rounded-0 w-100 h-100" style="object-fit: cover;" alt="">
+                                    @else
+                                        <div class="w-100 h-100 bg-dark" style="background: linear-gradient(135deg, rgba(30,32,34,1) 0%, rgba(20,21,22,1) 100%);"></div>
+                                    @endif
+                                    
+                                    <div class="card-img-overlay text-white text-center bg-gray-900 bg-opacity-75 d-flex flex-column align-items-center justify-content-center">
+                                        
+                                        @if($ws['locked'])
+                                            <div class="position-absolute top-0 end-0 m-3 text-warning" title="Locked">
+                                                <i class="bi bi-lock-fill fs-4" style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></i>
+                                            </div>
+                                        @endif
 
-                            @if($ws['locked'])
-                                <div class="position-absolute w-100 h-100 top-0 start-0 d-flex flex-column align-items-center justify-content-center"
-                                    style="background: rgba(0,0,0,0.85); z-index: 10;">
-                                    <i class="bi bi-lock-fill text-white mb-2" style="opacity: 0.9; font-size: 2.5rem;"></i>
-                                    <span class="badge bg-dark border border-secondary px-3 py-2">Requires Upgrade</span>
-                                </div>
-                            @endif
-                            <div class="card-body {{ $ws['locked'] ? 'opacity-25' : '' }}">
-                                <div class="d-flex gap-3 mb-3">
-                                    <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-3 shadow-sm"
-                                        style="width:48px;height:48px;background:rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,0.3);">
-                                        <i class="bi bi-tools" style="color:#f59e0b;font-size:1.3rem;"></i>
-                                    </div>
-                                    <div style="z-index: 2;">
-                                        <span class="badge module-badge shadow-sm" style="background:#f59e0b;color:#000;">WORKSHOP</span>
-                                        <h6 class="mt-1 mb-0 fw-bold text-inverse" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">{{ $ws['title'] }}</h6>
+                                        <div class="my-2">
+                                            <div class="{{ $ws['locked'] ? 'bg-secondary' : 'bg-warning' }} text-dark rounded-circle d-flex align-items-center justify-content-center mx-auto shadow" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                                <i class="bi bi-tools fs-4"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold fs-6 text-shadow px-2">{{ $ws['title'] }}</div>
+                                            <div class="small fw-semibold text-white text-opacity-75 letter-spacing-1 mt-1 text-warning">WORKSHOP</div>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="card-body py-3 px-3 fs-6 d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+                                    <div class="row w-100 text-center">
+                                        <div class="col-6 border-end border-secondary">
+                                            <div class="fw-bold fs-5 text-inverse">1</div>
+                                            <div class="fs-10px fw-semibold text-muted text-uppercase">SCENARIO</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="fw-bold fs-5 text-inverse">--</div>
+                                            <div class="fs-10px fw-semibold text-muted text-uppercase">MINS</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-footer bg-transparent border-0 pt-0">
-                                <span class="fs-12px fw-semibold" style="color:#f59e0b;">
-                                    <i class="bi bi-arrow-right-circle me-1"></i>View Workshop
-                                </span>
-                            </div>
-                            <div class="card-arrow">
-                                <div class="card-arrow-top-left"></div>
-                                <div class="card-arrow-top-right"></div>
-                                <div class="card-arrow-bottom-left"></div>
-                                <div class="card-arrow-bottom-right"></div>
-                            </div>
+                            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                         </div>
                     </a>
                 </div>

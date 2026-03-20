@@ -26,7 +26,8 @@ class CourseController extends Controller
 
         // Annotate each item with access info
         foreach ($items as &$item) {
-            $item['locked'] = !$user->canAccessModule($item['number'], $item['type']);
+            $courseSlug = $item['course_slug'] ?? null;
+            $item['locked'] = !$user->canAccessModule($item['number'], $item['type'], $courseSlug);
         }
         unset($item);
 
@@ -41,7 +42,7 @@ class CourseController extends Controller
 
         // Access control
         $user = Auth::user();
-        if (!$user->canAccessModule($module['number'], $module['type'])) {
+        if (!$user->canAccessModule($module['number'], $module['type'], $module['course_slug'] ?? null)) {
             return view('course.locked', [
                 'module' => $module,
                 'userRole' => $user->roleLabel(),
@@ -70,7 +71,7 @@ class CourseController extends Controller
         abort_if(!$module, 404, 'Module not found.');
 
         $user = Auth::user();
-        abort_if(!$user->canAccessModule($module['number'], $module['type']), 403, 'You do not have access to this module.');
+        abort_if(!$user->canAccessModule($module['number'], $module['type'], $module['course_slug'] ?? null), 403, 'You do not have access to this module.');
 
         // ── Virtual section: diagrams ─────────────────────────────────
         if ($section === 'diagrams') {

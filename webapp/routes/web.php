@@ -44,8 +44,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
+    // Student Course Catalog
+    Route::name('courses.')->prefix('courses')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CourseCatalogController::class, 'index'])->name('index');
+        Route::get('/{course}', [\App\Http\Controllers\CourseCatalogController::class, 'show'])->name('show');
+    });
 
-    // Course
+    // Course (legacy specific module routing)
     Route::prefix('course')->name('course.')->group(function () {
         Route::get('/', [CourseController::class, 'index'])->name('index');
         Route::get('/{moduleSlug}', [CourseController::class, 'module'])->name('module');

@@ -299,11 +299,11 @@
                         </a>
                     </div>
 
-                    <!-- All Modules -->
-                    <div class="menu-item {{ request()->routeIs('course.index') ? 'active' : '' }}">
-                        <a href="{{ route('course.index') }}" class="menu-link">
+                    <!-- Course Catalog -->
+                    <div class="menu-item {{ request()->routeIs('courses.*') ? 'active' : '' }}">
+                        <a href="{{ route('courses.index') }}" class="menu-link">
                             <span class="menu-icon"><i class="bi bi-collection"></i></span>
-                            <span class="menu-text">All Modules</span>
+                            <span class="menu-text">Course Catalog</span>
                         </a>
                     </div>
 
@@ -331,43 +331,49 @@
                         </a>
                     </div>
 
-                    @if(isset($allItems) && count($allItems))
-                        <!-- Modules section -->
-                        @php $modules = array_filter($allItems, fn($i) => $i['type'] === 'module'); @endphp
-                        @php $workshops = array_filter($allItems, fn($i) => $i['type'] === 'workshop'); @endphp
-
-                        @if(count($modules))
-                            <div class="menu-header mt-2">Modules</div>
-                            @foreach($modules as $mod)
-                                <div class="menu-item {{ (isset($module) && $module['slug'] === $mod['slug']) ? 'active' : '' }}">
-                                    <a href="{{ route('course.module', $mod['slug']) }}" class="menu-link">
-                                        <span class="menu-icon"><i class="{{ $mod['icon'] }}"></i></span>
-                                        <span class="menu-text">
-                                            <span
-                                                class="badge bg-theme text-dark module-badge me-1">{{ sprintf('%02d', $mod['number']) }}</span>
-                                            {{ $mod['title'] }}
-                                        </span>
+                    @auth
+                        @php
+                            $user = Auth::user();
+                            $enrolledSlugs = $user->enrolledCourseSlugs();
+                            $courseService = app(\App\Services\CourseService::class);
+                            $enrolledCourses = [];
+                            foreach ($courseService->getCourses() as $c) {
+                                if (in_array('*', $enrolledSlugs) || in_array($c['slug'], $enrolledSlugs)) {
+                                    $c['modules'] = $courseService->getModules($c['slug']);
+                                    $enrolledCourses[] = $c;
+                                }
+                            }
+                        @endphp
+                        
+                        @if(count($enrolledCourses) > 0)
+                            <div class="menu-header mt-3">My Courses</div>
+                            @foreach($enrolledCourses as $enrolled)
+                                <div class="menu-item has-sub {{ (isset($course) && $course['slug'] === $enrolled['slug']) || (isset($module) && $module['course_slug'] === $enrolled['slug']) ? 'active bg-white bg-opacity-10' : '' }}">
+                                    <a href="#" class="menu-link">
+                                        <span class="menu-icon"><i class="bi bi-journal-code"></i></span>
+                                        <span class="menu-text">{{ $enrolled['title'] }}</span>
+                                        <span class="menu-caret"><b class="caret"></b></span>
                                     </a>
+                                    <div class="menu-submenu">
+                                        @foreach($enrolled['modules'] as $mod)
+                                            <div class="menu-item {{ (isset($module) && $module['slug'] === $mod['slug']) ? 'active' : '' }}">
+                                                <a href="{{ route('course.module', $mod['slug']) }}" class="menu-link">
+                                                    <span class="menu-text">
+                                                        @if($mod['type'] === 'workshop')
+                                                            <span class="badge me-1" style="background:#f59e0b;color:#000;font-size:.68rem;font-weight:700;">WS</span>
+                                                        @else
+                                                            <span class="badge bg-theme text-dark module-badge me-1">{{ sprintf('%02d', $mod['number']) }}</span>
+                                                        @endif
+                                                        {{ $mod['title'] }}
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endforeach
                         @endif
-
-                        @if(count($workshops))
-                            <div class="menu-header mt-2">Workshops</div>
-                            @foreach($workshops as $ws)
-                                <div class="menu-item {{ (isset($module) && $module['slug'] === $ws['slug']) ? 'active' : '' }}">
-                                    <a href="{{ route('course.module', $ws['slug']) }}" class="menu-link">
-                                        <span class="menu-icon"><i class="{{ $ws['icon'] }}"></i></span>
-                                        <span class="menu-text">
-                                            <span class="badge me-1"
-                                                style="background:#f59e0b;color:#000;font-size:.68rem;font-weight:700;">WS</span>
-                                            {{ $ws['title'] }}
-                                        </span>
-                                    </a>
-                                </div>
-                            @endforeach
-                        @endif
-                    @endif
+                    @endauth
 
                     {{-- Admin Panel link (admin-only) --}}
                     @auth
@@ -377,6 +383,18 @@
                                 <a href="{{ route('admin.dashboard') }}" class="menu-link">
                                     <span class="menu-icon"><i class="bi bi-shield-lock"></i></span>
                                     <span class="menu-text">Admin Panel</span>
+                                </a>
+                            </div>
+                            <div class="menu-item {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.courses.index') }}" class="menu-link">
+                                    <span class="menu-icon"><i class="bi bi-book-half"></i></span>
+                                    <span class="menu-text">Courses</span>
+                                </a>
+                            </div>
+                            <div class="menu-item {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.classes.index') }}" class="menu-link">
+                                    <span class="menu-icon"><i class="bi bi-people"></i></span>
+                                    <span class="menu-text">Classes</span>
                                 </a>
                             </div>
                             <div class="menu-item {{ request()->routeIs('admin.invitations.*') ? 'active' : '' }}">

@@ -31,7 +31,8 @@ class DiagramController extends Controller
     public function create()
     {
         abort_if(!Auth::user()->isAdmin(), 403, 'Only admins can create diagrams.');
-        return view('diagrams.editor', ['diagram' => null]);
+        $allItems = app(\App\Services\CourseService::class)->getAllItems();
+        return view('diagrams.editor', ['diagram' => null, 'allItems' => $allItems]);
     }
 
     /**
@@ -50,7 +51,8 @@ class DiagramController extends Controller
             $xmlContent = $diagram->xml_data;
         }
         
-        return view('diagrams.editor', compact('diagram', 'xmlContent'));
+        $allItems = app(\App\Services\CourseService::class)->getAllItems();
+        return view('diagrams.editor', compact('diagram', 'xmlContent', 'allItems'));
     }
 
     /**

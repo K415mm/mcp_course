@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
         // Courses & Classes (Assignment)
         Route::get('courses', [\App\Http\Controllers\Admin\AdminCourseController::class, 'index'])->name('courses.index');
         Route::post('courses/assign-class', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToClass'])->name('courses.assignClasses');
-        Route::post('courses/assign-user', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToUser'])->name('courses.assignUser');
+        Route::post('courses/assign-user', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToStudent'])->name('courses.assignStudent');
         
         Route::resource('classes', \App\Http\Controllers\Admin\AdminClassController::class);
         Route::post('classes/{class}/add-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'addUser'])->name('classes.addUser');

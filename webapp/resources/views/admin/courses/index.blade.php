@@ -50,7 +50,7 @@
                         </div>
                         <div class="col-md-6 ps-md-3 mt-3 mt-md-0">
                             <h6 class="mb-3">Assign to Student (Direct)</h6>
-                            <form action="{{ route('admin.courses.assignStudent') }}" method="POST">
+                            <form action="{{ route('admin.courses.assignUser') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="course_slug" value="{{ $course['slug'] }}">
                                 <div class="mb-2">

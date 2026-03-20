@@ -69,33 +69,53 @@ class CourseController extends Controller
         $module = $this->courseService->getItem($moduleSlug);
         abort_if(!$module, 404, 'Module not found.');
 
-        // Access control
         $user = Auth::user();
         abort_if(!$user->canAccessModule($module['number'], $module['type']), 403, 'You do not have access to this module.');
 
+        // ── Virtual section: diagrams ─────────────────────────────────
+        if ($section === 'diagrams') {
+            // lessonSlug is 'diagram-{id}'
+            $diagramId = str_replace('diagram-', '', $lessonSlug);
+            $diagram   = Diagram::findOrFail($diagramId);
+            abort_if(!$diagram->is_published && $diagram->user_id !== $user->id, 404);
+
+            $lessons = $this->courseService->getLessons($moduleSlug);
+            return view('course.lesson', [
+                'module'       => $module,
+                'section'      => 'diagrams',
+                'lessonSlug'   => $lessonSlug,
+                'lessonTitle'  => $diagram->title,
+                'contentType'  => 'diagram',
+                'meta'         => [],
+                'contentHtml'  => '',
+                'quiz'         => null,
+                'lessons'      => $lessons,
+                'allItems'     => $this->courseService->getAllItems(),
+                'prevLesson'   => null,
+                'nextLesson'   => null,
+                'diagram'      => $diagram,
+            ]);
+        }
+
+        // ── Regular file-based lesson ─────────────────────────────────
         $filePath = $this->courseService->getLessonFile($moduleSlug, $section, $lessonSlug);
         abort_if(!$filePath, 404, 'Lesson not found.');
 
-        // Check file status — only published files for non-admin
         $status = $this->courseService->getFileStatus($filePath);
         if ($status !== 'published' && !$user->isAdmin()) {
             abort(404, 'Lesson not found.');
         }
 
-        // Parse front-matter and markdown body
         $parsed = $this->markdownService->parseFile($filePath);
         $lessons = $this->courseService->getLessons($moduleSlug);
 
-        // Auto-mark lesson as seen in user's progress
         $this->recordProgress($moduleSlug, $section, $lessonSlug);
 
-        // If it's a quiz, fetch the quiz data
         $quiz = null;
         if ($parsed['type'] === 'quiz') {
             $quiz = $this->quizService->getQuizForLesson($moduleSlug, $lessonSlug);
         }
 
-        // Flat lesson list for prev/next navigation
         $flatLessons = [];
         foreach ($lessons as $sec => $data) {
             foreach ($data['lessons'] as $lesson) {
@@ -110,29 +130,19 @@ class CourseController extends Controller
             }
         }
 
-        // Fetch published diagrams linked to this module (for embed at bottom of lesson)
-        $moduleDiagrams = Diagram::where('module_slug', $moduleSlug)
-            ->where(function($q) use ($user) {
-                $q->where('is_published', true);
-                if ($user->isAdmin()) $q->orWhere('user_id', $user->id);
-            })
-            ->orderBy('updated_at', 'desc')
-            ->get();
-
         return view('course.lesson', [
-            'module' => $module,
-            'section' => $section,
-            'lessonSlug' => $lessonSlug,
-            'lessonTitle' => $parsed['meta']['title'] ?? basename($filePath, '.md'),
-            'contentType' => $parsed['type'],
-            'meta' => $parsed['meta'],
-            'contentHtml' => $parsed['html'],
-            'quiz' => $quiz,
-            'lessons' => $lessons,
-            'allItems' => $this->courseService->getAllItems(),
-            'prevLesson' => $currentIdx > 0 ? $flatLessons[$currentIdx - 1] : null,
-            'nextLesson' => $currentIdx < count($flatLessons) - 1 ? $flatLessons[$currentIdx + 1] : null,
-            'moduleDiagrams' => $moduleDiagrams,
+            'module'       => $module,
+            'section'      => $section,
+            'lessonSlug'   => $lessonSlug,
+            'lessonTitle'  => $parsed['meta']['title'] ?? basename($filePath, '.md'),
+            'contentType'  => $parsed['type'],
+            'meta'         => $parsed['meta'],
+            'contentHtml'  => $parsed['html'],
+            'quiz'         => $quiz,
+            'lessons'      => $lessons,
+            'allItems'     => $this->courseService->getAllItems(),
+            'prevLesson'   => $currentIdx > 0 ? $flatLessons[$currentIdx - 1] : null,
+            'nextLesson'   => $currentIdx < count($flatLessons) - 1 ? $flatLessons[$currentIdx + 1] : null,
         ]);
     }
 

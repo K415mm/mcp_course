@@ -24,10 +24,11 @@ return [
     |--------------------------------------------------------------------------
     */
     'sections' => [
-        'theoretical' => 'Theoretical',
-        'practical'   => 'Practical',
-        'examples'    => 'Examples',
+        'theoretical'   => 'Theoretical',
+        'practical'     => 'Practical',
+        'examples'      => 'Examples',
         'slides_prompt' => 'Slides & Prompts',
+        'diagrams'      => 'Diagrams',   // virtual — resolved from DB
     ],
 
     /*

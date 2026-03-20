@@ -32,9 +32,13 @@
                         </div>
                         <div class="py-1">
                             @foreach($sectionData['lessons'] as $l)
-                                <a href="{{ route('course.lesson', [$module['slug'], $sectionKey, $l['slug']]) }}" class="d-block text-decoration-none text-inverse px-3 py-2 lesson-nav-item
+                                <a href="{{ route('course.lesson', [$module['slug'], $l['section'], $l['slug']]) }}" class="d-block text-decoration-none text-inverse px-3 py-2 lesson-nav-item
                                           {{ ($l['slug'] === $lessonSlug && $sectionKey === $section) ? 'active' : '' }}">
-                                    <i class="bi bi-file-earmark-text me-2 opacity-40 fs-12px"></i>
+                                    @if(($l['type'] ?? '') === 'diagram')
+                                        <i class="bi bi-bezier2 me-2 opacity-40 fs-12px text-theme"></i>
+                                    @else
+                                        <i class="bi bi-file-earmark-text me-2 opacity-40 fs-12px"></i>
+                                    @endif
                                     <span class="fs-12px">{{ $l['title'] }}</span>
                                 </a>
                             @endforeach
@@ -78,8 +82,22 @@
                 @case('slides')
                     @include('course.partials.slides-deck')
                     @break
+                @case('diagram')
+                    {{-- Dedicated full-height diagram viewer embedded in the lesson --}}
+                    <div class="card" style="height: calc(100vh - 260px); overflow:hidden;">
+                        @if(isset($diagram) && $diagram->hasContent())
+                            <iframe id="drawio-lesson-view"
+                                    src="https://embed.diagrams.net/?embed=1&proto=json&ui=dark&spin=1&nav=1"
+                                    style="width:100%;height:100%;border:none;"></iframe>
+                        @else
+                            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                <div class="text-center"><i class="bi bi-diagram-3" style="font-size:3rem;opacity:.3;"></i><p class="mt-3">No diagram content yet.</p></div>
+                            </div>
+                        @endif
+                        <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+                    </div>
+                    @break
                 @default
-                    <!-- Lesson Content Card (Default Markdown) -->
                     <div class="card mb-4" style="border-color:rgba(255,255,255,.07);">
                         <div class="card-body p-4 p-lg-5">
                             <div class="md-content">
@@ -90,17 +108,6 @@
                     </div>
             @endswitch
 
-            {{-- ── Module Diagrams Section ─────────────────────────────────── --}}
-            @if(!empty($moduleDiagrams) && $moduleDiagrams->count() > 0)
-                <div class="mt-4 mb-2 d-flex align-items-center gap-2">
-                    <i class="bi bi-bezier2 text-theme"></i>
-                    <span class="fw-semibold text-inverse">Module Diagrams</span>
-                    <span class="badge bg-dark text-muted fs-11px">{{ $moduleDiagrams->count() }}</span>
-                </div>
-                @foreach($moduleDiagrams as $embeddedDiagram)
-                    @include('course.partials.diagram-embed')
-                @endforeach
-            @endif
 
             {{-- ── Prev / Next Navigation ──────────────────────────────────── --}}
             <div class="d-flex justify-content-between align-items-center mt-2">
@@ -305,4 +312,23 @@
     });
 })();
 </script>
+
+@if($contentType === 'diagram' && isset($diagram) && $diagram->hasContent())
+<script>
+(function() {
+    const frame = document.getElementById('drawio-lesson-view');
+    if (!frame) return;
+    const fileUrl = "{{ route('diagrams.file', $diagram->id) }}";
+    window.addEventListener('message', function(evt) {
+        if (evt.source !== frame.contentWindow) return;
+        let msg; try { msg = JSON.parse(evt.data); } catch(e) { return; }
+        if (msg.event === 'init') {
+            fetch(fileUrl, { headers: { 'Accept': 'application/xml' } })
+                .then(r => r.text())
+                .then(xml => frame.contentWindow.postMessage(JSON.stringify({ action: 'load', xml, autosave: 0 }), '*'));
+        }
+    });
+})();
+</script>
+@endif
 @endpush

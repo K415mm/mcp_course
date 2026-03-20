@@ -37,9 +37,17 @@ class CourseCatalogController extends Controller
 
         $modules = $this->courseService->getModules($courseSlug);
 
-        // Compute access for each module
+        // Compute access for each component
         foreach ($modules as &$mod) {
-            $mod['locked'] = !$user->canAccessModule($mod['number'], $mod['type'], $courseSlug);
+            $isEnrolled = $user->canAccessModule($mod['number'], $mod['type'], $courseSlug);
+            
+            if ($mod['type'] === 'workshop') {
+                $hasCapability = $user->canAccessWorkshop($mod['slug']);
+            } else {
+                $hasCapability = $user->hasModuleCapability($courseSlug, $mod['slug']);
+            }
+
+            $mod['locked'] = !($isEnrolled && $hasCapability);
         }
         unset($mod);
 

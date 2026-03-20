@@ -169,6 +169,24 @@
                                                         <label class="form-label text-muted fs-12px">Email Address</label>
                                                         <input type="email" name="email" class="form-control bg-dark border-secondary text-inverse" value="{{ $user->email }}" required>
                                                     </div>
+
+                                                    <hr class="border-secondary my-4">
+                                                    <h6 class="text-theme fs-13px text-uppercase fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>Entitlements Overrides</h6>
+                                                    <p class="text-muted fs-12px mb-3">Leave inputs blank to inherit default capabilities from the user's role.</p>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted fs-12px">Max Enrolled Courses Override</label>
+                                                        <input type="number" name="caps[max_courses]" class="form-control bg-dark border-secondary text-inverse" value="{{ is_array($user->capabilities) && array_key_exists('max_courses', $user->capabilities) ? $user->capabilities['max_courses'] : '' }}" placeholder="e.g. 5, or -1 for unlimited">
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted fs-12px">Workshops Override</label>
+                                                        <select name="caps[workshops_enabled]" class="form-select bg-dark border-secondary text-inverse">
+                                                            <option value="">-- Use Role Default --</option>
+                                                            <option value="1" {{ is_array($user->capabilities) && array_key_exists('workshops_enabled', $user->capabilities) && $user->capabilities['workshops_enabled'] ? 'selected' : '' }}>Force Enabled</option>
+                                                            <option value="0" {{ is_array($user->capabilities) && array_key_exists('workshops_enabled', $user->capabilities) && !$user->capabilities['workshops_enabled'] ? 'selected' : '' }}>Force Disabled</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer border-top border-secondary">
                                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>

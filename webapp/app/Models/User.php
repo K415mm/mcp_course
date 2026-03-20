@@ -34,7 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name', 'email', 'password', 'is_admin', 'role',
         'bio', 'job_title', 'avatar', 'modules_viewed',
         'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at',
-        'banned_at',
+        'banned_at', 'capabilities',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -47,11 +47,92 @@ class User extends Authenticatable implements MustVerifyEmail
             'modules_viewed'             => 'array',
             'two_factor_confirmed_at'    => 'datetime',
             'banned_at'                  => 'datetime',
+            'capabilities'               => 'json',
         ];
     }
 
     // ── Relationships ───────────────────────────────────────────────
 
+    /**
+     * Get a specific capability value (user override, then role default).
+     */
+    public function getCapability(string $key, $default = null)
+    {
+        // 1. Check user-specific override
+        $userCaps = $this->capabilities ?? [];
+        if (array_key_exists($key, $userCaps)) {
+            return $userCaps[$key];
+        }
+
+        // 2. Map to role defaults if none specified
+        $roleDefaults = [
+            self::ROLE_ADMIN => [
+                'max_courses' => -1, // unlimited
+                'workshops_enabled' => true,
+                'allowed_workshops' => ['*'],
+                'allowed_modules' => [],
+            ],
+            self::ROLE_STUDENT => [
+                'max_courses' => 3,
+                'workshops_enabled' => false,
+                'allowed_workshops' => [],
+                'allowed_modules' => [],
+            ],
+            self::ROLE_CSTUDENT => [
+                'max_courses' => -1,
+                'workshops_enabled' => true,
+                'allowed_workshops' => ['*'],
+                'allowed_modules' => [],
+            ],
+            self::ROLE_GUEST => [
+                'max_courses' => 1,
+                'workshops_enabled' => false,
+                'allowed_workshops' => [],
+                'allowed_modules' => [],
+            ],
+            self::ROLE_PREENROL => [
+                'max_courses' => 0,
+                'workshops_enabled' => false,
+                'allowed_workshops' => [],
+                'allowed_modules' => [],
+            ],
+        ];
+
+        return $roleDefaults[$this->role][$key] ?? $default;
+    }
+
+    public function hasModuleCapability(string $courseSlug, string $moduleSlug): bool
+    {
+        if ($this->is_admin || $this->role === self::ROLE_ADMIN) return true;
+
+        $allowedModulesMap = $this->getCapability('allowed_modules', []);
+        
+        // If the course key isn't present in the allowed_modules map at all,
+        // it defaults to allowing all modules. If it IS present, it acts as a whitelist.
+        if (!array_key_exists($courseSlug, $allowedModulesMap)) {
+            return true;
+        }
+
+        $whitelist = $allowedModulesMap[$courseSlug];
+        if (in_array('*', $whitelist)) return true;
+        
+        return in_array($moduleSlug, $whitelist);
+    }
+
+    public function canAccessWorkshop(string $workshopSlug): bool
+    {
+        if ($this->is_admin || $this->role === self::ROLE_ADMIN) return true;
+
+        if (!$this->getCapability('workshops_enabled', false)) {
+            return false;
+        }
+
+        $allowedWorkshops = $this->getCapability('allowed_workshops', []);
+        if (in_array('*', $allowedWorkshops)) return true;
+
+        return in_array($workshopSlug, $allowedWorkshops);
+    }
+    
     /** Direct course enrollments for this user */
     public function courseEnrollments()
     {

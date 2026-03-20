@@ -26,9 +26,31 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->ignore($user->id)],
+            'caps' => ['nullable', 'array'],
         ]);
 
-        $user->update($validated);
+        $caps = $validated['caps'] ?? [];
+        $processedCaps = $user->capabilities ?? [];
+        
+        // Process max courses
+        if (isset($caps['max_courses']) && $caps['max_courses'] !== '') {
+            $processedCaps['max_courses'] = (int) $caps['max_courses'];
+        } else {
+            unset($processedCaps['max_courses']);
+        }
+
+        // Process workshops limit
+        if (isset($caps['workshops_enabled']) && $caps['workshops_enabled'] !== '') {
+            $processedCaps['workshops_enabled'] = (bool) $caps['workshops_enabled'];
+        } else {
+            unset($processedCaps['workshops_enabled']);
+        }
+
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'capabilities' => empty($processedCaps) ? null : $processedCaps,
+        ]);
 
         return back()->with('success', "User {$user->name} updated successfully.");
     }

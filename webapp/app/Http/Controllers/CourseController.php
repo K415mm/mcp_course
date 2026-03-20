@@ -27,7 +27,12 @@ class CourseController extends Controller
         // Annotate each item with access info
         foreach ($items as &$item) {
             $courseSlug = $item['course_slug'] ?? null;
-            $item['locked'] = !$user->canAccessModule($item['number'], $item['type'], $courseSlug);
+            $isEnrolled = $user->canAccessModule($item['number'], $item['type'], $courseSlug);
+            $hasCap = $item['type'] === 'workshop'
+                ? $user->canAccessWorkshop($item['slug'])
+                : $user->hasModuleCapability($courseSlug ?? '', $item['slug']);
+                
+            $item['locked'] = !($isEnrolled && $hasCap);
         }
         unset($item);
 
@@ -42,7 +47,13 @@ class CourseController extends Controller
 
         // Access control
         $user = Auth::user();
-        if (!$user->canAccessModule($module['number'], $module['type'], $module['course_slug'] ?? null)) {
+        $courseSlug = $module['course_slug'] ?? null;
+        $isEnrolled = $user->canAccessModule($module['number'], $module['type'], $courseSlug);
+        $hasCap = $module['type'] === 'workshop'
+            ? $user->canAccessWorkshop($module['slug'])
+            : $user->hasModuleCapability($courseSlug ?? '', $module['slug']);
+
+        if (!$isEnrolled || !$hasCap) {
             return view('course.locked', [
                 'module' => $module,
                 'userRole' => $user->roleLabel(),
@@ -71,7 +82,13 @@ class CourseController extends Controller
         abort_if(!$module, 404, 'Module not found.');
 
         $user = Auth::user();
-        abort_if(!$user->canAccessModule($module['number'], $module['type'], $module['course_slug'] ?? null), 403, 'You do not have access to this module.');
+        $courseSlug = $module['course_slug'] ?? null;
+        $isEnrolled = $user->canAccessModule($module['number'], $module['type'], $courseSlug);
+        $hasCap = $module['type'] === 'workshop'
+            ? $user->canAccessWorkshop($module['slug'])
+            : $user->hasModuleCapability($courseSlug ?? '', $module['slug']);
+
+        abort_if(!$isEnrolled || !$hasCap, 403, 'You do not have access to this module or workshop based on your entitlements.');
 
         // ── Virtual section: diagrams ─────────────────────────────────
         if ($section === 'diagrams') {

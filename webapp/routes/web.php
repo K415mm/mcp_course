@@ -119,6 +119,8 @@ Route::middleware('auth')->group(function () {
         // Global Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+        Route::get('/settings/roles', [\App\Http\Controllers\Admin\SettingsController::class, 'roles'])->name('settings.roles');
+        Route::post('/settings/roles', [\App\Http\Controllers\Admin\SettingsController::class, 'updateRoles'])->name('settings.updateRoles');
 
         // Content (CRUD .md files)
         Route::prefix('content')->name('content.')->group(function () {

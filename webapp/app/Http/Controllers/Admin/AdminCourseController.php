@@ -79,7 +79,17 @@ class AdminCourseController extends Controller
             'user_id'     => 'required|exists:users,id',
         ]);
 
-        $exists = CourseEnrollment::where('user_id', $request->user_id)
+        $user = User::findOrFail($request->user_id);
+
+        $max = $user->getCapability('max_courses', 0);
+        if ($max !== -1) {
+            $enrolledCount = count($user->enrolledCourseSlugs());
+            if ($enrolledCount >= $max) {
+                return redirect()->back()->with('error', "This user has reached their maximum course capacity ({$max}). Update their Entitlements to allow more.");
+            }
+        }
+
+        $exists = CourseEnrollment::where('user_id', $user->id)
             ->where('course_slug', $request->course_slug)
             ->exists();
 

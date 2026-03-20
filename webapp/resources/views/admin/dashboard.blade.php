@@ -103,5 +103,18 @@
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
         </a>
     </div>
+    
+    <div class="col-md-3 mt-3">
+        <a href="{{ route('admin.settings.roles') }}" class="card text-decoration-none h-100" style="border-color:rgba(var(--bs-theme-rgb),.2);">
+            <div class="card-body p-4 d-flex align-items-center gap-3">
+                <i class="bi bi-shield-check fs-2 text-theme"></i>
+                <div>
+                    <div class="fw-semibold text-inverse">Role Capabilities</div>
+                    <div class="fs-12px text-muted">Configure access limits</div>
+                </div>
+            </div>
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+        </a>
+    </div>
 </div>
 @endsection

@@ -68,6 +68,22 @@ class AdminClassController extends Controller
     public function addStudent(Request $request, StudentClass $class)
     {
         $request->validate(['user_id' => 'required|exists:users,id']);
+        
+        $user = \App\Models\User::findOrFail($request->user_id);
+        $max = $user->getCapability('max_courses', 0);
+        
+        if ($max !== -1) {
+            $classSlugs = $class->courseSlugs();
+            if (count($classSlugs) > 0) {
+                $currentSlugs = $user->enrolledCourseSlugs();
+                $projectedSlugs = array_unique(array_merge($currentSlugs, $classSlugs));
+                
+                if (count($projectedSlugs) > $max) {
+                    return redirect()->back()->with('error', "Cannot add student. The class courses would completely exceed this user's capacity limit ({$max}). Update their Entitlements.");
+                }
+            }
+        }
+
         if (!$class->students()->where('user_id', $request->user_id)->exists()) {
             $class->students()->attach($request->user_id);
             return redirect()->back()->with('success', 'Student added to class.');

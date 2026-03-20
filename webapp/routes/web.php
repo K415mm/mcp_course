@@ -109,11 +109,12 @@ Route::middleware('auth')->group(function () {
         // Courses & Classes (Assignment)
         Route::get('courses', [\App\Http\Controllers\Admin\AdminCourseController::class, 'index'])->name('courses.index');
         Route::post('courses/assign-class', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToClass'])->name('courses.assignClasses');
+        Route::post('courses/unassign-class', [\App\Http\Controllers\Admin\AdminCourseController::class, 'unassignFromClass'])->name('courses.unassignClasses');
         Route::post('courses/assign-user', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToStudent'])->name('courses.assignStudent');
         
         Route::resource('classes', \App\Http\Controllers\Admin\AdminClassController::class);
-        Route::post('classes/{class}/add-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'addUser'])->name('classes.addUser');
-        Route::post('classes/{class}/remove-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'removeUser'])->name('classes.removeUser');
+        Route::post('classes/{class}/add-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'addStudent'])->name('classes.addStudent');
+        Route::post('classes/{class}/remove-user', [\App\Http\Controllers\Admin\AdminClassController::class, 'removeStudent'])->name('classes.removeStudent');
 
         // Global Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');

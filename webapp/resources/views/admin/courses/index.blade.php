@@ -7,7 +7,7 @@
     <div>
         <h1 class="page-header mb-0">Course Enrollment Management</h1>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
             <li class="breadcrumb-item active">Courses</li>
         </ol>
     </div>

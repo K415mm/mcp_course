@@ -7,7 +7,7 @@
     <div>
         <h1 class="page-header mb-0">{{ $class->name }}</h1>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{ route('admin.classes.index') }}">Classes</a></li>
             <li class="breadcrumb-item active">{{ $class->name }}</li>
         </ol>

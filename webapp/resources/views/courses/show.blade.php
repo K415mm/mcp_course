@@ -72,7 +72,7 @@
                                         <div class="fs-10px fw-semibold text-muted text-uppercase">Lessons</div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="fw-bold fs-5 text-inverse">--</div>
+                                        <div class="fw-bold fs-5 text-inverse">{{ $isWorkshop ? '120' : count($item['lessons'] ?? []) * 20 }}</div>
                                         <div class="fs-10px fw-semibold text-muted text-uppercase">Mins</div>
                                     </div>
                                 </div>

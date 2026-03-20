@@ -51,15 +51,15 @@
                             <!-- Static metrics for visual enhancement -->
                             <div class="row text-center mt-auto">
                                 <div class="col-4">
-                                    <div class="fw-bold fs-5 text-theme">--</div>
+                                    <div class="fw-bold fs-5 text-theme">{{ $course['modules_count'] ?? '--' }}</div>
                                     <div class="fs-10px fw-semibold text-muted text-uppercase">Modules</div>
                                 </div>
                                 <div class="col-4 border-start border-end border-secondary">
-                                    <div class="fw-bold fs-5 text-theme">--</div>
+                                    <div class="fw-bold fs-5 text-theme">{{ $course['workshops_count'] ?? '--' }}</div>
                                     <div class="fs-10px fw-semibold text-muted text-uppercase">Workshops</div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="fw-bold fs-5 text-theme">--</div>
+                                    <div class="fw-bold fs-5 text-theme">{{ $course['hours_count'] ?? '--' }}</div>
                                     <div class="fs-10px fw-semibold text-muted text-uppercase">Hours</div>
                                 </div>
                             </div>

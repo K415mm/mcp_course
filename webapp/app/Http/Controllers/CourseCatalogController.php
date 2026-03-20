@@ -20,6 +20,11 @@ class CourseCatalogController extends Controller
         $enrolledCourses = [];
         foreach ($this->courseService->getCourses() as $c) {
             if (in_array('*', $enrolledSlugs) || in_array($c['slug'], $enrolledSlugs)) {
+                $modules = $this->courseService->getModules($c['slug']);
+                $c['modules_count'] = count(array_filter($modules, fn($m) => $m['type'] === 'module'));
+                $c['workshops_count'] = count(array_filter($modules, fn($m) => $m['type'] === 'workshop'));
+                $c['hours_count'] = ($c['modules_count'] * 2) + ($c['workshops_count'] * 3);
+
                 $enrolledCourses[] = $c;
             }
         }

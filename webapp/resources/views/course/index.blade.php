@@ -74,7 +74,7 @@
                                         <div class="fs-10px fw-semibold text-muted text-uppercase">SECTIONS</div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="fw-bold fs-5 text-inverse">--</div>
+                                        <div class="fw-bold fs-5 text-inverse">{{ count(config("course.sections")) * 20 }}</div>
                                         <div class="fs-10px fw-semibold text-muted text-uppercase">MINS</div>
                                     </div>
                                 </div>
@@ -142,7 +142,7 @@
                                             <div class="fs-10px fw-semibold text-muted text-uppercase">SCENARIO</div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="fw-bold fs-5 text-inverse">--</div>
+                                            <div class="fw-bold fs-5 text-inverse">120</div>
                                             <div class="fs-10px fw-semibold text-muted text-uppercase">MINS</div>
                                         </div>
                                     </div>

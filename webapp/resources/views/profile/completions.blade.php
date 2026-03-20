@@ -41,6 +41,45 @@
     </div>
 </div>
 
+<div class="row g-4 mt-1">
+    <div class="col-md-6">
+        <div class="card bg-dark border-theme h-100">
+            <div class="card-body p-4 d-flex align-items-center">
+                <div class="bg-theme bg-opacity-10 rounded p-3 me-3 text-theme fs-2">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div>
+                    <h6 class="text-inverse mb-1">Total Time Learning</h6>
+                    <div class="fs-4 fw-bold">
+                        @if($totalTimeSeconds >= 3600)
+                            {{ number_format($totalTimeSeconds / 3600, 1) }} <span class="fs-6 text-muted fw-normal">hours</span>
+                        @else
+                            {{ round($totalTimeSeconds / 60) }} <span class="fs-6 text-muted fw-normal">minutes</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark border-theme h-100">
+            <div class="card-body p-4 d-flex align-items-center">
+                <div class="bg-theme bg-opacity-10 rounded p-3 me-3 text-theme fs-2">
+                    <i class="bi bi-check2-all"></i>
+                </div>
+                <div>
+                    <h6 class="text-inverse mb-1">Lessons Completed</h6>
+                    <div class="fs-4 fw-bold">
+                        {{ $totalLessonsCompleted }} <span class="fs-6 text-muted fw-normal">lessons</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+        </div>
+    </div>
+</div>
+
 <h5 class="mt-5 mb-4 text-theme text-uppercase fw-bold" style="letter-spacing: 1px;"><i class="bi bi-grid-1x2 me-2"></i>Module Badges</h5>
 
 <div class="row g-4">

@@ -120,11 +120,17 @@
                     <div></div>
                 @endif
 
+                <button id="mark-lesson-complete-btn" class="btn btn-outline-success mx-3" disabled>
+                    <i class="bi bi-check2-circle me-1"></i> Complete Lesson (<span id="lesson-time-status">Waiting...</span>)
+                </button>
+
                 @if($nextLesson)
                     <a href="{{ route('course.lesson', [$module['slug'], $nextLesson['section'], $nextLesson['slug']]) }}"
                         class="btn btn-theme">
                         {{ $nextLesson['title'] }} <i class="bi bi-chevron-right ms-1"></i>
                     </a>
+                @else
+                    <div></div>
                 @endif
             </div>
         </div>
@@ -331,4 +337,111 @@
 })();
 </script>
 @endif
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const minSeconds = {{ config('course.min_lesson_time', 60) }};
+    const pingInterval = 10; // Ping every 10 seconds
+    const courseSlug = '{{ $module["course_slug"] ?? "legacy" }}';
+    const moduleSlug = '{{ $module["slug"] }}';
+    const lessonSlug = '{{ $lessonSlug }}';
+    const csrfToken = '{{ csrf_token() }}';
+    
+    const btn = document.getElementById('mark-lesson-complete-btn');
+    const statusTxt = document.getElementById('lesson-time-status');
+    let timeSpent = 0;
+    let isCompleted = false;
+
+    // Send ping every X seconds
+    const pingTimer = setInterval(async () => {
+        if (isCompleted) {
+            clearInterval(pingTimer);
+            return;
+        }
+
+        try {
+            const res = await fetch('{{ route("progress.ping") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    course_slug: courseSlug,
+                    module_slug: moduleSlug,
+                    lesson_slug: lessonSlug,
+                    increment: pingInterval
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                timeSpent = data.time_spent;
+                isCompleted = data.is_completed;
+                updateButtonState();
+            }
+        } catch(e) { console.error('Ping failed', e); }
+    }, pingInterval * 1000);
+
+    function updateButtonState() {
+        if (isCompleted) {
+            btn.classList.remove('btn-outline-success');
+            btn.classList.add('btn-success');
+            btn.disabled = true;
+            statusTxt.textContent = 'Completed!';
+            return;
+        }
+
+        const remaining = minSeconds - timeSpent;
+        if (remaining > 0) {
+            btn.disabled = true;
+            statusTxt.textContent = remaining + 's remaining';
+        } else {
+            btn.disabled = false;
+            statusTxt.textContent = 'Ready!';
+        }
+    }
+
+    // Do an initial ping to get current progress immediately
+    setTimeout(() => {
+        fetch('{{ route("progress.ping") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+            body: JSON.stringify({ course_slug: courseSlug, module_slug: moduleSlug, lesson_slug: lessonSlug, increment: 1 }) // Small initial increment
+        }).then(r => r.json()).then(data => {
+            timeSpent = data.time_spent;
+            isCompleted = data.is_completed;
+            updateButtonState();
+        }).catch(e => console.error(e));
+    }, 1000);
+
+    // Handle Complete Click
+    btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        statusTxt.textContent = 'Verifying...';
+        
+        try {
+            const res = await fetch('{{ route("progress.complete") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                body: JSON.stringify({ course_slug: courseSlug, module_slug: moduleSlug, lesson_slug: lessonSlug })
+            });
+            const data = await res.json();
+            
+            if (res.ok && data.status === 'completed') {
+                isCompleted = true;
+                updateButtonState();
+                // Check if there is a next lesson link, visually highlight it
+            } else {
+                alert(data.message || 'Verification failed. Did you spend enough time?');
+                updateButtonState(); // Re-evaluate
+            }
+        } catch(e) {
+            console.error('Complete failed', e);
+            btn.disabled = false;
+        }
+    });
+});
+</script>
 @endpush

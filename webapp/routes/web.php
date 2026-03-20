@@ -59,6 +59,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/quiz-grade', [CourseController::class, 'gradeQuiz'])->name('quiz.grade');
     });
 
+    // Lesson Progress (Smart Verification)
+    Route::prefix('progress')->name('progress.')->group(function () {
+        Route::post('/ping', [\App\Http\Controllers\LessonProgressController::class, 'ping'])->name('ping');
+        Route::post('/complete', [\App\Http\Controllers\LessonProgressController::class, 'complete'])->name('complete');
+    });
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -140,6 +146,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/{user}/password', [AdminUsers::class, 'updatePassword'])->name('password');
             Route::post('/{user}/toggle-ban', [AdminUsers::class, 'toggleBan'])->name('toggleBan');
             Route::delete('/{user}', [AdminUsers::class, 'destroy'])->name('destroy');
+            Route::get('/{user}/progress', [AdminUsers::class, 'progress'])->name('progress');
         });
 
         // Quiz Builder

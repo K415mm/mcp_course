@@ -66,9 +66,13 @@ class ModuleCompletionController extends Controller
             ->get()
             ->keyBy('module_slug');
 
+        $lessonProgress = \App\Models\LessonProgress::where('user_id', $user->id)->get();
+        $totalTimeSeconds = $lessonProgress->sum('time_spent_seconds');
+        $totalLessonsCompleted = $lessonProgress->where('is_completed', true)->count();
+
         $allItems = $this->courseService->getAllItems();
         $modules = array_filter($allItems, fn($i) => $i['type'] === 'module');
 
-        return view('profile.completions', compact('user', 'completions', 'modules'));
+        return view('profile.completions', compact('user', 'completions', 'modules', 'totalTimeSeconds', 'totalLessonsCompleted'));
     }
 }

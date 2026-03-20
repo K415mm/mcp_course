@@ -109,6 +109,11 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     
+                                    {{-- View Progress --}}
+                                    <a href="{{ route('admin.users.progress', $user) }}" class="btn btn-xs btn-outline-info" title="View Progress">
+                                        <i class="bi bi-clock-history"></i>
+                                    </a>
+                                    
                                     {{-- Reset Password Modal Trigger --}}
                                     <button class="btn btn-xs btn-outline-warning" data-bs-toggle="modal" data-bs-target="#pwdUserModal-{{ $user->id }}" title="Reset Password">
                                         <i class="bi bi-key"></i>

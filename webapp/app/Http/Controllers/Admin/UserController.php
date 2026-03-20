@@ -72,5 +72,20 @@ class UserController extends Controller
 
         return back()->with('success', "User {$name} deleted permanently.");
     }
+
+    public function progress(User $user)
+    {
+        $completions = \App\Models\ModuleCompletion::where('user_id', $user->id)
+            ->orderBy('completed_at', 'desc')
+            ->get();
+            
+        $lessonProgress = \App\Models\LessonProgress::where('user_id', $user->id)
+            ->orderBy('completed_at', 'desc')
+            ->get();
+            
+        $totalTimeSeconds = $lessonProgress->sum('time_spent_seconds');
+        
+        return view('admin.users.progress', compact('user', 'completions', 'lessonProgress', 'totalTimeSeconds'));
+    }
 }
 

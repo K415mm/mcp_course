@@ -230,7 +230,7 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('hud/plugins/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('hud/plugins/datatables.net/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('hud/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script>$(document).ready(() => $('#usersTable').DataTable({ pageLength: 25 }));</script>
     <style>

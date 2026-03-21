@@ -13,38 +13,69 @@
     </nav>
 
     <!-- Module Header -->
-    <div class="card mb-4" style="border-color:rgba(var(--bs-theme-rgb),.3);">
-        <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3 p-3">
-            <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
-                style="width:56px;height:56px;background:rgba(var(--bs-theme-rgb),.12);">
-                <i class="bi {{ $module['icon'] }}" style="font-size:1.6rem;color:var(--bs-theme);"></i>
-            </div>
-            <div class="flex-grow-1">
-                <div class="mb-1">
-                    @if($module['type'] === 'module')
-                        <span class="badge bg-theme text-dark module-badge">MODULE
-                            {{ sprintf('%02d', $module['number']) }}</span>
-                    @else
-                        <span class="badge module-badge" style="background:#f59e0b;color:#000;">WORKSHOP
-                            {{ sprintf('%02d', $module['number']) }}</span>
-                    @endif
+    <div class="card mb-4 border-0">
+        <div class="m-1 bg-inverse bg-opacity-10">
+            <div class="position-relative overflow-hidden" style="height: 200px">
+                @php
+                    $isWorkshop = $module['type'] === 'workshop';
+                    $coverImage = match(true) {
+                        str_contains($module['slug'], 'soc') => asset('img/workshops/network_analysis.png'),
+                        str_contains($module['slug'], 'malware') => asset('img/workshops/malware_analysis.png'),
+                        str_contains($module['slug'], 'cti') => asset('img/workshops/cti_automation.png'),
+                        str_contains($module['slug'], 'fastmcp') => asset('img/workshops/fastmcp_deploy.png'),
+                        str_contains($module['slug'], 'threat') => asset('img/workshops/threat_hunting.png'),
+                        default => null
+                    };
+                @endphp
+                @if($coverImage && $isWorkshop)
+                    <img src="{{ $coverImage }}" class="card-img rounded-0 w-100 h-100" style="object-fit: cover; object-position: center 30%;" alt="">
+                @else
+                    <div class="w-100 h-100 bg-dark" style="background: linear-gradient(135deg, rgba(30,32,34,1) 0%, rgba(20,21,22,1) 100%);"></div>
+                @endif
+                
+                <div class="card-img-overlay text-white text-center bg-gray-900 {{ $isWorkshop ? 'bg-opacity-75' : 'bg-opacity-50' }} d-flex flex-column align-items-center justify-content-center">
+                    <div class="my-2">
+                        <div class="{{ $isWorkshop ? 'bg-warning' : 'bg-theme' }} text-dark rounded-circle d-flex align-items-center justify-content-center mx-auto shadow" style="width: 64px; height: 64px; font-size: 1.8rem;">
+                            <i class="bi {{ $module['icon'] }}"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="fw-bold fs-3 text-shadow px-2 mb-1">{{ $module['title'] }}</h1>
+                        <div class="small fw-semibold text-white text-opacity-75 letter-spacing-1 mt-1 {{ $isWorkshop ? 'text-warning' : '' }}">
+                            {{ $isWorkshop ? 'WORKSHOP ' . sprintf('%02d', $module['number']) : 'MODULE ' . sprintf('%02d', $module['number']) }}
+                        </div>
+                    </div>
                 </div>
-                <h1 class="h4 fw-bold mb-0 text-inverse">{{ $module['title'] }}</h1>
             </div>
             
-            @if($module['type'] === 'workshop')
-                @php
-                    $notebookFilename = sprintf('%02d', $module['number']) . '_' . substr($module['folder'], 12) . '.ipynb';
-                    $colabUrl = config('course.workshop_github_base_url') . $module['folder'] . '/' . $notebookFilename;
-                @endphp
-                <div class="flex-shrink-0 mt-3 mt-md-0">
-                    <a href="{{ $colabUrl }}" target="_blank" class="btn btn-outline-warning d-flex align-items-center gap-2" 
-                       style="border-color:#f59e0b; color:#f59e0b; font-weight: 600;">
-                        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" style="height: 20px;" />
-                        Launch Interactive Environment
-                    </a>
+            <div class="card-body py-3 px-3 fs-6 d-flex flex-column align-items-center justify-content-center">
+                <div class="row w-100 text-center align-items-center">
+                    <div class="col-4 border-end border-secondary">
+                        <div class="fw-bold fs-4 text-inverse">{{ count($lessons ?? []) }}</div>
+                        <div class="fs-10px fw-semibold text-muted text-uppercase">SECTIONS</div>
+                    </div>
+                    <div class="col-4 border-end border-secondary d-flex flex-column justify-content-center align-items-center" style="min-height: 48px;">
+                        @if($isWorkshop)
+                            @php
+                                $notebookFilename = sprintf('%02d', $module['number']) . '_' . substr($module['folder'], 12) . '.ipynb';
+                                $colabUrl = config('course.workshop_github_base_url') . $module['folder'] . '/' . $notebookFilename;
+                            @endphp
+                            <a href="{{ $colabUrl }}" target="_blank" class="btn btn-outline-warning btn-sm d-flex align-items-center justify-content-center gap-2 m-0 mt-1" 
+                               style="border-color:#f59e0b; color:#f59e0b; font-weight: 600; width: fit-content; text-transform: uppercase; font-size: 10px;">
+                                <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" style="height: 14px;" />
+                                Launch Interactive Environment
+                            </a>
+                        @else
+                            <div class="fw-bold fs-4 text-inverse">{{ count(config("course.sections")) * 20 }}</div>
+                            <div class="fs-10px fw-semibold text-muted text-uppercase">ESTIMATED MINS</div>
+                        @endif
+                    </div>
+                    <div class="col-4 d-flex flex-column justify-content-center align-items-center" style="min-height: 48px;">
+                        <div class="fw-bold fs-4 text-success"><i class="bi bi-check-circle-fill"></i></div>
+                        <div class="fs-10px fw-semibold text-muted text-uppercase">STATUS</div>
+                    </div>
                 </div>
-            @endif
+            </div>
         </div>
         <div class="card-arrow">
             <div class="card-arrow-top-left"></div>

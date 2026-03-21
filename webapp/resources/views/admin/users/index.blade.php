@@ -149,7 +149,8 @@
         </div>
         <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
     </div>
-{{-- Edit Modal --}}
+@foreach($users as $user)
+    {{-- Edit Modal --}}
                                 <div class="modal fade" id="editUserModal-{{ $user->id }}" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content bg-dark border-secondary text-start">
@@ -226,6 +227,8 @@
                                     </div>
                                 </div>
 
+                                </div>
+@endforeach
 
 @endsection
 

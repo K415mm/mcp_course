@@ -74,8 +74,8 @@ class User extends Authenticatable implements MustVerifyEmail
             ],
             self::ROLE_STUDENT => [
                 'max_courses' => 3,
-                'workshops_enabled' => false,
-                'allowed_workshops' => [],
+                'workshops_enabled' => true,
+                'allowed_workshops' => ['*'],
                 'allowed_modules' => [],
             ],
             self::ROLE_CSTUDENT => [

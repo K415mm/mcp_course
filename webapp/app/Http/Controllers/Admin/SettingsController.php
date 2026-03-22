@@ -59,6 +59,8 @@ class SettingsController extends Controller
             
             if ($role === \App\Models\User::ROLE_STUDENT) {
                 $default['max_courses'] = 3;
+                $default['workshops_enabled'] = true;
+                $default['allowed_workshops'] = ['*'];
             } elseif ($role === \App\Models\User::ROLE_GUEST) {
                 $default['max_courses'] = 1;
             } elseif ($role === \App\Models\User::ROLE_PREENROL) {

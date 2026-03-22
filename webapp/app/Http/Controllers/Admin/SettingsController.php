@@ -65,7 +65,7 @@ class SettingsController extends Controller
                 $default['max_courses'] = 0;
             }
 
-            $roleSettings[$role] = $setting ? json_decode($setting->value, true) : $default;
+            $roleSettings[$role] = $setting ? $setting->value : $default;
         }
 
         return view('admin.settings.roles', compact('roleSettings', 'roles'));

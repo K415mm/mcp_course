@@ -4,7 +4,6 @@
 @section('content')
 <div class="container-fluid py-3">
 
-    {{-- Flash messages --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show mb-3">
             <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
@@ -34,11 +33,13 @@
                     <i class="bi bi-shield-lock me-1"></i> 2 équipes
                 </p>
             </div>
-            <div class="d-none d-md-block text-end">
-                <a href="{{ route('game.create') }}" class="btn btn-lg px-4" style="background:linear-gradient(90deg,#3a90e8,#1a6fc4);color:#fff;font-weight:600;">
-                    <i class="bi bi-plus-lg me-2"></i>Créer une session
-                </a>
-            </div>
+            @if(Auth::user()->isAdmin())
+                <div class="d-none d-md-block text-end">
+                    <a href="{{ route('game.create') }}" class="btn btn-lg px-4" style="background:linear-gradient(90deg,#3a90e8,#1a6fc4);color:#fff;font-weight:600;">
+                        <i class="bi bi-plus-lg me-2"></i>Créer une session
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -81,11 +82,13 @@
                         </div>
                     @endforelse
 
-                    <div class="d-md-none mt-3">
-                        <a href="{{ route('game.create') }}" class="btn btn-theme w-100">
-                            <i class="bi bi-plus-lg me-2"></i>Créer une session
-                        </a>
-                    </div>
+                    @if(Auth::user()->isAdmin())
+                        <div class="d-md-none mt-3">
+                            <a href="{{ route('game.create') }}" class="btn btn-theme w-100">
+                                <i class="bi bi-plus-lg me-2"></i>Créer une session
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -118,26 +121,18 @@
                                     </div>
                                 </div>
                                 <div class="d-flex gap-1">
-                                    @unless($s->isModerator(Auth::user()) || $s->playerFor(Auth::user()))
-                                        <form method="POST" action="{{ route('game.join', $s) }}">
-                                            @csrf
-                                            <input type="hidden" name="team" value="blue">
-                                            <button class="btn btn-sm btn-outline-primary" title="Rejoindre Blue Team">
-                                                <i class="bi bi-shield-plus"></i> Blue
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="{{ route('game.join', $s) }}">
-                                            @csrf
-                                            <input type="hidden" name="team" value="red">
-                                            <button class="btn btn-sm btn-outline-danger" title="Rejoindre Red Team">
-                                                <i class="bi bi-bug"></i> Red
-                                            </button>
-                                        </form>
-                                    @else
+                                    @if($s->isModerator(Auth::user()))
+                                        <a href="{{ route('game.manage', $s) }}" class="btn btn-sm btn-outline-warning" title="Gérer les équipes">
+                                            <i class="bi bi-gear"></i> Gérer
+                                        </a>
+                                    @endif
+                                    @if($s->isModerator(Auth::user()) || $s->playerFor(Auth::user()))
                                         <a href="{{ route('game.show', $s) }}" class="btn btn-sm btn-outline-theme">
                                             <i class="bi bi-box-arrow-in-right"></i> Entrer
                                         </a>
-                                    @endunless
+                                    @else
+                                        <span class="badge bg-dark text-white-50 align-self-center">Invitation requise</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -145,7 +140,7 @@
                         <div class="text-center text-white-50 py-4">
                             <i class="bi bi-globe" style="font-size:2rem;opacity:.3;"></i>
                             <p class="mt-2 mb-0">Aucune session disponible</p>
-                            <p class="small">Créez-en une ou attendez qu'un modérateur lance une partie</p>
+                            <p class="small">Attendez qu'un modérateur vous assigne à une partie</p>
                         </div>
                     @endforelse
                 </div>

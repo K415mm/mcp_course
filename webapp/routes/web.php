@@ -105,10 +105,15 @@ Route::middleware('auth')->group(function () {
     // ── CyberBreach Game ─────────────────────────────────────────────────
     Route::prefix('game')->name('game.')->group(function () {
         Route::get('/', [\App\Http\Controllers\GameController::class, 'lobby'])->name('lobby');
-        Route::get('/create', [\App\Http\Controllers\GameController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\GameController::class, 'store'])->name('store');
+
+        // Admin-only: create & manage
+        Route::middleware('admin')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\GameController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\GameController::class, 'store'])->name('store');
+            Route::get('/{session}/manage', [\App\Http\Controllers\GameController::class, 'manage'])->name('manage');
+        });
+
         Route::get('/{session}', [\App\Http\Controllers\GameController::class, 'show'])->name('show');
-        Route::post('/{session}/join', [\App\Http\Controllers\GameController::class, 'join'])->name('join');
         Route::post('/{session}/leave', [\App\Http\Controllers\GameController::class, 'leave'])->name('leave');
 
         // Game API (JSON)
@@ -122,6 +127,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/draw-event', [\App\Http\Controllers\GameApiController::class, 'drawEvent'])->name('drawEvent');
             Route::post('/adjust-tokens', [\App\Http\Controllers\GameApiController::class, 'adjustTokens'])->name('adjustTokens');
             Route::post('/deal-hands', [\App\Http\Controllers\GameApiController::class, 'dealHands'])->name('dealHands');
+            Route::post('/assign-player', [\App\Http\Controllers\GameApiController::class, 'assignPlayer'])->name('assignPlayer');
+            Route::post('/remove-player', [\App\Http\Controllers\GameApiController::class, 'removePlayer'])->name('removePlayer');
         });
     });
 

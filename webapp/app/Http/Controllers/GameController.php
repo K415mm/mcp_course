@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GameCard;
 use App\Models\GameSession;
+use App\Models\User;
 use App\Services\GameService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,13 +31,13 @@ class GameController extends Controller
         return view('game.lobby', compact('sessions', 'mySessions'));
     }
 
-    /** Create game form */
+    /** Create game form (admin only) */
     public function create()
     {
         return view('game.create');
     }
 
-    /** Store new game session */
+    /** Store new game session (admin only) */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -48,39 +49,43 @@ class GameController extends Controller
 
         $session = $this->gameService->createSession(Auth::user(), $data);
 
-        return redirect()->route('game.show', $session)
-            ->with('success', 'Session de jeu créée ! Partagez le code : ' . $session->code);
+        return redirect()->route('game.manage', $session)
+            ->with('success', 'Session créée ! Assignez les joueurs aux équipes.');
+    }
+
+    /** Team management view (admin/moderator only) */
+    public function manage(GameSession $session)
+    {
+        $session->load(['teams.players.user', 'moderator']);
+
+        // Get all verified students not yet in this session
+        $assignedIds = $session->players()->pluck('user_id')->toArray();
+        $availableUsers = User::where('role', 'student')
+            ->whereNotNull('email_verified_at')
+            ->whereNotIn('id', $assignedIds)
+            ->orderBy('name')
+            ->get();
+
+        return view('game.manage', compact('session', 'availableUsers'));
     }
 
     /** Main game board */
     public function show(GameSession $session)
     {
         $session->load(['teams.players.user', 'moderator']);
-        $user      = Auth::user();
-        $isMod     = $session->isModerator($user);
-        $player    = $session->playerFor($user);
-        $systems   = GameService::systems();
+        $user   = Auth::user();
+        $isMod  = $session->isModerator($user);
+        $player = $session->playerFor($user);
+
+        // Access control: only moderator or assigned players can see the board
+        if (!$isMod && !$player) {
+            return redirect()->route('game.lobby')
+                ->with('error', 'Vous n\'êtes pas assigné à cette session.');
+        }
+
+        $systems = GameService::systems();
 
         return view('game.board', compact('session', 'isMod', 'player', 'systems'));
-    }
-
-    /** Join a team */
-    public function join(Request $request, GameSession $session)
-    {
-        $request->validate(['team' => 'required|in:blue,red']);
-
-        if ($session->isModerator(Auth::user())) {
-            return back()->with('error', 'Le modérateur ne peut pas rejoindre une équipe');
-        }
-
-        if (!$session->isLobby() && !$session->isActive()) {
-            return back()->with('error', 'Impossible de rejoindre cette session');
-        }
-
-        $this->gameService->joinTeam($session, Auth::user(), $request->team);
-
-        return redirect()->route('game.show', $session)
-            ->with('success', 'Vous avez rejoint la ' . ($request->team === 'blue' ? 'Blue Team' : 'Red Team'));
     }
 
     /** Leave a game */

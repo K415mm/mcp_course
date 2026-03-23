@@ -169,4 +169,40 @@ class GameApiController extends Controller
         $this->gameService->dealInitialHands($session);
         return response()->json(['success' => true]);
     }
+
+    /** Assign a user to a team (moderator only) */
+    public function assignPlayer(Request $request, GameSession $session): JsonResponse
+    {
+        if (!$session->isModerator(Auth::user())) {
+            return response()->json(['success' => false, 'error' => 'Réservé au modérateur'], 403);
+        }
+
+        $request->validate([
+            'user_id'   => 'required|integer|exists:users,id',
+            'team_type' => 'required|in:blue,red',
+        ]);
+
+        $user = \App\Models\User::findOrFail($request->user_id);
+        $team = $this->gameService->joinTeam($session, $user, $request->team_type);
+
+        return response()->json([
+            'success' => true,
+            'team'    => $team->type,
+            'player'  => $user->name,
+        ]);
+    }
+
+    /** Remove a player from the session (moderator only) */
+    public function removePlayer(Request $request, GameSession $session): JsonResponse
+    {
+        if (!$session->isModerator(Auth::user())) {
+            return response()->json(['success' => false, 'error' => 'Réservé au modérateur'], 403);
+        }
+
+        $request->validate(['user_id' => 'required|integer']);
+
+        $this->gameService->leaveSession($session, \App\Models\User::findOrFail($request->user_id));
+
+        return response()->json(['success' => true]);
+    }
 }

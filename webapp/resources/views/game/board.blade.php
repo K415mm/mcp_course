@@ -48,6 +48,11 @@
                 <span class="text-white-50 small">vs</span>
                 <span class="fw-bold" style="color:#e83a3a;" id="cbRedScore">{{ $session->redTeam?->score ?? 0 }}</span>
             </div>
+            @if($isMod)
+                <a href="{{ route('game.manage', $session) }}" class="btn btn-sm btn-outline-warning" title="Gérer les équipes">
+                    <i class="bi bi-gear"></i>
+                </a>
+            @endif
             <form method="POST" action="{{ route('game.leave', $session) }}" class="d-inline">
                 @csrf
                 <button class="btn btn-sm btn-outline-secondary" onclick="return confirm('Quitter la session ?')">
@@ -57,12 +62,22 @@
         </div>
     </div>
 
+    {{-- ═══════════════ TURN BANNER ═══════════════ --}}
+    <div class="mx-2">
+        <div id="turnBanner" class="cb-turn-banner neutral">
+            <i class="bi bi-hourglass me-2"></i>EN ATTENTE
+        </div>
+    </div>
+
     <div class="row g-2 mx-1 mb-2">
         {{-- ═══════════════ LEFT: BLUE TEAM ═══════════════ --}}
         <div class="col-lg-3 col-md-4">
-            <div class="cb-team-panel blue h-100">
-                <div class="cb-team-title blue mb-2">
-                    <i class="bi bi-shield-lock me-1"></i> BLUE TEAM — Défense
+            <div class="cb-team-panel blue h-100" id="bluePanel">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="cb-team-title blue">
+                        <i class="bi bi-shield-lock me-1"></i> BLUE TEAM — Défense
+                    </div>
+                    <span id="blueTurnBadge" class="cb-turn-badge" style="display:none;background:#3a90e8;color:#fff;">JOUE</span>
                 </div>
 
                 <div class="d-flex gap-3 mb-2">
@@ -105,31 +120,25 @@
 
                 <div>
                     <div class="small text-white-50 mb-1"><i class="bi bi-shield-check me-1"></i>Cartes actives</div>
-                    <div id="blueActive"></div>
+                    <div id="blueActive"><div class="small text-white-50">Aucune</div></div>
                 </div>
             </div>
         </div>
 
         {{-- ═══════════════ CENTER: BOARD ═══════════════ --}}
         <div class="col-lg-6 col-md-4">
-            {{-- Infrastructure Map --}}
+            {{-- Interactive Network Map --}}
             <div class="card mb-2" style="background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);">
                 <div class="card-body p-2">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <span class="small fw-bold text-white-50"><i class="bi bi-diagram-3 me-1"></i>Infrastructure DevCo</span>
                         <span class="small text-white-50">Scénario {{ $session->scenario }}: {{ $session->scenarioTitle() }}</span>
                     </div>
-                    <div class="cb-infra-grid">
-                        @foreach($systems as $key => $zone)
-                            <div class="cb-zone" id="zone-{{ $key }}">
-                                <div class="cb-zone-title">{{ $zone['name'] }}</div>
-                                @foreach($zone['nodes'] as $node)
-                                    <div class="cb-node" data-node="{{ $node }}">
-                                        <span>{{ $node }}</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endforeach
+                    <div id="networkMap"></div>
+                    <div class="d-flex gap-3 mt-2 justify-content-center">
+                        <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3a90e8;"></span> Sécurisé</span>
+                        <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e83a3a;"></span> Compromis</span>
+                        <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2d9f4f;"></span> Défendu</span>
                     </div>
                 </div>
             </div>
@@ -170,9 +179,12 @@
         {{-- ═══════════════ RIGHT: RED TEAM + MOD ═══════════════ --}}
         <div class="col-lg-3 col-md-4">
             {{-- Red Team Panel --}}
-            <div class="cb-team-panel red mb-2">
-                <div class="cb-team-title red mb-2">
-                    <i class="bi bi-bug me-1"></i> RED TEAM — Attaque
+            <div class="cb-team-panel red mb-2" id="redPanel">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="cb-team-title red">
+                        <i class="bi bi-bug me-1"></i> RED TEAM — Attaque
+                    </div>
+                    <span id="redTurnBadge" class="cb-turn-badge" style="display:none;background:#e83a3a;color:#fff;">JOUE</span>
                 </div>
 
                 <div class="d-flex gap-3 mb-2">
@@ -215,7 +227,7 @@
 
                 <div>
                     <div class="small text-white-50 mb-1"><i class="bi bi-bug me-1"></i>Cartes actives</div>
-                    <div id="redActive"></div>
+                    <div id="redActive"><div class="small text-white-50">Aucune</div></div>
                 </div>
             </div>
 
@@ -251,7 +263,7 @@
         </div>
     </div>
 
-    {{-- ═══════════════ BOTTOM: MY HAND ═══════════════ --}}
+    {{-- ═══════════════ BOTTOM: MY HAND + DROP ZONE ═══════════════ --}}
     <div class="mx-2 mb-2">
         <div class="card" style="background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08);">
             <div class="card-body p-2">
@@ -261,6 +273,7 @@
                         @if($player)
                             <span class="badge {{ $player->team->isBlue() ? 'bg-primary' : 'bg-danger' }} ms-1">{{ $player->team->label() }}</span>
                         @endif
+                        <span class="text-white-50 ms-2" style="font-size:.7rem;">cliquer = jouer &middot; double-cliquer = retourner &middot; glisser = jouer</span>
                     </span>
                     <div class="d-flex gap-1">
                         @if($player)
@@ -271,14 +284,16 @@
                     </div>
                 </div>
                 <div id="myHand" class="cb-hand">
-                    <div class="text-white-50 small p-3">
-                        @if($player)
-                            Chargement des cartes...
-                        @elseif($isMod)
-                            <i class="bi bi-star-fill text-warning me-1"></i> Vous êtes le modérateur
-                        @else
-                            Rejoignez une équipe pour jouer
-                        @endif
+                    @if($player)
+                        <div class="text-white-50 small p-3">Chargement des cartes...</div>
+                    @elseif($isMod)
+                        <div class="text-white-50 small p-3"><i class="bi bi-star-fill text-warning me-1"></i> Vous êtes le modérateur</div>
+                    @else
+                        <div class="text-white-50 small p-3">Vous n'êtes pas assigné à une équipe</div>
+                    @endif
+                    <div class="cb-drop-zone" id="dropZone">
+                        <i class="bi bi-bullseye" style="font-size:1.5rem;opacity:.3;"></i>
+                        <div class="mt-1">Glissez une carte ici<br>pour jouer</div>
                     </div>
                 </div>
             </div>
@@ -333,9 +348,14 @@
 @endsection
 
 @push('scripts')
+{{-- vis-network for infrastructure graph --}}
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+{{-- SortableJS for drag-and-drop --}}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{{-- Game engine --}}
 <script src="{{ asset('js/cyberbreach-game.js') }}"></script>
 <script>
-    const game = new CyberBreachGame({{ $session->id }}, '{{ csrf_token() }}');
+    const game = new CyberBreachGame({{ $session->id }}, '{{ csrf_token() }}', '{{ $isMod ? "moderator" : ($player ? "player" : "spectator") }}');
     document.addEventListener('DOMContentLoaded', () => game.init());
     window.addEventListener('beforeunload', () => game.destroy());
 </script>

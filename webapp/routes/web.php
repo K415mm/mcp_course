@@ -102,6 +102,29 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/confirmed-two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
     Route::delete('/user/two-factor-authentication', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('two-factor.disable');
 
+    // ── CyberBreach Game ─────────────────────────────────────────────────
+    Route::prefix('game')->name('game.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\GameController::class, 'lobby'])->name('lobby');
+        Route::get('/create', [\App\Http\Controllers\GameController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\GameController::class, 'store'])->name('store');
+        Route::get('/{session}', [\App\Http\Controllers\GameController::class, 'show'])->name('show');
+        Route::post('/{session}/join', [\App\Http\Controllers\GameController::class, 'join'])->name('join');
+        Route::post('/{session}/leave', [\App\Http\Controllers\GameController::class, 'leave'])->name('leave');
+
+        // Game API (JSON)
+        Route::prefix('/{session}/api')->name('api.')->group(function () {
+            Route::get('/state', [\App\Http\Controllers\GameApiController::class, 'getGameState'])->name('state');
+            Route::post('/play-card', [\App\Http\Controllers\GameApiController::class, 'playCard'])->name('playCard');
+            Route::post('/draw-card', [\App\Http\Controllers\GameApiController::class, 'drawCard'])->name('drawCard');
+            Route::post('/buy-shop', [\App\Http\Controllers\GameApiController::class, 'buyFromShop'])->name('buyShop');
+            Route::post('/start-round', [\App\Http\Controllers\GameApiController::class, 'startRound'])->name('startRound');
+            Route::post('/advance-phase', [\App\Http\Controllers\GameApiController::class, 'advancePhase'])->name('advancePhase');
+            Route::post('/draw-event', [\App\Http\Controllers\GameApiController::class, 'drawEvent'])->name('drawEvent');
+            Route::post('/adjust-tokens', [\App\Http\Controllers\GameApiController::class, 'adjustTokens'])->name('adjustTokens');
+            Route::post('/deal-hands', [\App\Http\Controllers\GameApiController::class, 'dealHands'])->name('dealHands');
+        });
+    });
+
     // ── Admin-only routes ──────────────────────────────────────────────────
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');

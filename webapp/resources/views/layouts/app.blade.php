@@ -331,6 +331,15 @@
                         </a>
                     </div>
 
+                    <!-- CyberBreach Game -->
+                    <div class="menu-item {{ request()->routeIs('game.*') ? 'active' : '' }}">
+                        <a href="{{ route('game.lobby') }}" class="menu-link">
+                            <span class="menu-icon"><i class="bi bi-controller"></i></span>
+                            <span class="menu-text">CyberBreach</span>
+                            <span class="menu-badge bg-danger">GAME</span>
+                        </a>
+                    </div>
+
                     @auth
                         @php
                             $user = Auth::user();

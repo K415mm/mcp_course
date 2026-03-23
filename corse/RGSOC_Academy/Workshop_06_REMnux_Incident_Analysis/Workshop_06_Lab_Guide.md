@@ -77,11 +77,9 @@ The incident response team has:
 
 | Team | REMnux URL | Token |
 |---|---|---|
-| Alpha | `https://remnux1.tunai.cloud/mcp` | _(from instructor)_ |
-| Bravo | `https://remnux2.tunai.cloud/mcp` | _(from instructor)_ |
-| Delta | `https://remnux3.tunai.cloud/mcp` | _(from instructor)_ |
-| Echo | `https://remnux4.tunai.cloud/mcp` | _(from instructor)_ |
-| Foxtrot | `https://remnux5.tunai.cloud/mcp` | _(from instructor)_ |
+| Alpha | `http://164.90.233.77:3001/mcp` | _(from instructor)_ |
+| Bravo | `http://164.90.233.77:3002/mcp` | _(from instructor)_ |
+| Delta | `http://164.90.233.77:3003/mcp` | _(from instructor)_ |
 
 ---
 
@@ -94,7 +92,7 @@ Open your Trae AI **MCP settings** and add:
   "mcpServers": {
     "remnux": {
       "type": "streamable-http",
-      "url": "https://remnuxX.tunai.cloud/mcp",
+      "url": "http://164.90.233.77:300X/mcp",
       "headers": {
         "Authorization": "Bearer YOUR_TEAM_TOKEN"
       }
@@ -103,7 +101,7 @@ Open your Trae AI **MCP settings** and add:
 }
 ```
 
-> Replace `remnuxX` with your team number (1-5) and `YOUR_TEAM_TOKEN` with the token from the instructor.
+> Replace `300X` with your team port (3001-3003) and `YOUR_TEAM_TOKEN` with the token from the instructor.
 
 **Verify:** Ask Trae AI: _"Check which REMnux analysis tools are available"_
 
@@ -113,7 +111,16 @@ You should see tools like `capa`, `floss`, `tshark`, `zeek`, `strings`, `yara`, 
 
 ## Step 2: Network Traffic Analysis (MCP-Assisted)
 
-The PCAP is pre-loaded at `/home/remnux/files/samples/incident_capture.pcap`.
+### 2.0 — Agentic Artifact Download 
+
+The SOC has securely hosted the evidence zip for you on the internal Web App server. Instead of uploading the file manually, command your Trae AI agent to go fetch it!
+
+```
+Hey Trae, the incident evidence has been securely hosted by the SOC Lead at https://tunai.cloud/downloads/ghostforge_artifacts.zip.
+
+Please use your `download_from_url` tool to securely download this archive. Then, use the `extract_archive` tool to unzip it (the password is: infected).
+```
+*Note: The AI will download the file, unzip it, and reveal `incident_capture.pcap` and `suspicious_binary` in your local samples directory!*
 
 ### 2.1 — PCAP Overview
 
@@ -316,4 +323,4 @@ Complete the following report with your findings:
 2. Write a YARA rule that matches the GhostForge implant based on the unique strings you extracted.
 3. Use the `extract_iocs` MCP tool to generate a STIX bundle from your findings.
 
-**Time Limit:** 120 minutes | **Difficulty:** Intermediate | **Team Size:** up to 10
+**Time Limit:** 120 minutes | **Difficulty:** Intermediate | **Team Size:** up to 17

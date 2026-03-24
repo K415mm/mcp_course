@@ -42,6 +42,10 @@
                                 2 => ['title' => 'Supply Chain Poisoning', 'level' => 'Avancé', 'color' => '#e83a3a', 'desc' => 'Package npm empoisonné → 8 microservices touchés → credentials exfiltrés'],
                                 3 => ['title' => 'Insider Threat', 'level' => 'Expert', 'color' => '#d97706', 'desc' => 'Ex-employé licencié → backdoors AWS → code source exfiltré → fuite concurrentielle'],
                                 4 => ['title' => 'Zero-Day API', 'level' => 'Avancé', 'color' => '#7c6cc5', 'desc' => 'CVE critique CVSS 10.0 → PoC publique → course contre la montre pour patcher'],
+                                5 => ['title' => 'BEC Attack', 'level' => 'Intermédiaire', 'color' => '#20c997', 'desc' => 'CEO usurpé → factures frauduleuses → vol financier'],
+                                6 => ['title' => 'Ransomware Total', 'level' => 'Avancé', 'color' => '#dc3545', 'desc' => 'LockBit → chiffrement massif → backups détruits → double extorsion'],
+                                7 => ['title' => 'APT ciblée (Lazarus)', 'level' => 'Expert', 'color' => '#fd7e14', 'desc' => 'Infiltration étatique (6 mois) → DNS C2 → vol de propriété intellectuelle'],
+                                8 => ['title' => 'Attaque Industrielle', 'level' => 'Expert', 'color' => '#6610f2', 'desc' => 'Pivot IT/OT → automates SCADA/PLC compromis → sabotage physique'],
                             ];
                         @endphp
 

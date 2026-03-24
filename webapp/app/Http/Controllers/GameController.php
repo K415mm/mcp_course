@@ -42,7 +42,7 @@ class GameController extends Controller
     {
         $data = $request->validate([
             'name'          => 'required|string|max:100',
-            'scenario'      => 'required|integer|min:1|max:4',
+            'scenario'      => 'required|integer|min:1|max:8',
             'max_rounds'    => 'nullable|integer|min:4|max:12',
             'timer_seconds' => 'nullable|integer|min:300|max:1800',
         ]);

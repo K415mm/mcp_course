@@ -38,6 +38,7 @@ class GameService
 
     public function joinTeam(GameSession $session, User $user, string $teamType): GameTeam
     {
+        /** @var \App\Models\GameTeam $team */
         $team = $session->teams()->where('type', $teamType)->firstOrFail();
 
         // Remove from any existing team in this session
@@ -183,8 +184,8 @@ class GameService
             'success'       => true,
             'points'        => $points,
             'effectiveness' => $calc['effectiveness'],
-            'isCritical'    => $calc['isCriticalPath'],
-            'message'       => $calc['message'],
+            'isCritical'    => ($calc['scoreMultiplier'] ?? 1) > 1,
+            'message'       => $calc['log'] ?? '',
             'play'          => $play,
         ];
     }

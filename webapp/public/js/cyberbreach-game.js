@@ -206,8 +206,8 @@ class CyberBreachGame {
 
         const options = {
             nodes: { shape: 'box', margin: 10, shadow: { enabled: true, color: 'rgba(0,0,0,.3)', size: 8 } },
-            edges: { smooth: { type: 'cubicBezier', forceDirection: 'horizontal' } },
-            layout: { hierarchical: { direction: 'LR', sortMethod: 'directed', levelSeparation: 160, nodeSpacing: 70 } },
+            edges: { smooth: { type: 'cubicBezier', forceDirection: 'vertical' } },
+            layout: { hierarchical: { direction: 'UD', sortMethod: 'directed', levelSeparation: 130, nodeSpacing: 85 } },
             physics: false,
             interaction: { hover: true, tooltipDelay: 200, zoomView: true, dragView: true },
         };
@@ -289,7 +289,7 @@ class CyberBreachGame {
                 physics: { 
                     enabled: true, 
                     solver: 'forceAtlas2Based',
-                    forceAtlas2Based: { gravitationalConstant: -100, centralGravity: 0.01, springLength: 100, springConstant: 0.08 }
+                    forceAtlas2Based: { gravitationalConstant: -180, centralGravity: 0.04, springLength: 120, springConstant: 0.08 },
                 }
             });
         }

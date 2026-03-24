@@ -225,6 +225,56 @@ class CardEffectivenessMatrix
             80  => ['plc_cooling', 'plc_assembly'],
             50  => ['hmi_main'],
         ],
+        'Zero-Day Firewall Exploit' => [
+            100 => ['waf', 'fw_it_ot', 'vpn'],
+            80  => ['apigw', 'apigw2'],
+            50  => [],
+        ],
+        'Token Theft via OAuth' => [
+            100 => ['o365', 'github_ent', 'slack'],
+            80  => ['jira'],
+            50  => ['aws_iam'],
+        ],
+        'Container Escape' => [
+            100 => ['k8s_workers', 'jenkins_workers'],
+            80  => ['k8s_control', 'aws_ec2'],
+            50  => ['docker_reg'],
+        ],
+        'BGP Hijacking' => [
+            100 => ['internet', 'dns_ext', 'dns_c2'],
+            80  => ['waf', 'apigw'],
+            50  => ['vpn'],
+        ],
+        'Active Directory Golden Ticket' => [
+            100 => ['ad_primary', 'ad_sec', 'vcenter'],
+            80  => ['file_svr', 'nas', 'erp'],
+            50  => ['intranet', 'wsus'],
+        ],
+        'Supply Chain Hardware Implant' => [
+            100 => ['laptop_dev_lead', 'laptop_ceo', 'laptop_admin'],
+            80  => ['laptops_dev', 'laptops_ops', 'ot_eng_ws'],
+            50  => ['laptops_finance', 'laptops_hr', 'laptops_sales'],
+        ],
+        'Cloud IAM Policy Abuse' => [
+            100 => ['aws_iam', 'aws_ec2'],
+            80  => ['aws_s3', 'vault'],
+            50  => ['github_ent'],
+        ],
+        'Database Dump via SQLi' => [
+            100 => ['db_prod', 'db_dev', 'erp'],
+            80  => ['intranet', 'admin_portal'],
+            50  => ['slack'],
+        ],
+        'SCADA Firmware Downgrade' => [
+            100 => ['scada_master', 'plc_assembly', 'plc_cooling'],
+            80  => ['hmi_main', 'sis'],
+            50  => ['historian', 'ot_jump'],
+        ],
+        'Spearphishing Sysadmin' => [
+            100 => ['laptop_admin', 'linux_jump', 'ot_jump'],
+            80  => ['laptop_dev_lead', 'rdp_jump'],
+            50  => ['vault'],
+        ],
     ];
 
     private const BLUE_MATRIX = [
@@ -344,6 +394,56 @@ class CardEffectivenessMatrix
             100 => ['sis', 'plc_assembly', 'plc_cooling'],
             80  => ['hmi_main', 'scada_master', 'ot_eng_ws'],
             50  => [],
+        ],
+        'Zero-Trust Network Access' => [
+            100 => ['vpn', 'rdp_jump', 'linux_jump', 'ot_jump'],
+            80  => ['apigw', 'apigw2', 'waf'],
+            50  => ['ad_primary'],
+        ],
+        'MFA Enforced Company-Wide' => [
+            100 => ['o365', 'github_ent', 'slack', 'vpn'],
+            80  => ['jira', 'admin_portal', 'erp'],
+            50  => ['aws_iam'],
+        ],
+        'Immutable Cloud Backups' => [
+            100 => ['aws_glacier', 'veeam', 'offline_backup'],
+            80  => ['aws_s3', 'nas'],
+            50  => ['file_svr'],
+        ],
+        'Container Runtime Security' => [
+            100 => ['k8s_control', 'k8s_workers'],
+            80  => ['docker_reg', 'jenkins_workers', 'gitlab'],
+            50  => ['aws_ec2'],
+        ],
+        'DNS Sinkhole' => [
+            100 => ['dns_ext', 'dns_c2'],
+            80  => ['internet', 'waf'],
+            50  => ['apigw'],
+        ],
+        'EDR Mass Deployment' => [
+            100 => ['ad_primary', 'ad_sec', 'vcenter', 'laptop_ceo', 'laptop_admin'],
+            80  => ['laptops_staff', 'laptops_dev', 'laptops_ops'],
+            50  => ['db_prod', 'file_svr'],
+        ],
+        'Cloud Security Posture (CSPM)' => [
+            100 => ['aws_iam', 'aws_s3', 'aws_ec2'],
+            80  => ['vault', 'k8s_control'],
+            50  => ['github_ent'],
+        ],
+        'Database Activity Monitoring' => [
+            100 => ['db_prod', 'db_dev'],
+            80  => ['elastic', 'redis'],
+            50  => ['data_lake'],
+        ],
+        'OT Honeynet Deployment' => [
+            100 => ['scada_master', 'fw_it_ot', 'ot_jump'],
+            80  => ['historian', 'plc_assembly', 'hmi_main'],
+            50  => ['sis'],
+        ],
+        'Privileged Access Break-Glass' => [
+            100 => ['pam', 'vault', 'aws_iam'],
+            80  => ['ad_primary', 'vcenter'],
+            50  => ['vpn'],
         ],
     ];
 

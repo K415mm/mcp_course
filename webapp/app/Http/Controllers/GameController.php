@@ -83,7 +83,7 @@ class GameController extends Controller
                 ->with('error', 'Vous n\'êtes pas assigné à cette session.');
         }
 
-        $systems = GameService::systems();
+        $systems = GameService::systems($session->scenario);
 
         return view('game.board', compact('session', 'isMod', 'player', 'systems'));
     }

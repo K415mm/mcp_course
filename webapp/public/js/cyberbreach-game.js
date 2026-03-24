@@ -2,10 +2,11 @@
  * CyberBreach Game Engine v3 — Card-to-Node Scoring, Node States, Zoom
  */
 class CyberBreachGame {
-    constructor(sessionId, csrfToken, role) {
+    constructor(sessionId, csrfToken, role, scenario = null) {
         this.sessionId = sessionId;
         this.csrf = csrfToken;
         this.role = role;
+        this.scenario = scenario ? parseInt(scenario) : null;
         this.state = null;
         this.selectedCard = null;
         this.pollInterval = null;
@@ -102,6 +103,17 @@ class CyberBreachGame {
         scada: 'SCADA System', plc: 'PLC Controllers', hmi: 'HMI Interface', sis: 'Safety Systems (SIS)',
     };
 
+    static SCENARIO_NODES = {
+        1: ['apigw', 'cicd', 'github', 'vault', 'aws', 'slack', 'jira', 'dbprod'],
+        2: ['apigw', 'k8s', 'docker', 'npm', 'cicd', 'github', 'aws', 'dbprod'],
+        3: ['apigw', 'aws', 'vault', 'github', 'cicd', 'slack', 'jira', 'dbprod'],
+        4: ['apigw', 'k8s', 'dbprod', 'aws', 'slack', 'vault', 'docker'],
+        5: ['apigw', 'slack', 'jira', 'vault', 'github', 'dbprod'],
+        6: ['apigw', 'k8s', 'docker', 'dbprod', 'dbdev', 'github', 'cicd', 'aws'],
+        7: ['apigw', 'k8s', 'aws', 'github', 'cicd', 'docker', 'vault', 'dbprod', 'slack', 'jira'],
+        8: ['apigw', 'k8s', 'scada', 'plc', 'hmi', 'sis', 'slack', 'aws', 'dbprod']
+    };
+
     // ── vis-network Infrastructure Map ──────────────────────────
     initNetworkMap() {
         const container = document.getElementById('networkMap');
@@ -110,7 +122,7 @@ class CyberBreachGame {
         const baseColor = { background: '#0f2847', border: '#3a90e8' };
         const secColor  = { background: '#1a2744', border: '#5580aa' };
 
-        const nodes = new vis.DataSet([
+        const allNodesData = [
             { id: 'internet', label: '🌐 Internet',       shape: 'diamond', color: { background: '#1a2744', border: '#3a90e8' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
             { id: 'apigw',    label: '🛡️ API Gateway',    shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
             { id: 'k8s',      label: '☸️ K8s Cluster',    shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
@@ -124,14 +136,20 @@ class CyberBreachGame {
             { id: 'slack',    label: '💬 Slack/Comms',     shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
             { id: 'jira',     label: '📋 Jira/Tickets',   shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
             { id: 'aws',      label: '☁️ AWS Prod',       shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            // OT/ICS Zone
             { id: 'scada',    label: '🏭 SCADA',          shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
             { id: 'plc',      label: '🔧 PLC Controllers', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2, size: 18 },
             { id: 'hmi',      label: '💻 HMI Interface',  shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 1, size: 18 },
             { id: 'sis',      label: '⚠️ Safety (SIS)',   shape: 'box', color: { background: '#2d1f0e', border: '#dc2626' }, font: { color: '#fca5a5', size: 11 }, borderWidth: 2, size: 20 },
-        ]);
+        ];
 
-        const edges = new vis.DataSet([
+        let filteredNodes = allNodesData;
+        if (this.scenario && CyberBreachGame.SCENARIO_NODES[this.scenario]) {
+            const allowed = CyberBreachGame.SCENARIO_NODES[this.scenario];
+            filteredNodes = allNodesData.filter(n => allowed.includes(n.id) || n.id === 'internet');
+        }
+        const nodes = new vis.DataSet(filteredNodes);
+
+        const allEdgesData = [
             { from: 'internet', to: 'apigw',  arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
             { from: 'apigw',    to: 'k8s',    arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
             { from: 'apigw',    to: 'vault',  arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .3 } },
@@ -144,12 +162,15 @@ class CyberBreachGame {
             { from: 'cicd',     to: 'npm',    arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
             { from: 'vault',    to: 'slack',  dashes: true, color: { color: '#555', opacity: .2 } },
             { from: 'vault',    to: 'jira',   dashes: true, color: { color: '#555', opacity: .2 } },
-            // OT/ICS connections
             { from: 'k8s',      to: 'scada',  arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .3 } },
             { from: 'scada',    to: 'plc',    arrows: 'to', color: { color: '#d97706', opacity: .4 } },
             { from: 'scada',    to: 'hmi',    arrows: 'to', color: { color: '#d97706', opacity: .3 } },
             { from: 'plc',      to: 'sis',    arrows: 'to', dashes: true, color: { color: '#dc2626', opacity: .4 } },
-        ]);
+        ];
+
+        const nodeIds = new Set(filteredNodes.map(n => n.id));
+        const filteredEdges = allEdgesData.filter(e => nodeIds.has(e.from) && nodeIds.has(e.to));
+        const edges = new vis.DataSet(filteredEdges);
 
         this.networkNodes = nodes;
 
@@ -199,8 +220,8 @@ class CyberBreachGame {
             compromised: { background: '#3c0d0d', border: '#e83a3a' },
             defended:    { background: '#0a2e1a', border: '#2d9f4f' },
         };
-        // Reset all non-Internet nodes to safe
-        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws','scada','plc','hmi','sis'];
+        // Reset all active nodes (except internet) to safe
+        const allIds = this.networkNodes.getIds().filter(id => id !== 'internet');
         allIds.forEach(id => {
             const st = nodeStates[id] || 'safe';
             const c = stateColors[st] || stateColors.safe;
@@ -235,7 +256,7 @@ class CyberBreachGame {
             this.updateNodeStates(this.state.nodeStates);
         }
         // Reset opacity & border width
-        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws','scada','plc','hmi','sis'];
+        const allIds = this.networkNodes.getIds().filter(id => id !== 'internet');
         allIds.forEach(id => {
             this.networkNodes?.update({ id, borderWidth: 2, opacity: 1 });
         });

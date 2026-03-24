@@ -374,9 +374,24 @@ class GameService
 
     // ── Infrastructure Systems ──────────────────────────────────────
 
-    public static function systems(): array
+    public static function allowedNodesForScenario(int $scenario): array
     {
-        return [
+        return match($scenario) {
+            1 => ['API Gateway', 'CI/CD Pipeline', 'GitHub Repos', 'Secrets Vault', 'AWS Production', 'Slack/Comms', 'Jira/Tickets', 'DB Production'],
+            2 => ['API Gateway', 'Kubernetes Cluster', 'Docker Registry', 'npm Registry', 'CI/CD Pipeline', 'GitHub Repos', 'AWS Production', 'DB Production'],
+            3 => ['API Gateway', 'AWS Production', 'Secrets Vault', 'GitHub Repos', 'CI/CD Pipeline', 'Slack/Comms', 'Jira/Tickets', 'DB Production'],
+            4 => ['API Gateway', 'Kubernetes Cluster', 'DB Production', 'AWS Production', 'Slack/Comms', 'Secrets Vault', 'Docker Registry'],
+            5 => ['API Gateway', 'Slack/Comms', 'Jira/Tickets', 'Secrets Vault', 'GitHub Repos', 'DB Production'],
+            6 => ['API Gateway', 'Kubernetes Cluster', 'Docker Registry', 'DB Production', 'DB Dev/Test', 'GitHub Repos', 'CI/CD Pipeline', 'AWS Production'],
+            7 => ['API Gateway', 'Kubernetes Cluster', 'AWS Production', 'GitHub Repos', 'CI/CD Pipeline', 'Docker Registry', 'Secrets Vault', 'DB Production', 'Slack/Comms', 'Jira/Tickets'],
+            8 => ['API Gateway', 'Kubernetes Cluster', 'SCADA System', 'PLC Controllers', 'HMI Interface', 'Safety Systems (SIS)', 'Slack/Comms', 'AWS Production', 'DB Production'],
+            default => [],
+        };
+    }
+
+    public static function systems(?int $scenario = null): array
+    {
+        $all = [
             'devops' => [
                 'name'  => 'Zone DevOps',
                 'nodes' => ['GitHub Repos', 'CI/CD Pipeline', 'Docker Registry', 'npm Registry'],
@@ -398,6 +413,23 @@ class GameService
                 'nodes' => ['SCADA System', 'PLC Controllers', 'HMI Interface', 'Safety Systems (SIS)'],
             ],
         ];
+
+        if (!$scenario) return $all;
+
+        $allowed = self::allowedNodesForScenario($scenario);
+        $filtered = [];
+
+        foreach ($all as $key => $zone) {
+            $validNodes = array_values(array_intersect($zone['nodes'], $allowed));
+            if (!empty($validNodes)) {
+                $filtered[$key] = [
+                    'name'  => $zone['name'],
+                    'nodes' => $validNodes,
+                ];
+            }
+        }
+
+        return $filtered;
     }
 
     // ── Private helpers ─────────────────────────────────────────────

@@ -372,7 +372,7 @@
 {{-- Game engine --}}
 <script src="{{ asset('js/cyberbreach-game.js') }}"></script>
 <script>
-    const game = new CyberBreachGame({{ $session->id }}, '{{ csrf_token() }}', '{{ $isMod ? "moderator" : ($player ? "player" : "spectator") }}');
+    const game = new CyberBreachGame({{ $session->id }}, '{{ csrf_token() }}', '{{ $isMod ? "moderator" : ($player ? "player" : "spectator") }}', {{ $session->scenario ?? 1 }});
     document.addEventListener('DOMContentLoaded', () => game.init());
     window.addEventListener('beforeunload', () => game.destroy());
 </script>

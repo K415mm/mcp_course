@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class GameCard extends Model
 {
     protected $fillable = [
-        'type', 'subtype', 'name', 'phase', 'description',
-        'effect', 'cost', 'points', 'duration', 'team', 'data',
+        'name', 'type', 'phase', 'description', 'effect', 'mitre_id', 'mitre_name', 'mitre_description', 'cost', 'points', 'duration', 'team', 'data',
     ];
 
     protected function casts(): array

@@ -86,32 +86,32 @@ class CyberBreachGame {
 
     // ── NODE MAP ↔ Display Name Mapping ────────────────────────
     static NODE_MAP = {
-        internet: '🌐 Internet', apigw: '🛡️ API Gateway', k8s: '☸️ K8s Cluster',
-        dbprod: '🗄️ DB Prod', dbdev: '🧪 DB Dev/Test', docker: '🐳 Docker Registry',
-        cicd: '⚙️ CI/CD Pipeline', npm: '📦 npm Registry', github: '🐙 GitHub Repos',
-        vault: '🔑 Secrets Vault', slack: '💬 Slack/Comms', jira: '📋 Jira/Tickets',
-        aws: '☁️ AWS Prod',
-        scada: '🏭 SCADA', plc: '🔧 PLC Controllers', hmi: '💻 HMI', sis: '⚠️ SIS',
+        internet: '🌐 Internet',
+        laptop_dev: '💻 Dev Laptop', laptop_ex: '💻 Ex-Emp Laptop', laptop_ceo: '💻 CEO Laptop', laptop_finance: '💻 Finance Laptop', laptops: '💻 Laptops',
+        apigw: '🛡️ API Gateway', apigw2: '🛡️ API Gateway v2', aws_ec2: '☁️ AWS EC2', aws_s3: '🪣 AWS S3', aws_iam: '🔑 AWS IAM', vpn: '🔒 VPN', rdp: '🖥️ RDP', firewall_it_ot: '🧱 IT/OT FW',
+        dbprod: '🗄️ DB Prod', o365: '✉️ Office 365', bank: '🏦 Bank', slack: '💬 Slack', jira: '📋 Jira', vault: '🔑 Vault', backup: '💾 Veeam', dns_c2: '📡 DNS C2', ad: '🏠 Domain Ctrl',
+        jenkins: '⚙️ Jenkins', gitlab: '⚙️ GitLab CI', github: '🐙 GitHub', npm: '📦 npm', docker: '🐳 Docker', k8s: '☸️ K8s',
+        scada: '🏭 SCADA', plc: '🔧 PLC', hmi: '💻 HMI', sis: '⚠️ SIS',
     };
 
     static NODE_TO_DISPLAY = {
-        internet: 'Internet', apigw: 'API Gateway', k8s: 'Kubernetes Cluster',
-        dbprod: 'DB Production', dbdev: 'DB Dev/Test', docker: 'Docker Registry',
-        cicd: 'CI/CD Pipeline', npm: 'npm Registry', github: 'GitHub Repos',
-        vault: 'Secrets Vault', slack: 'Slack/Comms', jira: 'Jira/Tickets',
-        aws: 'AWS Production',
-        scada: 'SCADA System', plc: 'PLC Controllers', hmi: 'HMI Interface', sis: 'Safety Systems (SIS)',
+        internet: 'Internet',
+        laptop_dev: 'Developer Laptop', laptop_ex: 'Ex-Employee Laptop', laptop_ceo: 'CEO Laptop', laptop_finance: 'Finance Laptop', laptops: 'Employee Laptops',
+        apigw: 'API Gateway', apigw2: 'API Gateway v2', aws_ec2: 'AWS EC2', aws_s3: 'AWS S3', aws_iam: 'AWS IAM', vpn: 'VPN Gateway', rdp: 'RDP Gateway', firewall_it_ot: 'IT/OT Firewall',
+        dbprod: 'DB Prod', o365: 'Office 365', bank: 'Bank Portal', slack: 'Slack', jira: 'Jira', vault: 'HashiCorp Vault', backup: 'Veeam Backup', dns_c2: 'DNS C2', ad: 'Domain Controller',
+        jenkins: 'Jenkins CI', gitlab: 'GitLab CI', github: 'GitHub Enterprise', npm: 'npm Registry', docker: 'Docker Hub', k8s: 'K8s Cluster',
+        scada: 'SCADA Server', plc: 'PLC Controllers', hmi: 'HMI Panel', sis: 'Safety System (SIS)',
     };
 
     static SCENARIO_NODES = {
-        1: ['apigw', 'cicd', 'github', 'vault', 'aws', 'slack', 'jira', 'dbprod'],
-        2: ['apigw', 'k8s', 'docker', 'npm', 'cicd', 'github', 'aws', 'dbprod'],
-        3: ['apigw', 'aws', 'vault', 'github', 'cicd', 'slack', 'jira', 'dbprod'],
-        4: ['apigw', 'k8s', 'dbprod', 'aws', 'slack', 'vault', 'docker'],
-        5: ['apigw', 'slack', 'jira', 'vault', 'github', 'dbprod'],
-        6: ['apigw', 'k8s', 'docker', 'dbprod', 'dbdev', 'github', 'cicd', 'aws'],
-        7: ['apigw', 'k8s', 'aws', 'github', 'cicd', 'docker', 'vault', 'dbprod', 'slack', 'jira'],
-        8: ['apigw', 'k8s', 'scada', 'plc', 'hmi', 'sis', 'slack', 'aws', 'dbprod']
+        1: ['apigw', 'jenkins', 'github', 'vault', 'aws_ec2', 'aws_s3', 'slack', 'jira', 'laptop_dev'],
+        2: ['apigw', 'npm', 'docker', 'gitlab', 'k8s', 'aws_ec2', 'dbprod'],
+        3: ['vpn', 'laptop_ex', 'vault', 'github', 'aws_iam', 'aws_ec2', 'dbprod'],
+        4: ['apigw2', 'k8s', 'dbprod', 'aws_ec2', 'docker', 'slack', 'vault'],
+        5: ['o365', 'laptop_ceo', 'laptop_finance', 'bank', 'slack'],
+        6: ['rdp', 'ad', 'dbprod', 'backup', 'laptops'],
+        7: ['dns_c2', 'apigw', 'k8s', 'aws_ec2', 'vault', 'dbprod', 'slack', 'github'],
+        8: ['apigw', 'firewall_it_ot', 'scada', 'plc', 'hmi', 'sis', 'dbprod']
     };
 
     // ── vis-network Infrastructure Map ──────────────────────────
@@ -123,23 +123,44 @@ class CyberBreachGame {
         const secColor  = { background: '#1a2744', border: '#5580aa' };
 
         const allNodesData = [
-            { id: 'internet', label: '🌐 Internet',       shape: 'diamond', color: { background: '#1a2744', border: '#3a90e8' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
-            { id: 'apigw',    label: '🛡️ API Gateway',    shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'k8s',      label: '☸️ K8s Cluster',    shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'dbprod',   label: '🗄️ DB Prod',        shape: 'database', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'dbdev',    label: '🧪 DB Dev/Test',    shape: 'database', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'docker',   label: '🐳 Docker Registry', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'cicd',     label: '⚙️ CI/CD Pipeline', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'npm',      label: '📦 npm Registry',   shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'github',   label: '🐙 GitHub Repos',   shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'vault',    label: '🔑 Secrets Vault',  shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'slack',    label: '💬 Slack/Comms',     shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'jira',     label: '📋 Jira/Tickets',   shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'aws',      label: '☁️ AWS Prod',       shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'scada',    label: '🏭 SCADA',          shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'plc',      label: '🔧 PLC Controllers', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2, size: 18 },
-            { id: 'hmi',      label: '💻 HMI Interface',  shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'sis',      label: '⚠️ Safety (SIS)',   shape: 'box', color: { background: '#2d1f0e', border: '#dc2626' }, font: { color: '#fca5a5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'internet', label: '🌐 Internet', shape: 'diamond', color: { background: '#1a2744', border: '#3a90e8' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
+            // Endpoints
+            { id: 'laptop_dev', label: '💻 Dev Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'laptop_ex', label: '💻 Ex-Emp Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'laptop_ceo', label: '💻 CEO Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'laptop_finance', label: '💻 Finance Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'laptops', label: '💻 Laptops', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            // Infra & Cloud
+            { id: 'apigw', label: '🛡️ API Gateway', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'apigw2', label: '🛡️ API Gateway v2', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'aws_ec2', label: '☁️ AWS EC2', shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'aws_s3', label: '🪣 AWS S3', shape: 'database', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'aws_iam', label: '🔑 AWS IAM', shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'vpn', label: '🔒 VPN', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'rdp', label: '🖥️ RDP', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'firewall_it_ot', label: '🧱 IT/OT FW', shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            // Data & Apps
+            { id: 'dbprod', label: '🗄️ DB Prod', shape: 'database', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'o365', label: '✉️ Office 365', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'bank', label: '🏦 Bank', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'slack', label: '💬 Slack', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'jira', label: '📋 Jira', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'vault', label: '🔑 Vault', shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'backup', label: '💾 Veeam', shape: 'database', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'dns_c2', label: '📡 DNS C2', shape: 'diamond', color: { background: '#3c0d0d', border: '#e83a3a' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
+            { id: 'ad', label: '🏠 Domain Ctrl', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            // DevOps
+            { id: 'jenkins', label: '⚙️ Jenkins', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'gitlab', label: '⚙️ GitLab', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'github', label: '🐙 GitHub', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'npm', label: '📦 npm', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'docker', label: '🐳 Docker', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'k8s', label: '☸️ K8s', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            // OT
+            { id: 'scada', label: '🏭 SCADA', shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'plc', label: '🔧 PLC', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2, size: 18 },
+            { id: 'hmi', label: '💻 HMI', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'sis', label: '⚠️ SIS', shape: 'box', color: { background: '#2d1f0e', border: '#dc2626' }, font: { color: '#fca5a5', size: 11 }, borderWidth: 2, size: 20 },
         ];
 
         let filteredNodes = allNodesData;
@@ -151,21 +172,44 @@ class CyberBreachGame {
 
         const allEdgesData = [
             { from: 'internet', to: 'apigw',  arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
-            { from: 'apigw',    to: 'k8s',    arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'apigw',    to: 'vault',  arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .3 } },
-            { from: 'k8s',      to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'k8s',      to: 'docker', arrows: 'to', color: { color: '#3a90e8', opacity: .3 } },
-            { from: 'k8s',      to: 'aws',    arrows: 'to', color: { color: '#d97706', opacity: .3 } },
-            { from: 'dbprod',   to: 'dbdev',  arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'docker',   to: 'cicd',   arrows: 'from', color: { color: '#3a90e8', opacity: .3 } },
-            { from: 'cicd',     to: 'github', arrows: 'from', color: { color: '#3a90e8', opacity: .3 } },
-            { from: 'cicd',     to: 'npm',    arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'vault',    to: 'slack',  dashes: true, color: { color: '#555', opacity: .2 } },
-            { from: 'vault',    to: 'jira',   dashes: true, color: { color: '#555', opacity: .2 } },
-            { from: 'k8s',      to: 'scada',  arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .3 } },
-            { from: 'scada',    to: 'plc',    arrows: 'to', color: { color: '#d97706', opacity: .4 } },
-            { from: 'scada',    to: 'hmi',    arrows: 'to', color: { color: '#d97706', opacity: .3 } },
-            { from: 'plc',      to: 'sis',    arrows: 'to', dashes: true, color: { color: '#dc2626', opacity: .4 } },
+            { from: 'internet', to: 'apigw2', arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
+            { from: 'internet', to: 'vpn', arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
+            { from: 'internet', to: 'rdp', arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
+            { from: 'internet', to: 'o365', arrows: 'to', color: { color: '#555', opacity: .5 }, width: 2 },
+            { from: 'apigw', to: 'slack', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'apigw2', to: 'slack', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'slack', to: 'jira', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'vault', to: 'slack', dashes: true, color: { color: '#555', opacity: .2 } },
+            { from: 'laptop_dev', to: 'github', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
+            { from: 'github', to: 'jenkins', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
+            { from: 'github', to: 'gitlab', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
+            { from: 'jenkins', to: 'aws_ec2', arrows: 'to', color: { color: '#d97706', opacity: .3 } },
+            { from: 'gitlab', to: 'k8s', arrows: 'to', color: { color: '#3a90e8', opacity: .3 } },
+            { from: 'npm', to: 'gitlab', arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'docker', to: 'gitlab', arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'apigw', to: 'vault', dashes: true, color: { color: '#d97706', opacity: .3 } },
+            { from: 'vault', to: 'aws_ec2', dashes: true, color: { color: '#d97706', opacity: .3 } },
+            { from: 'aws_ec2', to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
+            { from: 'k8s', to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
+            { from: 'aws_ec2', to: 'aws_s3', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
+            { from: 'aws_iam', to: 'aws_ec2', arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .4 } },
+            { from: 'vpn', to: 'ad', arrows: 'to', color: { color: '#555', opacity: .4 } },
+            { from: 'rdp', to: 'ad', arrows: 'to', color: { color: '#555', opacity: .4 } },
+            { from: 'ad', to: 'laptops', arrows: 'to', color: { color: '#555', opacity: .4 } },
+            { from: 'laptops', to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .3 } },
+            { from: 'ad', to: 'backup', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'o365', to: 'laptop_ceo', arrows: 'to', color: { color: '#555', opacity: .4 } },
+            { from: 'laptop_ceo', to: 'laptop_finance', arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .4 } },
+            { from: 'laptop_finance', to: 'bank', arrows: 'to', color: { color: '#2d9f4f', opacity: .4 } },
+            { from: 'laptop_ex', to: 'vpn', arrows: 'to', color: { color: '#555', opacity: .4 } },
+            { from: 'internet', to: 'dns_c2', arrows: 'from', color: { color: '#e83a3a', opacity: .5 }, width: 2 },
+            { from: 'dns_c2', to: 'k8s', arrows: 'to', dashes: true, color: { color: '#e83a3a', opacity: .3 } },
+            { from: 'apigw', to: 'firewall_it_ot', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
+            { from: 'dbprod', to: 'firewall_it_ot', arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
+            { from: 'firewall_it_ot', to: 'scada', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
+            { from: 'scada', to: 'plc', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
+            { from: 'scada', to: 'hmi', arrows: 'to', color: { color: '#d97706', opacity: .3 } },
+            { from: 'plc', to: 'sis', arrows: 'to', dashes: true, color: { color: '#dc2626', opacity: .4 } },
         ];
 
         const nodeIds = new Set(filteredNodes.map(n => n.id));
@@ -184,20 +228,9 @@ class CyberBreachGame {
 
         this.network = new vis.Network(container, { nodes, edges }, options);
 
-        // Click node = select as target
-        this.network.on('click', (params) => {
-            if (params.nodes.length > 0 && this.selectedCard) {
-                const nodeId = params.nodes[0];
-                if (nodeId === 'internet') return;
-                const displayName = CyberBreachGame.NODE_TO_DISPLAY[nodeId] || nodeId;
-                this.selectedCard.targetSystem = displayName;
-                this.showPlayModal();
-            }
-        });
-
-        // Hover node = show effectiveness if card selected
+        // Moderator only: Hover node to show effectiveness if card selected
         this.network.on('hoverNode', (params) => {
-            if (this.selectedCard && this.selectedCard._effectivenessData) {
+            if (this.role === 'moderator' && this.selectedCard && this.selectedCard._effectivenessData) {
                 const eff = this.selectedCard._effectivenessData[params.node];
                 if (eff) {
                     container.title = `${eff.nodeName}: ${eff.effectiveness}% → ${eff.points} pts${eff.isCritical ? ' ★ Critique' : ''}`;
@@ -205,12 +238,85 @@ class CyberBreachGame {
             }
         });
         this.network.on('blurNode', () => { container.title = ''; });
+
+        // ── HTML5 Drag & Drop onto Map ──
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault(); 
+            e.dataTransfer.dropEffect = 'copy';
+            
+            if (this.role === 'moderator' && this.selectedCard && this.selectedCard._effectivenessData) {
+                const rect = container.getBoundingClientRect();
+                const pos = this.network.DOMtoCanvas({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+                const nodeId = this.network.getNodeAt(pos);
+                if (nodeId) {
+                    const eff = this.selectedCard._effectivenessData[nodeId];
+                    if (eff) container.title = `${eff.nodeName}: ${eff.effectiveness}% → ${eff.points} pts${eff.isCritical ? ' ★ Critique' : ''}`;
+                    else container.title = '';
+                } else container.title = '';
+            }
+        });
+
+        container.addEventListener('dragleave', () => { container.title = ''; });
+
+        container.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.network.unselectAll();
+            container.title = '';
+            
+            const cardDataStr = e.dataTransfer.getData('application/json');
+            if (!cardDataStr) return;
+            
+            const rect = container.getBoundingClientRect();
+            const pos = this.network.DOMtoCanvas({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+            const nodeId = this.network.getNodeAt(pos);
+
+            // Inherit the Selected Card initialized in dragstart
+            if (nodeId && nodeId !== 'internet') {
+                const displayName = CyberBreachGame.NODE_TO_DISPLAY[nodeId] || nodeId;
+                this.selectedCard.targetSystem = displayName;
+            } else {
+                this.selectedCard.targetSystem = null; 
+            }
+            
+            this.showPlayModal();
+        });
     }
 
     // Zoom controls
     zoomIn()  { if (this.network) this.network.moveTo({ scale: this.network.getScale() * 1.3 }); }
     zoomOut() { if (this.network) this.network.moveTo({ scale: this.network.getScale() / 1.3 }); }
     zoomFit() { if (this.network) this.network.fit({ animation: { duration: 300 } }); }
+
+    // Toggle Network Layout
+    toggleNetworkLayout() {
+        if (!this.network) return;
+        this.isFlatView = this.isFlatView === undefined ? false : !this.isFlatView; // defaults to true in init, so first click goes to false (organic)
+        
+        if (this.isFlatView) {
+            this.network.setOptions({
+                layout: { hierarchical: { direction: 'LR', sortMethod: 'directed', levelSeparation: 160, nodeSpacing: 70 } },
+                physics: false
+            });
+        } else {
+            this.network.setOptions({
+                layout: { hierarchical: false },
+                physics: { 
+                    enabled: true, 
+                    solver: 'forceAtlas2Based',
+                    forceAtlas2Based: { gravitationalConstant: -100, centralGravity: 0.01, springLength: 100, springConstant: 0.08 }
+                }
+            });
+        }
+        setTimeout(() => this.network.fit({ animation: { duration: 500 } }), 100);
+        
+        const btn = document.getElementById('btnLayoutToggle');
+        if (btn) {
+            btn.innerHTML = this.isFlatView ? '<i class="bi bi-diagram-3"></i>' : '<i class="bi bi-diagram-2"></i>';
+            btn.title = this.isFlatView ? 'Vue Network (Organique)' : 'Vue Flat (Hiérarchique)';
+            btn.className = this.isFlatView ? 'btn btn-xs btn-outline-info me-2' : 'btn btn-xs btn-info text-dark me-2';
+        }
+        this.showToast(`Vue modifiée : ${this.isFlatView ? 'Hiérarchique' : 'Organique'}`, 'info');
+    }
 
     // Update node colors from state
     updateNodeStates(nodeStates) {
@@ -264,19 +370,35 @@ class CyberBreachGame {
 
     // ── Event Binding ───────────────────────────────────────
     bindEvents() {
-        // Card click to select
-        document.addEventListener('click', (e) => {
-            const cardFlip = e.target.closest('.cb-card-flip[data-team-card-id]');
-            if (cardFlip) {
-                this.selectCard(cardFlip);
-                return;
-            }
-        });
-
         // Double-click to flip
         document.addEventListener('dblclick', (e) => {
             const cardFlip = e.target.closest('.cb-card-flip');
             if (cardFlip) cardFlip.classList.toggle('flipped');
+        });
+
+        // HTML5 Drag Start
+        document.addEventListener('dragstart', (e) => {
+            const cardEl = e.target.closest('.cb-card-flip[data-team-card-id]');
+            if (cardEl) {
+                this.selectCard(cardEl); 
+                const cardData = {
+                    teamCardId: parseInt(cardEl.dataset.teamCardId),
+                    cardName: cardEl.dataset.cardName || '',
+                    cardType: cardEl.dataset.cardType || '',
+                    cost: parseInt(cardEl.dataset.cost || 0),
+                    basePoints: parseInt(cardEl.dataset.basePoints || 0),
+                    targetSystem: null,
+                };
+                e.dataTransfer.setData('application/json', JSON.stringify(cardData));
+                e.dataTransfer.effectAllowed = 'copyMove';
+            }
+        });
+
+        // HTML5 Drag End
+        document.addEventListener('dragend', (e) => {
+            this.resetNodeHighlights();
+            const container = document.getElementById('networkMap');
+            if (container) container.title = '';
         });
     }
 
@@ -293,13 +415,12 @@ class CyberBreachGame {
             _effectivenessData: null,
         };
 
-        // Show effectiveness on nodes
-        await this.highlightNodeEffectiveness(
-            this.selectedCard.cardName, this.selectedCard.cardType, this.selectedCard.basePoints
-        );
-
-        // Show instruction
-        this.showToast('Cliquez sur un noeud de l\'infrastructure pour cibler, ou cliquez "Jouer sans cible"', 'info');
+        // Modérateur uniquement: Afficher visuellement l'efficacité
+        if (this.role === 'moderator') {
+            await this.highlightNodeEffectiveness(
+                this.selectedCard.cardName, this.selectedCard.cardType, this.selectedCard.basePoints
+            );
+        }
     }
 
     showPlayModal() {
@@ -483,7 +604,7 @@ class CyberBreachGame {
             : '';
 
         return `
-        <div class="cb-card-flip" ${dataAttrs}>
+        <div class="cb-card-flip" ${dataAttrs} draggable="true">
             <div class="cb-card-inner">
                 <div class="cb-card-front cb-card ${cssClass}">
                     <div class="cb-card-header">
@@ -506,7 +627,13 @@ class CyberBreachGame {
                     </div>
                 </div>
                 <div class="cb-card-back">
-                    <div class="cb-card-back-logo"><span class="blue">CYBER</span><span class="red">BREACH</span><br><span style="font-size:.6rem;opacity:.4;">DevCo v2</span></div>
+                    <div class="cb-card-back-logo pb-2"><span class="blue">CYBER</span><span class="red">BREACH</span><br><span style="font-size:.6rem;opacity:.4;">DevCo v2</span></div>
+                    ${card.mitre_id ? `
+                    <div class="cb-mitre-info mt-3" style="font-size:0.6rem; color:#aaa; text-align:center; padding: 0 5px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                        <strong class="text-white">${card.mitre_id}</strong><br>
+                        <span style="font-size:0.6rem; color:#c5dcf5">${card.mitre_name}</span><br>
+                        <em style="font-size:0.55rem;">${card.mitre_description}</em>
+                    </div>` : ''}
                 </div>
             </div>
         </div>`;

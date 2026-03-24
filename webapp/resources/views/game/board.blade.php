@@ -134,6 +134,7 @@
                         <span class="small fw-bold text-white-50"><i class="bi bi-diagram-3 me-1"></i>Infrastructure DevCo</span>
                         <div class="d-flex align-items-center gap-1">
                             <span class="small text-white-50 me-2">Scénario {{ $session->scenario }}: {{ $session->scenarioTitle() }}</span>
+                            <button id="btnLayoutToggle" class="btn btn-xs btn-outline-info me-2" onclick="game.toggleNetworkLayout()" title="Vue Network (Organique)"><i class="bi bi-diagram-3"></i></button>
                             <button class="btn btn-xs btn-outline-secondary" onclick="game.zoomIn()" title="Zoom +"><i class="bi bi-zoom-in"></i></button>
                             <button class="btn btn-xs btn-outline-secondary" onclick="game.zoomOut()" title="Zoom −"><i class="bi bi-zoom-out"></i></button>
                             <button class="btn btn-xs btn-outline-secondary" onclick="game.zoomFit()" title="Ajuster"><i class="bi bi-arrows-fullscreen"></i></button>

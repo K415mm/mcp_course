@@ -10,120 +10,157 @@ namespace App\Services;
  */
 class CardEffectivenessMatrix
 {
+    private const NODE_MAP = [
+        'internet' => 'Internet',
+        'laptop_dev' => 'Developer Laptop',
+        'laptop_ex' => 'Ex-Employee Laptop',
+        'laptop_ceo' => 'CEO Laptop',
+        'laptop_finance' => 'Finance Laptop',
+        'laptops' => 'Employee Laptops',
+        'apigw' => 'API Gateway',
+        'apigw2' => 'API Gateway v2',
+        'aws_ec2' => 'AWS EC2',
+        'aws_s3' => 'AWS S3',
+        'aws_iam' => 'AWS IAM',
+        'vpn' => 'VPN Gateway',
+        'rdp' => 'RDP Gateway',
+        'firewall_it_ot' => 'IT/OT Firewall',
+        'dbprod' => 'DB Prod',
+        'dbdev' => 'DB Dev/Test',
+        'o365' => 'Office 365',
+        'bank' => 'Bank Portal',
+        'slack' => 'Slack',
+        'jira' => 'Jira',
+        'vault' => 'HashiCorp Vault',
+        'backup' => 'Veeam Backup',
+        'dns_c2' => 'DNS C2',
+        'ad' => 'Domain Controller',
+        'jenkins' => 'Jenkins CI',
+        'gitlab' => 'GitLab CI',
+        'github' => 'GitHub Enterprise',
+        'npm' => 'npm Registry',
+        'docker' => 'Docker Hub',
+        'k8s' => 'K8s Cluster',
+        'scada' => 'SCADA Server',
+        'plc' => 'PLC Controllers',
+        'hmi' => 'HMI Panel',
+        'sis' => 'Safety System (SIS)',
+    ];
+
     // ── Red Team Card Effectiveness ─────────────────────────────────
     private const RED_MATRIX = [
         // Original v1 cards
         'GitHub secret scan' => [
             100 => ['github'],
             80  => ['vault'],
-            50  => ['cicd'],
+            50  => ['jenkins', 'gitlab'],
         ],
         'Supply chain attack' => [
             100 => ['npm', 'docker'],
-            80  => ['cicd', 'k8s'],
-            50  => ['aws'],
+            80  => ['jenkins', 'gitlab', 'k8s'],
+            50  => ['aws_ec2'],
         ],
         'Phishing développeur' => [
-            100 => ['slack', 'jira'],
+            100 => ['slack', 'jira', 'laptop_dev'],
             80  => ['github'],
-            50  => ['cicd', 'vault'],
+            50  => ['jenkins', 'vault'],
         ],
         'Pivot via CI/CD' => [
-            100 => ['cicd'],
+            100 => ['jenkins', 'gitlab'],
             80  => ['docker', 'k8s'],
-            50  => ['aws'],
+            50  => ['aws_ec2'],
         ],
         'Exfiltration S3' => [
-            100 => ['aws', 'dbprod'],
-            80  => ['dbdev'],
-            50  => [],
+            100 => ['aws_s3', 'aws_iam'],
+            80  => ['dbprod'],
+            50  => ['aws_ec2'],
         ],
         'Crypto-miner K8s' => [
             100 => ['k8s'],
-            80  => ['aws'],
+            80  => ['aws_ec2'],
             50  => ['docker'],
         ],
         'Ransomware partiel' => [
-            100 => ['dbdev', 'github'],
+            100 => ['laptops', 'dbdev', 'github', 'laptop_dev'],
             80  => ['dbprod'],
-            50  => ['cicd'],
+            50  => ['jenkins', 'gitlab'],
         ],
         'Defacement' => [
-            100 => ['apigw'],
+            100 => ['apigw', 'apigw2', 'internet'],
             80  => [],
             50  => [],
         ],
         'CRON persistance' => [
-            100 => ['k8s', 'aws'],
-            80  => ['cicd'],
+            100 => ['k8s', 'aws_ec2', 'ad'],
+            80  => ['jenkins', 'gitlab'],
             50  => [],
         ],
         'IAM backdoor' => [
-            100 => ['aws', 'vault'],
-            80  => ['k8s'],
+            100 => ['aws_iam', 'aws_ec2', 'vault'],
+            80  => ['aws_s3'],
             50  => [],
         ],
         'Credential stuffing' => [
-            100 => ['apigw', 'slack'],
-            80  => ['github'],
+            100 => ['apigw', 'apigw2', 'o365', 'slack'],
+            80  => ['github', 'vpn', 'rdp'],
             50  => ['jira'],
         ],
         'Lateral movement' => [
-            100 => ['k8s', 'docker', 'aws', 'dbprod'],
-            80  => ['cicd', 'vault'],
+            100 => ['k8s', 'docker', 'aws_ec2', 'dbprod', 'ad', 'laptops'],
+            80  => ['jenkins', 'gitlab', 'vault'],
             50  => ['dbdev', 'github'],
         ],
         // v2 — BEC Attack
         'CEO Impersonation' => [
-            100 => ['slack', 'jira'],
-            80  => ['apigw'],
+            100 => ['o365', 'laptop_finance', 'bank'],
+            80  => ['slack', 'laptop_ceo'],
             50  => [],
         ],
         'Invoice fraud' => [
-            100 => ['slack', 'jira'],
-            80  => [],
-            50  => ['apigw'],
+            100 => ['bank', 'laptop_finance'],
+            80  => ['o365', 'slack'],
+            50  => ['jira'],
         ],
         'Account takeover email' => [
-            100 => ['slack'],
-            80  => ['jira', 'github'],
+            100 => ['o365'],
+            80  => ['slack', 'jira', 'github'],
             50  => ['vault'],
         ],
         // v2 — Ransomware
         'Déploiement ransomware' => [
-            100 => ['dbprod', 'dbdev', 'github'],
+            100 => ['dbprod', 'ad', 'laptops', 'backup'],
             80  => ['k8s', 'docker'],
-            50  => ['aws', 'cicd'],
+            50  => ['aws_ec2', 'jenkins', 'gitlab'],
         ],
         'Double extorsion' => [
-            100 => ['dbprod', 'aws'],
-            80  => ['dbdev'],
+            100 => ['dbprod', 'aws_s3', 'backup'],
+            80  => ['aws_ec2', 'laptops'],
             50  => ['github'],
         ],
         'Destruction backups' => [
-            100 => ['aws', 'dbprod'],
-            80  => ['dbdev'],
-            50  => ['docker'],
+            100 => ['backup', 'aws_s3'],
+            80  => ['ad'],
+            50  => ['dbprod'],
         ],
         // v2 — APT
         'Custom malware (APT)' => [
-            100 => ['k8s', 'aws', 'github'],
-            80  => ['cicd', 'docker'],
+            100 => ['dns_c2', 'k8s', 'aws_ec2', 'github'],
+            80  => ['jenkins', 'gitlab', 'docker'],
             50  => ['vault', 'apigw'],
         ],
         'Living off the land' => [
-            100 => ['k8s', 'aws'],
-            80  => ['cicd', 'docker', 'github'],
+            100 => ['k8s', 'aws_ec2', 'laptop_ex', 'ad'],
+            80  => ['jenkins', 'gitlab', 'github'],
             50  => ['vault', 'dbprod'],
         ],
         'Data staging' => [
-            100 => ['dbprod', 'github', 'aws'],
-            80  => ['vault', 'dbdev'],
+            100 => ['dbprod', 'github', 'aws_s3', 'aws_ec2'],
+            80  => ['vault', 'laptop_ceo'],
             50  => ['jira'],
         ],
         // v2 — Industrial
         'Exploitation SCADA' => [
-            100 => ['scada'],
+            100 => ['scada', 'firewall_it_ot'],
             80  => ['plc', 'hmi'],
             50  => ['sis'],
         ],
@@ -144,36 +181,36 @@ class CardEffectivenessMatrix
         // Original v1 cards
         'Audit de code' => [
             100 => ['github'],
-            80  => ['cicd'],
-            50  => ['docker', 'npm'],
+            80  => ['jenkins', 'gitlab'],
+            50  => ['docker', 'npm', 'laptop_dev'],
         ],
         'Rotation des secrets' => [
-            100 => ['vault'],
-            80  => ['github', 'aws'],
-            50  => ['cicd'],
+            100 => ['vault', 'aws_iam'],
+            80  => ['github', 'aws_ec2'],
+            50  => ['jenkins', 'gitlab'],
         ],
         'Alerte SIEM' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
+            100 => ['apigw', 'apigw2', 'k8s', 'aws_ec2', 'dbprod', 'github', 'jenkins', 'gitlab', 'docker', 'npm', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis', 'ad', 'vpn', 'rdp', 'firewall_it_ot'],
             80  => [],
             50  => [],
         ],
         'WAF renforcé' => [
-            100 => ['apigw'],
+            100 => ['apigw', 'apigw2'],
             80  => [],
             50  => [],
         ],
         'Isolation CI/CD' => [
-            100 => ['cicd'],
-            80  => ['docker'],
-            50  => [],
+            100 => ['jenkins', 'gitlab'],
+            80  => ['docker', 'github'],
+            50  => ['aws_ec2'],
         ],
         'Restauration snapshot' => [
-            100 => ['dbprod'],
-            80  => ['dbdev'],
+            100 => ['dbprod', 'aws_ec2', 'k8s'],
+            80  => ['dbdev', 'aws_s3'],
             50  => [],
         ],
         'Investigation forensique' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
+            100 => ['apigw', 'apigw2', 'k8s', 'aws_ec2', 'aws_iam', 'dbprod', 'github', 'jenkins', 'gitlab', 'docker', 'npm', 'vault', 'scada', 'plc', 'hmi', 'sis', 'ad', 'vpn', 'rdp', 'laptops', 'laptop_ceo', 'laptop_dev', 'laptop_ex', 'laptop_finance', 'dns_c2'],
             80  => [],
             50  => [],
         ],
@@ -183,8 +220,8 @@ class CardEffectivenessMatrix
             50  => [],
         ],
         'Patch zero-day' => [
-            100 => ['apigw', 'k8s'],
-            80  => ['aws'],
+            100 => ['apigw', 'apigw2', 'k8s', 'vpn', 'rdp', 'docker', 'npm'],
+            80  => ['aws_ec2', 'github', 'jenkins', 'gitlab'],
             50  => [],
         ],
         'Honeypot' => [
@@ -193,239 +230,151 @@ class CardEffectivenessMatrix
             50  => [],
         ],
         'Threat hunting proactif' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
+            100 => ['apigw', 'apigw2', 'k8s', 'aws_ec2', 'aws_iam', 'dbprod', 'github', 'jenkins', 'gitlab', 'docker', 'npm', 'vault', 'scada', 'plc', 'hmi', 'sis', 'ad', 'vpn', 'rdp', 'laptops', 'dns_c2'],
             80  => [],
             50  => [],
         ],
         'Micro-segmentation' => [
-            100 => ['k8s'],
-            80  => ['aws'],
+            100 => ['k8s', 'firewall_it_ot', 'vpn'],
+            80  => ['aws_ec2', 'ad'],
             50  => ['dbprod'],
         ],
         // v2 — BEC Defense
         'DMARC/SPF enforcement' => [
-            100 => ['slack'],
+            100 => ['o365', 'slack'],
             80  => ['jira'],
-            50  => ['apigw'],
+            50  => ['apigw', 'apigw2'],
         ],
         'Vérification paiement' => [
-            100 => ['slack', 'jira'],
-            80  => [],
+            100 => ['bank', 'laptop_finance'],
+            80  => ['o365', 'slack'],
             50  => [],
         ],
         'Simulation phishing' => [
-            100 => ['slack', 'jira'],
+            100 => ['o365', 'slack', 'jira', 'laptop_ceo', 'laptops'],
             80  => ['github'],
             50  => [],
         ],
         // v2 — Ransomware Defense
         'Backup offline vérifié' => [
-            100 => ['dbprod', 'github'],
-            80  => ['dbdev', 'aws'],
+            100 => ['backup', 'dbprod', 'ad', 'laptops'],
+            80  => ['github', 'dbdev', 'aws_ec2'],
             50  => ['docker'],
         ],
         'Confinement réseau' => [
-            100 => ['k8s', 'docker'],
-            80  => ['aws', 'dbprod'],
-            50  => ['cicd', 'dbdev'],
+            100 => ['ad', 'k8s', 'docker', 'rdp'],
+            80  => ['aws_ec2', 'dbprod'],
+            50  => ['jenkins', 'gitlab', 'laptops'],
         ],
         'Analyse cryptographique' => [
-            100 => ['dbprod', 'dbdev'],
-            80  => ['github'],
-            50  => ['aws'],
+            100 => ['dbprod', 'ad', 'backup'],
+            80  => ['github', 'laptops'],
+            50  => ['aws_ec2'],
         ],
         // v2 — APT Defense
         'Forensique mémoire' => [
-            100 => ['k8s', 'aws', 'github'],
-            80  => ['cicd', 'docker'],
+            100 => ['k8s', 'aws_ec2', 'dns_c2', 'github', 'ad', 'vpn'],
+            80  => ['jenkins', 'gitlab', 'docker'],
             50  => ['vault', 'dbprod'],
         ],
         'Corrélation threat intel' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
+            100 => ['dns_c2', 'apigw', 'k8s', 'aws_ec2', 'dbprod', 'ad', 'vpn', 'rdp'],
             80  => [],
             50  => [],
         ],
         'Baseline réseau' => [
-            100 => ['k8s', 'aws', 'apigw'],
-            80  => ['cicd', 'docker'],
-            50  => ['scada'],
+            100 => ['dns_c2', 'k8s', 'aws_ec2', 'apigw', 'apigw2', 'vpn', 'rdp', 'firewall_it_ot'],
+            80  => ['jenkins', 'gitlab', 'docker'],
+            50  => ['dbprod'],
         ],
         // v2 — Industrial Defense
         'Isolation réseau OT' => [
-            100 => ['scada', 'plc', 'hmi', 'sis'],
-            80  => [],
-            50  => [],
+            100 => ['firewall_it_ot', 'scada'],
+            80  => ['plc', 'sis'],
+            50  => ['apigw', 'apigw2'],
         ],
         'Vérification firmware' => [
-            100 => ['plc'],
+            100 => ['plc', 'sis'],
             80  => ['scada', 'hmi'],
-            50  => ['sis'],
+            50  => [],
         ],
         'Test processus physique' => [
             100 => ['sis', 'plc'],
-            80  => ['scada'],
-            50  => ['hmi'],
+            80  => ['hmi', 'scada'],
+            50  => [],
         ],
     ];
 
-    // ── Scenario Critical Path Nodes (+20% bonus) ───────────────────
-    private const SCENARIO_CRITICAL = [
-        1 => ['github', 'cicd', 'aws'],           // NightOwl
-        2 => ['npm', 'docker', 'k8s'],            // Supply Chain
-        3 => ['vault', 'github', 'aws'],           // Insider Threat
-        4 => ['apigw', 'k8s', 'dbprod'],           // Zero-Day API
-        5 => ['slack', 'jira', 'apigw'],           // BEC Attack
-        6 => ['dbprod', 'dbdev', 'aws'],           // Ransomware Total
-        7 => ['k8s', 'aws', 'vault'],              // APT
-        8 => ['scada', 'plc', 'sis'],              // Industrial
-    ];
-
-    // ── Node name → ID mapping ──────────────────────────────────────
-    private const NODE_MAP = [
-        'GitHub Repos'        => 'github',
-        'CI/CD Pipeline'      => 'cicd',
-        'Docker Registry'     => 'docker',
-        'npm Registry'        => 'npm',
-        'Kubernetes Cluster'  => 'k8s',
-        'AWS Production'      => 'aws',
-        'DB Production'       => 'dbprod',
-        'DB Dev/Test'         => 'dbdev',
-        'API Gateway'         => 'apigw',
-        'Secrets Vault'       => 'vault',
-        'Slack/Comms'         => 'slack',
-        'Jira/Tickets'        => 'jira',
-        'SCADA System'        => 'scada',
-        'PLC Controllers'     => 'plc',
-        'HMI Interface'       => 'hmi',
-        'Safety Systems (SIS)' => 'sis',
-        'Internet'            => 'internet',
-    ];
-
     /**
-     * Calculate points for playing a card on a target system.
-     *
-     * @return array{points: int, effectiveness: int, isCriticalPath: bool, message: string}
+     * Calculate effectiveness:
+     * returns ['score' => int, 'log' => string, 'effectiveness' => int]
      */
-    public static function calculate(string $cardName, string $cardType, int $basePoints, ?string $targetSystem, int $scenario): array
+    public static function calculate(string $cardName, string $targetNodeName, ?int $scenario = null): array
     {
-        // Cards with no target requirement get full points
-        if (!$targetSystem) {
-            $noTargetCards = ['Notification CNIL', 'Honeypot', 'Alerte SIEM', 'Investigation forensique', 'Threat hunting proactif', 'Corrélation threat intel'];
-            if (in_array($cardName, $noTargetCards)) {
-                return [
-                    'points'         => $basePoints,
-                    'effectiveness'  => 100,
-                    'isCriticalPath' => false,
-                    'message'        => 'Action globale — plein effet',
-                ];
-            }
-            // If card normally needs a target but none provided → 50%
-            return [
-                'points'         => (int) round($basePoints * 0.5),
-                'effectiveness'  => 50,
-                'isCriticalPath' => false,
-                'message'        => 'Aucune cible — efficacité réduite (50%)',
-            ];
-        }
+        $targetId = array_search($targetNodeName, self::NODE_MAP) ?: $targetNodeName;
 
-        $nodeId = self::NODE_MAP[$targetSystem] ?? null;
-        if (!$nodeId) {
-            return [
-                'points'         => 0,
-                'effectiveness'  => 0,
-                'isCriticalPath' => false,
-                'message'        => 'Cible invalide',
-            ];
-        }
+        $isRed = array_key_exists($cardName, self::RED_MATRIX);
+        $isBlue = array_key_exists($cardName, self::BLUE_MATRIX);
 
-        $matrix = $cardType === 'red' ? self::RED_MATRIX : self::BLUE_MATRIX;
-        $cardMap = $matrix[$cardName] ?? null;
-
-        if (!$cardMap) {
-            // Resource cards get flat points
-            return [
-                'points'         => $basePoints,
-                'effectiveness'  => 100,
-                'isCriticalPath' => false,
-                'message'        => 'Carte ressource — effet fixe',
-            ];
-        }
-
-        // Determine base effectiveness
+        // Calculate base points
         $effectiveness = 0;
-        if (in_array($nodeId, $cardMap[100] ?? [])) {
-            $effectiveness = 100;
-        } elseif (in_array($nodeId, $cardMap[80] ?? [])) {
-            $effectiveness = 80;
-        } elseif (in_array($nodeId, $cardMap[50] ?? [])) {
-            $effectiveness = 50;
+        if ($isRed) {
+            $effectiveness = self::getEffectiveness(self::RED_MATRIX[$cardName], $targetId);
+        } elseif ($isBlue) {
+            // Check if card is universal (empty lists = 100% everywhere)
+            $matrix = self::BLUE_MATRIX[$cardName];
+            if (empty($matrix[100]) && empty($matrix[80]) && empty($matrix[50])) {
+                $effectiveness = 100;
+            } else {
+                $effectiveness = self::getEffectiveness($matrix, $targetId);
+            }
         }
 
+        // Action not applicable = 0 pts
         if ($effectiveness === 0) {
             return [
-                'points'         => 0,
-                'effectiveness'  => 0,
-                'isCriticalPath' => false,
-                'message'        => 'Cette carte n\'a aucun effet sur ' . $targetSystem,
+                'score'         => 0,
+                'log'           => "Action inefficace sur ce système (0%).",
+                'effectiveness' => 0,
             ];
         }
 
-        // Scenario critical path bonus (+20%)
-        $criticalNodes = self::SCENARIO_CRITICAL[$scenario] ?? [];
-        $isCritical = in_array($nodeId, $criticalNodes);
-        $finalEffectiveness = min(100, $effectiveness + ($isCritical ? 20 : 0));
+        // Base score mapped from DB is usually handled upstream, here we return multipliers.
+        // Actually, we return the *percentage* to multiply the card's base score by, 
+        // AND handle critical path bonus (+20%).
 
-        $points = (int) round($basePoints * ($finalEffectiveness / 100));
+        // Critical path bonus logic based on scenario
+        $criticalPaths = [
+            1 => ['apigw', 'jenkins', 'github', 'vault', 'aws_ec2'],
+            2 => ['apigw', 'npm', 'docker', 'gitlab', 'k8s', 'aws_ec2'],
+            3 => ['vpn', 'laptop_ex', 'vault', 'github', 'aws_iam', 'aws_ec2'],
+            4 => ['apigw2', 'k8s', 'dbprod', 'aws_ec2', 'docker', 'vault'],
+            5 => ['o365', 'laptop_ceo', 'laptop_finance', 'bank'],
+            6 => ['rdp', 'ad', 'dbprod', 'backup', 'laptops'],
+            7 => ['dns_c2', 'apigw', 'k8s', 'aws_ec2', 'vault', 'dbprod'],
+            8 => ['apigw', 'firewall_it_ot', 'scada', 'plc', 'sis'],
+        ];
 
-        $label = match($effectiveness) {
-            100 => 'Cible optimale',
-            80  => 'Cible secondaire (80%)',
-            50  => 'Cible marginale (50%)',
-            default => '',
-        };
-        if ($isCritical) $label .= ' + Bonus chemin critique (+20%)';
+        $bonusMsg = "";
+        $scoreMultiplier = $effectiveness / 100; // 1.0, 0.8, 0.5
+
+        if ($scenario && isset($criticalPaths[$scenario]) && in_array($targetId, $criticalPaths[$scenario])) {
+            $scoreMultiplier += 0.20; // +20%
+            $bonusMsg = " (+20% bonus cible critique)";
+        }
 
         return [
-            'points'         => $points,
-            'effectiveness'  => $finalEffectiveness,
-            'isCriticalPath' => $isCritical,
-            'message'        => $label,
+            'scoreMultiplier' => $scoreMultiplier,
+            'effectiveness'   => $effectiveness,
+            'log'             => "Efficacité : {$effectiveness}%" . $bonusMsg,
         ];
     }
 
-    /**
-     * Get effectiveness preview for all nodes for a given card.
-     * Used by the frontend to show which nodes are best targets.
-     */
-    public static function getCardTargetPreview(string $cardName, string $cardType, int $basePoints, int $scenario): array
+    private static function getEffectiveness(array $cardMatrix, string $targetId): int
     {
-        $results = [];
-        foreach (self::NODE_MAP as $nodeName => $nodeId) {
-            if ($nodeId === 'internet') continue;
-            $calc = self::calculate($cardName, $cardType, $basePoints, $nodeName, $scenario);
-            $results[$nodeId] = [
-                'nodeName'      => $nodeName,
-                'effectiveness' => $calc['effectiveness'],
-                'points'        => $calc['points'],
-                'isCritical'    => $calc['isCriticalPath'],
-            ];
-        }
-        return $results;
-    }
-
-    /**
-     * Get node ID from display name.
-     */
-    public static function nodeId(string $nodeName): ?string
-    {
-        return self::NODE_MAP[$nodeName] ?? null;
-    }
-
-    /**
-     * Get all node IDs.
-     */
-    public static function nodeMap(): array
-    {
-        return self::NODE_MAP;
+        if (in_array($targetId, $cardMatrix[100] ?? [])) return 100;
+        if (in_array($targetId, $cardMatrix[80]  ?? [])) return 80;
+        if (in_array($targetId, $cardMatrix[50]  ?? [])) return 50;
+        return 0;
     }
 }

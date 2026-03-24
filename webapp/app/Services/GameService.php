@@ -377,58 +377,40 @@ class GameService
     public static function allowedNodesForScenario(int $scenario): array
     {
         return match($scenario) {
-            1 => ['API Gateway', 'CI/CD Pipeline', 'GitHub Repos', 'Secrets Vault', 'AWS Production', 'Slack/Comms', 'Jira/Tickets', 'DB Production'],
-            2 => ['API Gateway', 'Kubernetes Cluster', 'Docker Registry', 'npm Registry', 'CI/CD Pipeline', 'GitHub Repos', 'AWS Production', 'DB Production'],
-            3 => ['API Gateway', 'AWS Production', 'Secrets Vault', 'GitHub Repos', 'CI/CD Pipeline', 'Slack/Comms', 'Jira/Tickets', 'DB Production'],
-            4 => ['API Gateway', 'Kubernetes Cluster', 'DB Production', 'AWS Production', 'Slack/Comms', 'Secrets Vault', 'Docker Registry'],
-            5 => ['API Gateway', 'Slack/Comms', 'Jira/Tickets', 'Secrets Vault', 'GitHub Repos', 'DB Production'],
-            6 => ['API Gateway', 'Kubernetes Cluster', 'Docker Registry', 'DB Production', 'DB Dev/Test', 'GitHub Repos', 'CI/CD Pipeline', 'AWS Production'],
-            7 => ['API Gateway', 'Kubernetes Cluster', 'AWS Production', 'GitHub Repos', 'CI/CD Pipeline', 'Docker Registry', 'Secrets Vault', 'DB Production', 'Slack/Comms', 'Jira/Tickets'],
-            8 => ['API Gateway', 'Kubernetes Cluster', 'SCADA System', 'PLC Controllers', 'HMI Interface', 'Safety Systems (SIS)', 'Slack/Comms', 'AWS Production', 'DB Production'],
+            1 => ['API Gateway', 'Jenkins CI', 'GitHub Enterprise', 'HashiCorp Vault', 'AWS EC2', 'AWS S3', 'Slack', 'Jira', 'Developer Laptop'],
+            2 => ['API Gateway', 'npm Registry', 'Docker Hub', 'GitLab CI', 'K8s Cluster', 'AWS EC2', 'DB Prod'],
+            3 => ['VPN Gateway', 'Ex-Employee Laptop', 'HashiCorp Vault', 'GitHub Enterprise', 'AWS IAM', 'AWS EC2', 'DB Prod'],
+            4 => ['API Gateway v2', 'K8s Cluster', 'DB Prod', 'AWS EC2', 'Docker Registry', 'Slack', 'HashiCorp Vault'],
+            5 => ['Office 365', 'CEO Laptop', 'Finance Laptop', 'Bank Portal', 'Slack'],
+            6 => ['RDP Gateway', 'Domain Controller', 'DB Prod', 'Veeam Backup', 'Employee Laptops'],
+            7 => ['DNS C2', 'API Gateway', 'K8s Cluster', 'AWS EC2', 'HashiCorp Vault', 'DB Prod', 'Slack', 'GitHub Enterprise'],
+            8 => ['API Gateway', 'IT/OT Firewall', 'SCADA Server', 'PLC Controllers', 'HMI Panel', 'Safety System (SIS)', 'DB Prod'],
             default => [],
         };
     }
 
     public static function systems(?int $scenario = null): array
     {
-        $all = [
-            'devops' => [
-                'name'  => 'Zone DevOps',
-                'nodes' => ['GitHub Repos', 'CI/CD Pipeline', 'Docker Registry', 'npm Registry'],
-            ],
-            'cloud' => [
-                'name'  => 'Zone Cloud',
-                'nodes' => ['Kubernetes Cluster', 'AWS Production'],
-            ],
-            'data' => [
-                'name'  => 'Zone Data',
-                'nodes' => ['DB Production', 'DB Dev/Test'],
-            ],
-            'infra' => [
-                'name'  => 'Zone Infra/Collab',
-                'nodes' => ['API Gateway', 'Secrets Vault', 'Slack/Comms', 'Jira/Tickets'],
-            ],
-            'ot' => [
-                'name'  => 'Zone OT/ICS',
-                'nodes' => ['SCADA System', 'PLC Controllers', 'HMI Interface', 'Safety Systems (SIS)'],
-            ],
-        ];
-
-        if (!$scenario) return $all;
-
-        $allowed = self::allowedNodesForScenario($scenario);
-        $filtered = [];
-
-        foreach ($all as $key => $zone) {
-            $validNodes = array_values(array_intersect($zone['nodes'], $allowed));
-            if (!empty($validNodes)) {
-                $filtered[$key] = [
-                    'name'  => $zone['name'],
-                    'nodes' => $validNodes,
-                ];
-            }
+        $allowed = $scenario ? self::allowedNodesForScenario($scenario) : [];
+        if (empty($allowed)) {
+            $allowed = ['API Gateway', 'Jenkins CI', 'GitHub Enterprise', 'HashiCorp Vault', 'AWS EC2', 'AWS S3', 'Slack', 'Jira', 'Developer Laptop'];
         }
 
+        $groupMap = [
+            'Endpoints' => ['Developer Laptop', 'Ex-Employee Laptop', 'CEO Laptop', 'Finance Laptop', 'Employee Laptops'],
+            'Infra & Cloud' => ['API Gateway', 'API Gateway v2', 'AWS EC2', 'AWS S3', 'AWS IAM', 'VPN Gateway', 'RDP Gateway', 'IT/OT Firewall'],
+            'Data & Apps' => ['DB Prod', 'Office 365', 'Bank Portal', 'Slack', 'Jira', 'HashiCorp Vault', 'Veeam Backup', 'DNS C2'],
+            'DevOps & Containers' => ['Jenkins CI', 'GitLab CI', 'GitHub Enterprise', 'npm Registry', 'Docker Hub', 'Docker Registry', 'K8s Cluster'],
+            'OT/ICS' => ['SCADA Server', 'PLC Controllers', 'HMI Panel', 'Safety System (SIS)'],
+        ];
+
+        $filtered = [];
+        foreach ($groupMap as $groupName => $groupNodes) {
+            $valid = array_values(array_intersect($groupNodes, $allowed));
+            if (!empty($valid)) {
+                $filtered[] = ['name' => $groupName, 'nodes' => $valid];
+            }
+        }
         return $filtered;
     }
 
@@ -472,18 +454,21 @@ class GameService
     private function cardToArray(GameCard $card): array
     {
         return [
-            'id'          => $card->id,
-            'type'        => $card->type,
-            'subtype'     => $card->subtype,
-            'name'        => $card->name,
-            'phase'       => $card->phase,
-            'description' => $card->description,
-            'effect'      => $card->effect,
-            'cost'        => $card->cost,
-            'points'      => $card->points,
-            'duration'    => $card->duration,
-            'cssClass'    => $card->cssClass(),
-            'typeLabel'   => $card->typeLabel(),
+            'id'                => $card->id,
+            'type'              => $card->type,
+            'subtype'           => $card->subtype,
+            'name'              => $card->name,
+            'phase'             => $card->phase,
+            'description'       => $card->description,
+            'effect'            => $card->effect,
+            'cost'              => $card->cost,
+            'points'            => $card->points,
+            'duration'          => $card->duration,
+            'cssClass'          => $card->cssClass(),
+            'typeLabel'         => $card->typeLabel(),
+            'mitre_id'          => $card->mitre_id,
+            'mitre_name'        => $card->mitre_name,
+            'mitre_description' => $card->mitre_description,
         ];
     }
 

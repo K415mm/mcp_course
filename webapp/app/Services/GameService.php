@@ -9,6 +9,7 @@ use App\Models\GameSession;
 use App\Models\GameTeam;
 use App\Models\GameTeamCard;
 use App\Models\User;
+use App\Services\CardEffectivenessMatrix;
 
 class GameService
 {
@@ -140,9 +141,21 @@ class GameService
         // Spend tokens
         $team->spendTokens($card->cost);
 
-        // Award points
-        $points = $card->points;
+        // Calculate points using effectiveness matrix
+        $calc = CardEffectivenessMatrix::calculate(
+            $card->name, $card->type, $card->points, $targetSystem, $session->scenario
+        );
+        $points = $calc['points'];
         $team->addScore($points);
+
+        // Update node state if target specified
+        if ($targetSystem) {
+            $nodeId = CardEffectivenessMatrix::nodeId($targetSystem);
+            if ($nodeId && $calc['effectiveness'] > 0) {
+                $newState = $team->isRed() ? 'compromised' : 'defended';
+                $this->setNodeState($session, $nodeId, $newState);
+            }
+        }
 
         // Move card from hand to active/used
         if ($card->duration) {
@@ -165,9 +178,12 @@ class GameService
         ]);
 
         return [
-            'success' => true,
-            'points'  => $points,
-            'play'    => $play,
+            'success'       => true,
+            'points'        => $points,
+            'effectiveness' => $calc['effectiveness'],
+            'isCritical'    => $calc['isCriticalPath'],
+            'message'       => $calc['message'],
+            'play'          => $play,
         ];
     }
 
@@ -349,7 +365,8 @@ class GameService
                 'startedAt' => $round->started_at?->toIso8601String(),
                 'eventCard' => $round->event_card,
             ] : null,
-            'actionLog' => $this->getActionLog($session, $round),
+            'actionLog'  => $this->getActionLog($session, $round),
+            'nodeStates' => $this->getNodeStates($session),
         ];
 
         return $state;
@@ -480,5 +497,21 @@ class GameService
                 $tc->tickDuration();
             }
         }
+    }
+
+    // ── Node State Management ───────────────────────────────────────
+
+    private function setNodeState(GameSession $session, string $nodeId, string $state): void
+    {
+        $settings = $session->settings ?? [];
+        $nodeStates = $settings['nodeStates'] ?? [];
+        $nodeStates[$nodeId] = $state;
+        $settings['nodeStates'] = $nodeStates;
+        $session->update(['settings' => $settings]);
+    }
+
+    private function getNodeStates(GameSession $session): array
+    {
+        return $session->settings['nodeStates'] ?? [];
     }
 }

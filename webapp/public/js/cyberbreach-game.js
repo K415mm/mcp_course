@@ -1,26 +1,25 @@
 /**
- * CyberBreach Game Engine v2 — Enhanced with vis-network, SortableJS, card flip
+ * CyberBreach Game Engine v3 — Card-to-Node Scoring, Node States, Zoom
  */
 class CyberBreachGame {
     constructor(sessionId, csrfToken, role) {
         this.sessionId = sessionId;
         this.csrf = csrfToken;
-        this.role = role; // 'moderator', 'player', 'spectator'
+        this.role = role;
         this.state = null;
         this.selectedCard = null;
         this.pollInterval = null;
         this.network = null;
-        this.sortable = null;
+        this.networkNodes = null;
         this.POLL_MS = 3000;
         this.BASE = `/game/${sessionId}/api`;
         this.lastPhase = -1;
+        this.effectivenessCache = {};
     }
 
-    // ── Init ────────────────────────────────────────────────────
     init() {
         this.startPolling();
         this.initNetworkMap();
-        this.initSortable();
         this.bindEvents();
     }
 
@@ -29,7 +28,7 @@ class CyberBreachGame {
         if (this.network) this.network.destroy();
     }
 
-    // ── Polling ─────────────────────────────────────────────────
+    // ── Polling ─────────────────────────────────────────────
     startPolling() {
         this.fetchState();
         this.pollInterval = setInterval(() => this.fetchState(), this.POLL_MS);
@@ -39,27 +38,27 @@ class CyberBreachGame {
         try {
             const res = await fetch(`${this.BASE}/state`);
             if (!res.ok) return;
-            const data = await res.json();
-            this.state = data;
+            this.state = await res.json();
             this.render();
         } catch (e) { console.warn('Poll failed:', e); }
     }
 
-    // ── API Calls ───────────────────────────────────────────────
-    async api(endpoint, body = {}) {
+    // ── API Calls ───────────────────────────────────────────
+    async api(endpoint, body = {}, method = 'POST') {
         try {
-            const res = await fetch(`${this.BASE}/${endpoint}`, {
-                method: 'POST',
+            const opts = {
+                method,
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrf, 'Accept': 'application/json' },
-                body: JSON.stringify(body),
-            });
+            };
+            if (method === 'POST') opts.body = JSON.stringify(body);
+            const url = method === 'GET' && Object.keys(body).length
+                ? `${this.BASE}/${endpoint}?${new URLSearchParams(body)}`
+                : `${this.BASE}/${endpoint}`;
+            const res = await fetch(url, opts);
             const data = await res.json();
-            if (data.success) this.fetchState();
+            if (data.success && method === 'POST') this.fetchState();
             return data;
-        } catch (e) {
-            console.error('API error:', e);
-            return { success: false, error: 'Erreur réseau' };
-        }
+        } catch (e) { return { success: false, error: 'Erreur réseau' }; }
     }
 
     async playCard(teamCardId, targetSystem) { return this.api('play-card', { team_card_id: teamCardId, target_system: targetSystem }); }
@@ -71,25 +70,53 @@ class CyberBreachGame {
     async adjustTokens(teamType, amount) { return this.api('adjust-tokens', { team_type: teamType, amount }); }
     async dealHands() { return this.api('deal-hands'); }
 
+    async getCardEffectiveness(cardName, cardType, basePoints) {
+        const key = `${cardName}_${cardType}_${basePoints}`;
+        if (this.effectivenessCache[key]) return this.effectivenessCache[key];
+        const data = await this.api('card-effectiveness', { card_name: cardName, card_type: cardType, base_points: basePoints }, 'GET');
+        if (data.success) this.effectivenessCache[key] = data.targets;
+        return data.targets || {};
+    }
+
+    // ── NODE MAP ↔ Display Name Mapping ────────────────────────
+    static NODE_MAP = {
+        internet: '🌐 Internet', apigw: '🛡️ API Gateway', k8s: '☸️ K8s Cluster',
+        dbprod: '🗄️ DB Prod', dbdev: '🧪 DB Dev/Test', docker: '🐳 Docker Registry',
+        cicd: '⚙️ CI/CD Pipeline', npm: '📦 npm Registry', github: '🐙 GitHub Repos',
+        vault: '🔑 Secrets Vault', slack: '💬 Slack/Comms', jira: '📋 Jira/Tickets',
+        aws: '☁️ AWS Prod',
+    };
+
+    static NODE_TO_DISPLAY = {
+        internet: 'Internet', apigw: 'API Gateway', k8s: 'Kubernetes Cluster',
+        dbprod: 'DB Production', dbdev: 'DB Dev/Test', docker: 'Docker Registry',
+        cicd: 'CI/CD Pipeline', npm: 'npm Registry', github: 'GitHub Repos',
+        vault: 'Secrets Vault', slack: 'Slack/Comms', jira: 'Jira/Tickets',
+        aws: 'AWS Production',
+    };
+
     // ── vis-network Infrastructure Map ──────────────────────────
     initNetworkMap() {
         const container = document.getElementById('networkMap');
         if (!container) return;
 
+        const baseColor = { background: '#0f2847', border: '#3a90e8' };
+        const secColor  = { background: '#1a2744', border: '#5580aa' };
+
         const nodes = new vis.DataSet([
-            { id: 'internet',  label: '🌐 Internet',          shape: 'diamond', color: { background: '#1a2744', border: '#3a90e8' }, font: { color: '#fff', size: 11 }, borderWidth: 2, size: 25 },
-            { id: 'apigw',     label: '🛡️ API Gateway',       shape: 'box',     color: { background: '#0f2847', border: '#3a90e8' }, font: { color: '#c5dcf5', size: 10 }, borderWidth: 2 },
-            { id: 'k8s',       label: '☸️ K8s Cluster',       shape: 'box',     color: { background: '#0f2847', border: '#3a90e8' }, font: { color: '#c5dcf5', size: 10 }, borderWidth: 2 },
-            { id: 'dbprod',    label: '🗄️ DB Prod',           shape: 'database',color: { background: '#0f2847', border: '#3a90e8' }, font: { color: '#c5dcf5', size: 10 }, borderWidth: 2 },
-            { id: 'dbdev',     label: '🧪 DB Dev/Test',       shape: 'database',color: { background: '#1a2744', border: '#5580aa' }, font: { color: '#aaa', size: 9 }, borderWidth: 1 },
-            { id: 'docker',    label: '🐳 Docker Registry',   shape: 'box',     color: { background: '#0f2847', border: '#3a90e8' }, font: { color: '#c5dcf5', size: 10 }, borderWidth: 2 },
-            { id: 'cicd',      label: '⚙️ CI/CD Pipeline',    shape: 'box',     color: { background: '#0f2847', border: '#3a90e8' }, font: { color: '#c5dcf5', size: 10 }, borderWidth: 2 },
-            { id: 'npm',       label: '📦 npm Registry',      shape: 'box',     color: { background: '#1a2744', border: '#5580aa' }, font: { color: '#aaa', size: 9 }, borderWidth: 1 },
-            { id: 'github',    label: '🐙 GitHub Repos',      shape: 'box',     color: { background: '#0f2847', border: '#3a90e8' }, font: { color: '#c5dcf5', size: 10 }, borderWidth: 2 },
-            { id: 'vault',     label: '🔑 Secrets Vault',     shape: 'box',     color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2 },
-            { id: 'slack',     label: '💬 Slack/Comms',        shape: 'box',     color: { background: '#1a2744', border: '#5580aa' }, font: { color: '#aaa', size: 9 }, borderWidth: 1 },
-            { id: 'jira',      label: '📋 Jira/Tickets',      shape: 'box',     color: { background: '#1a2744', border: '#5580aa' }, font: { color: '#aaa', size: 9 }, borderWidth: 1 },
-            { id: 'aws',       label: '☁️ AWS Prod',           shape: 'box',     color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2 },
+            { id: 'internet', label: '🌐 Internet',       shape: 'diamond', color: { background: '#1a2744', border: '#3a90e8' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
+            { id: 'apigw',    label: '🛡️ API Gateway',    shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'k8s',      label: '☸️ K8s Cluster',    shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'dbprod',   label: '🗄️ DB Prod',        shape: 'database', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'dbdev',    label: '🧪 DB Dev/Test',    shape: 'database', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'docker',   label: '🐳 Docker Registry', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'cicd',     label: '⚙️ CI/CD Pipeline', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'npm',      label: '📦 npm Registry',   shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'github',   label: '🐙 GitHub Repos',   shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'vault',    label: '🔑 Secrets Vault',  shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'slack',    label: '💬 Slack/Comms',     shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'jira',     label: '📋 Jira/Tickets',   shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'aws',      label: '☁️ AWS Prod',       shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
         ]);
 
         const edges = new vis.DataSet([
@@ -114,100 +141,127 @@ class CyberBreachGame {
             edges: { smooth: { type: 'cubicBezier', forceDirection: 'horizontal' } },
             layout: { hierarchical: { direction: 'LR', sortMethod: 'directed', levelSeparation: 160, nodeSpacing: 70 } },
             physics: false,
-            interaction: { hover: true, tooltipDelay: 200, zoomView: false },
+            interaction: { hover: true, tooltipDelay: 200, zoomView: true, dragView: true },
         };
 
         this.network = new vis.Network(container, { nodes, edges }, options);
 
-        // Click on node shows info
+        // Click node = select as target
         this.network.on('click', (params) => {
-            if (params.nodes.length > 0) {
+            if (params.nodes.length > 0 && this.selectedCard) {
                 const nodeId = params.nodes[0];
-                const node = nodes.get(nodeId);
-                this.showToast(`${node.label}`, 'info');
+                if (nodeId === 'internet') return;
+                const displayName = CyberBreachGame.NODE_TO_DISPLAY[nodeId] || nodeId;
+                this.selectedCard.targetSystem = displayName;
+                this.showPlayModal();
             }
         });
+
+        // Hover node = show effectiveness if card selected
+        this.network.on('hoverNode', (params) => {
+            if (this.selectedCard && this.selectedCard._effectivenessData) {
+                const eff = this.selectedCard._effectivenessData[params.node];
+                if (eff) {
+                    container.title = `${eff.nodeName}: ${eff.effectiveness}% → ${eff.points} pts${eff.isCritical ? ' ★ Critique' : ''}`;
+                }
+            }
+        });
+        this.network.on('blurNode', () => { container.title = ''; });
     }
 
-    updateNetworkNodeColor(nodeId, status) {
+    // Zoom controls
+    zoomIn()  { if (this.network) this.network.moveTo({ scale: this.network.getScale() * 1.3 }); }
+    zoomOut() { if (this.network) this.network.moveTo({ scale: this.network.getScale() / 1.3 }); }
+    zoomFit() { if (this.network) this.network.fit({ animation: { duration: 300 } }); }
+
+    // Update node colors from state
+    updateNodeStates(nodeStates) {
         if (!this.networkNodes) return;
-        const colors = {
+        const stateColors = {
             safe:        { background: '#0f2847', border: '#3a90e8' },
             compromised: { background: '#3c0d0d', border: '#e83a3a' },
             defended:    { background: '#0a2e1a', border: '#2d9f4f' },
         };
-        const c = colors[status] || colors.safe;
-        this.networkNodes.update({ id: nodeId, color: c });
-    }
-
-    // ── SortableJS — Drag-and-Drop ──────────────────────────────
-    initSortable() {
-        const hand = document.getElementById('myHand');
-        const dropZone = document.getElementById('dropZone');
-        if (!hand || !dropZone) return;
-
-        this.sortable = new Sortable(hand, {
-            group: { name: 'cards', pull: 'clone', put: false },
-            sort: false,
-            animation: 200,
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen',
-            filter: '.cb-drop-zone',
-            onStart: () => dropZone.classList.add('drag-over'),
-            onEnd: () => dropZone.classList.remove('drag-over'),
-        });
-
-        new Sortable(dropZone, {
-            group: { name: 'cards', pull: false, put: true },
-            animation: 200,
-            onAdd: (evt) => {
-                const cardEl = evt.item;
-                const teamCardId = cardEl.dataset?.teamCardId;
-                if (teamCardId) {
-                    this.selectedCard = {
-                        teamCardId: parseInt(teamCardId),
-                        cardName: cardEl.dataset.cardName || '',
-                        cost: parseInt(cardEl.dataset.cost || 0),
-                    };
-                    this.showPlayModal();
-                }
-                // Remove the cloned element from drop zone
-                evt.item.remove();
-                dropZone.classList.remove('drag-over');
-            },
+        // Reset all non-Internet nodes to safe
+        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws'];
+        allIds.forEach(id => {
+            const st = nodeStates[id] || 'safe';
+            const c = stateColors[st] || stateColors.safe;
+            this.networkNodes.update({ id, color: c });
         });
     }
 
-    // ── Event Binding ───────────────────────────────────────────
+    // Highlight nodes by effectiveness when card is selected
+    async highlightNodeEffectiveness(cardName, cardType, basePoints) {
+        const targets = await this.getCardEffectiveness(cardName, cardType, basePoints);
+        if (!targets || !this.networkNodes) return;
+
+        this.selectedCard._effectivenessData = targets;
+
+        Object.entries(targets).forEach(([nodeId, info]) => {
+            if (info.effectiveness === 0) {
+                this.networkNodes.update({ id: nodeId, borderWidth: 1, opacity: 0.3 });
+            } else if (info.effectiveness >= 100) {
+                const color = info.isCritical ? '#fbbf24' : '#2d9f4f';
+                this.networkNodes.update({ id: nodeId, borderWidth: 4, color: { border: color }, opacity: 1 });
+            } else if (info.effectiveness >= 80) {
+                this.networkNodes.update({ id: nodeId, borderWidth: 3, color: { border: '#6366f1' }, opacity: 1 });
+            } else {
+                this.networkNodes.update({ id: nodeId, borderWidth: 2, color: { border: '#555' }, opacity: 0.7 });
+            }
+        });
+    }
+
+    // Reset node visuals to current state
+    resetNodeHighlights() {
+        if (this.state?.nodeStates) {
+            this.updateNodeStates(this.state.nodeStates);
+        }
+        // Reset opacity & border width
+        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws'];
+        allIds.forEach(id => {
+            this.networkNodes?.update({ id, borderWidth: 2, opacity: 1 });
+        });
+    }
+
+    // ── Event Binding ───────────────────────────────────────
     bindEvents() {
+        // Card click to select
         document.addEventListener('click', (e) => {
-            // Card click to play
             const cardFlip = e.target.closest('.cb-card-flip[data-team-card-id]');
             if (cardFlip) {
-                // Double click = flip, single click = select
                 this.selectCard(cardFlip);
                 return;
             }
-            // Flip on right-click
         });
 
+        // Double-click to flip
         document.addEventListener('dblclick', (e) => {
             const cardFlip = e.target.closest('.cb-card-flip');
-            if (cardFlip) {
-                cardFlip.classList.toggle('flipped');
-            }
+            if (cardFlip) cardFlip.classList.toggle('flipped');
         });
     }
 
-    selectCard(cardEl) {
+    async selectCard(cardEl) {
         document.querySelectorAll('.cb-card-flip.selected').forEach(c => c.classList.remove('selected'));
         cardEl.classList.add('selected');
         this.selectedCard = {
             teamCardId: parseInt(cardEl.dataset.teamCardId),
             cardName: cardEl.dataset.cardName || '',
+            cardType: cardEl.dataset.cardType || '',
             cost: parseInt(cardEl.dataset.cost || 0),
+            basePoints: parseInt(cardEl.dataset.basePoints || 0),
+            targetSystem: null,
+            _effectivenessData: null,
         };
-        this.showPlayModal();
+
+        // Show effectiveness on nodes
+        await this.highlightNodeEffectiveness(
+            this.selectedCard.cardName, this.selectedCard.cardType, this.selectedCard.basePoints
+        );
+
+        // Show instruction
+        this.showToast('Cliquez sur un noeud de l\'infrastructure pour cibler, ou cliquez "Jouer sans cible"', 'info');
     }
 
     showPlayModal() {
@@ -216,24 +270,59 @@ class CyberBreachGame {
         if (!modal) return;
         document.getElementById('playCardName').textContent = this.selectedCard.cardName;
         document.getElementById('playCardCost').textContent = this.selectedCard.cost;
+
+        // Show target & effectiveness
+        const targetEl = document.getElementById('playTargetInfo');
+        const effEl = document.getElementById('playEffectiveness');
+        if (this.selectedCard.targetSystem) {
+            const nodeId = Object.entries(CyberBreachGame.NODE_TO_DISPLAY)
+                .find(([k,v]) => v === this.selectedCard.targetSystem)?.[0];
+            const eff = this.selectedCard._effectivenessData?.[nodeId];
+            if (targetEl) targetEl.textContent = this.selectedCard.targetSystem;
+            if (effEl && eff) {
+                const color = eff.effectiveness >= 100 ? '#2d9f4f' : eff.effectiveness >= 80 ? '#6366f1' : eff.effectiveness >= 50 ? '#d97706' : '#e83a3a';
+                effEl.innerHTML = `<span style="color:${color};font-family:'Space Mono',monospace;font-weight:700;font-size:1.2rem;">${eff.effectiveness}%</span>` +
+                    `<span class="text-white-50 ms-2">${eff.points} pts</span>` +
+                    (eff.isCritical ? '<span class="badge bg-warning text-dark ms-2">★ Chemin critique</span>' : '');
+            }
+        } else {
+            if (targetEl) targetEl.textContent = 'Aucune cible (action globale)';
+            if (effEl) effEl.innerHTML = '<span class="text-white-50">50-100% selon le type de carte</span>';
+        }
+
+        // Set select value
+        const select = document.getElementById('targetSystem');
+        if (select && this.selectedCard.targetSystem) {
+            select.value = this.selectedCard.targetSystem;
+        }
+
         new bootstrap.Modal(modal).show();
     }
 
     async confirmPlay() {
         if (!this.selectedCard) return;
-        const target = document.getElementById('targetSystem')?.value || null;
+        const target = document.getElementById('targetSystem')?.value || this.selectedCard.targetSystem || null;
         const result = await this.playCard(this.selectedCard.teamCardId, target);
         const modal = bootstrap.Modal.getInstance(document.getElementById('playCardModal'));
         if (modal) modal.hide();
         if (result.success) {
-            this.showToast(`Carte jouée ! +${result.points} pts`, 'success');
+            const effMsg = result.effectiveness !== undefined ? ` (${result.effectiveness}% efficacité)` : '';
+            const critMsg = result.isCritical ? ' ★ Bonus critique!' : '';
+            this.showToast(`Carte jouée ! +${result.points} pts${effMsg}${critMsg}`, 'success');
         } else {
             this.showToast(result.error || 'Erreur', 'danger');
         }
         this.selectedCard = null;
+        this.resetNodeHighlights();
     }
 
-    // ── Rendering ───────────────────────────────────────────────
+    playWithoutTarget() {
+        if (!this.selectedCard) return;
+        this.selectedCard.targetSystem = null;
+        this.showPlayModal();
+    }
+
+    // ── Rendering ───────────────────────────────────────────
     render() {
         if (!this.state) return;
         const s = this.state;
@@ -244,6 +333,7 @@ class CyberBreachGame {
         this.renderHand(s);
         this.renderActionLog(s);
         this.renderScoreBar(s);
+        if (s.nodeStates) this.updateNodeStates(s.nodeStates);
         if (s.role === 'moderator') this.renderModPanel(s);
         if (s.round?.eventCard) this.renderEventCard(s.round.eventCard);
     }
@@ -257,7 +347,6 @@ class CyberBreachGame {
             el('cbStatus').textContent = sess.status.toUpperCase();
             el('cbStatus').className = 'badge ' + (sess.status === 'active' ? 'bg-success' : sess.status === 'lobby' ? 'bg-warning text-dark' : 'bg-secondary');
         }
-        if (el('cbCode')) el('cbCode').textContent = sess.code;
         if (el('cbBlueScore')) el('cbBlueScore').textContent = s.blueTeam?.score ?? 0;
         if (el('cbRedScore'))  el('cbRedScore').textContent = s.redTeam?.score ?? 0;
     }
@@ -269,18 +358,15 @@ class CyberBreachGame {
         const redPanel = document.getElementById('redPanel');
         if (!banner || !bluePanel || !redPanel) return;
 
-        // Reset classes
         bluePanel.classList.remove('active-turn', 'waiting');
         redPanel.classList.remove('active-turn', 'waiting');
 
         if (phase === 2) {
-            // Red Team plays
             banner.className = 'cb-turn-banner red';
             banner.innerHTML = '<i class="bi bi-bug me-2"></i>RED TEAM JOUE <i class="bi bi-bug ms-2"></i>';
             redPanel.classList.add('active-turn');
             bluePanel.classList.add('waiting');
         } else if (phase === 3) {
-            // Blue Team plays
             banner.className = 'cb-turn-banner blue';
             banner.innerHTML = '<i class="bi bi-shield me-2"></i>BLUE TEAM JOUE <i class="bi bi-shield ms-2"></i>';
             bluePanel.classList.add('active-turn');
@@ -299,10 +385,9 @@ class CyberBreachGame {
             banner.innerHTML = '<i class="bi bi-hourglass me-2"></i>EN ATTENTE';
         }
 
-        // Flash banner on phase change
         if (phase !== this.lastPhase && this.lastPhase !== -1) {
             banner.style.animation = 'none';
-            banner.offsetHeight; // trigger reflow
+            banner.offsetHeight;
             banner.style.animation = 'banner-pulse 2s ease-in-out infinite';
         }
         this.lastPhase = phase;
@@ -310,14 +395,13 @@ class CyberBreachGame {
 
     renderTeam(type, team) {
         if (!team) return;
-        const prefix = type;
         const el = id => document.getElementById(id);
-        if (el(`${prefix}Tokens`))     el(`${prefix}Tokens`).textContent = team.tokens;
-        if (el(`${prefix}ShopTokens`)) el(`${prefix}ShopTokens`).textContent = team.shopTokens;
-        if (el(`${prefix}Score`))      el(`${prefix}Score`).textContent = team.score;
-        if (el(`${prefix}HandCount`))  el(`${prefix}HandCount`).textContent = team.handCount;
+        if (el(`${type}Tokens`))     el(`${type}Tokens`).textContent = team.tokens;
+        if (el(`${type}ShopTokens`)) el(`${type}ShopTokens`).textContent = team.shopTokens;
+        if (el(`${type}Score`))      el(`${type}Score`).textContent = team.score;
+        if (el(`${type}HandCount`))  el(`${type}HandCount`).textContent = team.handCount;
 
-        const playersList = el(`${prefix}Players`);
+        const playersList = el(`${type}Players`);
         if (playersList && team.players) {
             playersList.innerHTML = team.players.map(p =>
                 `<div class="d-flex align-items-center gap-2 mb-1">
@@ -327,11 +411,11 @@ class CyberBreachGame {
             ).join('');
         }
 
-        const activeList = el(`${prefix}Active`);
+        const activeList = el(`${type}Active`);
         if (activeList && team.activeCards) {
             activeList.innerHTML = team.activeCards.length > 0 ? team.activeCards.map(tc =>
                 `<div class="d-flex align-items-center gap-2 mb-1 p-1 rounded" style="background:rgba(255,255,255,.04);font-size:.75rem;">
-                    <span class="cb-${type === 'blue' ? 'defend' : 'compromise'}-dot" style="width:6px;height:6px;border-radius:50%;background:${type === 'blue' ? '#3a90e8' : '#e83a3a'};box-shadow:0 0 6px ${type === 'blue' ? '#3a90e8' : '#e83a3a'};"></span>
+                    <span style="width:6px;height:6px;border-radius:50%;background:${type === 'blue' ? '#3a90e8' : '#e83a3a'};box-shadow:0 0 6px ${type === 'blue' ? '#3a90e8' : '#e83a3a'};"></span>
                     <span>${tc.card.name}</span>
                     ${tc.remainingTurns ? `<span class="ms-auto badge bg-dark">${tc.remainingTurns}t</span>` : ''}
                 </div>`
@@ -346,28 +430,18 @@ class CyberBreachGame {
         const myTeam = s.myTeamType === 'blue' ? s.blueTeam : (s.myTeamType === 'red' ? s.redTeam : null);
 
         if (!myTeam?.hand) {
-            // Keep drop zone but show message
-            const dropZone = container.querySelector('.cb-drop-zone');
-            const msg = s.role === 'moderator' ? '<i class="bi bi-star-fill text-warning me-1"></i> Vous êtes le modérateur' : 'Vous n\'êtes pas assigné';
+            const msg = s.role === 'moderator' ? '<i class="bi bi-star-fill text-warning me-1"></i> Modérateur' : 'Non assigné';
             container.innerHTML = `<div class="text-white-50 small p-3">${msg}</div>`;
-            if (dropZone) container.appendChild(dropZone);
             return;
         }
 
-        // Build cards + drop zone
-        const cardsHtml = myTeam.hand.map(tc => this.renderCardHTML(tc.card, tc.id)).join('');
-        const dropZoneHtml = `<div class="cb-drop-zone" id="dropZone"><i class="bi bi-bullseye" style="font-size:1.5rem;opacity:.3;"></i><div class="mt-1">Glissez une carte ici<br>pour jouer</div></div>`;
-
-        container.innerHTML = cardsHtml + dropZoneHtml;
-
-        // Reinitialize sortable after rendering
-        this.initSortable();
+        container.innerHTML = myTeam.hand.map(tc => this.renderCardHTML(tc.card, tc.id)).join('');
     }
 
     renderCardHTML(card, teamCardId = null) {
         const cssClass = card.cssClass || ('card-' + card.type);
         const dataAttrs = teamCardId
-            ? `data-team-card-id="${teamCardId}" data-card-name="${this.escHtml(card.name)}" data-cost="${card.cost}"`
+            ? `data-team-card-id="${teamCardId}" data-card-name="${this.escHtml(card.name)}" data-card-type="${card.type}" data-cost="${card.cost}" data-base-points="${card.points}"`
             : '';
 
         return `
@@ -405,7 +479,6 @@ class CyberBreachGame {
         const bScore = s.blueTeam?.score ?? 0;
         const rScore = s.redTeam?.score ?? 0;
         const total = Math.max(bScore + rScore, 1);
-
         if (el('blueScoreBar')) el('blueScoreBar').textContent = bScore;
         if (el('redScoreBar'))  el('redScoreBar').textContent = rScore;
         if (el('blueScoreFill')) el('blueScoreFill').style.width = `${(bScore / total) * 100}%`;
@@ -415,12 +488,10 @@ class CyberBreachGame {
     renderActionLog(s) {
         const log = document.getElementById('actionLog');
         if (!log || !s.actionLog) return;
-
         if (s.actionLog.length === 0) {
             log.innerHTML = '<div class="text-white-50 small p-2 text-center">Aucune action ce round</div>';
             return;
         }
-
         log.innerHTML = s.actionLog.map(a =>
             `<div class="cb-log-entry">
                 <div class="cb-log-dot ${a.teamType}"></div>
@@ -436,11 +507,6 @@ class CyberBreachGame {
         const panel = document.getElementById('modPanel');
         if (!panel) return;
         panel.style.display = 'block';
-        const sess = s.session;
-        const el = id => document.getElementById(id);
-        if (el('btnStartRound')) el('btnStartRound').disabled = sess.status === 'active' && sess.currentPhase > 0 && sess.currentPhase < 5;
-        if (el('btnAdvancePhase')) el('btnAdvancePhase').disabled = sess.status !== 'active';
-        if (el('btnDrawEvent')) el('btnDrawEvent').disabled = sess.currentPhase !== 4;
     }
 
     renderEventCard(event) {
@@ -460,7 +526,6 @@ class CyberBreachGame {
         container.style.display = 'block';
     }
 
-    // ── Utilities ────────────────────────────────────────────────
     escHtml(s) { return s.replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
     showToast(message, type = 'info') {

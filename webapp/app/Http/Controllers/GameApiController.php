@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GameSession;
 use App\Models\GameTeamCard;
+use App\Services\CardEffectivenessMatrix;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,6 +13,22 @@ use Illuminate\Support\Facades\Auth;
 class GameApiController extends Controller
 {
     public function __construct(private GameService $gameService) {}
+
+    /** Get effectiveness preview for a card on all nodes */
+    public function cardEffectiveness(Request $request, GameSession $session): JsonResponse
+    {
+        $request->validate([
+            'card_name' => 'required|string',
+            'card_type' => 'required|string',
+            'base_points' => 'required|integer',
+        ]);
+
+        $preview = CardEffectivenessMatrix::getCardTargetPreview(
+            $request->card_name, $request->card_type, $request->base_points, $session->scenario
+        );
+
+        return response()->json(['success' => true, 'targets' => $preview]);
+    }
 
     /** Get full game state (for polling / reconnection) */
     public function getGameState(GameSession $session): JsonResponse

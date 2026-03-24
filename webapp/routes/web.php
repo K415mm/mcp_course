@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/draw-event', [\App\Http\Controllers\GameApiController::class, 'drawEvent'])->name('drawEvent');
             Route::post('/adjust-tokens', [\App\Http\Controllers\GameApiController::class, 'adjustTokens'])->name('adjustTokens');
             Route::post('/deal-hands', [\App\Http\Controllers\GameApiController::class, 'dealHands'])->name('dealHands');
+            Route::get('/card-effectiveness', [\App\Http\Controllers\GameApiController::class, 'cardEffectiveness'])->name('cardEffectiveness');
             Route::post('/assign-player', [\App\Http\Controllers\GameApiController::class, 'assignPlayer'])->name('assignPlayer');
             Route::post('/remove-player', [\App\Http\Controllers\GameApiController::class, 'removePlayer'])->name('removePlayer');
         });

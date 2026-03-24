@@ -132,13 +132,20 @@
                 <div class="card-body p-2">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <span class="small fw-bold text-white-50"><i class="bi bi-diagram-3 me-1"></i>Infrastructure DevCo</span>
-                        <span class="small text-white-50">Scénario {{ $session->scenario }}: {{ $session->scenarioTitle() }}</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="small text-white-50 me-2">Scénario {{ $session->scenario }}: {{ $session->scenarioTitle() }}</span>
+                            <button class="btn btn-xs btn-outline-secondary" onclick="game.zoomIn()" title="Zoom +"><i class="bi bi-zoom-in"></i></button>
+                            <button class="btn btn-xs btn-outline-secondary" onclick="game.zoomOut()" title="Zoom −"><i class="bi bi-zoom-out"></i></button>
+                            <button class="btn btn-xs btn-outline-secondary" onclick="game.zoomFit()" title="Ajuster"><i class="bi bi-arrows-fullscreen"></i></button>
+                        </div>
                     </div>
                     <div id="networkMap"></div>
-                    <div class="d-flex gap-3 mt-2 justify-content-center">
+                    <div class="d-flex gap-3 mt-2 justify-content-center flex-wrap">
                         <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3a90e8;"></span> Sécurisé</span>
                         <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e83a3a;"></span> Compromis</span>
                         <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2d9f4f;"></span> Défendu</span>
+                        <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#fbbf24;"></span> 100% + Critique</span>
+                        <span class="small text-white-50"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6366f1;"></span> 80%</span>
                     </div>
                 </div>
             </div>
@@ -273,10 +280,13 @@
                         @if($player)
                             <span class="badge {{ $player->team->isBlue() ? 'bg-primary' : 'bg-danger' }} ms-1">{{ $player->team->label() }}</span>
                         @endif
-                        <span class="text-white-50 ms-2" style="font-size:.7rem;">cliquer = jouer &middot; double-cliquer = retourner &middot; glisser = jouer</span>
+                        <span class="text-white-50 ms-2" style="font-size:.7rem;">1. cliquer une carte &middot; 2. cliquer un noeud sur la map &middot; double-clic = retourner</span>
                     </span>
                     <div class="d-flex gap-1">
                         @if($player)
+                            <button class="btn btn-sm btn-outline-warning" onclick="game.playWithoutTarget()" title="Jouer sans cible">
+                                <i class="bi bi-slash-circle me-1"></i>Sans cible
+                            </button>
                             <button class="btn btn-sm btn-outline-theme" onclick="game.drawCard().then(r => r.success ? game.showToast('Carte piochée','success') : game.showToast(r.error || 'Erreur','danger'))">
                                 <i class="bi bi-plus-circle me-1"></i>Piocher (1 jeton)
                             </button>
@@ -291,10 +301,6 @@
                     @else
                         <div class="text-white-50 small p-3">Vous n'êtes pas assigné à une équipe</div>
                     @endif
-                    <div class="cb-drop-zone" id="dropZone">
-                        <i class="bi bi-bullseye" style="font-size:1.5rem;opacity:.3;"></i>
-                        <div class="mt-1">Glissez une carte ici<br>pour jouer</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -322,10 +328,18 @@
                     <strong id="playCardCost" class="text-warning ms-1"></strong>
                     <span class="text-white-50 ms-1">jetons</span>
                 </div>
+                <div class="mb-3">
+                    <span class="text-white-50">Cible:</span>
+                    <strong id="playTargetInfo" class="text-white ms-1">—</strong>
+                </div>
+                <div class="mb-3 p-2 rounded" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);">
+                    <span class="text-white-50 small">Efficacité:</span>
+                    <div id="playEffectiveness" class="mt-1"></div>
+                </div>
                 <div class="mb-2">
-                    <label class="form-label small text-white-50">Système cible (optionnel)</label>
+                    <label class="form-label small text-white-50">Modifier la cible</label>
                     <select id="targetSystem" class="form-select form-select-sm">
-                        <option value="">— Aucun —</option>
+                        <option value="">— Aucune cible —</option>
                         @foreach($systems as $key => $zone)
                             <optgroup label="{{ $zone['name'] }}">
                                 @foreach($zone['nodes'] as $node)
@@ -350,8 +364,6 @@
 @push('scripts')
 {{-- vis-network for infrastructure graph --}}
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-{{-- SortableJS for drag-and-drop --}}
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 {{-- Game engine --}}
 <script src="{{ asset('js/cyberbreach-game.js') }}"></script>
 <script>

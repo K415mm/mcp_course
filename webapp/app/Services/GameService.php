@@ -143,9 +143,11 @@ class GameService
 
         // Calculate points using effectiveness matrix
         $calc = CardEffectivenessMatrix::calculate(
-            $card->name, $card->type, $card->points, $targetSystem, $session->scenario
+            $card->name, 
+            $targetSystem ?? '', 
+            $session->scenario
         );
-        $points = $calc['points'];
+        $points = (int) round($card->points * $calc['scoreMultiplier']);
         $team->addScore($points);
 
         // Update node state if target specified
@@ -377,14 +379,14 @@ class GameService
     public static function allowedNodesForScenario(int $scenario): array
     {
         return match($scenario) {
-            1 => ['API Gateway', 'Jenkins CI', 'GitHub Enterprise', 'HashiCorp Vault', 'AWS EC2', 'AWS S3', 'Slack', 'Jira', 'Developer Laptop'],
-            2 => ['API Gateway', 'npm Registry', 'Docker Hub', 'GitLab CI', 'K8s Cluster', 'AWS EC2', 'DB Prod'],
-            3 => ['VPN Gateway', 'Ex-Employee Laptop', 'HashiCorp Vault', 'GitHub Enterprise', 'AWS IAM', 'AWS EC2', 'DB Prod'],
-            4 => ['API Gateway v2', 'K8s Cluster', 'DB Prod', 'AWS EC2', 'Docker Registry', 'Slack', 'HashiCorp Vault'],
-            5 => ['Office 365', 'CEO Laptop', 'Finance Laptop', 'Bank Portal', 'Slack'],
-            6 => ['RDP Gateway', 'Domain Controller', 'DB Prod', 'Veeam Backup', 'Employee Laptops'],
-            7 => ['DNS C2', 'API Gateway', 'K8s Cluster', 'AWS EC2', 'HashiCorp Vault', 'DB Prod', 'Slack', 'GitHub Enterprise'],
-            8 => ['API Gateway', 'IT/OT Firewall', 'SCADA Server', 'PLC Controllers', 'HMI Panel', 'Safety System (SIS)', 'DB Prod'],
+            1 => ['Internet', 'DNS External', 'API Gateway', 'VPN Gateway', 'WAF', 'Primary Active Directory', 'Slack', 'Jira', 'File Server', 'Email Server', 'Lead Dev Laptop', 'Dev Laptops', 'PM Laptop', 'Jenkins Master', 'Jenkins Workers', 'GitHub Enterprise', 'HashiCorp Vault', 'Nexus Repo', 'AWS EC2 Fleet', 'AWS S3 Buckets', 'AWS IAM', 'Production DB'],
+            2 => ['Internet', 'API Gateway', 'WAF', 'VPN Gateway', 'Primary Active Directory', 'Slack', 'Jira', 'Dev Laptops', 'Ops Laptops', 'npm Registry', 'Docker Hub', 'GitLab CI', 'GitHub Enterprise', 'HashiCorp Vault', 'SonarQube', 'K8s Control Plane', 'K8s Worker Nodes', 'AWS EC2 Fleet', 'Production DB', 'Redis Cache'],
+            3 => ['Internet', 'VPN Gateway', 'API Gateway', 'Primary Active Directory', 'Secondary AD', 'File Server', 'Slack', 'Jira', 'Splunk SIEM', 'Ex-Employee Laptop', 'Admin Laptop', 'Staff Laptops', 'GitHub Enterprise', 'HashiCorp Vault', 'Jenkins Master', 'AWS IAM', 'AWS EC2 Fleet', 'AWS S3 Buckets', 'Production DB', 'Dev/Test DB', 'Admin Portal'],
+            4 => ['Internet', 'DNS External', 'API Gateway v2', 'Legacy API Gateway', 'WAF', 'VPN Gateway', 'Primary Active Directory', 'Slack', 'Splunk SIEM', 'PAM Solution', 'Ops Laptops', 'Dev Laptops', 'Internal Docker Registry', 'Jenkins Master', 'HashiCorp Vault', 'K8s Control Plane', 'K8s Worker Nodes', 'Production DB', 'Elasticsearch Cluster', 'AWS EC2 Fleet'],
+            5 => ['Internet', 'Office 365 Cloud', 'Bank Portal API', 'Supplier Portal', 'Secure Email Gateway', 'VPN Gateway', 'Primary Active Directory', 'File Server', 'ERP System', 'Intranet Portal', 'Slack', 'Jira', 'CEO Laptop', 'CFO Laptop', 'Finance Laptops', 'Sales Laptops', 'HR Laptops', 'CEO Mobile Device', 'Splunk SIEM', 'PAM Solution'],
+            6 => ['Internet', 'Office 365 Cloud', 'RDP Jump Host', 'API Gateway', 'VPN Gateway', 'Primary Active Directory', 'Secondary AD', 'vCenter Server', 'NAS Storage', 'Production DB', 'Dev/Test DB', 'ERP System', 'Intranet Portal', 'Veeam Backup Server', 'Offline Backup Infrastructure', 'AWS Glacier Backups', 'HR Laptops', 'Finance Laptops', 'Dev Laptops', 'Sales Laptops', 'Splunk SIEM', 'EDR Console'],
+            7 => ['Internet', 'Malicious C2 (DNS)', 'GitHub Cloud', 'API Gateway', 'VPN Gateway', 'WAF', 'Linux Jump Host', 'Jenkins Master', 'HashiCorp Vault', 'Nexus Repo', 'K8s Control Plane', 'K8s Worker Nodes', 'AWS EC2 Fleet', 'AWS S3 Buckets', 'AWS IAM', 'Production DB', 'Elasticsearch Cluster', 'Data Lake', 'Lead Dev Laptop', 'Slack', 'Splunk SIEM'],
+            8 => ['Internet', 'API Gateway', 'VPN Gateway', 'Public Website', 'Primary Active Directory', 'ERP System', 'Engineering Laptops', 'WSUS Server', 'Splunk SIEM', 'IT/OT Firewall', 'OT Jump Host', 'Data Historian', 'SCADA Master', 'SCADA Standby', 'OT Engineering WorkStation', 'Assembly PLC', 'Cooling PLC', 'Main HMI Panel', 'Safety Instrumented System (SIS)'],
             default => [],
         };
     }
@@ -393,15 +395,19 @@ class GameService
     {
         $allowed = $scenario ? self::allowedNodesForScenario($scenario) : [];
         if (empty($allowed)) {
-            $allowed = ['API Gateway', 'Jenkins CI', 'GitHub Enterprise', 'HashiCorp Vault', 'AWS EC2', 'AWS S3', 'Slack', 'Jira', 'Developer Laptop'];
+            $allowed = ['API Gateway', 'Jenkins Master', 'GitHub Enterprise', 'HashiCorp Vault', 'AWS EC2 Fleet', 'AWS S3 Buckets', 'Slack', 'Jira', 'Lead Dev Laptop'];
         }
 
         $groupMap = [
-            'Endpoints' => ['Developer Laptop', 'Ex-Employee Laptop', 'CEO Laptop', 'Finance Laptop', 'Employee Laptops'],
-            'Infra & Cloud' => ['API Gateway', 'API Gateway v2', 'AWS EC2', 'AWS S3', 'AWS IAM', 'VPN Gateway', 'RDP Gateway', 'IT/OT Firewall'],
-            'Data & Apps' => ['DB Prod', 'Office 365', 'Bank Portal', 'Slack', 'Jira', 'HashiCorp Vault', 'Veeam Backup', 'DNS C2'],
-            'DevOps & Containers' => ['Jenkins CI', 'GitLab CI', 'GitHub Enterprise', 'npm Registry', 'Docker Hub', 'Docker Registry', 'K8s Cluster'],
-            'OT/ICS' => ['SCADA Server', 'PLC Controllers', 'HMI Panel', 'Safety System (SIS)'],
+            'External & Cloud Services' => ['Internet', 'DNS External', 'GitHub Cloud', 'Office 365 Cloud', 'Bank Portal API', 'Supplier Portal', 'Malicious C2 (DNS)'],
+            'DMZ & Gateways' => ['API Gateway', 'API Gateway v2', 'Legacy API Gateway', 'VPN Gateway', 'WAF', 'Secure Email Gateway', 'RDP Jump Host', 'Public Website', 'IT/OT Firewall', 'Linux Jump Host', 'OT Jump Host'],
+            'Corporate IT & Security' => ['Primary Active Directory', 'Secondary AD', 'File Server', 'NAS Storage', 'ERP System', 'Intranet Portal', 'WSUS Server', 'Splunk SIEM', 'EDR Console', 'PAM Solution', 'vCenter Server', 'Admin Portal', 'Email Server'],
+            'Endpoints' => ['Lead Dev Laptop', 'Dev Laptops', 'PM Laptop', 'Ops Laptops', 'Admin Laptop', 'Ex-Employee Laptop', 'CEO Laptop', 'CEO Mobile Device', 'CFO Laptop', 'Finance Laptops', 'HR Laptops', 'Sales Laptops', 'Staff Laptops', 'Engineering Laptops', 'OT Engineering WorkStation'],
+            'DevOps & Pipeline' => ['Jenkins Master', 'Jenkins Workers', 'GitLab CI', 'GitHub Enterprise', 'npm Registry', 'Docker Hub', 'Internal Docker Registry', 'HashiCorp Vault', 'Nexus Repo', 'SonarQube'],
+            'Cloud Infrastructure' => ['K8s Control Plane', 'K8s Worker Nodes', 'AWS EC2 Fleet', 'AWS IAM', 'AWS S3 Buckets', 'AWS Glacier Backups'],
+            'Data & Backups' => ['Production DB', 'Dev/Test DB', 'Elasticsearch Cluster', 'Data Lake', 'Redis Cache', 'Veeam Backup Server', 'Offline Backup Infrastructure'],
+            'Collaboration' => ['Slack', 'Jira'],
+            'Industrial Control Systems (OT)' => ['Data Historian', 'SCADA Master', 'SCADA Standby', 'Assembly PLC', 'Cooling PLC', 'Main HMI Panel', 'Safety Instrumented System (SIS)'],
         ];
 
         $filtered = [];

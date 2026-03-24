@@ -87,31 +87,39 @@ class CyberBreachGame {
     // ── NODE MAP ↔ Display Name Mapping ────────────────────────
     static NODE_MAP = {
         internet: '🌐 Internet',
-        laptop_dev: '💻 Dev Laptop', laptop_ex: '💻 Ex-Emp Laptop', laptop_ceo: '💻 CEO Laptop', laptop_finance: '💻 Finance Laptop', laptops: '💻 Laptops',
-        apigw: '🛡️ API Gateway', apigw2: '🛡️ API Gateway v2', aws_ec2: '☁️ AWS EC2', aws_s3: '🪣 AWS S3', aws_iam: '🔑 AWS IAM', vpn: '🔒 VPN', rdp: '🖥️ RDP', firewall_it_ot: '🧱 IT/OT FW',
-        dbprod: '🗄️ DB Prod', o365: '✉️ Office 365', bank: '🏦 Bank', slack: '💬 Slack', jira: '📋 Jira', vault: '🔑 Vault', backup: '💾 Veeam', dns_c2: '📡 DNS C2', ad: '🏠 Domain Ctrl',
-        jenkins: '⚙️ Jenkins', gitlab: '⚙️ GitLab CI', github: '🐙 GitHub', npm: '📦 npm', docker: '🐳 Docker', k8s: '☸️ K8s',
-        scada: '🏭 SCADA', plc: '🔧 PLC', hmi: '💻 HMI', sis: '⚠️ SIS',
+        dns_ext: '🌍 DNS External', github: '☁️ GitHub Cloud', o365: '☁️ Office 365', bank: '🏦 Bank Portal', supplier: '🏭 Supplier Portal', dns_c2: '📡 DNS C2',
+        apigw: '🛡️ API Gateway', apigw2: '🛡️ API Gateway v2', apigw_legacy: '🛡️ Legacy API', vpn: '🔒 VPN', waf: '🧱 WAF', seg: '📧 Secure Email', rdp_jump: '🖥️ RDP Jump', web_front: '🌐 Web Front', fw_it_ot: '🧱 IT/OT FW', linux_jump: '🐧 Linux Jump', ot_jump: '🏭 OT Jump',
+        ad_primary: '🏠 Primary AD', ad_sec: '🏠 Secondary AD', file_svr: '📁 File Server', nas: '💽 NAS', erp: '📊 ERP', intranet: '🏢 Intranet', wsus: '🔄 WSUS', siem: '👁️ Splunk SIEM', edr: '🛡️ EDR', pam: '🔑 PAM', vcenter: '☁️ vCenter', admin_portal: '⚙️ Admin Portal', email_svr: '📧 Email Server',
+        laptop_dev_lead: '💻 Lead Dev Laptop', laptops_dev: '💻 Dev Laptops', laptop_pm: '💻 PM Laptop', laptops_ops: '💻 Ops Laptops', laptop_admin: '💻 Admin Laptop', laptop_ex: '💻 Ex-Emp Laptop', laptop_ceo: '💻 CEO Laptop', mobile_ceo: '📱 CEO Mobile', laptop_cfo: '💻 CFO Laptop', laptops_finance: '💻 Finance Laptops', laptops_hr: '💻 HR Laptops', laptops_sales: '💻 Sales Laptops', laptops_staff: '💻 Staff Laptops', laptops_eng: '💻 Eng Laptops', ot_eng_ws: '💻 OT Eng WS',
+        jenkins_master: '⚙️ Jenkins Master', jenkins_workers: '⚙️ Jenkins Workers', gitlab: '⚙️ GitLab CI', github_ent: '🐙 GitHub Ent', npm: '📦 npm', docker_hub: '🐳 Docker Hub', docker_reg: '🐳 Docker Reg', vault: '🔑 Vault', nexus: '📦 Nexus Repo', sonar: '🔎 SonarQube',
+        k8s_control: '☸️ K8s Control', k8s_workers: '☸️ K8s Workers', aws_ec2: '☁️ AWS EC2', aws_iam: '🔑 AWS IAM', aws_s3: '🪣 AWS S3', aws_glacier: '❄️ Glacier',
+        db_prod: '🗄️ DB Prod', db_dev: '🗄️ DB Dev', elastic: '🔍 Elastic', data_lake: '🌊 Data Lake', redis: '⚡ Redis Cache', veeam: '💾 Veeam Backup', offline_backup: '📼 Offline Backup',
+        slack: '💬 Slack', jira: '📋 Jira',
+        historian: '📊 Data Historian', scada_master: '🏭 SCADA Master', scada_standby: '🏭 SCADA Standby', plc_assembly: '🔧 PLC Assembly', plc_cooling: '🔧 PLC Cooling', hmi_main: '💻 HMI Main', sis: '⚠️ SIS'
     };
 
     static NODE_TO_DISPLAY = {
         internet: 'Internet',
-        laptop_dev: 'Developer Laptop', laptop_ex: 'Ex-Employee Laptop', laptop_ceo: 'CEO Laptop', laptop_finance: 'Finance Laptop', laptops: 'Employee Laptops',
-        apigw: 'API Gateway', apigw2: 'API Gateway v2', aws_ec2: 'AWS EC2', aws_s3: 'AWS S3', aws_iam: 'AWS IAM', vpn: 'VPN Gateway', rdp: 'RDP Gateway', firewall_it_ot: 'IT/OT Firewall',
-        dbprod: 'DB Prod', o365: 'Office 365', bank: 'Bank Portal', slack: 'Slack', jira: 'Jira', vault: 'HashiCorp Vault', backup: 'Veeam Backup', dns_c2: 'DNS C2', ad: 'Domain Controller',
-        jenkins: 'Jenkins CI', gitlab: 'GitLab CI', github: 'GitHub Enterprise', npm: 'npm Registry', docker: 'Docker Hub', k8s: 'K8s Cluster',
-        scada: 'SCADA Server', plc: 'PLC Controllers', hmi: 'HMI Panel', sis: 'Safety System (SIS)',
+        dns_ext: 'DNS External', github: 'GitHub Cloud', o365: 'Office 365 Cloud', bank: 'Bank Portal API', supplier: 'Supplier Portal', dns_c2: 'Malicious C2 (DNS)',
+        apigw: 'API Gateway', apigw2: 'API Gateway v2', apigw_legacy: 'Legacy API Gateway', vpn: 'VPN Gateway', waf: 'WAF', seg: 'Secure Email Gateway', rdp_jump: 'RDP Jump Host', web_front: 'Public Website', fw_it_ot: 'IT/OT Firewall', linux_jump: 'Linux Jump Host', ot_jump: 'OT Jump Host',
+        ad_primary: 'Primary Active Directory', ad_sec: 'Secondary AD', file_svr: 'File Server', nas: 'NAS Storage', erp: 'ERP System', intranet: 'Intranet Portal', wsus: 'WSUS Server', siem: 'Splunk SIEM', edr: 'EDR Console', pam: 'PAM Solution', vcenter: 'vCenter Server', admin_portal: 'Admin Portal', email_svr: 'Email Server',
+        laptop_dev_lead: 'Lead Dev Laptop', laptops_dev: 'Dev Laptops', laptop_pm: 'PM Laptop', laptops_ops: 'Ops Laptops', laptop_admin: 'Admin Laptop', laptop_ex: 'Ex-Employee Laptop', laptop_ceo: 'CEO Laptop', mobile_ceo: 'CEO Mobile Device', laptop_cfo: 'CFO Laptop', laptops_finance: 'Finance Laptops', laptops_hr: 'HR Laptops', laptops_sales: 'Sales Laptops', laptops_staff: 'Staff Laptops', laptops_eng: 'Engineering Laptops', ot_eng_ws: 'OT Engineering WorkStation',
+        jenkins_master: 'Jenkins Master', jenkins_workers: 'Jenkins Workers', gitlab: 'GitLab CI', github_ent: 'GitHub Enterprise', npm: 'npm Registry', docker_hub: 'Docker Hub', docker_reg: 'Internal Docker Registry', vault: 'HashiCorp Vault', nexus: 'Nexus Repo', sonar: 'SonarQube',
+        k8s_control: 'K8s Control Plane', k8s_workers: 'K8s Worker Nodes', aws_ec2: 'AWS EC2 Fleet', aws_iam: 'AWS IAM', aws_s3: 'AWS S3 Buckets', aws_glacier: 'AWS Glacier Backups',
+        db_prod: 'Production DB', db_dev: 'Dev/Test DB', elastic: 'Elasticsearch Cluster', data_lake: 'Data Lake', redis: 'Redis Cache', veeam: 'Veeam Backup Server', offline_backup: 'Offline Backup Infrastructure',
+        slack: 'Slack', jira: 'Jira',
+        historian: 'Data Historian', scada_master: 'SCADA Master', scada_standby: 'SCADA Standby', plc_assembly: 'Assembly PLC', plc_cooling: 'Cooling PLC', hmi_main: 'Main HMI Panel', sis: 'Safety Instrumented System (SIS)'
     };
 
     static SCENARIO_NODES = {
-        1: ['apigw', 'jenkins', 'github', 'vault', 'aws_ec2', 'aws_s3', 'slack', 'jira', 'laptop_dev'],
-        2: ['apigw', 'npm', 'docker', 'gitlab', 'k8s', 'aws_ec2', 'dbprod'],
-        3: ['vpn', 'laptop_ex', 'vault', 'github', 'aws_iam', 'aws_ec2', 'dbprod'],
-        4: ['apigw2', 'k8s', 'dbprod', 'aws_ec2', 'docker', 'slack', 'vault'],
-        5: ['o365', 'laptop_ceo', 'laptop_finance', 'bank', 'slack'],
-        6: ['rdp', 'ad', 'dbprod', 'backup', 'laptops'],
-        7: ['dns_c2', 'apigw', 'k8s', 'aws_ec2', 'vault', 'dbprod', 'slack', 'github'],
-        8: ['apigw', 'firewall_it_ot', 'scada', 'plc', 'hmi', 'sis', 'dbprod']
+        1: ['dns_ext', 'apigw', 'vpn', 'waf', 'ad_primary', 'slack', 'jira', 'file_svr', 'email_svr', 'laptop_dev_lead', 'laptops_dev', 'laptop_pm', 'jenkins_master', 'jenkins_workers', 'github_ent', 'vault', 'nexus', 'aws_ec2', 'aws_s3', 'aws_iam', 'db_prod'],
+        2: ['apigw', 'waf', 'vpn', 'ad_primary', 'slack', 'jira', 'laptops_dev', 'laptops_ops', 'npm', 'docker_hub', 'gitlab', 'github_ent', 'vault', 'sonar', 'k8s_control', 'k8s_workers', 'aws_ec2', 'db_prod', 'redis'],
+        3: ['vpn', 'apigw', 'ad_primary', 'ad_sec', 'file_svr', 'slack', 'jira', 'siem', 'laptop_ex', 'laptop_admin', 'laptops_staff', 'github_ent', 'vault', 'jenkins_master', 'aws_iam', 'aws_ec2', 'aws_s3', 'db_prod', 'db_dev', 'admin_portal'],
+        4: ['dns_ext', 'apigw2', 'apigw_legacy', 'waf', 'vpn', 'ad_primary', 'slack', 'siem', 'pam', 'laptops_ops', 'laptops_dev', 'docker_reg', 'jenkins_master', 'vault', 'k8s_control', 'k8s_workers', 'db_prod', 'elastic', 'aws_ec2'],
+        5: ['o365', 'bank', 'supplier', 'seg', 'vpn', 'ad_primary', 'file_svr', 'erp', 'intranet', 'slack', 'jira', 'laptop_ceo', 'laptop_cfo', 'laptops_finance', 'laptops_sales', 'laptops_hr', 'mobile_ceo', 'siem', 'pam'],
+        6: ['o365', 'rdp_jump', 'apigw', 'vpn', 'ad_primary', 'ad_sec', 'vcenter', 'nas', 'db_prod', 'db_dev', 'erp', 'intranet', 'veeam', 'offline_backup', 'aws_glacier', 'laptops_hr', 'laptops_finance', 'laptops_dev', 'laptops_sales', 'siem', 'edr'],
+        7: ['dns_c2', 'github', 'apigw', 'vpn', 'waf', 'linux_jump', 'jenkins_master', 'vault', 'nexus', 'k8s_control', 'k8s_workers', 'aws_ec2', 'aws_s3', 'aws_iam', 'db_prod', 'elastic', 'data_lake', 'laptop_dev_lead', 'slack', 'siem'],
+        8: ['apigw', 'vpn', 'web_front', 'ad_primary', 'erp', 'laptops_eng', 'wsus', 'siem', 'fw_it_ot', 'ot_jump', 'historian', 'scada_master', 'scada_standby', 'ot_eng_ws', 'plc_assembly', 'plc_cooling', 'hmi_main', 'sis']
     };
 
     // ── vis-network Infrastructure Map ──────────────────────────
@@ -121,47 +129,25 @@ class CyberBreachGame {
 
         const baseColor = { background: '#0f2847', border: '#3a90e8' };
         const secColor  = { background: '#1a2744', border: '#5580aa' };
+        const cloudColor = { background: '#0f2847', border: '#d97706' };
+        const badColor = { background: '#3c0d0d', border: '#e83a3a' };
+        const otColor = { background: '#2d1f0e', border: '#b45309' };
 
-        const allNodesData = [
-            { id: 'internet', label: '🌐 Internet', shape: 'diamond', color: { background: '#1a2744', border: '#3a90e8' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
-            // Endpoints
-            { id: 'laptop_dev', label: '💻 Dev Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'laptop_ex', label: '💻 Ex-Emp Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'laptop_ceo', label: '💻 CEO Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'laptop_finance', label: '💻 Finance Laptop', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'laptops', label: '💻 Laptops', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            // Infra & Cloud
-            { id: 'apigw', label: '🛡️ API Gateway', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'apigw2', label: '🛡️ API Gateway v2', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'aws_ec2', label: '☁️ AWS EC2', shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'aws_s3', label: '🪣 AWS S3', shape: 'database', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'aws_iam', label: '🔑 AWS IAM', shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'vpn', label: '🔒 VPN', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'rdp', label: '🖥️ RDP', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'firewall_it_ot', label: '🧱 IT/OT FW', shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            // Data & Apps
-            { id: 'dbprod', label: '🗄️ DB Prod', shape: 'database', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'o365', label: '✉️ Office 365', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'bank', label: '🏦 Bank', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'slack', label: '💬 Slack', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'jira', label: '📋 Jira', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'vault', label: '🔑 Vault', shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'backup', label: '💾 Veeam', shape: 'database', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'dns_c2', label: '📡 DNS C2', shape: 'diamond', color: { background: '#3c0d0d', border: '#e83a3a' }, font: { color: '#fff', size: 12 }, borderWidth: 2, size: 30 },
-            { id: 'ad', label: '🏠 Domain Ctrl', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            // DevOps
-            { id: 'jenkins', label: '⚙️ Jenkins', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'gitlab', label: '⚙️ GitLab', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'github', label: '🐙 GitHub', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'npm', label: '📦 npm', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'docker', label: '🐳 Docker', shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'k8s', label: '☸️ K8s', shape: 'box', color: baseColor, font: { color: '#c5dcf5', size: 11 }, borderWidth: 2, size: 20 },
-            // OT
-            { id: 'scada', label: '🏭 SCADA', shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
-            { id: 'plc', label: '🔧 PLC', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2, size: 18 },
-            { id: 'hmi', label: '💻 HMI', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 1, size: 18 },
-            { id: 'sis', label: '⚠️ SIS', shape: 'box', color: { background: '#2d1f0e', border: '#dc2626' }, font: { color: '#fca5a5', size: 11 }, borderWidth: 2, size: 20 },
-        ];
+        const allNodesData = Object.keys(CyberBreachGame.NODE_MAP).map(id => {
+            const label = CyberBreachGame.NODE_MAP[id];
+            let shape = 'box'; let color = secColor; let size = 18; let bw = 1; let fc = '#aaa';
+
+            if (id === 'internet') { shape = 'diamond'; color = secColor; fc = '#fff'; bw = 2; size = 30; }
+            else if (id.includes('apigw') || id === 'vpn' || id === 'ad_primary' || id === 'jenkins_master' || id === 'gitlab' || id === 'github_ent') { shape = 'box'; color = baseColor; fc = '#c5dcf5'; bw = 2; size = 20; }
+            else if (id.includes('db') || id.includes('aws_s3') || id === 'nas' || id === 'veeam' || id === 'offline_backup') { shape = 'database'; color = baseColor; fc = '#c5dcf5'; bw = 2; size = 20; if(id==='aws_s3') color=cloudColor; }
+            else if (id.includes('aws') || id === 'vault' || id.includes('k8s')) { shape = 'box'; color = cloudColor; fc = '#fcd1a6'; bw = 2; size = 20; }
+            else if (id === 'dns_c2') { shape = 'diamond'; color = badColor; fc = '#fff'; bw = 2; size = 30; }
+            else if (id.includes('scada') || id.includes('plc') || id === 'sis' || id === 'fw_it_ot') { shape = 'box'; color = otColor; fc = '#fcd1a6'; bw = 2; size = 20; if(id==='sis') color={ background: '#2d1f0e', border: '#dc2626' }; }
+            else if (id.includes('laptop') || id === 'mobile_ceo') { shape = 'box'; color = secColor; fc = '#aaa'; bw = 1; size = 18; }
+            else if (id === 'siem' || id === 'pam' || id === 'edr') { shape = 'hexagon'; color = baseColor; fc = '#c5dcf5'; bw = 2; size = 20; }
+
+            return { id, label, shape, color, font: { color: fc, size: 11 }, borderWidth: bw, size };
+        });
 
         let filteredNodes = allNodesData;
         if (this.scenario && CyberBreachGame.SCENARIO_NODES[this.scenario]) {
@@ -170,46 +156,46 @@ class CyberBreachGame {
         }
         const nodes = new vis.DataSet(filteredNodes);
 
+        const buildEdge = (from, to, dashes=false, color='#3a90e8') => ({ from, to, arrows: 'to', dashes, color: { color, opacity: 0.4 } });
+        
         const allEdgesData = [
-            { from: 'internet', to: 'apigw',  arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
-            { from: 'internet', to: 'apigw2', arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
-            { from: 'internet', to: 'vpn', arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
-            { from: 'internet', to: 'rdp', arrows: 'to', color: { color: '#3a90e8', opacity: .5 }, width: 2 },
-            { from: 'internet', to: 'o365', arrows: 'to', color: { color: '#555', opacity: .5 }, width: 2 },
-            { from: 'apigw', to: 'slack', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'apigw2', to: 'slack', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'slack', to: 'jira', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'vault', to: 'slack', dashes: true, color: { color: '#555', opacity: .2 } },
-            { from: 'laptop_dev', to: 'github', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'github', to: 'jenkins', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'github', to: 'gitlab', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'jenkins', to: 'aws_ec2', arrows: 'to', color: { color: '#d97706', opacity: .3 } },
-            { from: 'gitlab', to: 'k8s', arrows: 'to', color: { color: '#3a90e8', opacity: .3 } },
-            { from: 'npm', to: 'gitlab', arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'docker', to: 'gitlab', arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'apigw', to: 'vault', dashes: true, color: { color: '#d97706', opacity: .3 } },
-            { from: 'vault', to: 'aws_ec2', dashes: true, color: { color: '#d97706', opacity: .3 } },
-            { from: 'aws_ec2', to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'k8s', to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .4 } },
-            { from: 'aws_ec2', to: 'aws_s3', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
-            { from: 'aws_iam', to: 'aws_ec2', arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .4 } },
-            { from: 'vpn', to: 'ad', arrows: 'to', color: { color: '#555', opacity: .4 } },
-            { from: 'rdp', to: 'ad', arrows: 'to', color: { color: '#555', opacity: .4 } },
-            { from: 'ad', to: 'laptops', arrows: 'to', color: { color: '#555', opacity: .4 } },
-            { from: 'laptops', to: 'dbprod', arrows: 'to', color: { color: '#3a90e8', opacity: .3 } },
-            { from: 'ad', to: 'backup', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'o365', to: 'laptop_ceo', arrows: 'to', color: { color: '#555', opacity: .4 } },
-            { from: 'laptop_ceo', to: 'laptop_finance', arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .4 } },
-            { from: 'laptop_finance', to: 'bank', arrows: 'to', color: { color: '#2d9f4f', opacity: .4 } },
-            { from: 'laptop_ex', to: 'vpn', arrows: 'to', color: { color: '#555', opacity: .4 } },
-            { from: 'internet', to: 'dns_c2', arrows: 'from', color: { color: '#e83a3a', opacity: .5 }, width: 2 },
-            { from: 'dns_c2', to: 'k8s', arrows: 'to', dashes: true, color: { color: '#e83a3a', opacity: .3 } },
-            { from: 'apigw', to: 'firewall_it_ot', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
-            { from: 'dbprod', to: 'firewall_it_ot', arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
-            { from: 'firewall_it_ot', to: 'scada', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
-            { from: 'scada', to: 'plc', arrows: 'to', color: { color: '#d97706', opacity: .4 } },
-            { from: 'scada', to: 'hmi', arrows: 'to', color: { color: '#d97706', opacity: .3 } },
-            { from: 'plc', to: 'sis', arrows: 'to', dashes: true, color: { color: '#dc2626', opacity: .4 } },
+            // External
+            buildEdge('internet', 'dns_ext'), buildEdge('internet', 'github', false, '#555'), buildEdge('internet', 'o365', false, '#555'),
+            buildEdge('internet', 'bank', true, '#555'), buildEdge('internet', 'supplier', true, '#555'),
+            buildEdge('internet', 'waf'), buildEdge('internet', 'seg'), buildEdge('internet', 'web_front'),
+            buildEdge('internet', 'apigw'), buildEdge('internet', 'apigw2'), buildEdge('internet', 'apigw_legacy'), buildEdge('internet', 'vpn'), buildEdge('internet', 'rdp_jump'),
+            buildEdge('dns_c2', 'internet', true, '#e83a3a'),
+            // DMZ
+            buildEdge('waf', 'apigw'), buildEdge('waf', 'apigw2'), buildEdge('waf', 'apigw_legacy'),
+            buildEdge('vpn', 'linux_jump'), buildEdge('vpn', 'ot_jump'), buildEdge('vpn', 'ad_primary'), buildEdge('rdp_jump', 'ad_primary'),
+            buildEdge('seg', 'email_svr'), buildEdge('apigw', 'ad_primary'),
+            // IT & Endpoints
+            buildEdge('ad_primary', 'ad_sec', true), buildEdge('ad_primary', 'wsus'), buildEdge('ad_primary', 'siem'), buildEdge('ad_primary', 'edr'), buildEdge('ad_primary', 'pam'),
+            buildEdge('ad_primary', 'file_svr'), buildEdge('ad_primary', 'nas'), buildEdge('ad_primary', 'erp'), buildEdge('ad_primary', 'intranet'), buildEdge('ad_primary', 'vcenter'),
+            buildEdge('ad_primary', 'laptop_dev_lead'), buildEdge('ad_primary', 'laptops_dev'), buildEdge('ad_primary', 'laptop_pm'), buildEdge('ad_primary', 'laptops_ops'),
+            buildEdge('ad_primary', 'laptop_admin'), buildEdge('ad_primary', 'laptop_ceo'), buildEdge('ad_primary', 'laptop_cfo'), buildEdge('ad_primary', 'laptops_staff'),
+            buildEdge('ad_primary', 'laptops_hr'), buildEdge('ad_primary', 'laptops_finance'), buildEdge('ad_primary', 'laptops_eng'), buildEdge('ad_primary', 'laptops_sales'),
+            buildEdge('laptop_ex', 'vpn', true), buildEdge('mobile_ceo', 'o365', true), buildEdge('laptop_ceo', 'mobile_ceo', true),
+            buildEdge('file_svr', 'nas'), buildEdge('slack', 'jira', true, '#555'), buildEdge('ad_primary', 'slack', true, '#555'),
+            // DevOps
+            buildEdge('laptop_dev_lead', 'jenkins_master'), buildEdge('laptops_dev', 'github_ent'), buildEdge('laptops_dev', 'gitlab'),
+            buildEdge('jenkins_master', 'jenkins_workers'), buildEdge('jenkins_master', 'vault'), buildEdge('jenkins_master', 'nexus'), buildEdge('jenkins_master', 'sonar'),
+            buildEdge('gitlab', 'docker_reg'), buildEdge('github_ent', 'jenkins_master'), buildEdge('jenkins_master', 'k8s_control'),
+            buildEdge('npm', 'nexus', true), buildEdge('docker_hub', 'docker_reg', true),
+            // Cloud & Data
+            buildEdge('k8s_control', 'k8s_workers'), buildEdge('k8s_workers', 'aws_ec2'), buildEdge('k8s_workers', 'db_prod'), buildEdge('k8s_workers', 'redis'),
+            buildEdge('aws_iam', 'aws_ec2', false, '#d97706'), buildEdge('aws_ec2', 'aws_s3', false, '#d97706'), buildEdge('aws_iam', 'aws_s3', false, '#d97706'),
+            buildEdge('db_prod', 'elastic'), buildEdge('db_prod', 'data_lake', true), buildEdge('db_dev', 'db_prod', true),
+            // Backup
+            buildEdge('veeam', 'db_prod'), buildEdge('veeam', 'file_svr'), buildEdge('veeam', 'nas'), buildEdge('veeam', 'vcenter'),
+            buildEdge('veeam', 'aws_glacier', true), buildEdge('veeam', 'offline_backup'),
+            // OT
+            buildEdge('fw_it_ot', 'scada_master', false, '#d97706'), buildEdge('ot_jump', 'scada_master', false, '#d97706'), buildEdge('scada_master', 'scada_standby', true, '#d97706'),
+            buildEdge('scada_master', 'historian', false, '#d97706'), buildEdge('scada_master', 'plc_assembly', false, '#d97706'), buildEdge('scada_master', 'plc_cooling', false, '#d97706'),
+            buildEdge('plc_assembly', 'hmi_main', true, '#d97706'), buildEdge('plc_cooling', 'hmi_main', true, '#d97706'),
+            buildEdge('plc_assembly', 'sis', true, '#dc2626'), buildEdge('plc_cooling', 'sis', true, '#dc2626'),
+            // Threat
+            buildEdge('dns_c2', 'k8s_workers', true, '#e83a3a'), buildEdge('dns_c2', 'aws_ec2', true, '#e83a3a')
         ];
 
         const nodeIds = new Set(filteredNodes.map(n => n.id));

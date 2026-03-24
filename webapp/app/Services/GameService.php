@@ -393,6 +393,10 @@ class GameService
                 'name'  => 'Zone Infra/Collab',
                 'nodes' => ['API Gateway', 'Secrets Vault', 'Slack/Comms', 'Jira/Tickets'],
             ],
+            'ot' => [
+                'name'  => 'Zone OT/ICS',
+                'nodes' => ['SCADA System', 'PLC Controllers', 'HMI Interface', 'Safety Systems (SIS)'],
+            ],
         ];
     }
 

@@ -12,6 +12,7 @@ class CardEffectivenessMatrix
 {
     // ── Red Team Card Effectiveness ─────────────────────────────────
     private const RED_MATRIX = [
+        // Original v1 cards
         'GitHub secret scan' => [
             100 => ['github'],
             80  => ['vault'],
@@ -72,10 +73,75 @@ class CardEffectivenessMatrix
             80  => ['cicd', 'vault'],
             50  => ['dbdev', 'github'],
         ],
+        // v2 — BEC Attack
+        'CEO Impersonation' => [
+            100 => ['slack', 'jira'],
+            80  => ['apigw'],
+            50  => [],
+        ],
+        'Invoice fraud' => [
+            100 => ['slack', 'jira'],
+            80  => [],
+            50  => ['apigw'],
+        ],
+        'Account takeover email' => [
+            100 => ['slack'],
+            80  => ['jira', 'github'],
+            50  => ['vault'],
+        ],
+        // v2 — Ransomware
+        'Déploiement ransomware' => [
+            100 => ['dbprod', 'dbdev', 'github'],
+            80  => ['k8s', 'docker'],
+            50  => ['aws', 'cicd'],
+        ],
+        'Double extorsion' => [
+            100 => ['dbprod', 'aws'],
+            80  => ['dbdev'],
+            50  => ['github'],
+        ],
+        'Destruction backups' => [
+            100 => ['aws', 'dbprod'],
+            80  => ['dbdev'],
+            50  => ['docker'],
+        ],
+        // v2 — APT
+        'Custom malware (APT)' => [
+            100 => ['k8s', 'aws', 'github'],
+            80  => ['cicd', 'docker'],
+            50  => ['vault', 'apigw'],
+        ],
+        'Living off the land' => [
+            100 => ['k8s', 'aws'],
+            80  => ['cicd', 'docker', 'github'],
+            50  => ['vault', 'dbprod'],
+        ],
+        'Data staging' => [
+            100 => ['dbprod', 'github', 'aws'],
+            80  => ['vault', 'dbdev'],
+            50  => ['jira'],
+        ],
+        // v2 — Industrial
+        'Exploitation SCADA' => [
+            100 => ['scada'],
+            80  => ['plc', 'hmi'],
+            50  => ['sis'],
+        ],
+        'Reprogrammation PLC' => [
+            100 => ['plc'],
+            80  => ['scada'],
+            50  => ['hmi', 'sis'],
+        ],
+        'Bypass Safety Systems' => [
+            100 => ['sis'],
+            80  => ['plc', 'scada'],
+            50  => ['hmi'],
+        ],
     ];
 
     // ── Blue Team Card Effectiveness ────────────────────────────────
     private const BLUE_MATRIX = [
+        // Original v1 cards
         'Audit de code' => [
             100 => ['github'],
             80  => ['cicd'],
@@ -87,7 +153,7 @@ class CardEffectivenessMatrix
             50  => ['cicd'],
         ],
         'Alerte SIEM' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira'],
+            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
             80  => [],
             50  => [],
         ],
@@ -107,12 +173,11 @@ class CardEffectivenessMatrix
             50  => [],
         ],
         'Investigation forensique' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira'],
+            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
             80  => [],
             50  => [],
         ],
         'Notification CNIL' => [
-            // No target needed — regulatory action
             100 => [],
             80  => [],
             50  => [],
@@ -123,13 +188,12 @@ class CardEffectivenessMatrix
             50  => [],
         ],
         'Honeypot' => [
-            // Decoy — no target needed
             100 => [],
             80  => [],
             50  => [],
         ],
         'Threat hunting proactif' => [
-            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira'],
+            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
             80  => [],
             50  => [],
         ],
@@ -137,6 +201,70 @@ class CardEffectivenessMatrix
             100 => ['k8s'],
             80  => ['aws'],
             50  => ['dbprod'],
+        ],
+        // v2 — BEC Defense
+        'DMARC/SPF enforcement' => [
+            100 => ['slack'],
+            80  => ['jira'],
+            50  => ['apigw'],
+        ],
+        'Vérification paiement' => [
+            100 => ['slack', 'jira'],
+            80  => [],
+            50  => [],
+        ],
+        'Simulation phishing' => [
+            100 => ['slack', 'jira'],
+            80  => ['github'],
+            50  => [],
+        ],
+        // v2 — Ransomware Defense
+        'Backup offline vérifié' => [
+            100 => ['dbprod', 'github'],
+            80  => ['dbdev', 'aws'],
+            50  => ['docker'],
+        ],
+        'Confinement réseau' => [
+            100 => ['k8s', 'docker'],
+            80  => ['aws', 'dbprod'],
+            50  => ['cicd', 'dbdev'],
+        ],
+        'Analyse cryptographique' => [
+            100 => ['dbprod', 'dbdev'],
+            80  => ['github'],
+            50  => ['aws'],
+        ],
+        // v2 — APT Defense
+        'Forensique mémoire' => [
+            100 => ['k8s', 'aws', 'github'],
+            80  => ['cicd', 'docker'],
+            50  => ['vault', 'dbprod'],
+        ],
+        'Corrélation threat intel' => [
+            100 => ['apigw', 'k8s', 'aws', 'dbprod', 'github', 'cicd', 'docker', 'npm', 'dbdev', 'vault', 'slack', 'jira', 'scada', 'plc', 'hmi', 'sis'],
+            80  => [],
+            50  => [],
+        ],
+        'Baseline réseau' => [
+            100 => ['k8s', 'aws', 'apigw'],
+            80  => ['cicd', 'docker'],
+            50  => ['scada'],
+        ],
+        // v2 — Industrial Defense
+        'Isolation réseau OT' => [
+            100 => ['scada', 'plc', 'hmi', 'sis'],
+            80  => [],
+            50  => [],
+        ],
+        'Vérification firmware' => [
+            100 => ['plc'],
+            80  => ['scada', 'hmi'],
+            50  => ['sis'],
+        ],
+        'Test processus physique' => [
+            100 => ['sis', 'plc'],
+            80  => ['scada'],
+            50  => ['hmi'],
         ],
     ];
 
@@ -146,6 +274,10 @@ class CardEffectivenessMatrix
         2 => ['npm', 'docker', 'k8s'],            // Supply Chain
         3 => ['vault', 'github', 'aws'],           // Insider Threat
         4 => ['apigw', 'k8s', 'dbprod'],           // Zero-Day API
+        5 => ['slack', 'jira', 'apigw'],           // BEC Attack
+        6 => ['dbprod', 'dbdev', 'aws'],           // Ransomware Total
+        7 => ['k8s', 'aws', 'vault'],              // APT
+        8 => ['scada', 'plc', 'sis'],              // Industrial
     ];
 
     // ── Node name → ID mapping ──────────────────────────────────────
@@ -162,6 +294,10 @@ class CardEffectivenessMatrix
         'Secrets Vault'       => 'vault',
         'Slack/Comms'         => 'slack',
         'Jira/Tickets'        => 'jira',
+        'SCADA System'        => 'scada',
+        'PLC Controllers'     => 'plc',
+        'HMI Interface'       => 'hmi',
+        'Safety Systems (SIS)' => 'sis',
         'Internet'            => 'internet',
     ];
 
@@ -174,7 +310,7 @@ class CardEffectivenessMatrix
     {
         // Cards with no target requirement get full points
         if (!$targetSystem) {
-            $noTargetCards = ['Notification CNIL', 'Honeypot', 'Alerte SIEM', 'Investigation forensique', 'Threat hunting proactif'];
+            $noTargetCards = ['Notification CNIL', 'Honeypot', 'Alerte SIEM', 'Investigation forensique', 'Threat hunting proactif', 'Corrélation threat intel'];
             if (in_array($cardName, $noTargetCards)) {
                 return [
                     'points'         => $basePoints,

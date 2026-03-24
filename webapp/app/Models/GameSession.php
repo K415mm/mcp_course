@@ -109,6 +109,10 @@ class GameSession extends Model
             2 => 'Supply Chain Poisoning',
             3 => 'Insider Threat',
             4 => 'Zero-Day API',
+            5 => 'BEC — Business Email Compromise',
+            6 => 'Ransomware Total',
+            7 => 'APT — Advanced Persistent Threat',
+            8 => 'Attaque Industrielle (OT/ICS)',
             default => 'Custom',
         };
     }
@@ -120,6 +124,10 @@ class GameSession extends Model
             2 => 'Avancé',
             3 => 'Expert',
             4 => 'Avancé',
+            5 => 'Intermédiaire',
+            6 => 'Avancé',
+            7 => 'Expert',
+            8 => 'Expert',
             default => '—',
         };
     }

@@ -90,6 +90,7 @@ class CyberBreachGame {
         cicd: '⚙️ CI/CD Pipeline', npm: '📦 npm Registry', github: '🐙 GitHub Repos',
         vault: '🔑 Secrets Vault', slack: '💬 Slack/Comms', jira: '📋 Jira/Tickets',
         aws: '☁️ AWS Prod',
+        scada: '🏭 SCADA', plc: '🔧 PLC Controllers', hmi: '💻 HMI', sis: '⚠️ SIS',
     };
 
     static NODE_TO_DISPLAY = {
@@ -98,6 +99,7 @@ class CyberBreachGame {
         cicd: 'CI/CD Pipeline', npm: 'npm Registry', github: 'GitHub Repos',
         vault: 'Secrets Vault', slack: 'Slack/Comms', jira: 'Jira/Tickets',
         aws: 'AWS Production',
+        scada: 'SCADA System', plc: 'PLC Controllers', hmi: 'HMI Interface', sis: 'Safety Systems (SIS)',
     };
 
     // ── vis-network Infrastructure Map ──────────────────────────
@@ -122,6 +124,11 @@ class CyberBreachGame {
             { id: 'slack',    label: '💬 Slack/Comms',     shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
             { id: 'jira',     label: '📋 Jira/Tickets',   shape: 'box', color: secColor, font: { color: '#aaa', size: 10 }, borderWidth: 1, size: 18 },
             { id: 'aws',      label: '☁️ AWS Prod',       shape: 'box', color: { background: '#0f2847', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            // OT/ICS Zone
+            { id: 'scada',    label: '🏭 SCADA',          shape: 'box', color: { background: '#2d1f0e', border: '#d97706' }, font: { color: '#fcd1a6', size: 11 }, borderWidth: 2, size: 20 },
+            { id: 'plc',      label: '🔧 PLC Controllers', shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 2, size: 18 },
+            { id: 'hmi',      label: '💻 HMI Interface',  shape: 'box', color: { background: '#2d1f0e', border: '#b45309' }, font: { color: '#fcd1a6', size: 10 }, borderWidth: 1, size: 18 },
+            { id: 'sis',      label: '⚠️ Safety (SIS)',   shape: 'box', color: { background: '#2d1f0e', border: '#dc2626' }, font: { color: '#fca5a5', size: 11 }, borderWidth: 2, size: 20 },
         ]);
 
         const edges = new vis.DataSet([
@@ -137,6 +144,11 @@ class CyberBreachGame {
             { from: 'cicd',     to: 'npm',    arrows: 'to', dashes: true, color: { color: '#555', opacity: .3 } },
             { from: 'vault',    to: 'slack',  dashes: true, color: { color: '#555', opacity: .2 } },
             { from: 'vault',    to: 'jira',   dashes: true, color: { color: '#555', opacity: .2 } },
+            // OT/ICS connections
+            { from: 'k8s',      to: 'scada',  arrows: 'to', dashes: true, color: { color: '#d97706', opacity: .3 } },
+            { from: 'scada',    to: 'plc',    arrows: 'to', color: { color: '#d97706', opacity: .4 } },
+            { from: 'scada',    to: 'hmi',    arrows: 'to', color: { color: '#d97706', opacity: .3 } },
+            { from: 'plc',      to: 'sis',    arrows: 'to', dashes: true, color: { color: '#dc2626', opacity: .4 } },
         ]);
 
         this.networkNodes = nodes;
@@ -188,7 +200,7 @@ class CyberBreachGame {
             defended:    { background: '#0a2e1a', border: '#2d9f4f' },
         };
         // Reset all non-Internet nodes to safe
-        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws'];
+        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws','scada','plc','hmi','sis'];
         allIds.forEach(id => {
             const st = nodeStates[id] || 'safe';
             const c = stateColors[st] || stateColors.safe;
@@ -223,7 +235,7 @@ class CyberBreachGame {
             this.updateNodeStates(this.state.nodeStates);
         }
         // Reset opacity & border width
-        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws'];
+        const allIds = ['apigw','k8s','dbprod','dbdev','docker','cicd','npm','github','vault','slack','jira','aws','scada','plc','hmi','sis'];
         allIds.forEach(id => {
             this.networkNodes?.update({ id, borderWidth: 2, opacity: 1 });
         });

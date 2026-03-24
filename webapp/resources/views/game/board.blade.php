@@ -446,7 +446,7 @@
 {{-- vis-network for infrastructure graph --}}
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 {{-- Game engine --}}
-<script src="{{ asset('js/cyberbreach-game.js') }}"></script>
+<script src="{{ asset('js/cyberbreach-game.js') }}?v={{ time() }}"></script>
 <script>
     const game = new CyberBreachGame({{ $session->id }}, '{{ csrf_token() }}', '{{ $isMod ? "moderator" : ($player ? "player" : "spectator") }}', {{ $session->scenario ?? 1 }});
     document.addEventListener('DOMContentLoaded', () => game.init());

@@ -44,7 +44,7 @@
                     <input type="text" id="userSearch" class="form-control form-control-sm mb-2" placeholder="Rechercher un étudiant...">
                     <div id="availableUsers" style="max-height:500px;overflow-y:auto;">
                         @foreach($availableUsers as $user)
-                            <div class="user-item d-flex align-items-center justify-content-between p-2 mb-1 rounded" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);" data-name="{{ strtolower($user->name) }}" data-user-id="{{ $user->id }}">
+                            <div class="user-item d-flex align-items-center justify-content-between p-2 mb-1 rounded" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);" data-name="{{ strtolower($user->name) }}" data-email="{{ strtolower($user->email) }}" data-user-id="{{ $user->id }}">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="cb-player-avatar" style="background:var(--bs-theme);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;">{{ $user->initials() }}</div>
                                     <div>
@@ -142,7 +142,14 @@ const API = `/game/${SESSION_ID}/api`;
 document.getElementById('userSearch')?.addEventListener('input', function() {
     const q = this.value.toLowerCase();
     document.querySelectorAll('#availableUsers .user-item').forEach(el => {
-        el.style.display = el.dataset.name.includes(q) ? '' : 'none';
+        const match = el.dataset.name.includes(q) || el.dataset.email.includes(q);
+        if (match) {
+            el.classList.remove('d-none');
+            el.classList.add('d-flex');
+        } else {
+            el.classList.remove('d-flex');
+            el.classList.add('d-none');
+        }
     });
 });
 

@@ -60,7 +60,7 @@ class GameService
 
     // ── Round Management ────────────────────────────────────────────
 
-    public function startRound(GameSession $session): GameRound
+    public function startRound(GameSession $session, int $cardsToDeal = 2, int $tokensToDeal = 3): GameRound
     {
         $nextRound = $session->current_round + 1;
 
@@ -77,9 +77,24 @@ class GameService
             'current_phase' => 1,
         ]);
 
-        // Distribute resources to both teams
+        // Explicit, manual distribution of exact requested resources
         foreach ($session->teams as $team) {
-            $team->distributeRoundResources();
+            $team->addTokens($tokensToDeal);
+            // Deal explicit amount of random cards
+            for ($i = 0; $i < $cardsToDeal; $i++) {
+                if ($team->handCount() < GameTeam::MAX_HAND_SIZE) {
+                    $card = GameCard::where('type', $team->type)
+                        ->whereNotIn('id', $team->cards()->pluck('game_card_id'))
+                        ->inRandomOrder()->first();
+                    if ($card) {
+                        $team->cards()->create([
+                            'game_card_id'   => $card->id,
+                            'status'         => 'hand',
+                            'acquired_round' => $nextRound,
+                        ]);
+                    }
+                }
+            }
         }
 
         // Tick down active card durations
@@ -92,7 +107,8 @@ class GameService
     {
         $nextPhase = $session->current_phase + 1;
 
-        if ($nextPhase > 5) {
+        // If advancing past the Event phase (4)
+        if ($nextPhase > 4) {
             // Round is over
             $round = $session->currentRound();
             if ($round) {
@@ -102,10 +118,10 @@ class GameService
             // Check if game is finished
             if ($session->current_round >= $session->maxRounds()) {
                 $session->update(['status' => 'finished', 'current_phase' => 5]);
-                return -1; // game over
+                return 5; // game over phase
             }
 
-            return 0; // round over, need to start next round
+            return 0; // round over, ready to start "Next Round"
         }
 
         $session->update(['current_phase' => $nextPhase]);

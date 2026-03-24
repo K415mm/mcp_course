@@ -65,15 +65,58 @@ class CyberBreachGame {
     async playCard(teamCardId, targetSystem) { return this.api('play-card', { team_card_id: teamCardId, target_system: targetSystem }); }
     async drawCard() { return this.api('draw-card'); }
     async buyFromShop(cardId) { return this.api('buy-shop', { card_id: cardId }); }
-    async startRound() { return this.api('start-round'); }
+    
+    async startRound(cards = 2, tokens = 3) { return this.api('start-round', { cards, tokens }); }
+    
+    async confirmStartRound() {
+        if (!document.getElementById('modCardsToDeal')) return; // Safety check
+        const cards = parseInt(document.getElementById('modCardsToDeal').value || 2);
+        const tokens = parseInt(document.getElementById('modTokensToDeal').value || 3);
+        
+        const r = await this.startRound(cards, tokens);
+        const m = bootstrap.Modal.getInstance(document.getElementById('modStartRoundModal'));
+        if (m) m.hide();
+        
+        if (r.success) this.showToast(`Round démarré (${cards} cartes, ${tokens} jetons)`, 'success');
+        else this.showToast(r.error || 'Erreur lors du démarrage', 'danger');
+    }
+
     async advancePhase() { return this.api('advance-phase'); }
     async drawEvent() { return this.api('draw-event'); }
     async adjustTokens(teamType, amount) { return this.api('adjust-tokens', { team_type: teamType, amount }); }
     async dealHands() { return this.api('deal-hands'); }
     async endGame() {
+        if (!confirm('Terminer la partie maintenant ? Cette action est irréversible.')) return;
         const r = await this.api('end-game');
-        if (r.success) this.showToast(`Partie terminée ! Blue: ${r.blueScore} pts — Red: ${r.redScore} pts`, 'warning');
+        if (r.success) this.showVictoryScreen(r.blueScore, r.redScore);
         return r;
+    }
+
+    showVictoryScreen(blueScore, redScore) {
+        const modalEl = document.getElementById('victoryModal');
+        if (!modalEl || modalEl.classList.contains('show')) return;
+        
+        const vMod = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        document.getElementById('victoryBlueScore').textContent = blueScore;
+        document.getElementById('victoryRedScore').textContent = redScore;
+        
+        const title = document.getElementById('victoryTitle');
+        const content = document.getElementById('victoryModalContent');
+        if (blueScore > redScore) {
+            title.innerHTML = '<i class="bi bi-shield-lock me-2"></i>BLUE TEAM GAGNE';
+            title.style.color = '#3a90e8';
+            content.style.borderColor = '#3a90e8';
+        } else if (redScore > blueScore) {
+            title.innerHTML = '<i class="bi bi-bug me-2"></i>RED TEAM GAGNE';
+            title.style.color = '#e83a3a';
+            content.style.borderColor = '#e83a3a';
+        } else {
+            title.textContent = 'ÉGALITÉ';
+            title.style.color = '#fff';
+            content.style.borderColor = '#555';
+        }
+        
+        vMod.show();
     }
 
     async getCardEffectiveness(cardName, cardType, basePoints) {
@@ -481,6 +524,10 @@ class CyberBreachGame {
         if (s.nodeStates) this.updateNodeStates(s.nodeStates);
         if (s.role === 'moderator') this.renderModPanel(s);
         if (s.round?.eventCard) this.renderEventCard(s.round.eventCard);
+
+        if (s.session.status === 'finished' || s.session.currentPhase === 5) {
+            this.showVictoryScreen(s.blueTeam?.score ?? 0, s.redTeam?.score ?? 0);
+        }
     }
 
     renderHeader(s) {
@@ -508,12 +555,12 @@ class CyberBreachGame {
 
         if (phase === 2) {
             banner.className = 'cb-turn-banner red';
-            banner.innerHTML = '<i class="bi bi-bug me-2"></i>RED TEAM JOUE <i class="bi bi-bug ms-2"></i>';
+            banner.innerHTML = '<i class="bi bi-bug me-2"></i>TOUR RED TEAM <span class="ms-2" style="font-size:0.75rem;opacity:0.6;">(Attente Blue)</span>';
             redPanel.classList.add('active-turn');
             bluePanel.classList.add('waiting');
         } else if (phase === 3) {
             banner.className = 'cb-turn-banner blue';
-            banner.innerHTML = '<i class="bi bi-shield me-2"></i>BLUE TEAM JOUE <i class="bi bi-shield ms-2"></i>';
+            banner.innerHTML = '<i class="bi bi-shield me-2"></i>TOUR BLUE TEAM <span class="ms-2" style="font-size:0.75rem;opacity:0.6;">(Attente Red)</span>';
             bluePanel.classList.add('active-turn');
             redPanel.classList.add('waiting');
         } else if (phase === 1) {
@@ -521,10 +568,10 @@ class CyberBreachGame {
             banner.innerHTML = '<i class="bi bi-coin me-2"></i>DISTRIBUTION DES RESSOURCES';
         } else if (phase === 4) {
             banner.className = 'cb-turn-banner neutral';
-            banner.innerHTML = '<i class="bi bi-lightning me-2"></i>TIRAGE ÉVÉNEMENT';
+            banner.innerHTML = '<i class="bi bi-lightning me-2"></i>PHASE ÉVÉNEMENT GLOBAL';
         } else if (phase === 5) {
             banner.className = 'cb-turn-banner neutral';
-            banner.innerHTML = '<i class="bi bi-trophy me-2"></i>SCORING & BILAN';
+            banner.innerHTML = '<i class="bi bi-trophy me-2"></i>PARTIE TERMINÉE';
         } else {
             banner.className = 'cb-turn-banner neutral';
             banner.innerHTML = '<i class="bi bi-hourglass me-2"></i>EN ATTENTE';

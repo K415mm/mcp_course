@@ -99,13 +99,19 @@ class GameApiController extends Controller
     // ── Moderator-only actions ──────────────────────────────────────
 
     /** Start a new round */
-    public function startRound(GameSession $session): JsonResponse
+    public function startRound(Request $request, GameSession $session): JsonResponse
     {
         if (!$session->isModerator(Auth::user())) {
             return response()->json(['success' => false, 'error' => 'Réservé au modérateur'], 403);
         }
 
-        $round = $this->gameService->startRound($session);
+        $request->validate([
+            'cards'  => 'required|integer|min:0|max:10',
+            'tokens' => 'required|integer|min:0|max:20',
+        ]);
+
+        $round = $this->gameService->startRound($session, $request->cards, $request->tokens);
+        
         return response()->json([
             'success' => true,
             'round'   => $round->round_number,
@@ -194,7 +200,10 @@ class GameApiController extends Controller
             return response()->json(['success' => false, 'error' => 'Réservé au modérateur'], 403);
         }
 
-        $session->update(['status' => 'finished']);
+        $session->update([
+            'status' => 'finished',
+            'current_phase' => 5
+        ]);
 
         // Close any open round
         $round = $session->currentRound();
@@ -202,11 +211,18 @@ class GameApiController extends Controller
             $round->update(['ended_at' => now()]);
         }
 
+        $bScore = $session->blueTeam?->score ?? 0;
+        $rScore = $session->redTeam?->score ?? 0;
+        $winner = 'tie';
+        if ($bScore > $rScore) $winner = 'blue';
+        if ($rScore > $bScore) $winner = 'red';
+
         return response()->json([
-            'success' => true,
-            'message' => 'Partie terminée',
-            'blueScore' => $session->blueTeam?->score ?? 0,
-            'redScore'  => $session->redTeam?->score ?? 0,
+            'success'   => true,
+            'message'   => 'Partie terminée',
+            'blueScore' => $bScore,
+            'redScore'  => $rScore,
+            'winner'    => $winner
         ]);
     }
 

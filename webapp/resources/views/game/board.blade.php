@@ -247,7 +247,7 @@
                     <button id="btnDealHands" class="btn btn-sm btn-outline-warning" onclick="game.dealHands().then(r => r.success && game.showToast('Cartes distribuées','success'))">
                         <i class="bi bi-stack me-1"></i>Distribuer les mains
                     </button>
-                    <button id="btnStartRound" class="btn btn-sm btn-outline-success" onclick="game.startRound().then(r => r.success && game.showToast('Round démarré','success'))">
+                    <button id="btnStartRound" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modStartRoundModal">
                         <i class="bi bi-play-fill me-1"></i>Démarrer le round
                     </button>
                     <button id="btnAdvancePhase" class="btn btn-sm btn-outline-info" onclick="game.advancePhase().then(r => game.showToast(r.label || r.error || 'Phase avancée', r.success ? 'info' : 'danger'))">
@@ -361,6 +361,81 @@
                 <button type="button" class="btn btn-theme btn-sm" onclick="game.confirmPlay()">
                     <i class="bi bi-check-lg me-1"></i>Confirmer
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ═══════════════ MODERATOR START ROUND MODAL ═══════════════ --}}
+<div class="modal fade" id="modStartRoundModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);">
+            <div class="modal-header border-bottom-0">
+                <h6 class="modal-title" style="font-family:'Space Mono',monospace;">
+                    <i class="bi bi-gear me-2 text-warning"></i>Configuration du Round
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-white-50 mb-3">Définissez les ressources qui seront distribuées aux deux équipes pour ce round.</p>
+                
+                <div class="mb-3">
+                    <label class="form-label text-white-50 small">Nombre de cartes à distribuer (par équipe)</label>
+                    <input type="number" class="form-control" id="modCardsToDeal" value="2" min="0" max="10" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:white;">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-white-50 small">Nombre de jetons d'action à distribuer (par équipe)</label>
+                    <input type="number" class="form-control" id="modTokensToDeal" value="3" min="0" max="20" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:white;">
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="game.confirmStartRound()">
+                    <i class="bi bi-play-fill me-1"></i>Lancer le round
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ═══════════════ VICTORY MODAL ═══════════════ --}}
+<div class="modal fade" id="victoryModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content text-center" style="background:#0a0a0f;border:2px solid;border-color:#3a90e8;box-shadow:0 0 40px rgba(0,0,0,0.8);" id="victoryModalContent">
+            <div class="modal-body py-5">
+                <div class="mb-4">
+                    <span class="blue" style="font-size:2rem;font-weight:900;">CYBER</span><span class="red" style="font-size:2rem;font-weight:900;">BREACH</span>
+                </div>
+                
+                <h1 class="display-3 fw-bold mb-2 text-white" style="font-family:'Space Mono',monospace;text-transform:uppercase;" id="victoryTitle">
+                    Gagnant !
+                </h1>
+                <p class="lead text-white-50 mb-5" id="victorySubtitle">Le scénario est terminé.</p>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background:rgba(58,144,232,.1);border:1px solid #3a90e8;">
+                            <h4 class="text-white mb-1"><i class="bi bi-shield-lock me-2" style="color:#3a90e8;"></i> BLUE TEAM</h4>
+                            <div class="display-5 fw-bold" style="color:#3a90e8;" id="victoryBlueScore">0</div>
+                            <div class="small text-white-50">Points</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center justify-content-center">
+                        <div class="fw-bold text-white-50" style="font-size:1.5rem;">VS</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded" style="background:rgba(232,58,58,.1);border:1px solid #e83a3a;">
+                            <h4 class="text-white mb-1">RED TEAM <i class="bi bi-bug ms-2" style="color:#e83a3a;"></i></h4>
+                            <div class="display-5 fw-bold" style="color:#e83a3a;" id="victoryRedScore">0</div>
+                            <div class="small text-white-50">Points</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <a href="{{ route('game.lobby') }}" class="btn btn-outline-light px-4">Retour au lobby</a>
+                </div>
             </div>
         </div>
     </div>

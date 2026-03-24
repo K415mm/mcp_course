@@ -69,6 +69,11 @@ class CyberBreachGame {
     async drawEvent() { return this.api('draw-event'); }
     async adjustTokens(teamType, amount) { return this.api('adjust-tokens', { team_type: teamType, amount }); }
     async dealHands() { return this.api('deal-hands'); }
+    async endGame() {
+        const r = await this.api('end-game');
+        if (r.success) this.showToast(`Partie terminée ! Blue: ${r.blueScore} pts — Red: ${r.redScore} pts`, 'warning');
+        return r;
+    }
 
     async getCardEffectiveness(cardName, cardType, basePoints) {
         const key = `${cardName}_${cardType}_${basePoints}`;

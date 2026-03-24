@@ -266,6 +266,11 @@
                     <button class="btn btn-xs btn-outline-danger flex-fill" onclick="game.adjustTokens('red',2)" style="font-size:.7rem;">Red +2</button>
                     <button class="btn btn-xs btn-outline-danger flex-fill" onclick="game.adjustTokens('red',-2)" style="font-size:.7rem;">Red -2</button>
                 </div>
+
+                <hr style="border-color:rgba(217,119,6,.2);margin:.75rem 0;">
+                <button class="btn btn-sm btn-danger w-100" onclick="if(confirm('Terminer la partie maintenant ? Cette action est irréversible.')) game.endGame()">
+                    <i class="bi bi-stop-circle me-1"></i>Terminer la partie
+                </button>
             </div>
         </div>
     </div>

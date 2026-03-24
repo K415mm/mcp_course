@@ -187,6 +187,29 @@ class GameApiController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /** End the game session immediately (moderator only) */
+    public function endGame(GameSession $session): JsonResponse
+    {
+        if (!$session->isModerator(Auth::user())) {
+            return response()->json(['success' => false, 'error' => 'Réservé au modérateur'], 403);
+        }
+
+        $session->update(['status' => 'finished']);
+
+        // Close any open round
+        $round = $session->currentRound();
+        if ($round && !$round->ended_at) {
+            $round->update(['ended_at' => now()]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Partie terminée',
+            'blueScore' => $session->blueTeam?->score ?? 0,
+            'redScore'  => $session->redTeam?->score ?? 0,
+        ]);
+    }
+
     /** Assign a user to a team (moderator only) */
     public function assignPlayer(Request $request, GameSession $session): JsonResponse
     {

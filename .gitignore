@@ -1,8 +1,51 @@
+# ── Default: ignore everything, then whitelist ─────────────────────────────
 /*
+
+# ── Whitelisted project directories ────────────────────────────────────────
 !/webapp/
 !/webapp/**
 !/corse/
 !/corse/**
+!/docs/
+!/docs/**
+!/deploy.sh
 !.gitignore
+!README.md
 
+# ── Always exclude from webapp (Laravel defaults) ──────────────────────────
+/webapp/.env
+/webapp/.env.*
+!/webapp/.env.example
+/webapp/vendor/
+/webapp/node_modules/
+/webapp/public/hot
+/webapp/public/storage
+/webapp/storage/*.key
+/webapp/storage/app/public/*
+/webapp/storage/framework/cache/*
+/webapp/storage/framework/sessions/*
+/webapp/storage/framework/views/*
+/webapp/storage/logs/*
+/webapp/bootstrap/cache/*.php
+
+# ── Scratch / local files (never commit) ───────────────────────────────────
 notebook_llm_materials/
+*.env.production
+*.env.local
+composer11.json
+droplet file/
+/docs/server/env.production*
+
+# ── SSH keys (NEVER commit private keys) ───────────────────────────────────
+*.pem
+id_rsa
+id_ed25519
+tunai_do
+*.key
+
+# ── OS / editor noise ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

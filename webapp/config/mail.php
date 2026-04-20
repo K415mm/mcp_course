@@ -37,6 +37,14 @@ return [
 
     'mailers' => [
 
+        'graph' => [
+            'transport'     => 'graph',
+            'tenant_id'     => env('AZURE_TENANT_ID'),
+            'client_id'     => env('AZURE_CLIENT_ID'),
+            'client_secret' => env('AZURE_CLIENT_SECRET'),
+            'from'          => env('MAIL_FROM_ADDRESS'),
+        ],
+
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),

@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\ContentController as AdminContent;
 use App\Http\Controllers\Admin\MediaController as AdminMedia;
 use App\Http\Controllers\Admin\UserController as AdminUsers;
 use App\Http\Controllers\Admin\QuizController as AdminQuiz;
+use App\Http\Controllers\CsController;
+use App\Http\Controllers\CsApiController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
@@ -134,11 +136,47 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    // ── Admin-only routes ──────────────────────────────────────────────────
+    // ── CARTHAGE SHIELD — Public join routes (auth optional) ─────────────────
+    // These are inside 'verified' middleware so users need accounts,
+    // BUT the join/participant view itself handles anonymous guests via session.
+    Route::prefix('cs')->name('cs.')->group(function () {
+        Route::get('/{code}', [CsController::class, 'show'])->name('show');            // participant join
+        Route::get('/{code}/dashboard', [CsController::class, 'dashboard'])->name('dashboard'); // big screen (public)
+        Route::get('/{code}/moderator', [CsController::class, 'moderator'])->name('moderator'); // moderator console
+
+        // CS API endpoints (used by all 3 views, CSRF-protected)
+        Route::prefix('/{code}/api')->name('api.')->group(function () {
+            Route::get('/state',             [CsApiController::class, 'state'])->name('state');
+            Route::post('/join',             [CsApiController::class, 'join'])->name('join');
+            Route::post('/heartbeat',        [CsApiController::class, 'heartbeat'])->name('heartbeat');
+            Route::post('/timer/start',      [CsApiController::class, 'timerStart'])->name('timer.start');
+            Route::post('/timer/pause',      [CsApiController::class, 'timerPause'])->name('timer.pause');
+            Route::post('/timer/reset',      [CsApiController::class, 'timerReset'])->name('timer.reset');
+            Route::post('/timer/set',        [CsApiController::class, 'timerSet'])->name('timer.set');
+            Route::post('/phase/advance',    [CsApiController::class, 'phaseAdvance'])->name('phase.advance');
+            Route::post('/phase/goto',       [CsApiController::class, 'phaseGoto'])->name('phase.goto');
+            Route::post('/score/{teamId}',   [CsApiController::class, 'scoreAdjust'])->name('score.adjust');
+            Route::post('/broadcast',        [CsApiController::class, 'broadcast'])->name('broadcast');
+            Route::post('/phantom',          [CsApiController::class, 'phantom'])->name('phantom');
+            Route::post('/inject/{injectId}',[CsApiController::class, 'inject'])->name('inject');
+            Route::post('/atmosphere',       [CsApiController::class, 'atmosphere'])->name('atmosphere');
+            Route::post('/vote/open',        [CsApiController::class, 'voteOpen'])->name('vote.open');
+            Route::post('/vote/close',       [CsApiController::class, 'voteClose'])->name('vote.close');
+            Route::post('/vote/submit',      [CsApiController::class, 'voteSubmit'])->name('vote.submit');
+            Route::post('/decision',         [CsApiController::class, 'decision'])->name('decision');
+            Route::post('/decision/{id}/award',[CsApiController::class, 'awardScore'])->name('decision.award');
+            Route::post('/end',              [CsApiController::class, 'end'])->name('end');
+        });
+    });
+
+    // ── CARTHAGE SHIELD — Admin session management + all other Admin routes ───────
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        // ── CARTHAGE SHIELD sessions ──
+        Route::get('/cs',  [CsController::class, 'index'])->name('cs.index');
+        Route::post('/cs', [CsController::class, 'store'])->name('cs.store');
+
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
 
-        // Courses & Classes (Assignment)
         Route::get('courses', [\App\Http\Controllers\Admin\AdminCourseController::class, 'index'])->name('courses.index');
         Route::post('courses/assign-class', [\App\Http\Controllers\Admin\AdminCourseController::class, 'assignToClass'])->name('courses.assignClasses');
         Route::post('courses/unassign-class', [\App\Http\Controllers\Admin\AdminCourseController::class, 'unassignFromClass'])->name('courses.unassignClasses');

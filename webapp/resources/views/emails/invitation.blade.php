@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You're Invited to RAISEGUARD Academy</title>
+<title>You're Invited to Carthage Shield</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { 
@@ -82,42 +82,38 @@
     <div class="hud-bracket bracket-br"></div>
 
     <div class="brand-logo">
-      <div class="brand-img">R</div>
-      <div class="brand-text">RAISEGUARD</div>
+      <div class="brand-img">C</div>
+      <div class="brand-text">CARTHAGE SHIELD</div>
     </div>
 
     <h1>You're Invited to Join</h1>
-    <div class="subtitle">AI-Powered Cyber Defence Training</div>
+    <div class="subtitle">Cyber Breach Tabletop Simulation</div>
 
     <p class="greeting">
       {{ $invitation->name ? 'Hi ' . $invitation->name . ',' : 'Hello,' }}<br><br>
-      You have been granted exclusive access to <strong>RAISEGUARD Academy</strong>. Our HUD platform is ready for you to start building, deploying, and governing autonomous MCP agents for SOC operations.
+      You have been granted exclusive access to the <strong>Carthage Shield</strong> platform. Prepare to face the Phantom Grid attack in our highly immersive, real-time cyber breach exercise.
     </p>
 
     <div class="module-list">
-      <div class="module-list-title">Curriculum Overview</div>
+      <div class="module-list-title">Exercise Briefing</div>
       @foreach([
-        ['M01','Agentic AI Foundations'],['M02','MCP Protocol & Architecture'],
-        ['M03','Cyber Defence & SOC Workflows'],['M04','Python for MCP Development'],
-        ['M05','Building MCP Servers with FastMCP'],['M06','Building Autonomous MCP Clients'],
-        ['M07','End-to-End SOC Integrations'],['M08','Policy, Governance & Guardrails'],
+        ['01','Real-time SOC Environment Simulation'],
+        ['02','Dynamic Threat Injects (Phantom Grid)'],
+        ['03','Team-Based Incident Response'],
+        ['04','Executive Reporting & Action Plans'],
       ] as [$num,$title])
       <div class="module-item">
         <span class="module-badge">{{ $num }}</span>
         <span>{{ $title }}</span>
       </div>
       @endforeach
-      <div class="module-item" style="margin-top:15px; color:#cbd5e1;">
-        <span class="module-badge" style="background:rgba(255,193,7,0.1); color:#ffc107;">WS</span>
-        <span>+ 5 Live SOC Capstone Workshops</span>
-      </div>
     </div>
 
     <div class="highlight-box">
-      <div class="highlight-icon">🎖️</div>
+      <div class="highlight-icon">🎯</div>
       <div>
-        <div class="highlight-title">Certification & Graduate Gift</div>
-        <div class="highlight-text">Complete all modules and workshops to earn your verified certificate in AI-Powered Cyber Defence, plus an exclusive graduate gift.</div>
+        <div class="highlight-title">Mission Objective</div>
+        <div class="highlight-text">Analyze incoming threats, collaborate with your team, and make critical decisions to defend the infrastructure against advanced persistent threats.</div>
       </div>
     </div>
 
@@ -133,7 +129,7 @@
   </div>
 
   <div class="footer">
-    <p>This is an automated system message from RAISEGUARD Academy.<br>
+    <p>This is an automated system message from Carthage Shield Command.<br>
        Access granted via <a href="{{ url('/') }}">tunai.cloud</a> HUD.</p>
     <p style="margin-top:10px; font-size:11px; word-break:break-all;">
       Backup link: <a href="{{ $inviteUrl }}">{{ $inviteUrl }}</a>

@@ -18,7 +18,7 @@ class InvitationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '🎓 You\'re Invited to RAISEGUARD Academy — AI-Powered Cyber Defence',
+            subject: '🛡️ You\'re Invited to Carthage Shield — Cyber Breach Exercise',
         );
     }
 

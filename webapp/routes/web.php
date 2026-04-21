@@ -243,5 +243,4 @@ Route::middleware('auth')->group(function () {
     
     }); // End verified middleware group
 });
-R o u t e : : g e t ( ' / c s - t e s t ' ,   f u n c t i o n ( )   {   r e t u r n   v i e w ( ' c s . i n d e x ' ,   [ ' s e s s i o n s '   = >   A p p \ M o d e l s \ C s S e s s i o n : : p a g i n a t e ( 1 0 ) ,   ' s c e n a r i o s '   = >   A p p \ M o d e l s \ C s S c e n a r i o : : l i s t ( ) ] ) ;   } ) ;  
- 
+Route::get('/cs-test', function() { return view('cs.index', ['sessions' => App\Models\CsSession::paginate(10), 'scenarios' => App\Models\CsScenario::list()]); });

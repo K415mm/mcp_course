@@ -1,0 +1,282 @@
+{
+  "messages": [
+    {
+      "type": "info",
+      "content": "[PHANTOM GRID] Phase 2: Amplification et impacts services essentiels."
+    },
+    {
+      "type": "warn",
+      "content": "Contexte: attaque coordonnee multi-secteurs. Les decisions des 10 prochaines minutes conditionnent la suite."
+    },
+    {
+      "type": "alert",
+      "content": "Rappel animateur: tracer la chaine d escalade, les arbitrages et la justification de chaque choix."
+    },
+    {
+      "type": "info",
+      "content": "Objectif: maintenir la continuite des services essentiels tout en reduisant le risque cyber."
+    }
+  ],
+  "questions": [
+    {
+      "question": "[Amplification et impacts services essentiels] Q1: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Action minimale et observation",
+          "color": "#ef4444",
+          "points": 5,
+          "note": "Faible maturite: retarde la prise de decision et augmente l exposition."
+        },
+        {
+          "key": "B",
+          "label": "Coordination inter-equipes et containment cible",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Option optimale: aligne gouvernance, technique et communication."
+        },
+        {
+          "key": "C",
+          "label": "Mesure radicale immediate",
+          "color": "#f59e0b",
+          "points": 12,
+          "note": "Acceptable sous justification forte, mais impact metier potentiellement eleve."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q2: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Priorite image publique",
+          "color": "#f59e0b",
+          "points": 8,
+          "note": "Partiel: utile mais insuffisant sans pilotage operationnel."
+        },
+        {
+          "key": "B",
+          "label": "Priorite services critiques et chaine d escalade",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Excellent arbitrage pour limiter impact citoyen et risque systemique."
+        },
+        {
+          "key": "C",
+          "label": "Decision decentralisee par secteur",
+          "color": "#ef4444",
+          "points": 6,
+          "note": "Risque de silos, contradictions et delai de reponse."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q3: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Collecte d informations supplementaires",
+          "color": "#00b4d8",
+          "points": 10,
+          "note": "Bonne hygiene analytique mais doit rester time-boxee."
+        },
+        {
+          "key": "B",
+          "label": "Activation cellule de crise et plan de com",
+          "color": "#2dc653",
+          "points": 20,
+          "note": "Meilleure decision globale: gouvernance claire + execution rapide."
+        },
+        {
+          "key": "C",
+          "label": "Gel total des operations",
+          "color": "#f97316",
+          "points": 11,
+          "note": "Peut contenir la menace mais degrade fortement la continuite de service."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q4: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Action minimale et observation",
+          "color": "#ef4444",
+          "points": 5,
+          "note": "Faible maturite: retarde la prise de decision et augmente l exposition."
+        },
+        {
+          "key": "B",
+          "label": "Coordination inter-equipes et containment cible",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Option optimale: aligne gouvernance, technique et communication."
+        },
+        {
+          "key": "C",
+          "label": "Mesure radicale immediate",
+          "color": "#f59e0b",
+          "points": 12,
+          "note": "Acceptable sous justification forte, mais impact metier potentiellement eleve."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q5: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Priorite image publique",
+          "color": "#f59e0b",
+          "points": 8,
+          "note": "Partiel: utile mais insuffisant sans pilotage operationnel."
+        },
+        {
+          "key": "B",
+          "label": "Priorite services critiques et chaine d escalade",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Excellent arbitrage pour limiter impact citoyen et risque systemique."
+        },
+        {
+          "key": "C",
+          "label": "Decision decentralisee par secteur",
+          "color": "#ef4444",
+          "points": 6,
+          "note": "Risque de silos, contradictions et delai de reponse."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q6: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Collecte d informations supplementaires",
+          "color": "#00b4d8",
+          "points": 10,
+          "note": "Bonne hygiene analytique mais doit rester time-boxee."
+        },
+        {
+          "key": "B",
+          "label": "Activation cellule de crise et plan de com",
+          "color": "#2dc653",
+          "points": 20,
+          "note": "Meilleure decision globale: gouvernance claire + execution rapide."
+        },
+        {
+          "key": "C",
+          "label": "Gel total des operations",
+          "color": "#f97316",
+          "points": 11,
+          "note": "Peut contenir la menace mais degrade fortement la continuite de service."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q7: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Action minimale et observation",
+          "color": "#ef4444",
+          "points": 5,
+          "note": "Faible maturite: retarde la prise de decision et augmente l exposition."
+        },
+        {
+          "key": "B",
+          "label": "Coordination inter-equipes et containment cible",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Option optimale: aligne gouvernance, technique et communication."
+        },
+        {
+          "key": "C",
+          "label": "Mesure radicale immediate",
+          "color": "#f59e0b",
+          "points": 12,
+          "note": "Acceptable sous justification forte, mais impact metier potentiellement eleve."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q8: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Priorite image publique",
+          "color": "#f59e0b",
+          "points": 8,
+          "note": "Partiel: utile mais insuffisant sans pilotage operationnel."
+        },
+        {
+          "key": "B",
+          "label": "Priorite services critiques et chaine d escalade",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Excellent arbitrage pour limiter impact citoyen et risque systemique."
+        },
+        {
+          "key": "C",
+          "label": "Decision decentralisee par secteur",
+          "color": "#ef4444",
+          "points": 6,
+          "note": "Risque de silos, contradictions et delai de reponse."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q9: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Collecte d informations supplementaires",
+          "color": "#00b4d8",
+          "points": 10,
+          "note": "Bonne hygiene analytique mais doit rester time-boxee."
+        },
+        {
+          "key": "B",
+          "label": "Activation cellule de crise et plan de com",
+          "color": "#2dc653",
+          "points": 20,
+          "note": "Meilleure decision globale: gouvernance claire + execution rapide."
+        },
+        {
+          "key": "C",
+          "label": "Gel total des operations",
+          "color": "#f97316",
+          "points": 11,
+          "note": "Peut contenir la menace mais degrade fortement la continuite de service."
+        }
+      ]
+    },
+    {
+      "question": "[Amplification et impacts services essentiels] Q10: Quelle decision prioritaire prenez-vous pour la coalition a cet instant ?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Action minimale et observation",
+          "color": "#ef4444",
+          "points": 5,
+          "note": "Faible maturite: retarde la prise de decision et augmente l exposition."
+        },
+        {
+          "key": "B",
+          "label": "Coordination inter-equipes et containment cible",
+          "color": "#22c55e",
+          "points": 20,
+          "note": "Option optimale: aligne gouvernance, technique et communication."
+        },
+        {
+          "key": "C",
+          "label": "Mesure radicale immediate",
+          "color": "#f59e0b",
+          "points": 12,
+          "note": "Acceptable sous justification forte, mais impact metier potentiellement eleve."
+        }
+      ]
+    }
+  ]
+}

@@ -6,13 +6,17 @@ use App\Models\CsInject;
 use App\Models\CsPlayer;
 use App\Models\CsScenario;
 use App\Models\CsSession;
+use App\Services\CsContentBankService;
 use App\Services\CsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CsController extends Controller
 {
-    public function __construct(protected CsService $cs) {}
+    public function __construct(
+        protected CsService $cs,
+        protected CsContentBankService $contentBank
+    ) {}
 
     // ── Admin/Moderator: List sessions ──────────────────────────────
     public function index()
@@ -82,12 +86,19 @@ class CsController extends Controller
         $injects  = CsInject::where('scenario_key', $session->scenario_key)
             ->orderBy('sort_order')
             ->get();
+        $initialBankByPhase = collect($scenario['phases'] ?? [])
+            ->mapWithKeys(function ($phase) use ($session) {
+                $index = (int) ($phase['index'] ?? 0);
+                return [$index => $this->contentBank->getPhaseContent($session->scenario_key, $index)];
+            })
+            ->all();
 
         return view('cs.moderator', [
             'session'  => $session,
             'scenario' => $scenario,
             'teams'    => $session->teams,
             'injects'  => $injects,
+            'initialBankByPhase' => $initialBankByPhase,
         ]);
     }
 

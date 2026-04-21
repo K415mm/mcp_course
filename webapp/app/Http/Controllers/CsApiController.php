@@ -8,6 +8,7 @@ use App\Models\CsPlayer;
 use App\Models\CsSession;
 use App\Models\CsTeam;
 use App\Models\CsVote;
+use App\Services\CsContentBankService;
 use App\Services\CsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CsApiController extends Controller
 {
-    public function __construct(protected CsService $cs) {}
+    public function __construct(
+        protected CsService $cs,
+        protected CsContentBankService $contentBank
+    ) {}
 
     // ── GET /api/cs/{code}/state ────────────────────────────────────
     // Main polling endpoint — used by all 3 views
@@ -34,6 +38,24 @@ class CsApiController extends Controller
         }
 
         return response()->json($this->cs->getState($session, $player));
+    }
+
+    // ── GET /api/cs/{code}/bank ─────────────────────────────────────
+    public function getBank(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $phaseIndex = (int) ($request->query('phase_index', $session->current_phase_index));
+        $phaseIndex = max(0, $phaseIndex);
+
+        $content = $this->contentBank->getPhaseContent($session->scenario_key, $phaseIndex);
+
+        return response()->json([
+            'ok' => true,
+            'scenarioKey' => $session->scenario_key,
+            'phaseIndex' => $phaseIndex,
+            'messages' => $content['messages'],
+            'questions' => $content['questions'],
+        ]);
     }
 
     // ── POST /api/cs/{code}/join ────────────────────────────────────
@@ -181,10 +203,30 @@ class CsApiController extends Controller
     public function voteOpen(Request $request, string $code): JsonResponse
     {
         $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'question' => 'required|string|max:500',
+            'options' => 'required|array|min:2|max:6',
+            'options.*.key' => 'required|string|max:10',
+            'options.*.label' => 'required|string|max:255',
+            'options.*.color' => 'nullable|string|max:20',
+            'options.*.points' => 'nullable|integer|min:0|max:100',
+            'options.*.note' => 'nullable|string|max:1000',
+        ]);
+
+        $normalizedOptions = collect($data['options'])->map(function ($option) {
+            return [
+                'key' => strtoupper(trim((string) ($option['key'] ?? ''))),
+                'label' => trim((string) ($option['label'] ?? '')),
+                'color' => $option['color'] ?? null,
+                'points' => isset($option['points']) ? (int) $option['points'] : 0,
+                'note' => $option['note'] ?? null,
+            ];
+        })->values()->all();
+
         $vote    = $this->cs->openVote(
             $session,
-            $request->input('question'),
-            $request->input('options')
+            $data['question'],
+            $normalizedOptions
         );
         return response()->json(['ok' => true, 'voteId' => $vote->id]);
     }
@@ -197,22 +239,28 @@ class CsApiController extends Controller
         if (!$vote) return response()->json(['ok' => false, 'error' => 'No open vote']);
 
         $tally = $this->cs->closeVote($vote);
-
-        // Auto-award points based on winning option in the decision matrix
-        $winner     = collect($tally)->sortDesc()->keys()->first();
-        $phases     = $session->phases();
-        $phase      = $phases[$session->current_phase_index] ?? null;
-        $matrix     = $phase['decision_matrix'] ?? null;
+        $maxVotes = empty($tally) ? 0 : max($tally);
+        $winners = collect($tally)
+            ->filter(fn($count) => (int) $count === (int) $maxVotes)
+            ->keys()
+            ->values()
+            ->all();
+        $isTie = count($winners) > 1;
+        $winner = $isTie ? null : ($winners[0] ?? null);
         $awardedPoints = 0;
+        $winnerLabel = null;
+        $winnerNote = null;
 
-        if ($winner && $matrix) {
-            $option = collect($matrix['options'] ?? [])->firstWhere('key', $winner);
+        if ($winner) {
+            $option = collect($vote->options ?? [])->firstWhere('key', $winner);
             if ($option && isset($option['points'])) {
+                $winnerLabel = $option['label'] ?? $winner;
+                $winnerNote = $option['note'] ?? null;
                 // Award points to all teams (collective vote)
                 foreach ($session->teams as $team) {
-                    $this->cs->adjustScore($team, $option['points']);
+                    $this->cs->adjustScore($team, (int) $option['points']);
                 }
-                $awardedPoints = $option['points'];
+                $awardedPoints = (int) $option['points'];
             }
         }
 
@@ -220,6 +268,10 @@ class CsApiController extends Controller
             'ok'           => true,
             'tally'        => $tally,
             'winner'       => $winner,
+            'winnerLabel'  => $winnerLabel,
+            'winnerNote'   => $winnerNote,
+            'isTie'        => $isTie,
+            'tiedKeys'     => $isTie ? $winners : [],
             'awardedPoints'=> $awardedPoints,
         ]);
     }

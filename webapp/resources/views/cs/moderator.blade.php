@@ -64,6 +64,11 @@
 
 /* ── Badge Log ── */
 .badge-log-entry{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:7px;margin-bottom:6px;border:1px solid rgba(255,255,255,.06)}
+.bank-block{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px}
+.bank-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px;margin-bottom:8px}
+.bank-item:last-child{margin-bottom:0}
+.bank-item p{margin:0;font-size:.8rem}
+.bank-note{font-size:.74rem;color:rgba(255,255,255,.6)}
 </style>
 @endpush
 
@@ -189,10 +194,11 @@
                     <div class="card-body">
                         <h6 class="card-title mb-2"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Vote stratégique</h6>
                         <input class="form-control form-control-sm mb-2" id="voteQ" placeholder="Question...">
-                        <div class="d-flex gap-1 mb-2">
-                            <input class="form-control form-control-sm" id="vOpt" placeholder="Options (ex: A, B, C)">
-                            <button onclick="openVote()" class="btn btn-sm btn-warning text-dark fw-bold">Ouvrir</button>
-                        </div>
+                        <textarea class="form-control form-control-sm mb-2 cs-mono" id="vOpt"
+                                  placeholder="Options manuelles (une ligne = A|Label|#00b4d8|20|Note)"
+                                  rows="3"></textarea>
+                        <div id="preparedVoteInfo" class="bank-note mb-2">Aucune question préchargée depuis la bibliothèque.</div>
+                        <button onclick="openVote()" class="btn btn-sm btn-warning text-dark fw-bold w-100 mb-2">Ouvrir</button>
                         <button onclick="closeVoteWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Fermer & Scorer</button>
                         <div class="mt-2" id="voteTally"></div>
                     </div>
@@ -204,6 +210,30 @@
 
     {{-- ══ MIDDLE COLUMN: Decision Matrix + Bonus Badges ══ --}}
     <div class="col-lg-4 mb-3">
+
+        {{-- Scenario Library --}}
+        <div class="card mb-3">
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+            <div class="card-body">
+                <h6 class="card-title mb-2"><i class="bi bi-journal-text me-2 text-info"></i>Bibliothèque de scénario</h6>
+                <div class="d-flex gap-2 mb-2">
+                    <select id="bankPhaseSelect" class="form-select form-select-sm" onchange="loadBankForPhase(this.value)">
+                        @foreach($scenario['phases'] as $p)
+                            <option value="{{ $p['index'] }}">Phase {{ $p['index'] }} - {{ $p['name'] }}</option>
+                        @endforeach
+                    </select>
+                    <button class="btn btn-sm btn-outline-theme" onclick="refreshBank()">Rafraichir</button>
+                </div>
+                <div class="bank-block mb-2">
+                    <div class="small fw-bold text-theme mb-2">Messages</div>
+                    <div id="bankMessages" class="small text-white-50">Chargement...</div>
+                </div>
+                <div class="bank-block">
+                    <div class="small fw-bold text-theme mb-2">Questions stratégiques</div>
+                    <div id="bankQuestions" class="small text-white-50">Chargement...</div>
+                </div>
+            </div>
+        </div>
 
         {{-- Decision Matrix (active phase) --}}
         <div class="card mb-3">
@@ -328,8 +358,11 @@ const PHASES = {{ count($scenario['phases']) }};
 
 // Pre-load the scenario phases for the matrix (passed from server)
 const SCENARIO_PHASES = @json($scenario['phases']);
+const INITIAL_BANK_BY_PHASE = @json($initialBankByPhase ?? []);
 
 let lastDecId = 0, lastBadgeId = 0, lastDecCount = 0;
+let currentPhaseIndex = null;
+let currentBank = { messages: [], questions: [] };
 
 async function api(path, method='GET', body=null) {
     const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json'}};
@@ -385,6 +418,99 @@ function updatePhase(s) {
     // Update matrix from local phases data (always current)
     const phase = SCENARIO_PHASES[idx] ?? null;
     updateMatrix(phase?.decision_matrix ?? null);
+
+    if (currentPhaseIndex !== idx) {
+        currentPhaseIndex = idx;
+        const phaseSelect = document.getElementById('bankPhaseSelect');
+        if (phaseSelect) phaseSelect.value = String(idx);
+        loadBankForPhase(idx);
+    }
+}
+
+async function refreshBank() {
+    const phaseValue = document.getElementById('bankPhaseSelect')?.value ?? currentPhaseIndex ?? 0;
+    await loadBankForPhase(phaseValue);
+}
+
+async function loadBankForPhase(phaseIndex) {
+    const idx = parseInt(phaseIndex, 10) || 0;
+    try {
+        const data = await api(`bank?phase_index=${idx}`);
+        if (data?.ok) {
+            currentBank = {
+                messages: data.messages ?? [],
+                questions: data.questions ?? [],
+            };
+        } else {
+            throw new Error('bank endpoint not ok');
+        }
+    } catch (e) {
+        // Fallback server-rendered payload, avoids hard failure if API bank is blocked in prod.
+        currentBank = INITIAL_BANK_BY_PHASE?.[idx] ?? { messages: [], questions: [] };
+        showNotif('Bibliotheque chargee via fallback local', 'warn');
+    }
+
+    renderBankMessages();
+    renderBankQuestions();
+}
+
+function renderBankMessages() {
+    const root = document.getElementById('bankMessages');
+    if (!root) return;
+    if (!currentBank.messages.length) {
+        root.innerHTML = '<div class="text-white-50">Aucun message disponible pour cette phase.</div>';
+        return;
+    }
+
+    root.innerHTML = currentBank.messages.map((m, idx) => `
+        <div class="bank-item">
+            <p>${m.content || ''}</p>
+            <div class="mt-2 d-flex justify-content-between align-items-center">
+                <span class="badge bg-dark">${(m.type || 'info').toUpperCase()}</span>
+                <button class="btn btn-sm btn-outline-theme" onclick="sendBankMessage(${idx})">Envoyer au live feed</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderBankQuestions() {
+    const root = document.getElementById('bankQuestions');
+    if (!root) return;
+    if (!currentBank.questions.length) {
+        root.innerHTML = '<div class="text-white-50">Aucune question disponible pour cette phase.</div>';
+        return;
+    }
+
+    root.innerHTML = currentBank.questions.map((q, idx) => `
+        <div class="bank-item">
+            <p class="fw-bold">${idx + 1}. ${q.question || 'Question sans titre'}</p>
+            <div class="bank-note mt-1">${(q.options || []).map(o => `${o.key}: ${o.label} (${o.points ?? 0} pts)`).join(' | ')}</div>
+            <div class="mt-2 d-flex justify-content-end">
+                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">Pre-remplir le vote</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function sendBankMessage(index) {
+    const msg = currentBank.messages[index];
+    if (!msg?.content) return;
+    await api('broadcast', 'POST', { message: msg.content, type: msg.type || 'info' });
+    showNotif('Message de la bibliotheque diffuse', 'success');
+}
+
+function prefillVoteFromBank(index) {
+    const question = currentBank.questions[index];
+    if (!question) return;
+
+    document.getElementById('voteQ').value = question.question || '';
+    
+    const opts = Array.isArray(question.options) ? question.options : [];
+    document.getElementById('vOpt').value = opts.map(opt => `${opt.key}|${opt.label}|${opt.color||'#00b4d8'}|${opt.points||0}|${opt.note||''}`).join('\n');
+
+    const info = document.getElementById('preparedVoteInfo');
+    const notes = opts.map(opt => `${opt.key}: ${opt.note || 'pas de note'}`).join(' | ');
+    info.textContent = `Question préchargée (${opts.length} options). Guide: ${notes}`;
 }
 
 // ── ONLINE COUNT ────────────────────────────────────────────
@@ -458,18 +584,70 @@ async function phantom() {
 // ── VOTE ────────────────────────────────────────────────────
 async function openVote() {
     const q = document.getElementById('voteQ').value.trim();
-    const rawOpts = document.getElementById('vOpt').value.split(',').map(s=>s.trim()).filter(Boolean);
-    if (!q || !rawOpts.length) { showNotif('Question et options requises','danger'); return; }
-    const options = rawOpts.map(o => ({key:o.toUpperCase()[0], label:o}));
-    await api('vote/open','POST',{question:q, options});
+    if (!q) {
+        showNotif('Question requise', 'danger');
+        return;
+    }
+
+    const options = parseManualOptions(document.getElementById('vOpt').value);
+
+    if (!options || options.length < 2) {
+        showNotif('Au moins 2 options sont requises', 'danger');
+        return;
+    }
+
+    const response = await api('vote/open', 'POST', { question: q, options });
+    if (!response?.ok) {
+        showNotif('Impossible d ouvrir le vote', 'danger');
+        return;
+    }
     showNotif('Vote ouvert');
+    document.getElementById('preparedVoteInfo').textContent = 'Vote en cours...';
 }
+
+function parseManualOptions(raw) {
+    const normalized = (raw || '').trim();
+    if (!normalized) return [];
+
+    // Backward compatibility: old input style "A, B, C"
+    if (!normalized.includes('|') && !normalized.includes('\n') && normalized.includes(',')) {
+        return normalized.split(',')
+            .map(x => x.trim())
+            .filter(Boolean)
+            .map((label, index) => {
+                const key = String.fromCharCode(65 + index);
+                return {
+                    key,
+                    label,
+                    color: '#00b4d8',
+                    points: 0,
+                    note: '',
+                };
+            });
+    }
+
+    const lines = normalized.split('\n').map(l => l.trim()).filter(Boolean);
+    return lines.map((line, index) => {
+        const [key, label, color, points, note] = line.split('|').map(p => (p || '').trim());
+        const fallbackKey = String.fromCharCode(65 + index);
+        return {
+            key: (key || fallbackKey).toUpperCase(),
+            label: label || key || `Option ${fallbackKey}`,
+            color: color || '#00b4d8',
+            points: Number.isFinite(parseInt(points, 10)) ? parseInt(points, 10) : 0,
+            note: note || '',
+        };
+    });
+}
+
 async function closeVoteWithScore() {
     const d = await api('vote/close','POST');
     if (d.ok) {
-        const msg = d.awardedPoints > 0
-            ? `✅ Vote fermé — Vainqueur: ${d.winner} — ${d.awardedPoints} pts attribués à toutes les équipes`
-            : `Vote fermé — Vainqueur: ${d.winner}`;
+        const msg = d.isTie
+            ? `Vote fermé — Egalite (${(d.tiedKeys || []).join(', ')}) — aucun point attribue`
+            : (d.awardedPoints > 0
+                ? `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts attribues`
+                : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner}`);
         showNotif(msg, 'success');
     } else {
         showNotif(d.error || 'Erreur', 'danger');
@@ -480,14 +658,19 @@ function updateVoteTally(vote) {
     if (!vote) { el.innerHTML = ''; return; }
     const tally = vote.tally || {};
     const total = Object.values(tally).reduce((a,b)=>a+b,0)||1;
-    const colors = {A:'#ef4444', B:'#22c55e', C:'#f59e0b'};
+    const colorMap = {};
+    const labelMap = {};
+    (vote.options || []).forEach(opt => {
+        if (opt?.key) colorMap[opt.key] = opt.color || '#aaa';
+        if (opt?.key) labelMap[opt.key] = opt.label || opt.key;
+    });
     const rows = Object.entries(tally).map(([k,v]) => `
         <div class="mb-1">
             <div class="d-flex justify-content-between" style="font-size:.75rem">
-                <span class="fw-bold" style="color:${colors[k]||'#aaa'}">${k}</span>
+                <span class="fw-bold" style="color:${colorMap[k]||'#aaa'}">${k} - ${labelMap[k] || k}</span>
                 <span class="cs-mono">${v} vote${v>1?'s':''}</span>
             </div>
-            <div class="tally-bar"><div class="tally-bar-fill" style="width:${Math.round(v/total*100)}%;background:${colors[k]||'#aaa'}"></div></div>
+            <div class="tally-bar"><div class="tally-bar-fill" style="width:${Math.round(v/total*100)}%;background:${colorMap[k]||'#aaa'}"></div></div>
         </div>`).join('');
     el.innerHTML = `<div class="small text-theme fw-bold mb-2">📊 ${vote.question||'Vote en cours'}</div>${rows}`;
 }

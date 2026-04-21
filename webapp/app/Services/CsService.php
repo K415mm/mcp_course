@@ -443,6 +443,8 @@ class CsService
                 'question'=> $openVote->question,
                 'options' => $openVote->options,
                 'tally'   => $openVote->tally(),
+                'is_open' => (bool) $openVote->is_open,
+                'isOpen'  => (bool) $openVote->is_open,
                 'myChoice'=> $player ? $openVote->entries()->where('cs_team_id', $player->cs_team_id)->value('choice') : null,
             ] : null,
             'myTeamType'  => $player?->team?->type,

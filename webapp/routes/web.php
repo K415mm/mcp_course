@@ -147,6 +147,7 @@ Route::middleware('auth')->group(function () {
         // CS API endpoints (used by all 3 views, CSRF-protected)
         Route::prefix('/{code}/api')->name('api.')->group(function () {
             Route::get('/state',             [CsApiController::class, 'state'])->name('state');
+            Route::get('/bank',              [CsApiController::class, 'getBank'])->name('bank');
             Route::post('/join',             [CsApiController::class, 'join'])->name('join');
             Route::post('/heartbeat',        [CsApiController::class, 'heartbeat'])->name('heartbeat');
             Route::post('/timer/start',      [CsApiController::class, 'timerStart'])->name('timer.start');
@@ -242,3 +243,5 @@ Route::middleware('auth')->group(function () {
     
     }); // End verified middleware group
 });
+R o u t e : : g e t ( ' / c s - t e s t ' ,   f u n c t i o n ( )   {   r e t u r n   v i e w ( ' c s . i n d e x ' ,   [ ' s e s s i o n s '   = >   A p p \ M o d e l s \ C s S e s s i o n : : p a g i n a t e ( 1 0 ) ,   ' s c e n a r i o s '   = >   A p p \ M o d e l s \ C s S c e n a r i o : : l i s t ( ) ] ) ;   } ) ;  
+ 

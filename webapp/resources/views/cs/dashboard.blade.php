@@ -453,7 +453,9 @@ body.scanlines::after {
 /* Vote bars */
 .vote-bars { display: flex; flex-direction: column; gap: 7px; }
 .vote-bar-row { display: flex; align-items: center; gap: 8px; }
-.vb-lbl { font-family: 'Space Mono', monospace; font-size: 1.2rem; font-weight: 700; width: 28px; }
+.vb-lbl { display:flex; align-items:center; gap:8px; min-width:220px; max-width:45%; }
+.vb-key { font-family: 'Space Mono', monospace; font-size: 1.1rem; font-weight: 700; min-width:26px; text-align:center; }
+.vb-text { font-size: .78rem; color: rgba(255,255,255,.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .vb-track {
     flex: 1; height: 18px;
     background: rgba(255,255,255,.07); border-radius: 4px; overflow: hidden;
@@ -463,7 +465,7 @@ body.scanlines::after {
     transition: width .5s ease;
     background: var(--bs-theme);
 }
-.vb-count { font-family: 'Space Mono', monospace; font-size: .75rem; width: 18px; text-align: right; }
+.vb-count { font-family: 'Space Mono', monospace; font-size: .75rem; min-width:64px; text-align: right; }
 .vote-q { font-family: 'Space Mono', monospace; font-size: .65rem; color: rgba(255,255,255,.4); margin-bottom: 8px; }
 
 /* ══ ATMOSPHERE SYSTEM ═══════════════════════════════════════════ */
@@ -635,46 +637,72 @@ body.atmo-neutral { }
 /* ── ENDGAME overlay ─────────────────────────────────────────────── */
 .endgame-ov {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.96); z-index: 950;
+    background: radial-gradient(circle at 50% 40%, rgba(10, 25, 40, 0.98) 0%, rgba(0, 0, 0, 1) 100%);
+    z-index: 950;
     align-items: center; justify-content: center; flex-direction: column;
 }
-body.atmo-crisis .endgame-ov { background: radial-gradient(ellipse at center, rgba(35,10,10,.96) 0%, rgba(0,0,0,.99) 100%); }
-.endgame-ov.show { display: flex; animation: endIn .8s ease; }
-@keyframes endIn { from { opacity: 0; transform: scale(.96) } to { opacity: 1; transform: scale(1) } }
-.eg-label { font-family: 'Space Mono', monospace; font-size: .65rem; letter-spacing: 8px; color: #f59e0b; margin-bottom: 6px; }
+body.atmo-crisis .endgame-ov { background: radial-gradient(circle at 50% 40%, rgba(40, 10, 10, 0.98) 0%, rgba(0, 0, 0, 1) 100%); }
+.endgame-ov.show { display: flex; animation: endIn .8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes endIn { from { opacity: 0; transform: scale(.9) } to { opacity: 1; transform: scale(1) } }
+.eg-label { font-family: 'Space Mono', monospace; font-size: 1rem; letter-spacing: 12px; color: #f59e0b; margin-bottom: 10px; text-transform: uppercase; animation: floatLabel 3s ease-in-out infinite; }
+@keyframes floatLabel { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 body.atmo-crisis .eg-label { color: #ef4444; }
-.eg-title { font-size: 2rem; font-weight: 900; margin-bottom: 28px; }
-body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 20px rgba(239,68,68,.6); }
+.eg-title { font-size: 4rem; font-weight: 900; margin-bottom: 60px; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; }
+body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,68,.6); }
 
-.podium { display: flex; align-items: flex-end; gap: 12px; justify-content: center; }
-.podium-slot { text-align: center; width: 140px; }
+.podium { display: flex; align-items: flex-end; gap: 30px; justify-content: center; margin-bottom: 20px; }
+.podium-slot { text-align: center; width: 220px; display: flex; flex-direction: column; align-items: center; }
 .pod-bar {
-    border-radius: 8px 8px 0 0;
-    display: flex; align-items: center; justify-content: center; flex-direction: column;
-    padding: 14px 8px;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    display: flex; align-items: center; justify-content: flex-start; flex-direction: column;
+    padding: 30px 15px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
 }
-.p1 .pod-bar { border: 1px solid #f59e0b; background: linear-gradient(180deg,rgba(245,158,11,.25),rgba(245,158,11,.06)); height: 200px; }
-.p2 .pod-bar { border: 1px solid var(--bs-theme); background: linear-gradient(180deg,rgba(var(--bs-theme-rgb),.2),rgba(var(--bs-theme-rgb),.04)); height: 152px; }
-.p3 .pod-bar { border: 1px solid #8b5cf6; background: linear-gradient(180deg,rgba(139,92,246,.2),rgba(139,92,246,.04)); height: 118px; }
-.pod-icon { font-size: 2rem; }
-.pod-name { font-size: 1.1rem; font-weight: 900; margin-top: 4px; }
-.pod-score { font-family: 'Space Mono', monospace; font-size: 1.8rem; color: var(--bs-theme); font-weight: 700; }
-.pod-badge { font-size: 1.6rem; margin-top: 4px; }
+.pod-bar::before { content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent); pointer-events:none; }
+
+.p1 { z-index: 3; animation: floatWinner 4s ease-in-out infinite; }
+@keyframes floatWinner { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.p1 .pod-bar { border: 2px solid #fbbf24; background: linear-gradient(180deg, rgba(245,158,11,.4) 0%, rgba(245,158,11,.05) 100%); height: 380px; box-shadow: 0 0 60px rgba(245,158,11,.3); }
+.p2 { z-index: 2; animation: floatWinner 4s ease-in-out infinite 1s; }
+.p2 .pod-bar { border: 2px solid #94a3b8; background: linear-gradient(180deg, rgba(148,163,184,.3) 0%, rgba(148,163,184,.05) 100%); height: 280px; box-shadow: 0 0 40px rgba(148,163,184,.2); }
+.p3 { z-index: 1; animation: floatWinner 4s ease-in-out infinite 2s; }
+.p3 .pod-bar { border: 2px solid #b45309; background: linear-gradient(180deg, rgba(180,83,9,.3) 0%, rgba(180,83,9,.05) 100%); height: 220px; box-shadow: 0 0 40px rgba(180,83,9,.2); }
+
+.pod-icon { font-size: 3.5rem; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+.pod-icon img { width: 70px !important; height: 70px !important; object-fit: contain; }
+.pod-name { font-size: 1.6rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+.pod-score { font-family: 'Space Mono', monospace; font-size: 2.8rem; color: #fff; font-weight: 700; text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 15px; }
+.pod-badge { margin-top: auto; }
+.pod-badge img { width: 110px !important; height: 110px !important; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) !important; transition: transform 0.3s; }
+.p1 .pod-badge img { width: 140px !important; height: 140px !important; object-fit: contain; filter: drop-shadow(0 0 30px rgba(245,158,11,0.6)) !important; animation: pulseBadge 2s infinite; }
+@keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
 .pod-base {
-    background: rgba(255,255,255,.05); padding: 5px 8px;
-    border-radius: 0 0 6px 6px;
-    font-family: 'Space Mono', monospace; font-size: .7rem; color: rgba(255,255,255,.4);
+    width: 100%;
+    background: rgba(255,255,255,.1); padding: 12px;
+    border-radius: 0 0 16px 16px;
+    font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #fff; font-weight: 700; letter-spacing: 2px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.2);
 }
-.others-row { display: flex; gap: 14px; margin-top: 20px; justify-content: center; }
+
+.others-row { display: flex; gap: 20px; margin-top: 40px; justify-content: center; flex-wrap: wrap; max-width: 900px; }
 .other-tile {
-    text-align: center; padding: 8px 16px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 8px;
+    text-align: center; padding: 15px 25px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    transition: transform 0.2s, background 0.2s;
+    min-width: 180px;
 }
-.ot-rank { font-family: 'Space Mono', monospace; font-size: .65rem; color: rgba(255,255,255,.35); }
-.ot-name { font-size: .9rem; font-weight: 700; }
-.ot-score { font-family: 'Space Mono', monospace; font-size: 1rem; color: var(--bs-theme); }
+.other-tile:hover { transform: translateY(-3px); background: rgba(255,255,255,.1); }
+.ot-rank { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: rgba(255,255,255,.5); letter-spacing: 1px; margin-bottom: 5px; }
+.ot-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; }
+.ot-score { font-family: 'Space Mono', monospace; font-size: 1.4rem; color: var(--bs-theme); font-weight: bold; }
 
 #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 960; }
 
@@ -1026,26 +1054,30 @@ function handleVote(vote) {
         return;
     }
 
-    const total  = Object.values(vote.tally).reduce((a,b) => a+b, 0) || 1;
-    const winner = !vote.is_open ? Object.entries(vote.tally).sort((a,b)=>b[1]-a[1])[0]?.[0] : null;
+    const total = Object.values(vote.tally || {}).reduce((a,b) => a+b, 0) || 1;
+    const isOpen = (vote.is_open ?? vote.isOpen ?? true) === true;
+    const winner = !isOpen ? Object.entries(vote.tally || {}).sort((a,b)=>b[1]-a[1])[0]?.[0] : null;
 
     // Detect vote just closed → flash announcement
-    if (lastVoteId === vote.id && lastVoteOpen === true && !vote.is_open && winner) {
+    if (lastVoteId === vote.id && lastVoteOpen === true && !isOpen && winner) {
         addFeed('success', `🗳️ Vote fermé — Choix national: <strong>${winner}</strong>`);
         playTone(523, .4, 'triangle', .3);
     }
     lastVoteId   = vote.id;
-    lastVoteOpen = vote.is_open ?? true;
+    lastVoteOpen = isOpen;
 
     const barsHtml = (vote.options||[]).map(o => {
         const count  = vote.tally[o.key] ?? 0;
         const pct    = Math.round(count / total * 100);
         const isWin  = winner === o.key;
+        const safeColor = o.color || 'var(--bs-theme)';
+        const safeLabel = o.label || `Option ${o.key}`;
         return `<div class="vote-bar-row" style="${isWin ? 'opacity:1' : (winner ? 'opacity:.55' : '')}">
-            <span class="vb-lbl" style="color:${o.color||'var(--bs-theme)'}">
-                ${isWin ? '🏆 ' : ''}${o.key}${o.label ? ' — '+o.label : ''}
+            <span class="vb-lbl">
+                <span class="vb-key" style="color:${safeColor}">${isWin ? '🏆' : o.key}</span>
+                <span class="vb-text" title="${safeLabel}">${safeLabel}</span>
             </span>
-            <div class="vb-track"><div class="vb-fill" style="width:${pct}%;background:${o.color||'var(--bs-theme)'}${isWin?'':''};${isWin?'box-shadow:0 0 6px '+o.color:''}"></div></div>
+            <div class="vb-track"><div class="vb-fill" style="width:${pct}%;background:${safeColor};${isWin ? `box-shadow:0 0 6px ${safeColor}` : ''}"></div></div>
             <span class="vb-count">${count} <span style="font-size:.65rem;opacity:.6">(${pct}%)</span></span>
         </div>`;
     }).join('');
@@ -1086,11 +1118,11 @@ function fireEndgame(teams, session) {
         const t = top3[ri]; if (!t) return '';
         return `<div class="podium-slot ${classes[ci]}">
             <div class="pod-bar">
-                <div class="pod-icon">${t.logoPath ? `<img src="${t.logoPath}" style="width:48px;height:48px;object-fit:contain">` : t.icon}</div>
+                <div class="pod-icon">${t.logoPath ? `<img src="${t.logoPath}" alt="logo">` : t.icon}</div>
                 <div class="pod-name">${t.name}</div>
                 <div class="pod-score">${t.score}</div>
                 <div class="pod-badge">${t.badge.image
-                    ? `<img src="${t.badge.image}" alt="${t.badge.name}" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(220,160,30,.8))">`
+                    ? `<img src="${t.badge.image}" alt="${t.badge.name}">`
                     : t.badge.icon}</div>
             </div>
             <div class="pod-base">${ranks[ri]}</div>
@@ -1116,18 +1148,19 @@ function launchConfetti() {
     const canvas = document.getElementById('confettiCanvas');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     const ctx = canvas.getContext('2d');
-    const parts = Array.from({length:200}, () => ({
-        x: Math.random() * canvas.width, y: -20,
-        w: 4 + Math.random() * 8, h: 8 + Math.random() * 14,
-        vx: (Math.random()-.5)*3, vy: 2 + Math.random()*4,
-        r: Math.random()*Math.PI*2, vr: (Math.random()-.5)*.15,
-        c: ['var(--bs-theme)','#f59e0b','#2dc653','#8b5cf6','#ef4444','#f4a261']
-            [Math.floor(Math.random()*6)],
+    const parts = Array.from({length:300}, () => ({
+        x: Math.random() * canvas.width, y: -20 - Math.random() * 1000,
+        w: 6 + Math.random() * 10, h: 10 + Math.random() * 20,
+        vx: (Math.random()-.5)*5, vy: 3 + Math.random()*6,
+        r: Math.random()*Math.PI*2, vr: (Math.random()-.5)*.25,
+        c: ['#f59e0b','#fbbf24','#10b981','#3b82f6','#8b5cf6','#ef4444','#ec4899','#f43f5e']
+            [Math.floor(Math.random()*8)],
     }));
     (function loop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         parts.forEach(p => {
-            p.x += p.vx; p.y += p.vy; p.r += p.vr; p.vy += .05;
+            p.x += p.vx; p.y += p.vy; p.r += p.vr; p.vy += .03;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
             ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
             ctx.fillStyle = p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
             ctx.restore();

@@ -221,7 +221,7 @@ const CODE = '{{ $session->code }}';
 const CSRF = '{{ csrf_token() }}';
 const PHASES = {{ count($scenario['phases']) }};
 const PLAYER_ID = {{ $player?->id ?? 'null' }};
-const TEAM_ID   = {{ $player?->team_id ?? 'null' }};
+const TEAM_ID   = {{ $player?->cs_team_id ?? 'null' }};
 
 let selectedTeam = null, decisionType = 'decision';
 let lastBcId = 0, lastAtmo = '';
@@ -267,8 +267,12 @@ async function submitDecision() {
 // ── VOTE ───────────────────────────────────────────────────
 async function castVote(key) {
     if (!TEAM_ID) return;
-    await api('vote/submit','POST',{choice:key, team_id:TEAM_ID});
-    toast('success','Vote enregistré');
+    const res = await api('vote/submit','POST',{choice:key, team_id:TEAM_ID});
+    if (res.ok) {
+        toast('success','Vote enregistré');
+    } else {
+        toast('warn','Vote non pris en compte (déjà voté ?)');
+    }
 }
 
 // ── POLL ───────────────────────────────────────────────────
@@ -351,10 +355,14 @@ function updateVote(vote) {
     if (!vote) { card.style.setProperty('display','none','important'); return; }
     card.style.removeProperty('display');
     document.getElementById('voteQuestion').textContent = vote.question ?? '';
+    const myChoice = vote.myChoice ?? null;
     const opts = document.getElementById('voteOptions');
     opts.innerHTML = (vote.options||[]).map(o => {
         const pct = Math.round((vote.tally?.[o.key]||0) / Math.max(1, Object.values(vote.tally||{}).reduce((a,b)=>a+b,0)) * 100);
-        return `<button onclick="castVote('${o.key}')" class="btn btn-sm btn-outline-theme" style="min-width:80px">
+        const selected = myChoice === o.key;
+        const border = o.color || 'var(--bs-theme)';
+        return `<button onclick="castVote('${o.key}')" class="btn btn-sm ${selected ? 'btn-theme' : 'btn-outline-theme'}"
+            style="min-width:80px;border-color:${border};color:${selected ? '#001018' : border}">
             ${o.label} <span class="badge bg-dark ms-1">${pct}%</span>
         </button>`;
     }).join('');

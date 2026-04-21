@@ -3,10 +3,67 @@
 
 @push('head')
 <style>
-.cs-hero{background:linear-gradient(135deg,#030f1a 0%,#071a2e 60%,#0a1a1a 100%);min-height:180px;position:relative;overflow:hidden}
-.cs-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,180,216,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,216,.04) 1px,transparent 1px);background-size:40px 40px}
-.cs-title{font-family:'Space Mono',monospace;font-weight:700;font-size:2.2rem;letter-spacing:2px}
-.cs-title .shield{color:#00b4d8}.cs-title .word{color:#e2eaf4}
+/* ═══════════════════════════════════════════════════
+   HEADER — Gold/Crimson HUD Bar with center medallion
+   ═══════════════════════════════════════════════════ */
+.cs-header {
+    position: relative;
+    display: flex; align-items: center;
+    height: 88px;
+    background: linear-gradient(90deg, rgba(10,4,4,.98) 0%, rgba(24,8,8,.97) 30%, rgba(35,12,8,.97) 50%, rgba(24,8,8,.97) 70%, rgba(10,4,4,.98) 100%);
+    border-top: 2px solid #c9a050;
+    border-bottom: 1px solid #c0152a;
+    border-left: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(192,21,42,.2), inset 0 1px 0 rgba(201,160,80,.15), inset 0 -1px 0 rgba(192,21,42,.2);
+    overflow: visible;
+    padding: 0 28px;
+    margin-bottom: 2rem;
+}
+.cs-header::before {
+    content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, #f0c060, transparent);
+    opacity: .5;
+}
+.cs-left { display: flex; flex-direction: column; justify-content: center; gap: 2px; flex: 1; min-width: 0; }
+.logo-txt {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700; font-size: 1.3rem; letter-spacing: 4px;
+    background: linear-gradient(90deg, #c9a050 0%, #f0c060 50%, #c9a050 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo-txt .shield-word {
+    background: linear-gradient(90deg, #c0152a 0%, #e83352 50%, #c0152a 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.scenario-sub { font-size: .72rem; color: rgba(201,160,80,.55); font-family: 'Space Mono', monospace; letter-spacing: 1px; }
+
+.cs-medallion {
+    position: absolute; left: 50%; transform: translateX(-50%); top: -18px; width: 124px; height: 124px; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+}
+.cs-medallion::before {
+    content: ''; position: absolute; left: 50%; transform: translateX(-50%); top: 50%; transform: translate(-50%, -50%);
+    width: 220px; height: 44px;
+    background: linear-gradient(90deg, transparent 0%, rgba(201,160,80,.12) 15%, rgba(201,160,80,.25) 50%, rgba(201,160,80,.12) 85%, transparent 100%);
+    border-top: 1px solid rgba(201,160,80,.3); border-bottom: 1px solid rgba(201,160,80,.3); border-radius: 4px;
+}
+.cs-medallion::after {
+    content: '✦'; position: absolute; font-size: .9rem; color: #c9a050; opacity: .5;
+    animation: cornerSpin 8s linear infinite;
+    top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(0deg) translateX(72px);
+}
+@keyframes cornerSpin { from { transform: translate(-50%,-50%) rotate(0deg) translateX(72px); } to { transform: translate(-50%,-50%) rotate(360deg) translateX(72px); } }
+.cs-medal-img {
+    width: 110px; height: 110px; object-fit: contain; position: relative; z-index: 2;
+    filter: drop-shadow(0 0 18px rgba(201,160,80,.7)) drop-shadow(0 0 6px rgba(192,21,42,.5));
+    animation: medalFloat 4s ease-in-out infinite;
+}
+@keyframes medalFloat { 0%,100% { transform: translateY(0); filter: drop-shadow(0 0 18px rgba(201,160,80,.7)) drop-shadow(0 0 6px rgba(192,21,42,.5)); } 50% { transform: translateY(-4px); filter: drop-shadow(0 0 26px rgba(201,160,80,.9)) drop-shadow(0 0 10px rgba(192,21,42,.6)); } }
+
+.cs-right { display: flex; align-items: center; gap: 18px; flex-shrink: 0; position: relative; z-index: 30; }
+
 .scenario-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .sc-opt{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px 12px;cursor:pointer;transition:all .2s;border-top:3px solid transparent}
 .sc-opt:hover{border-color:rgba(255,255,255,.2)}
@@ -29,28 +86,32 @@
         </div>
     @endif
 
-    {{-- Hero Banner --}}
-    <div class="card mb-4 border-0 cs-hero">
-        <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
-        <div class="card-body d-flex align-items-center justify-content-between p-4" style="position:relative;z-index:1">
-            <div>
-                <h1 class="mb-1 cs-title"><span class="shield">CARTHAGE</span> <span class="word">SHIELD</span></h1>
-                <p class="text-white-50 mb-2" style="font-size:.95rem">Exercice de Cybersécurité Nationale — Simulation Tabletop Multi-Équipes</p>
-                <p class="text-white-50 mb-0" style="font-size:.8rem">
-                    <i class="bi bi-people me-1"></i> 6 équipes &middot;
-                    <i class="bi bi-layers me-1"></i> 5 phases &middot;
-                    <i class="bi bi-clock me-1"></i> 90–120 min &middot;
-                    <i class="bi bi-shield-fill-exclamation me-1"></i> PHANTOM GRID
-                </p>
+    {{-- Hero Banner (Loopy Header Design) --}}
+    <div class="cs-header mt-3">
+        {{-- LEFT: Title + Sub --}}
+        <div class="cs-left">
+            <div class="logo-txt">CARTHAGE <span class="shield-word">SHIELD</span></div>
+            <div class="scenario-sub mt-1">Exercice de Cybersécurité Nationale</div>
+            <div class="scenario-sub" style="font-size: 0.65rem; opacity: 0.6;">
+                <i class="bi bi-people me-1"></i> 6 équipes &middot;
+                <i class="bi bi-layers me-1"></i> 5 phases &middot;
+                <i class="bi bi-clock me-1"></i> 90–120 min
             </div>
-            <div class="d-none d-md-flex flex-column align-items-end gap-2" style="position:relative;z-index:1">
-                <a href="{{ route('admin.cs.index') }}" class="btn btn-lg px-4" style="background:linear-gradient(90deg,#00b4d8,#0077a8);color:#000;font-weight:700">
-                    <i class="bi bi-plus-lg me-2"></i>Nouvelle Session
-                </a>
-                <a href="{{ route('admin.cs.entities.index') }}" class="btn btn-sm btn-outline-light">
-                    <i class="bi bi-gear me-1"></i>Configurer Entités
-                </a>
-            </div>
+        </div>
+
+        {{-- CENTER: Protruding game medallion --}}
+        <div class="cs-medallion">
+            <img src="/cs-assets/game_logo.png" class="cs-medal-img" alt="Carthage Shield">
+        </div>
+
+        {{-- RIGHT: Actions --}}
+        <div class="cs-right">
+            <a href="{{ route('admin.cs.index') }}" class="btn btn-sm px-3" style="background:linear-gradient(90deg,#00b4d8,#0077a8);color:#000;font-weight:700;border:none;">
+                <i class="bi bi-plus-lg me-1"></i>Nouvelle Session
+            </a>
+            <a href="{{ route('admin.cs.entities.index') }}" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.15);">
+                <i class="bi bi-gear me-1"></i>Configurer Entités
+            </a>
         </div>
     </div>
 

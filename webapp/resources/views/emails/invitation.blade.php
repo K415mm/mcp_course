@@ -7,83 +7,65 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { 
-    background-color: #0b1117; 
-    background-image: url('{{ $message->embed(public_path("hud/img/cover/cover-raiseguard.png")) }}');
-    background-size: cover;
-    background-position: center;
+    background-color: #f4f5f7; /* Light silver/gray background */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
-    color: #a4b2c1; 
+    color: #1e293b; /* Dark text for readability */
+    -webkit-font-smoothing: antialiased;
   }
   .email-wrapper { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
 
-  /* HUD Panel */
+  /* Main Minimalist Panel */
   .hud-panel {
-    background: rgba(0, 0, 0, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    position: relative;
-    padding: 35px 40px;
-    border-radius: 4px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: #ffffff; /* Clean white card */
+    border: 1px solid #e2e8f0;
+    padding: 40px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   }
 
-  /* HUD Corner Brackets */
-  .hud-bracket { position: absolute; width: 10px; height: 10px; border-color: rgba(255, 255, 255, 0.25); border-style: solid; }
-  .bracket-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-  .bracket-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-  .bracket-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-  .bracket-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-
   /* Header */
-  .brand-logo { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 30px; }
-  .brand-img { width: 38px; height: 38px; background: rgba(4, 236, 240, 0.15); border-radius: 6px;
-    display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #04ecf0; }
-  .brand-text { font-size: 18px; font-weight: 700; color: #04ecf0; letter-spacing: 1px; }
+  .brand-logo { text-align: center; margin-bottom: 35px; }
+  .brand-logo img { max-width: 120px; height: auto; }
 
-  h1 { font-size: 24px; font-weight: 700; color: #ffffff; line-height: 1.3; margin-bottom: 8px; }
-  .subtitle { font-size: 14px; color: #6c7e93; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
+  h1 { font-size: 24px; font-weight: 700; color: #b8860b; /* Elegant Dark Gold */ line-height: 1.3; margin-bottom: 8px; text-align: center; }
+  .subtitle { font-size: 13px; color: #b8860b; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 35px; text-align: center; font-weight: 600; }
 
   /* Body Content */
-  .greeting { font-size: 15px; color: #cbd5e1; line-height: 1.6; margin-bottom: 25px; }
-  .greeting strong { color: #ffffff; }
+  .greeting { font-size: 15px; color: #334155; line-height: 1.6; margin-bottom: 25px; }
+  .greeting strong { color: #000000; font-weight: 600; }
 
   /* Module List */
-  .module-list { margin: 30px 0; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px; }
-  .module-list-title { font-size: 12px; color: #04ecf0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; font-weight: 600; }
-  .module-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 13px; color: #94a3b8; }
-  .module-badge { background: rgba(4, 236, 240, 0.1); color: #04ecf0; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-family: monospace; }
+  .module-list { margin: 35px 0; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 25px 0; }
+  .module-list-title { font-size: 12px; color: #b8860b; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 20px; font-weight: 700; text-align: center; }
+  .module-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #475569; }
+  .module-item:last-child { margin-bottom: 0; }
+  .module-badge { background: #f8fafc; border: 1px solid #e2e8f0; color: #000000; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-weight: 600; }
   
   /* Highlight Box */
-  .highlight-box { background: rgba(255, 193, 7, 0.05); border: 1px solid rgba(255, 193, 7, 0.2);
-    border-radius: 4px; padding: 18px 20px; margin: 30px 0; display: flex; gap: 15px; }
-  .highlight-icon { font-size: 24px; }
-  .highlight-title { font-size: 14px; font-weight: 700; color: #ffc107; margin-bottom: 4px; }
-  .highlight-text { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+  .highlight-box { background: #fafafa; border-left: 3px solid #b8860b; padding: 20px; margin: 30px 0; border-radius: 0 8px 8px 0; display: flex; gap: 15px; }
+  .highlight-icon { font-size: 20px; }
+  .highlight-title { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 6px; }
+  .highlight-text { font-size: 13px; color: #475569; line-height: 1.6; }
 
   /* CTA Button */
-  .cta-wrap { margin: 35px 0 20px; }
-  .cta-btn { display: inline-block; background: #04ecf0; color: #000000; font-size: 14px; font-weight: 700;
-    text-decoration: none; padding: 14px 35px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .cta-wrap { margin: 40px 0 20px; text-align: center; }
+  .cta-btn { display: inline-block; background: #000000; color: #ffffff; font-size: 14px; font-weight: 600;
+    text-decoration: none; padding: 14px 35px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
 
   /* Footer */
-  .footer { margin-top: 30px; font-size: 12px; color: #475569; line-height: 1.6; text-align: center; }
-  .footer a { color: #04ecf0; text-decoration: none; }
-  .expire-notice { margin-top: 20px; padding: 12px; background: rgba(239, 68, 68, 0.05);
-    border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 4px; font-size: 12px; color: #cbd5e1; }
+  .footer { margin-top: 30px; padding: 25px; background: #0b1117; border-radius: 12px; font-size: 12px; line-height: 1.8; text-align: center; }
+  .footer p { margin-bottom: 10px; }
+  .footer p:last-child { margin-bottom: 0; }
+  .footer a { text-decoration: none; }
+  .expire-notice { margin-top: 25px; padding: 15px; background: #fff1f2; border: 1px solid #ffe4e6; border-radius: 6px; font-size: 12px; color: #e11d48; text-align: center; }
 </style>
 </head>
 <body>
 <div class="email-wrapper">
   
   <div class="hud-panel">
-    <!-- Corner brackets -->
-    <div class="hud-bracket bracket-tl"></div>
-    <div class="hud-bracket bracket-tr"></div>
-    <div class="hud-bracket bracket-bl"></div>
-    <div class="hud-bracket bracket-br"></div>
-
     <div class="brand-logo">
-      <div class="brand-img">C</div>
-      <div class="brand-text">CARTHAGE SHIELD</div>
+      <img src="https://cyberhero.defensy.io/cs-assets/game_logo.png" alt="Carthage Shield Logo">
     </div>
 
     <h1>You're Invited to Join</h1>
@@ -123,16 +105,20 @@
 
     @if($expiresAt)
     <div class="expire-notice">
-      SYSTEM ALERT: This token expires on <strong>{{ $expiresAt }}</strong>
+      <strong>SYSTEM ALERT:</strong> This token expires on {{ $expiresAt }}
     </div>
     @endif
   </div>
 
   <div class="footer">
-    <p>This is an automated system message from Carthage Shield Command.<br>
-       Access granted via <a href="{{ url('/') }}">tunai.cloud</a> HUD.</p>
-    <p style="margin-top:10px; font-size:11px; word-break:break-all;">
-      Backup link: <a href="{{ $inviteUrl }}">{{ $inviteUrl }}</a>
+    <p>
+      <span style="color: gold;">This is an automated system message from</span> 
+      <span style="color: red;">defensy</span><br>
+      <span style="color: white;">access granted via</span> 
+      <span style="color: magenta;">cyberhero platform defensy 2026.</span>
+    </p>
+    <p style="font-size:11px; word-break:break-all;">
+      <span style="color: white;">Backup link:</span> <a href="{{ $inviteUrl }}" style="color: gold;">{{ $inviteUrl }}</a>
     </p>
   </div>
 

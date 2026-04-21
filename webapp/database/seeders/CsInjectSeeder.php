@@ -9,7 +9,7 @@ class CsInjectSeeder extends Seeder
 {
     public function run(): void
     {
-        CsInject::truncate();
+        CsInject::query()->delete();
 
         // ── PHANTOM GRID Scenario ──────────────────────────────────
         $phantom = [

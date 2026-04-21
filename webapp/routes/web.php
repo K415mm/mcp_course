@@ -165,6 +165,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/vote/submit',      [CsApiController::class, 'voteSubmit'])->name('vote.submit');
             Route::post('/decision',         [CsApiController::class, 'decision'])->name('decision');
             Route::post('/decision/{id}/award',[CsApiController::class, 'awardScore'])->name('decision.award');
+            Route::post('/badge/{teamId}',   [CsApiController::class, 'badgeAward'])->name('badge.award');
             Route::post('/end',              [CsApiController::class, 'end'])->name('end');
         });
     });
@@ -174,6 +175,9 @@ Route::middleware('auth')->group(function () {
         // ── CARTHAGE SHIELD sessions ──
         Route::get('/cs',  [CsController::class, 'index'])->name('cs.index');
         Route::post('/cs', [CsController::class, 'store'])->name('cs.store');
+
+        Route::get('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'index'])->name('cs.entities.index');
+        Route::put('/cs/entities/{entity}', [\App\Http\Controllers\Admin\CsEntityController::class, 'update'])->name('cs.entities.update');
 
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
 

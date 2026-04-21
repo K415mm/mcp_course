@@ -47,6 +47,9 @@
                 <a href="{{ route('admin.cs.index') }}" class="btn btn-lg px-4" style="background:linear-gradient(90deg,#00b4d8,#0077a8);color:#000;font-weight:700">
                     <i class="bi bi-plus-lg me-2"></i>Nouvelle Session
                 </a>
+                <a href="{{ route('admin.cs.entities.index') }}" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-gear me-1"></i>Configurer Entités
+                </a>
             </div>
         </div>
     </div>

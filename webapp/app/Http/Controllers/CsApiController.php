@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CsBadge;
 use App\Models\CsInject;
 use App\Models\CsPlayer;
 use App\Models\CsSession;
@@ -188,14 +189,39 @@ class CsApiController extends Controller
         return response()->json(['ok' => true, 'voteId' => $vote->id]);
     }
 
-    // ── POST /api/cs/{code}/vote/close ─────────────────────────────
+    // ── POST /api/cs/{code}/vote/close ─────────────────────────────────
     public function voteClose(string $code): JsonResponse
     {
         $session = $this->getModeratorSession($code);
         $vote    = CsVote::where('cs_session_id', $session->id)->where('is_open', true)->first();
         if (!$vote) return response()->json(['ok' => false, 'error' => 'No open vote']);
+
         $tally = $this->cs->closeVote($vote);
-        return response()->json(['ok' => true, 'tally' => $tally]);
+
+        // Auto-award points based on winning option in the decision matrix
+        $winner     = collect($tally)->sortDesc()->keys()->first();
+        $phases     = $session->phases();
+        $phase      = $phases[$session->current_phase_index] ?? null;
+        $matrix     = $phase['decision_matrix'] ?? null;
+        $awardedPoints = 0;
+
+        if ($winner && $matrix) {
+            $option = collect($matrix['options'] ?? [])->firstWhere('key', $winner);
+            if ($option && isset($option['points'])) {
+                // Award points to all teams (collective vote)
+                foreach ($session->teams as $team) {
+                    $this->cs->adjustScore($team, $option['points']);
+                }
+                $awardedPoints = $option['points'];
+            }
+        }
+
+        return response()->json([
+            'ok'           => true,
+            'tally'        => $tally,
+            'winner'       => $winner,
+            'awardedPoints'=> $awardedPoints,
+        ]);
     }
 
     // ── POST /api/cs/{code}/vote/submit ────────────────────────────
@@ -238,7 +264,7 @@ class CsApiController extends Controller
         return response()->json(['ok' => true, 'id' => $decision->id]);
     }
 
-    // ── POST /api/cs/{code}/decision/{id}/award ─────────────────────
+    // ── POST /api/cs/{code}/decision/{id}/award ───────────────────────
     public function awardScore(Request $request, string $code, int $decisionId): JsonResponse
     {
         $session  = $this->getModeratorSession($code);
@@ -246,6 +272,22 @@ class CsApiController extends Controller
         $data     = $request->validate(['points' => 'required|integer|min:0|max:100']);
         $this->cs->awardDecisionScore($decision, $data['points']);
         return response()->json(['ok' => true]);
+    }
+
+    // ── POST /api/cs/{code}/badge/{teamId} ────────────────────────────────
+    public function badgeAward(Request $request, string $code, int $teamId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $team    = CsTeam::where('id', $teamId)->where('cs_session_id', $session->id)->firstOrFail();
+        $data    = $request->validate([
+            'badge_type' => 'required|in:first_responder,crisis_communicator,zero_silo,innovation',
+        ]);
+        $badge = $this->cs->awardBadge($session, $team, $data['badge_type'], Auth::user());
+        return response()->json([
+            'ok'     => true,
+            'badge'  => $badge->badge_icon . ' ' . $badge->badge_label,
+            'points' => $badge->bonus_points,
+        ]);
     }
 
     // ── POST /api/cs/{code}/end ─────────────────────────────────────

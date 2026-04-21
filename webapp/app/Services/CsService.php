@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CsBadge;
 use App\Models\CsBroadcast;
 use App\Models\CsDecision;
 use App\Models\CsInject;
@@ -308,6 +309,29 @@ class CsService
         $decision->team->addScore($points);
     }
 
+    // ── Bonus Badges ────────────────────────────────────────────────
+
+    public function awardBadge(CsSession $session, CsTeam $team, string $badgeType, ?User $moderator = null): CsBadge
+    {
+        $catalog = CsBadge::catalog();
+        $info    = $catalog[$badgeType] ?? ['icon' => '🏅', 'label' => $badgeType, 'points' => 5];
+
+        $badge = CsBadge::create([
+            'cs_session_id' => $session->id,
+            'cs_team_id'    => $team->id,
+            'badge_type'    => $badgeType,
+            'badge_label'   => $info['label'],
+            'badge_icon'    => $info['icon'],
+            'bonus_points'  => $info['points'],
+            'awarded_by'    => $moderator?->id,
+        ]);
+
+        // Award the bonus points to the team
+        $this->adjustScore($team, $info['points']);
+
+        return $badge;
+    }
+
     // ── Atmosphere ──────────────────────────────────────────────────
 
     public function setAtmosphere(CsSession $session, string $mode): void
@@ -340,19 +364,26 @@ class CsService
                 'at'        => $b->created_at->toIso8601String(),
             ])->values()->all();
 
-        // Last 10 injects
+        // Last 10 injects — filtered by player's team type if applicable
+        $playerTeamType = $player?->team?->type;
         $injects = CsSessionInject::where('cs_session_id', $session->id)
             ->with('inject')
             ->orderByDesc('triggered_at')
-            ->limit(10)
+            ->limit(20)
             ->get()
+            ->filter(fn($si) =>
+                is_null($si->inject->target_team_type)
+                || $si->inject->target_team_type === $playerTeamType
+            )
+            ->take(10)
             ->map(fn($si) => [
-                'id'       => $si->id,
-                'tag'      => $si->inject->tag,
-                'content'  => $si->inject->content,
-                'color'    => $si->inject->color,
-                'isSuprise'=> (bool) $si->inject->is_surprise,
-                'at'       => $si->triggered_at->toIso8601String(),
+                'id'            => $si->id,
+                'tag'           => $si->inject->tag,
+                'content'       => $si->inject->content,
+                'color'         => $si->inject->color,
+                'isSuprise'     => (bool) $si->inject->is_surprise,
+                'targetTeam'    => $si->inject->target_team_type,
+                'at'            => $si->triggered_at->toIso8601String(),
             ])->values()->all();
 
         // Teams state
@@ -363,8 +394,9 @@ class CsService
             'roleLabel'   => $t->role_label,
             'color'       => $t->color,
             'icon'        => $t->icon,
+            'logoPath'    => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
             'score'       => $t->score,
-            'badge'       => $t->badge(),
+            'badge'       => $t->badge(),   // includes icon, name, image
             'playerCount' => $t->players->count(),
             'onlineCount' => $t->players->filter(fn($p) => $p->isOnline())->count(),
         ])->values()->all();
@@ -468,11 +500,40 @@ class CsService
                 'teamName' => $p->team->name,
             ])->values()->all();
 
+        // Awarded badges
+        $badges = CsBadge::where('cs_session_id', $session->id)
+            ->with('team')
+            ->orderByDesc('awarded_at')
+            ->get()
+            ->map(fn($b) => [
+                'id'        => $b->id,
+                'teamName'  => $b->team->name,
+                'teamType'  => $b->team->type,
+                'teamId'    => $b->cs_team_id,
+                'type'      => $b->badge_type,
+                'label'     => $b->badge_label,
+                'icon'      => $b->badge_icon,
+                'image'     => CsBadge::catalog()[$b->badge_type]['image'] ?? null,
+                'points'    => $b->bonus_points,
+                'at'        => $b->awarded_at->toIso8601String(),
+            ])->values()->all();
+
+        // Current phase decision matrix
+        $phases       = $session->phases();
+        $currentPhase = $phases[$session->current_phase_index] ?? null;
+        $decisionMatrix = $currentPhase['decision_matrix'] ?? null;
+
+        // Badge catalog for the UI
+        $badgeCatalog = CsBadge::catalog();
+
         return array_merge($base, [
             'decisions'       => $decisions,
             'injectCatalog'   => $injectCatalog,
             'phantomMessages' => $phantomMessages,
             'onlinePlayers'   => $onlinePlayers,
+            'badges'          => $badges,
+            'badgeCatalog'    => $badgeCatalog,
+            'decisionMatrix'  => $decisionMatrix,
         ]);
     }
 }

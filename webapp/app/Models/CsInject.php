@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CsInject extends Model
 {
     protected $fillable = [
-        'scenario_key', 'tag', 'content', 'color', 'phase_hint', 'is_surprise', 'sort_order',
+        'scenario_key', 'tag', 'content', 'color', 'phase_hint',
+        'is_surprise', 'sort_order', 'target_team_type',
     ];
 
     protected function casts(): array
@@ -30,6 +31,20 @@ class CsInject extends Model
     public function scopeStandard($q)
     {
         return $q->where('is_surprise', false);
+    }
+
+    /**
+     * Filter injects visible to a given team type.
+     * Returns injects with no target OR matching the given team type.
+     */
+    public function scopeVisibleToTeam($q, ?string $teamType)
+    {
+        return $q->where(function ($inner) use ($teamType) {
+            $inner->whereNull('target_team_type');
+            if ($teamType) {
+                $inner->orWhere('target_team_type', $teamType);
+            }
+        });
     }
 }
 

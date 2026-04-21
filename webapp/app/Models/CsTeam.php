@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CsTeam extends Model
 {
     protected $fillable = [
-        'cs_session_id', 'type', 'name', 'role_label', 'color', 'icon', 'score',
+        'cs_session_id', 'type', 'name', 'role_label', 'color', 'icon', 'score', 'logo_path'
     ];
 
     protected function casts(): array
@@ -66,15 +66,29 @@ class CsTeam extends Model
     public static function badges(): array
     {
         return [
-            ['min' => 0,  'icon' => '🥉', 'name' => 'OBSERVATEUR'],
-            ['min' => 26, 'icon' => '🥈', 'name' => 'ANALYSTE'],
-            ['min' => 51, 'icon' => '🥇', 'name' => 'STRATÉGISTE'],
-            ['min' => 76, 'icon' => '💎', 'name' => 'CYBER HÉROS'],
+            ['min' =>  0, 'icon' => '🥉', 'name' => 'OBSERVATEUR', 'image' => '/cs-assets/badges/observateur.png'],
+            ['min' => 26, 'icon' => '🥈', 'name' => 'ANALYSTE',    'image' => '/cs-assets/badges/analyst.png'],
+            ['min' => 51, 'icon' => '🥇', 'name' => 'STRATÈGE',    'image' => '/cs-assets/badges/stratege.png'],
+            ['min' => 76, 'icon' => '💎', 'name' => 'CYBER HÉROS', 'image' => '/cs-assets/badges/cyber_hero.png'],
         ];
     }
 
     public static function defaultTeams(): array
     {
+        $entities = \App\Models\CsEntity::all();
+        if ($entities->isNotEmpty()) {
+            return $entities->map(function($e) {
+                return [
+                    'type'       => $e->type,
+                    'name'       => $e->name,
+                    'role_label' => $e->role_label,
+                    'color'      => $e->color,
+                    'icon'       => $e->icon,
+                    'logo_path'  => $e->logo_path,
+                ];
+            })->toArray();
+        }
+
         return [
             ['type' => 'ancs',      'name' => 'ANCS',      'role_label' => 'Commandement national',  'color' => '#00b4d8', 'icon' => '🏛️'],
             ['type' => 'cert',      'name' => 'CERT',      'role_label' => 'Détection technique',    'color' => '#2dc653', 'icon' => '🔍'],

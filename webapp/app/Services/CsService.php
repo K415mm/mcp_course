@@ -21,6 +21,35 @@ use Illuminate\Validation\ValidationException;
 
 class CsService
 {
+    private function eligibleSessionUsersQuery()
+    {
+        return User::query()
+            ->whereIn('role', [User::ROLE_STUDENT, User::ROLE_CSTUDENT])
+            ->whereNotNull('email_verified_at')
+            ->whereNull('banned_at');
+    }
+
+    private function assertAssignableSessionUser(User $user): void
+    {
+        if (!in_array($user->role, [User::ROLE_STUDENT, User::ROLE_CSTUDENT], true)) {
+            throw ValidationException::withMessages([
+                'user_id' => 'Only student users can be assigned to a Carthage Shield session.',
+            ]);
+        }
+
+        if ($user->isBanned()) {
+            throw ValidationException::withMessages([
+                'user_id' => 'This user account is banned.',
+            ]);
+        }
+
+        if (is_null($user->email_verified_at)) {
+            throw ValidationException::withMessages([
+                'user_id' => 'Only verified student users can be assigned.',
+            ]);
+        }
+    }
+
     // ── Session Management ──────────────────────────────────────────
 
     public function createSession(User $moderator, array $data): CsSession
@@ -147,6 +176,8 @@ class CsService
                 'session' => 'User assignment is only allowed before session start.',
             ]);
         }
+
+        $this->assertAssignableSessionUser($targetUser);
 
         $team = $session->teams()->where('type', $teamType)->firstOrFail();
         $player = $session->players()->where('user_id', $targetUser->id)->first();
@@ -880,12 +911,32 @@ class CsService
             ->values()
             ->all();
 
+        $assignedUserIds = array_values(array_filter(array_map(
+            fn(array $player) => $player['userId'] ?? null,
+            $playersRoster
+        )));
+
+        $assignableUsers = $this->eligibleSessionUsersQuery()
+            ->whereNotIn('id', $assignedUserIds)
+            ->orderBy('name')
+            ->orderBy('email')
+            ->get()
+            ->map(fn(User $user) => [
+                'id' => $user->id,
+                'name' => $user->name ?: $user->email,
+                'email' => $user->email,
+                'role' => $user->role,
+            ])
+            ->values()
+            ->all();
+
         return array_merge($base, [
             'decisions'       => $decisions,
             'injectCatalog'   => $injectCatalog,
             'phantomMessages' => $phantomMessages,
             'onlinePlayers'   => $onlinePlayers,
             'playersRoster'   => $playersRoster,
+            'assignableUsers' => $assignableUsers,
             'badges'          => $badges,
             'badgeCatalog'    => $badgeCatalog,
             'decisionMatrix'  => $decisionMatrix,

@@ -5,8 +5,6 @@ namespace App\Mail;
 use App\Models\Invitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class InvitationMail extends Mailable
@@ -15,22 +13,18 @@ class InvitationMail extends Mailable
 
     public function __construct(public Invitation $invitation) {}
 
-    public function envelope(): Envelope
+    public function build(): self
     {
-        return new Envelope(
-            subject: '🛡️ You\'re Invited to Carthage Shield — Cyber Breach Exercise',
-        );
-    }
+        $fromAddress = config('mail.from.address') ?: env('MAIL_FROM_ADDRESS', 'event.ancs@defensy.io');
+        $fromName = config('mail.from.name') ?: env('MAIL_FROM_NAME', config('app.name', 'Carthage Shield'));
 
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.invitation',
-            with: [
-                'inviteUrl'  => url('/invite/' . $this->invitation->token),
+        return $this
+            ->from($fromAddress, (string) $fromName)
+            ->subject("You're Invited to Carthage Shield - Cyber Breach Exercise")
+            ->view('emails.invitation', [
+                'inviteUrl' => url('/invite/' . $this->invitation->token),
                 'invitation' => $this->invitation,
-                'expiresAt'  => $this->invitation->expires_at?->format('F j, Y'),
-            ]
-        );
+                'expiresAt' => $this->invitation->expires_at?->format('F j, Y'),
+            ]);
     }
 }

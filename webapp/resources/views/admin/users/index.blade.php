@@ -81,6 +81,7 @@
                                                         'preenrol' => 'Pre-Enrolled',
                                                         'student' => 'Student',
                                                         'cstudent' => 'Certified Student',
+                                                        'mentor' => 'Mentor',
                                                         'admin' => 'Admin',
                                                         default => ucfirst($role)
                                                     } }}

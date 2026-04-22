@@ -54,6 +54,10 @@ class CsController extends Controller
     // ── Participant join page ───────────────────────────────────────
     public function show(string $code)
     {
+        if (!Auth::check() || !Auth::user()->canAccessCsTeamView()) {
+            abort(403, 'Accès non autorisé à la vue équipe.');
+        }
+
         $session  = CsSession::where('code', $code)->firstOrFail();
         $scenario = $session->scenario();
         $teams    = $session->teams;
@@ -79,9 +83,8 @@ class CsController extends Controller
             ->with(['teams', 'moderator'])
             ->firstOrFail();
 
-        // Allow admin or session moderator
-        if (!Auth::check() || (!Auth::user()->isAdmin() && $session->moderator_id !== Auth::id())) {
-            abort(403, 'Accès réservé au modérateur.');
+        if (!Auth::check() || !Auth::user()->canModerateCs()) {
+            abort(403, 'Accès réservé aux admins et mentors.');
         }
 
         $scenario = $session->scenario();
@@ -109,6 +112,10 @@ class CsController extends Controller
     // ── Big-screen dashboard ────────────────────────────────────────
     public function dashboard(string $code)
     {
+        if (!Auth::check() || !Auth::user()->canAccessCsDashboard()) {
+            abort(403, 'Accès non autorisé au dashboard.');
+        }
+
         $session  = CsSession::where('code', $code)->firstOrFail();
         $scenario = $session->scenario();
 

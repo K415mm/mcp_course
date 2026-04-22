@@ -157,6 +157,15 @@ Route::middleware('auth')->group(function () {
             Route::post('/phase/advance',    [CsApiController::class, 'phaseAdvance'])->name('phase.advance');
             Route::post('/phase/goto',       [CsApiController::class, 'phaseGoto'])->name('phase.goto');
             Route::post('/score/{teamId}',   [CsApiController::class, 'scoreAdjust'])->name('score.adjust');
+            Route::post('/teams',            [CsApiController::class, 'teamStore'])->name('teams.store');
+            Route::put('/teams/{teamId}',    [CsApiController::class, 'teamUpdate'])->name('teams.update');
+            Route::delete('/teams/{teamId}', [CsApiController::class, 'teamDelete'])->name('teams.delete');
+            Route::post('/players/assign',   [CsApiController::class, 'assignPlayer'])->name('players.assign');
+            Route::post('/players/assign-bulk', [CsApiController::class, 'assignPlayersBulk'])->name('players.assignBulk');
+            Route::put('/players/{playerId}', [CsApiController::class, 'updatePlayer'])->name('players.update');
+            Route::delete('/players/{playerId}', [CsApiController::class, 'removePlayer'])->name('players.remove');
+            Route::post('/players/{playerId}/ban', [CsApiController::class, 'banPlayer'])->name('players.ban');
+            Route::post('/players/{playerId}/unban', [CsApiController::class, 'unbanPlayer'])->name('players.unban');
             Route::post('/broadcast',        [CsApiController::class, 'broadcast'])->name('broadcast');
             Route::post('/phantom',          [CsApiController::class, 'phantom'])->name('phantom');
             Route::post('/inject/{injectId}',[CsApiController::class, 'inject'])->name('inject');
@@ -185,7 +194,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/cs', [CsController::class, 'store'])->name('cs.store');
 
         Route::get('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'index'])->name('cs.entities.index');
+        Route::post('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'store'])->name('cs.entities.store');
         Route::put('/cs/entities/{entity}', [\App\Http\Controllers\Admin\CsEntityController::class, 'update'])->name('cs.entities.update');
+        Route::delete('/cs/entities/{entity}', [\App\Http\Controllers\Admin\CsEntityController::class, 'destroy'])->name('cs.entities.destroy');
 
         Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
 

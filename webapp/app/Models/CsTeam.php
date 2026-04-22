@@ -101,7 +101,7 @@ class CsTeam extends Model
 
     public static function defaultTeams(): array
     {
-        $entities = \App\Models\CsEntity::all();
+        $entities = \App\Models\CsEntity::orderBy('sort_order')->orderBy('id')->get();
         if ($entities->isNotEmpty()) {
             return $entities->map(function($e) {
                 return [
@@ -111,11 +111,11 @@ class CsTeam extends Model
                     'color'      => $e->color,
                     'icon'       => $e->icon,
                     'logo_path'  => $e->logo_path,
-                    'is_scored' => $e->type !== 'ancs',
-                    'can_vote' => $e->type !== 'ancs',
-                    'badge_eligible' => $e->type !== 'ancs',
-                    'show_in_ranking' => $e->type !== 'ancs',
-                    'role_mode' => $e->type === 'ancs' ? 'mentor' : 'participant',
+                    'is_scored' => (bool) $e->is_scored,
+                    'can_vote' => (bool) $e->can_vote,
+                    'badge_eligible' => (bool) $e->badge_eligible,
+                    'show_in_ranking' => (bool) $e->show_in_ranking,
+                    'role_mode' => $e->role_mode ?: 'participant',
                 ];
             })->toArray();
         }

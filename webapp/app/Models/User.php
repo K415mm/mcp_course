@@ -20,6 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
     const ROLE_PREENROL = 'preenrol';
     const ROLE_STUDENT  = 'student';
     const ROLE_CSTUDENT = 'cstudent';
+    const ROLE_MENTOR   = 'mentor';
     const ROLE_ADMIN    = 'admin';
 
     const ROLES = [
@@ -27,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         self::ROLE_PREENROL,
         self::ROLE_STUDENT,
         self::ROLE_CSTUDENT,
+        self::ROLE_MENTOR,
         self::ROLE_ADMIN,
     ];
 
@@ -82,6 +84,12 @@ class User extends Authenticatable implements MustVerifyEmail
                 'max_courses' => -1,
                 'workshops_enabled' => true,
                 'allowed_workshops' => ['*'],
+                'allowed_modules' => [],
+            ],
+            self::ROLE_MENTOR => [
+                'max_courses' => 0,
+                'workshops_enabled' => false,
+                'allowed_workshops' => [],
                 'allowed_modules' => [],
             ],
             self::ROLE_GUEST => [
@@ -150,6 +158,36 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isMentor(): bool
+    {
+        return $this->role === self::ROLE_MENTOR;
+    }
+
+    public function canModerateCs(): bool
+    {
+        return $this->isAdmin() || $this->isMentor();
+    }
+
+    public function canAccessCsTeamView(): bool
+    {
+        return in_array($this->role, [
+            self::ROLE_STUDENT,
+            self::ROLE_CSTUDENT,
+            self::ROLE_MENTOR,
+            self::ROLE_ADMIN,
+        ], true);
+    }
+
+    public function canAccessCsDashboard(): bool
+    {
+        return in_array($this->role, [
+            self::ROLE_STUDENT,
+            self::ROLE_CSTUDENT,
+            self::ROLE_MENTOR,
+            self::ROLE_ADMIN,
+        ], true);
     }
 
     public function isBanned(): bool
@@ -233,7 +271,8 @@ class User extends Authenticatable implements MustVerifyEmail
             self::ROLE_PREENROL => 1,
             self::ROLE_STUDENT  => 2,
             self::ROLE_CSTUDENT => 3,
-            self::ROLE_ADMIN    => 4,
+            self::ROLE_MENTOR   => 4,
+            self::ROLE_ADMIN    => 5,
             default             => 0,
         };
     }
@@ -245,6 +284,7 @@ class User extends Authenticatable implements MustVerifyEmail
             self::ROLE_PREENROL => 'Pre-Enrolled',
             self::ROLE_STUDENT  => 'Student',
             self::ROLE_CSTUDENT => 'Certified Student',
+            self::ROLE_MENTOR   => 'Mentor',
             self::ROLE_ADMIN    => 'Admin',
             default             => ucfirst($this->role),
         };
@@ -257,6 +297,7 @@ class User extends Authenticatable implements MustVerifyEmail
             self::ROLE_PREENROL => 'bg-info',
             self::ROLE_STUDENT  => 'bg-success',
             self::ROLE_CSTUDENT => 'bg-warning text-dark',
+            self::ROLE_MENTOR   => 'bg-primary',
             self::ROLE_ADMIN    => 'bg-danger',
             default             => 'bg-secondary',
         };

@@ -9,6 +9,7 @@ use App\Models\CsQuiz;
 use App\Models\CsSession;
 use App\Models\CsTeam;
 use App\Models\CsVote;
+use App\Models\User;
 use App\Services\CsContentBankService;
 use App\Services\CsService;
 use Illuminate\Http\JsonResponse;
@@ -306,6 +307,157 @@ class CsApiController extends Controller
         return response()->json(['ok' => true, 'score' => $team->fresh()->score]);
     }
 
+    // ── POST /api/cs/{code}/teams ──────────────────────────────────
+    public function teamStore(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'type' => 'required|string|max:50|regex:/^[a-z0-9_\\-]+$/',
+            'name' => 'required|string|max:120',
+            'role_label' => 'required|string|max:180',
+            'color' => 'required|string|max:20',
+            'icon' => 'nullable|string|max:10',
+            'role_mode' => 'nullable|in:participant,mentor',
+            'is_scored' => 'nullable|boolean',
+            'can_vote' => 'nullable|boolean',
+            'badge_eligible' => 'nullable|boolean',
+            'show_in_ranking' => 'nullable|boolean',
+        ]);
+
+        if ($session->teams()->where('type', $data['type'])->exists()) {
+            throw ValidationException::withMessages(['type' => 'This team type already exists in this session.']);
+        }
+
+        $team = $this->cs->upsertSessionTeam($session, [
+            'type' => strtolower((string) $data['type']),
+            'name' => trim((string) $data['name']),
+            'role_label' => trim((string) $data['role_label']),
+            'color' => trim((string) $data['color']),
+            'icon' => trim((string) ($data['icon'] ?? '')),
+            'role_mode' => $data['role_mode'] ?? 'participant',
+            'is_scored' => (bool) ($data['is_scored'] ?? true),
+            'can_vote' => (bool) ($data['can_vote'] ?? true),
+            'badge_eligible' => (bool) ($data['badge_eligible'] ?? true),
+            'show_in_ranking' => (bool) ($data['show_in_ranking'] ?? true),
+        ]);
+
+        return response()->json(['ok' => true, 'team' => $team]);
+    }
+
+    // ── PUT /api/cs/{code}/teams/{teamId} ──────────────────────────
+    public function teamUpdate(Request $request, string $code, int $teamId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $team = CsTeam::where('id', $teamId)->where('cs_session_id', $session->id)->firstOrFail();
+
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:120',
+            'role_label' => 'sometimes|required|string|max:180',
+            'color' => 'sometimes|required|string|max:20',
+            'icon' => 'sometimes|nullable|string|max:10',
+            'role_mode' => 'sometimes|in:participant,mentor',
+            'is_scored' => 'sometimes|boolean',
+            'can_vote' => 'sometimes|boolean',
+            'badge_eligible' => 'sometimes|boolean',
+            'show_in_ranking' => 'sometimes|boolean',
+        ]);
+
+        $updated = $this->cs->upsertSessionTeam($session, $data, $team);
+        return response()->json(['ok' => true, 'team' => $updated]);
+    }
+
+    // ── DELETE /api/cs/{code}/teams/{teamId} ───────────────────────
+    public function teamDelete(string $code, int $teamId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $team = CsTeam::where('id', $teamId)->where('cs_session_id', $session->id)->firstOrFail();
+        $this->cs->removeSessionTeam($session, $team);
+        return response()->json(['ok' => true]);
+    }
+
+    // ── POST /api/cs/{code}/players/assign ─────────────────────────
+    public function assignPlayer(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'team_type' => 'required|string|max:50',
+        ]);
+
+        $targetUser = User::findOrFail((int) $data['user_id']);
+        $player = $this->cs->assignUserToTeam($session, (string) $data['team_type'], $targetUser, Auth::user());
+        return response()->json(['ok' => true, 'player' => $player]);
+    }
+
+    // ── POST /api/cs/{code}/players/assign-bulk ────────────────────
+    public function assignPlayersBulk(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'team_type' => 'required|string|max:50',
+            'user_ids' => 'required|array|min:1|max:500',
+            'user_ids.*' => 'integer|exists:users,id',
+        ]);
+
+        $players = $this->cs->bulkAssignUsersToTeam(
+            $session,
+            (string) $data['team_type'],
+            $data['user_ids'],
+            Auth::user()
+        );
+
+        return response()->json([
+            'ok' => true,
+            'assignedCount' => count($players),
+            'players' => $players,
+        ]);
+    }
+
+    // ── PUT /api/cs/{code}/players/{playerId} ──────────────────────
+    public function updatePlayer(Request $request, string $code, int $playerId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $player = CsPlayer::where('id', $playerId)->where('cs_session_id', $session->id)->firstOrFail();
+        $data = $request->validate([
+            'display_name' => 'sometimes|required|string|max:80',
+            'team_type' => 'sometimes|required|string|max:50',
+        ]);
+
+        $updated = $this->cs->updatePlayer($session, $player, $data);
+        return response()->json(['ok' => true, 'player' => $updated]);
+    }
+
+    // ── DELETE /api/cs/{code}/players/{playerId} ───────────────────
+    public function removePlayer(string $code, int $playerId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $player = CsPlayer::where('id', $playerId)->where('cs_session_id', $session->id)->firstOrFail();
+        $this->cs->removePlayer($player);
+        return response()->json(['ok' => true]);
+    }
+
+    // ── POST /api/cs/{code}/players/{playerId}/ban ─────────────────
+    public function banPlayer(Request $request, string $code, int $playerId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $player = CsPlayer::where('id', $playerId)->where('cs_session_id', $session->id)->firstOrFail();
+        $data = $request->validate([
+            'reason' => 'nullable|string|max:160',
+        ]);
+
+        $updated = $this->cs->banPlayer($player, $data['reason'] ?? null);
+        return response()->json(['ok' => true, 'player' => $updated]);
+    }
+
+    // ── POST /api/cs/{code}/players/{playerId}/unban ───────────────
+    public function unbanPlayer(string $code, int $playerId): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $player = CsPlayer::where('id', $playerId)->where('cs_session_id', $session->id)->firstOrFail();
+        $updated = $this->cs->unbanPlayer($player);
+        return response()->json(['ok' => true, 'player' => $updated]);
+    }
+
     // ── POST /api/cs/{code}/broadcast ──────────────────────────────
     public function broadcast(Request $request, string $code): JsonResponse
     {
@@ -445,6 +597,9 @@ class CsApiController extends Controller
         if (!$player || !$player->team || (int) $player->cs_team_id !== (int) $data['team_id']) {
             return response()->json(['ok' => false, 'error' => 'Invalid voting context.'], 403);
         }
+        if ($player->is_banned) {
+            return response()->json(['ok' => false, 'error' => 'Player is banned from this session.'], 403);
+        }
 
         $vote = CsVote::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
         $team = CsTeam::where('id', $data['team_id'])->where('cs_session_id', $session->id)->firstOrFail();
@@ -518,6 +673,9 @@ class CsApiController extends Controller
         $player = $this->resolvePlayer($request, $session);
         if (!$player || !$player->team || (int) $player->cs_team_id !== (int) $data['team_id']) {
             return response()->json(['ok' => false, 'error' => 'Invalid quiz context.'], 403);
+        }
+        if ($player->is_banned) {
+            return response()->json(['ok' => false, 'error' => 'Player is banned from this session.'], 403);
         }
 
         $quiz = CsQuiz::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
@@ -610,6 +768,14 @@ class CsApiController extends Controller
             'player_id' => 'required|integer',
         ]);
 
+        $resolved = $this->resolvePlayer($request, $session);
+        if (!$resolved || (int) $resolved->id !== (int) $data['player_id']) {
+            return response()->json(['ok' => false, 'error' => 'Invalid player session context.'], 403);
+        }
+        if ($resolved->is_banned) {
+            return response()->json(['ok' => false, 'error' => 'Player is banned from this session.'], 403);
+        }
+
         $player = CsPlayer::where('id', $data['player_id'])
             ->where('cs_session_id', $session->id)
             ->with('team')
@@ -676,7 +842,7 @@ class CsApiController extends Controller
     private function getModeratorSession(string $code): CsSession
     {
         $session = CsSession::where('code', $code)->firstOrFail();
-        if (!Auth::check() || (!Auth::user()->isAdmin() && $session->moderator_id !== Auth::id())) {
+        if (!Auth::check() || !Auth::user()->canModerateCs()) {
             abort(403);
         }
         return $session;
@@ -684,14 +850,16 @@ class CsApiController extends Controller
 
     private function isModerator(CsSession $session): bool
     {
-        return Auth::check() && (Auth::user()->isAdmin() || $session->moderator_id === Auth::id());
+        return Auth::check() && Auth::user()->canModerateCs();
     }
 
     private function resolvePlayer(Request $request, CsSession $session): ?CsPlayer
     {
         $playerId = session('cs_player_' . $session->code);
         if ($playerId) {
-            return CsPlayer::find($playerId);
+            return CsPlayer::where('id', $playerId)
+                ->where('cs_session_id', $session->id)
+                ->first();
         }
         return null;
     }

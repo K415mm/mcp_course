@@ -45,7 +45,7 @@ body.scanlines::after {
 /* ── Layout ─────────────────────────────────────────────────────── */
 .cs-layout {
     display: grid;
-    grid-template-rows: 88px 1fr 190px;
+    grid-template-rows: 88px 1fr 220px;
     height: 100vh;
     padding: 12px 12px 12px;
     gap: 10px;
@@ -248,12 +248,12 @@ body.scanlines::after {
     grid-column: 2 / span 4;
     border: 1px solid rgba(201,160,80,.28);
     border-radius: 10px;
-    padding: 10px;
+    padding: 12px;
     background: rgba(9,6,4,.72);
     box-shadow: inset 0 0 24px rgba(201,160,80,.08), 0 0 18px rgba(0,0,0,.35);
 }
 .media-stage {
-    height: 220px;
+    height: 290px;
     border: 1px solid rgba(120, 214, 255, .7);
     border-radius: 8px;
     display: flex;
@@ -266,7 +266,8 @@ body.scanlines::after {
 .media-stage video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #000;
 }
 .media-stage-empty {
     font-family: 'Space Mono', monospace;
@@ -274,12 +275,19 @@ body.scanlines::after {
     color: rgba(255,255,255,.5);
 }
 .media-quiz-line {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 1.8rem;
+    margin-top: 8px;
+    text-align: left;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #ef4444;
-    letter-spacing: 1px;
+    color: #f87171;
+    letter-spacing: .3px;
+    line-height: 1.35;
+    min-height: 2.7em;
+    max-height: 4.05em;
+    overflow: auto;
+    white-space: normal;
+    word-break: break-word;
+    padding: 0 2px;
 }
 
 /* === CARD DESIGN === same language as header: dark + gold border */
@@ -296,7 +304,7 @@ body.scanlines::after {
     border-left: 1px solid var(--cs-border);
     border-right: 1px solid var(--cs-border);
     border-radius: 10px;
-    padding: 16px 12px 12px;
+    padding: 10px 10px 8px;
     text-align: center;
     position: relative; overflow: visible;
     transition: border-color .4s, box-shadow .4s;
@@ -409,11 +417,11 @@ body.scanlines::after {
 
 .t-icon-img { display: block; margin: 0 auto 6px; width: 48px; height: 48px; object-fit: contain; }
 .t-icon { font-size: 2.2rem; display: block; margin-bottom: 4px; }
-.t-name { font-size: 1.05rem; font-weight: 900; letter-spacing: 1px; color: #fff; }
+.t-name { font-size: .92rem; font-weight: 900; letter-spacing: .6px; color: #fff; line-height: 1.1; }
 .t-role { font-size: .68rem; color: rgba(201,160,80,.45); margin: 2px 0 6px; font-family: 'Space Mono',monospace; }
 .t-score {
     font-family: 'Space Mono', monospace;
-    font-size: 3.2rem; font-weight: 700;
+    font-size: 2.2rem; font-weight: 700;
     /* Gold gradient score — deepens to team color on hover */
     background: linear-gradient(180deg, var(--cs-gold2) 0%, var(--cs-gold) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -432,26 +440,26 @@ body.scanlines::after {
 }
 /* Badge image container — bigger + centered */
 .t-badge {
-    margin-top: 15px;
-    min-height: 100px;
+    margin-top: 8px;
+    min-height: 64px;
     display: flex; align-items: center; justify-content: center;
 }
 .t-badge img {
-    width: 100px; height: 100px; object-fit: contain;
+    width: 62px; height: 62px; object-fit: contain;
     filter: drop-shadow(0 0 16px rgba(201,160,80,.6));
     transition: filter .5s, transform .3s;
 }
 .t-badge span {
-    font-size: 4rem; filter: drop-shadow(0 0 16px var(--cs-gold));
+    font-size: 2.6rem; filter: drop-shadow(0 0 12px var(--cs-gold));
 }
 .t-badge-nm {
-    font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: bold;
+    font-family: 'Space Mono', monospace; font-size: .58rem; font-weight: bold;
     color: var(--cs-gold); margin-top: 6px;
-    letter-spacing: 2px; text-transform: uppercase;
+    letter-spacing: 1.2px; text-transform: uppercase;
 }
 .t-online {
     font-family: 'Space Mono', monospace; font-size: .62rem;
-    color: rgba(255,255,255,.28); margin-top: 6px;
+    color: rgba(255,255,255,.28); margin-top: 4px;
     display: flex; align-items: center; gap: 4px; justify-content: center;
 }
 .dot-on { width: 5px; height: 5px; border-radius: 50%; background: #2dc653; display: inline-block; animation: dotPulse 2s infinite; }
@@ -477,7 +485,7 @@ body.scanlines::after {
 }
 .widget-hdr i { color: var(--bs-theme); font-size: .8rem; }
 
-.feed-list { display: flex; flex-direction: column; gap: 4px; max-height: 126px; overflow-y: auto; }
+.feed-list { display: flex; flex-direction: column; gap: 4px; max-height: 160px; overflow-y: auto; }
 .feed-item {
     padding: 6px 9px; border-radius: 5px;
     border-left: 3px solid rgba(255,255,255,.1);
@@ -493,9 +501,9 @@ body.scanlines::after {
 /* Vote bars */
 .vote-bars { display: flex; flex-direction: column; gap: 7px; }
 .vote-bar-row { display: flex; align-items: center; gap: 8px; }
-.vb-lbl { display:flex; align-items:center; gap:8px; min-width:220px; max-width:45%; }
+.vb-lbl { display:flex; align-items:flex-start; gap:8px; min-width:0; max-width:none; flex:1; }
 .vb-key { font-family: 'Space Mono', monospace; font-size: 1.1rem; font-weight: 700; min-width:26px; text-align:center; }
-.vb-text { font-size: .78rem; color: rgba(255,255,255,.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vb-text { font-size: .78rem; color: rgba(255,255,255,.9); white-space: normal; overflow: visible; text-overflow: unset; word-break: break-word; }
 .vb-track {
     flex: 1; height: 18px;
     background: rgba(255,255,255,.07); border-radius: 4px; overflow: hidden;
@@ -506,7 +514,15 @@ body.scanlines::after {
     background: var(--bs-theme);
 }
 .vb-count { font-family: 'Space Mono', monospace; font-size: .75rem; min-width:64px; text-align: right; }
-.vote-q { font-family: 'Space Mono', monospace; font-size: .65rem; color: rgba(255,255,255,.4); margin-bottom: 8px; }
+.vote-q {
+    font-family: 'Space Mono', monospace;
+    font-size: .78rem;
+    color: rgba(255,255,255,.78);
+    margin-bottom: 8px;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: break-word;
+}
 
 /* ══ ATMOSPHERE SYSTEM ═══════════════════════════════════════════ */
 /* Each mode tints the whole dashboard */
@@ -1224,7 +1240,7 @@ function handleQuiz(quiz) {
     `;
     if (quizLine) {
         const text = (quiz.question || 'Quiz').trim();
-        quizLine.textContent = text.length > 120 ? `${text.substring(0, 117)}...` : text;
+        quizLine.textContent = text;
     }
 }
 

@@ -17,6 +17,7 @@ use App\Models\CsVote;
 use App\Models\CsVoteEntry;
 use App\Models\User;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CsService
 {
@@ -62,9 +63,16 @@ class CsService
             ->first();
 
         if ($existing) {
+            if ($existing->is_banned) {
+                throw ValidationException::withMessages([
+                    'player' => 'This player is currently banned from the session.',
+                ]);
+            }
+
             $existing->update([
                 'cs_team_id'   => $team->id,
                 'display_name' => $displayName,
+                'assignment_source' => $existing->assignment_source ?: 'self',
                 'last_seen_at' => now(),
             ]);
             return $existing;
@@ -76,10 +84,160 @@ class CsService
             'cs_session_id' => $session->id,
             'cs_team_id'    => $team->id,
             'user_id'       => $user?->id,
+            'assignment_source' => 'self',
             'display_name'  => $displayName,
             'is_captain'    => $isCaptain,
             'last_seen_at'  => now(),
         ]);
+    }
+
+    public function upsertSessionTeam(
+        CsSession $session,
+        array $payload,
+        ?CsTeam $team = null
+    ): CsTeam {
+        if (!$session->isLobby()) {
+            throw ValidationException::withMessages([
+                'session' => 'Team overrides are only allowed before the session starts.',
+            ]);
+        }
+
+        $roleMode = $payload['role_mode'] ?? 'participant';
+        if ($roleMode === 'mentor') {
+            $payload['is_scored'] = false;
+            $payload['can_vote'] = false;
+            $payload['badge_eligible'] = false;
+            $payload['show_in_ranking'] = false;
+        }
+
+        if ($team) {
+            $team->update($payload);
+            return $team->fresh();
+        }
+
+        return $session->teams()->create($payload);
+    }
+
+    public function removeSessionTeam(CsSession $session, CsTeam $team): void
+    {
+        if (!$session->isLobby()) {
+            throw ValidationException::withMessages([
+                'session' => 'Teams can only be removed before session start.',
+            ]);
+        }
+
+        $playerCount = $session->players()->where('cs_team_id', $team->id)->count();
+        if ($playerCount > 0) {
+            throw ValidationException::withMessages([
+                'team' => 'Cannot remove a team that already has assigned players.',
+            ]);
+        }
+
+        $team->delete();
+    }
+
+    public function assignUserToTeam(
+        CsSession $session,
+        string $teamType,
+        User $targetUser,
+        User $actor
+    ): CsPlayer {
+        if (!$session->isLobby()) {
+            throw ValidationException::withMessages([
+                'session' => 'User assignment is only allowed before session start.',
+            ]);
+        }
+
+        $team = $session->teams()->where('type', $teamType)->firstOrFail();
+        $player = $session->players()->where('user_id', $targetUser->id)->first();
+
+        if ($player && $player->is_banned) {
+            throw ValidationException::withMessages([
+                'user_id' => 'User is banned in this session.',
+            ]);
+        }
+
+        if ($player) {
+            $player->update([
+                'cs_team_id' => $team->id,
+                'display_name' => $targetUser->name ?: $targetUser->email,
+                'assigned_by' => $actor->id,
+                'assignment_source' => 'manual',
+                'last_seen_at' => now(),
+            ]);
+            return $player->fresh(['team', 'user']);
+        }
+
+        return CsPlayer::create([
+            'cs_session_id' => $session->id,
+            'cs_team_id' => $team->id,
+            'user_id' => $targetUser->id,
+            'display_name' => $targetUser->name ?: $targetUser->email,
+            'assigned_by' => $actor->id,
+            'assignment_source' => 'manual',
+            'is_captain' => false,
+            'last_seen_at' => now(),
+        ])->fresh(['team', 'user']);
+    }
+
+    public function bulkAssignUsersToTeam(
+        CsSession $session,
+        string $teamType,
+        array $userIds,
+        User $actor
+    ): array {
+        $assigned = [];
+        foreach ($userIds as $userId) {
+            $target = User::query()->find((int) $userId);
+            if (!$target) {
+                continue;
+            }
+            $assigned[] = $this->assignUserToTeam($session, $teamType, $target, $actor);
+        }
+
+        return $assigned;
+    }
+
+    public function updatePlayer(
+        CsSession $session,
+        CsPlayer $player,
+        array $payload
+    ): CsPlayer {
+        if (isset($payload['team_type'])) {
+            $team = $session->teams()->where('type', $payload['team_type'])->firstOrFail();
+            $payload['cs_team_id'] = $team->id;
+            unset($payload['team_type']);
+        }
+
+        $player->update($payload);
+        return $player->fresh(['team', 'user']);
+    }
+
+    public function removePlayer(CsPlayer $player): void
+    {
+        $player->delete();
+    }
+
+    public function banPlayer(CsPlayer $player, ?string $reason = null): CsPlayer
+    {
+        $player->update([
+            'is_banned' => true,
+            'banned_at' => now(),
+            'banned_reason' => $reason,
+        ]);
+
+        return $player->fresh(['team', 'user']);
+    }
+
+    public function unbanPlayer(CsPlayer $player): CsPlayer
+    {
+        $player->update([
+            'is_banned' => false,
+            'banned_at' => null,
+            'banned_reason' => null,
+        ]);
+
+        return $player->fresh(['team', 'user']);
     }
 
     // ── Timer (Server-Authoritative) ────────────────────────────────
@@ -535,7 +693,7 @@ class CsService
             'badgeEligible' => (bool) $t->badge_eligible,
             'showInRanking' => (bool) $t->show_in_ranking,
             'badge'       => $t->badge(),   // includes icon, name, image
-            'playerCount' => $t->players->count(),
+            'playerCount' => $t->players->filter(fn($p) => !$p->is_banned)->count(),
             'onlineCount' => $t->players->filter(fn($p) => $p->isOnline())->count(),
         ])->values()->all();
 
@@ -664,6 +822,7 @@ class CsService
 
         // Active players online
         $onlinePlayers = CsPlayer::where('cs_session_id', $session->id)
+            ->where('is_banned', false)
             ->where('last_seen_at', '>=', now()->subSeconds(15))
             ->with('team')
             ->get()
@@ -699,11 +858,34 @@ class CsService
         // Badge catalog for the UI
         $badgeCatalog = CsBadge::catalog();
 
+        $playersRoster = CsPlayer::where('cs_session_id', $session->id)
+            ->with(['team', 'user'])
+            ->orderBy('display_name')
+            ->get()
+            ->map(fn($p) => [
+                'id' => $p->id,
+                'displayName' => $p->display_name,
+                'teamId' => $p->cs_team_id,
+                'teamType' => $p->team?->type,
+                'teamName' => $p->team?->name,
+                'userId' => $p->user_id,
+                'email' => $p->user?->email,
+                'isBanned' => (bool) $p->is_banned,
+                'bannedAt' => $p->banned_at?->toIso8601String(),
+                'bannedReason' => $p->banned_reason,
+                'assignmentSource' => $p->assignment_source,
+                'isOnline' => $p->isOnline(),
+                'lastSeenAt' => $p->last_seen_at?->toIso8601String(),
+            ])
+            ->values()
+            ->all();
+
         return array_merge($base, [
             'decisions'       => $decisions,
             'injectCatalog'   => $injectCatalog,
             'phantomMessages' => $phantomMessages,
             'onlinePlayers'   => $onlinePlayers,
+            'playersRoster'   => $playersRoster,
             'badges'          => $badges,
             'badgeCatalog'    => $badgeCatalog,
             'decisionMatrix'  => $decisionMatrix,

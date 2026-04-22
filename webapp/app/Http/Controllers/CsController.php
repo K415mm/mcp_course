@@ -61,13 +61,15 @@ class CsController extends Controller
         $playerId = session('cs_player_' . $code);
         $player   = $playerId ? CsPlayer::with('team')->find($playerId) : null;
 
-        return view('cs.participant', [
+        return response()->view('cs.participant', [
             'session'  => $session,
             'scenario' => $scenario,
             'teams'    => $teams,
             'player'   => $player,
             'user'     => Auth::user(),
-        ]);
+        ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+          ->header('Pragma', 'no-cache')
+          ->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
     }
 
     // ── Moderator console ───────────────────────────────────────────
@@ -93,13 +95,15 @@ class CsController extends Controller
             })
             ->all();
 
-        return view('cs.moderator', [
+        return response()->view('cs.moderator', [
             'session'  => $session,
             'scenario' => $scenario,
             'teams'    => $session->teams,
             'injects'  => $injects,
             'initialBankByPhase' => $initialBankByPhase,
-        ]);
+        ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+          ->header('Pragma', 'no-cache')
+          ->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
     }
 
     // ── Big-screen dashboard ────────────────────────────────────────
@@ -108,9 +112,11 @@ class CsController extends Controller
         $session  = CsSession::where('code', $code)->firstOrFail();
         $scenario = $session->scenario();
 
-        return view('cs.dashboard', [
+        return response()->view('cs.dashboard', [
             'session'  => $session,
             'scenario' => $scenario,
-        ]);
+        ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+          ->header('Pragma', 'no-cache')
+          ->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
     }
 }

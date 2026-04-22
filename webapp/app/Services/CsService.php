@@ -325,7 +325,7 @@ class CsService
         if ($quiz->teamHasAnswered($team)) return false;
         if (!$team->isScorable()) return false;
 
-        CsQuizEntry::create([
+        $entry = CsQuizEntry::create([
             'cs_quiz_id' => $quiz->id,
             'cs_team_id' => $team->id,
             'answer_key' => $answerKey,
@@ -333,6 +333,9 @@ class CsService
             'awarded_points' => 0,
             'answered_at' => now(),
         ]);
+
+        // Make quiz answers immediately visible in moderator Decisions panel.
+        $this->upsertQuizDecision($quiz, $entry, 0);
 
         return true;
     }
@@ -409,22 +412,8 @@ class CsService
                 'awardedPoints' => $entry->awarded_points,
             ];
 
-            // Mirror quiz evaluation in Decisions feed so mentor/admin can validate and adjust points.
-            CsDecision::create([
-                'cs_session_id' => $quiz->cs_session_id,
-                'cs_team_id' => $entry->cs_team_id,
-                'cs_player_id' => null,
-                'type' => 'question',
-                'content' => sprintf(
-                    'Quiz (%s): %s | Réponse: %s%s',
-                    $quizType,
-                    $quiz->question,
-                    $entry->answer_key ?: '—',
-                    $entry->answer_text ? (' (' . mb_strimwidth($entry->answer_text, 0, 120, '...') . ')') : ''
-                ),
-                'phase_index' => (int) $quiz->phase_index,
-                'score_awarded' => (int) $entry->awarded_points,
-            ]);
+            // Keep a single decision item per team/quiz and refresh awarded score after auto-scoring.
+            $this->upsertQuizDecision($quiz, $entry, (int) $entry->awarded_points, $quizType);
         }
 
         $quiz->update([
@@ -655,6 +644,10 @@ class CsService
      */
     public function getModeratorState(CsSession $session): array
     {
+        // Backfill/refresh quiz answer decisions so mentor panel stays consistent
+        // even for answers submitted before the latest UI/backend updates.
+        $this->syncQuizDecisionsForSession($session);
+
         $base     = $this->getState($session, null, true);
         $scenario = $session->scenario();
 
@@ -746,5 +739,57 @@ class CsService
             'order', 'sort_order', 'sort order', 'ordering', 'rank', 'ranking' => 'order',
             default => 'single_choice',
         };
+    }
+
+    private function upsertQuizDecision(CsQuiz $quiz, CsQuizEntry $entry, int $scoreAwarded, ?string $quizType = null): void
+    {
+        $type = $quizType ?? $this->normalizeQuizType((string) $quiz->type);
+        $content = sprintf(
+            'Quiz (%s): %s | Réponse: %s%s',
+            $type,
+            $quiz->question,
+            $entry->answer_key ?: '—',
+            $entry->answer_text ? (' (' . mb_strimwidth($entry->answer_text, 0, 120, '...') . ')') : ''
+        );
+
+        $escapedQuestion = addcslashes($quiz->question, '%_\\');
+        $existing = CsDecision::where('cs_session_id', $quiz->cs_session_id)
+            ->where('cs_team_id', $entry->cs_team_id)
+            ->where('type', 'question')
+            ->where('phase_index', (int) $quiz->phase_index)
+            ->where('content', 'like', sprintf('Quiz (%%): %s | Réponse: %%', $escapedQuestion))
+            ->orderByDesc('id')
+            ->first();
+
+        if ($existing) {
+            $existing->update([
+                'content' => $content,
+                'score_awarded' => max(0, $scoreAwarded),
+            ]);
+            return;
+        }
+
+        CsDecision::create([
+            'cs_session_id' => $quiz->cs_session_id,
+            'cs_team_id' => $entry->cs_team_id,
+            'cs_player_id' => null,
+            'type' => 'question',
+            'content' => $content,
+            'phase_index' => (int) $quiz->phase_index,
+            'score_awarded' => max(0, $scoreAwarded),
+        ]);
+    }
+
+    private function syncQuizDecisionsForSession(CsSession $session): void
+    {
+        CsQuiz::where('cs_session_id', $session->id)
+            ->with('entries')
+            ->get()
+            ->each(function (CsQuiz $quiz): void {
+                $quizType = $this->normalizeQuizType((string) $quiz->type);
+                foreach ($quiz->entries as $entry) {
+                    $this->upsertQuizDecision($quiz, $entry, (int) ($entry->awarded_points ?? 0), $quizType);
+                }
+            });
     }
 }

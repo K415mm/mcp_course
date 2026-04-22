@@ -129,6 +129,16 @@
                                             </button>
                                         </form>
 
+                                        @if(!$user->email_verified_at)
+                                        {{-- Verify User --}}
+                                        <form method="POST" action="{{ route('admin.users.verify', $user) }}" class="d-inline" onsubmit="return confirm('Manually verify this user?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-xs btn-outline-success" title="Verify User">
+                                                <i class="bi bi-check2-circle"></i>
+                                            </button>
+                                        </form>
+                                        @endif
+
                                         {{-- Delete User --}}
                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="d-inline" onsubmit="return confirm('WARNING: This will permanently delete this user and all their progress. Continue?');">
                                             @csrf

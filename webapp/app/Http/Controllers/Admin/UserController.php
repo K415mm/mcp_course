@@ -95,6 +95,16 @@ class UserController extends Controller
         return back()->with('success', "User {$name} deleted permanently.");
     }
 
+    public function verify(User $user)
+    {
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            return back()->with('success', "User {$user->name} has been manually verified.");
+        }
+        
+        return back()->with('info', "User {$user->name} is already verified.");
+    }
+
     public function progress(User $user)
     {
         $completions = \App\Models\ModuleCompletion::where('user_id', $user->id)

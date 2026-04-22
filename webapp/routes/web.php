@@ -239,8 +239,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [AdminUsers::class, 'index'])->name('index');
             Route::post('/{user}/role', [AdminUsers::class, 'updateRole'])->name('role');
             Route::put('/{user}', [AdminUsers::class, 'update'])->name('update');
-            Route::post('/{user}/password', [AdminUsers::class, 'updatePassword'])->name('password');
+            Route::post('/{user}/password', [AdminUsers::class, 'updatePassword'])->name('password');       
             Route::post('/{user}/toggle-ban', [AdminUsers::class, 'toggleBan'])->name('toggleBan');
+            Route::post('/{user}/verify', [AdminUsers::class, 'verify'])->name('verify');
             Route::delete('/{user}', [AdminUsers::class, 'destroy'])->name('destroy');
             Route::get('/{user}/progress', [AdminUsers::class, 'progress'])->name('progress');
         });

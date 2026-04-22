@@ -90,14 +90,6 @@
     {{-- LEFT: Join / Participant info + Decisions --}}
     <div class="col-lg-7 mb-3">
 
-        <div class="card mb-3">
-            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
-            <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Carte des Opérations Nationale</h5>
-                <div id="phaseSituationMedia" class="small text-white-50">Aucun visuel pour la phase en cours.</div>
-            </div>
-        </div>
-
         @if(!$player)
         {{-- JOIN FORM --}}
         <div class="card mb-3">
@@ -150,6 +142,14 @@
             </div>
         </div>
         @endif
+
+        <div class="card mb-3">
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Carte des Opérations Nationale</h5>
+                <div id="phaseSituationMedia" class="small text-white-50">Aucun visuel pour la phase en cours.</div>
+            </div>
+        </div>
 
         <div class="card mb-3" id="quizCard" style="display:none!important">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>

@@ -302,6 +302,8 @@ async function castVote(key) {
 
 let currentQuizType = 'single_choice';
 let multiChoiceSelection = [];
+let orderSelection = [];
+let currentQuizState = null;
 
 async function castQuiz(key) {
     if (!TEAM_ID) return;
@@ -316,19 +318,7 @@ function toggleMultiChoice(key) {
     } else {
         multiChoiceSelection.push(key);
     }
-    const btn = document.getElementById('mc-btn-'+key);
-    if (btn) {
-        const isSelected = multiChoiceSelection.includes(key);
-        if (isSelected) {
-            btn.classList.remove('btn-outline-info');
-            btn.classList.add('btn-info', 'text-dark');
-            btn.style.color = '#001018';
-        } else {
-            btn.classList.remove('btn-info', 'text-dark');
-            btn.classList.add('btn-outline-info');
-            btn.style.color = btn.style.borderColor;
-        }
-    }
+    redrawCurrentQuiz();
 }
 
 async function submitMultiChoice() {
@@ -343,6 +333,53 @@ async function submitMultiChoice() {
         multiChoiceSelection = [];
     }
     else toast('warn', res.error || 'Réponse quiz non prise en compte');
+}
+
+function toggleOrderChoice(key) {
+    if (orderSelection.includes(key)) {
+        orderSelection = orderSelection.filter(k => k !== key);
+    } else {
+        orderSelection.push(key);
+    }
+    redrawCurrentQuiz();
+}
+
+function resetOrderChoice() {
+    orderSelection = [];
+    redrawCurrentQuiz();
+}
+
+async function submitOrderChoice() {
+    if (!TEAM_ID) return;
+    if (orderSelection.length < 2) {
+        toast('warn', 'Définissez un ordre avec au moins 2 choix');
+        return;
+    }
+    const res = await api('quiz/submit', 'POST', {choice: orderSelection, team_id: TEAM_ID});
+    if (res.ok) {
+        toast('success', 'Ordre quiz enregistré');
+        orderSelection = [];
+    } else {
+        toast('warn', res.error || 'Réponse quiz non prise en compte');
+    }
+}
+
+async function submitShortAnswer() {
+    if (!TEAM_ID) return;
+    const field = document.getElementById('quizShortAnswer');
+    if (!field) return;
+    const text = field.value.trim();
+    if (!text) {
+        toast('warn', 'Veuillez saisir votre réponse');
+        return;
+    }
+    const res = await api('quiz/submit', 'POST', {answer_text: text, team_id: TEAM_ID});
+    if (res.ok) toast('success', 'Réponse texte enregistrée');
+    else toast('warn', res.error || 'Réponse quiz non prise en compte');
+}
+
+function redrawCurrentQuiz() {
+    if (currentQuizState) updateQuiz(currentQuizState);
 }
 
 // ── POLL ───────────────────────────────────────────────────
@@ -481,6 +518,7 @@ function updateVote(vote) {
 }
 
 function updateQuiz(quiz) {
+    currentQuizState = quiz || null;
     const card = document.getElementById('quizCard');
     if (!card) return;
     if (!quiz || !quiz.isOpen) { card.style.setProperty('display','none','important'); return; }
@@ -488,10 +526,11 @@ function updateQuiz(quiz) {
 
     document.getElementById('quizQuestion').textContent = quiz.question ?? '';
     const myAnswer = quiz.myAnswer ?? null;
+    const myAnswerText = quiz.myAnswerText ?? null;
     currentQuizType = quiz.type || 'single_choice';
     const opts = document.getElementById('quizOptions');
     
-    const alreadyAnswered = myAnswer !== null;
+    const alreadyAnswered = (myAnswer !== null && myAnswer !== '') || (myAnswerText !== null && myAnswerText !== '');
     let html = '';
 
     if (currentQuizType === 'multi_choice') {
@@ -508,6 +547,31 @@ function updateQuiz(quiz) {
         if (!alreadyAnswered) {
             html += `<div class="w-100 mt-2"><button onclick="submitMultiChoice()" class="btn btn-sm btn-primary w-100 fw-bold">Valider les réponses multiples</button></div>`;
         }
+    } else if (currentQuizType === 'order') {
+        const answeredOrder = alreadyAnswered ? myAnswer.split(',').filter(Boolean) : orderSelection;
+        html = `<div class="small text-white-50 w-100 mb-2">Ordre actuel: ${answeredOrder.length ? answeredOrder.join(' > ') : '—'}</div>`;
+        html += (quiz.options || []).map(o => {
+            const selectedIdx = answeredOrder.indexOf(o.key);
+            const selected = selectedIdx !== -1;
+            const border = o.color || '#60a5fa';
+            const orderBadge = selected ? `<span class="badge bg-dark ms-1">#${selectedIdx + 1}</span>` : '';
+            return `<button onclick="toggleOrderChoice('${o.key}')" class="btn btn-sm ${selected ? 'btn-info text-dark' : 'btn-outline-info'}"
+                style="min-width:120px;border-color:${border};color:${selected ? '#001018' : border}" ${alreadyAnswered ? 'disabled' : ''}>
+                ${o.key} · ${o.label} ${orderBadge}
+            </button>`;
+        }).join('');
+        if (!alreadyAnswered) {
+            html += `<div class="w-100 mt-2 d-flex gap-2">
+                <button onclick="submitOrderChoice()" class="btn btn-sm btn-primary flex-fill fw-bold">Valider l'ordre</button>
+                <button onclick="resetOrderChoice()" class="btn btn-sm btn-outline-light">Réinitialiser</button>
+            </div>`;
+        }
+    } else if (currentQuizType === 'short_answer') {
+        const safeText = (alreadyAnswered ? (myAnswerText || '') : '');
+        html = `<textarea id="quizShortAnswer" class="form-control form-control-sm mb-2" rows="3" placeholder="Saisissez votre réponse..." ${alreadyAnswered ? 'disabled' : ''}>${safeText}</textarea>`;
+        if (!alreadyAnswered) {
+            html += `<button onclick="submitShortAnswer()" class="btn btn-sm btn-primary w-100 fw-bold">Valider la réponse texte</button>`;
+        }
     } else {
         html = (quiz.options || []).map(o => {
             const selected = myAnswer === o.key;
@@ -520,7 +584,8 @@ function updateQuiz(quiz) {
     }
 
     opts.innerHTML = html;
-    document.getElementById('quizMeta').textContent = `Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}`;
+    const prompt = (quiz.prompt || '').trim();
+    document.getElementById('quizMeta').textContent = `Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}${prompt ? ' · ' + prompt : ''}`;
 }
 
 // ── ATMOSPHERE ─────────────────────────────────────────────

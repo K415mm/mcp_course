@@ -731,7 +731,9 @@ async function openQuiz() {
     const type = document.getElementById('quizType').value;
     const options = parseManualOptions(document.getElementById('quizOpt').value);
     if (!q) return showNotif('Question quiz requise', 'danger');
-    if (!options || options.length < 2) return showNotif('Le quiz doit contenir au moins 2 choix', 'danger');
+    if (['single_choice', 'multi_choice', 'order'].includes(type) && (!options || options.length < 2)) {
+        return showNotif('Ce type de quiz doit contenir au moins 2 choix', 'danger');
+    }
 
     const correctRaw = (document.getElementById('quizCorrect').value || '').trim();
     const correct_answers = correctRaw ? correctRaw.split(',').map(x => x.trim().toUpperCase()).filter(Boolean) : [];
@@ -763,7 +765,10 @@ function updateQuizTally(quiz) {
     }
 
     const rows = (quiz.options || []).map(opt => `<div class="small"><span class="fw-bold">${opt.key}</span> - ${opt.label}</div>`).join('');
-    const resultRows = (quiz.results || []).map(r => `<div class="small">${r.teamName}: ${r.answerKey || '—'} => <span class="text-theme">${r.awardedPoints} pts</span></div>`).join('');
+    const resultRows = (quiz.results || []).map(r => {
+        const answerDisplay = r.answerText ? `${r.answerKey || '—'} (${r.answerText})` : (r.answerKey || '—');
+        return `<div class="small">${r.teamName}: ${answerDisplay} => <span class="text-theme">${r.awardedPoints} pts</span></div>`;
+    }).join('');
     el.innerHTML = `
         <div class="small fw-bold text-info mb-1">${quiz.question || 'Quiz'} (${(quiz.type || 'single_choice').replace('_',' ')})</div>
         <div class="mb-1">${rows}</div>

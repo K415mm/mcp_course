@@ -322,30 +322,35 @@ class CsApiController extends Controller
             'question' => 'required|string|max:500',
             'type' => 'nullable|in:single_choice,multi_choice,order,short_answer',
             'prompt' => 'nullable|string|max:1000',
-            'options' => 'required|array|min:2|max:8',
+            'options' => 'nullable|array|max:8',
             'options.*.key' => 'required|string|max:10',
             'options.*.label' => 'required|string|max:255',
             'options.*.color' => 'nullable|string|max:20',
             'options.*.points' => 'nullable|integer|min:0|max:100',
             'correct_answers' => 'nullable|array',
-            'correct_answers.*' => 'nullable|string|max:20',
+            'correct_answers.*' => 'nullable|string|max:500',
             'base_points' => 'nullable|integer|min:0|max:100',
         ]);
 
-        $normalizedOptions = collect($data['options'])->map(function ($option) {
+        $type = (string) ($data['type'] ?? 'single_choice');
+        $normalizedOptions = collect($data['options'] ?? [])->map(function ($option) {
             return [
                 'key' => strtoupper(trim((string) ($option['key'] ?? ''))),
                 'label' => trim((string) ($option['label'] ?? '')),
                 'color' => $option['color'] ?? null,
                 'points' => isset($option['points']) ? (int) $option['points'] : 0,
             ];
-        })->values()->all();
+        })->filter(fn($opt) => ($opt['key'] ?? '') !== '' && ($opt['label'] ?? '') !== '')->values()->all();
+
+        if (in_array($type, ['single_choice', 'multi_choice', 'order'], true) && count($normalizedOptions) < 2) {
+            return response()->json(['ok' => false, 'error' => 'Quiz options are required for this quiz type.'], 422);
+        }
 
         $quiz = $this->cs->openQuiz(
             $session,
             trim((string) $data['question']),
             $normalizedOptions,
-            (string) ($data['type'] ?? 'single_choice'),
+            $type,
             $data['prompt'] ?? null,
             collect($data['correct_answers'] ?? [])->map(fn($v) => strtoupper(trim((string) $v)))->filter()->values()->all(),
             (int) ($data['base_points'] ?? 0)
@@ -374,13 +379,37 @@ class CsApiController extends Controller
         }
 
         $quiz = CsQuiz::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
+        $choiceStr = null;
+        $answerText = null;
 
-        // Handle array of choices for multi_choice
-        $choiceVal = $data['choice'] ?? null;
-        if (is_array($choiceVal)) {
-            $choiceStr = implode(',', array_map(fn($v) => strtoupper(trim((string) $v)), $choiceVal));
+        if ($quiz->type === 'short_answer') {
+            $answerText = trim((string) ($data['answer_text'] ?? ''));
+            if ($answerText === '') {
+                return response()->json(['ok' => false, 'error' => 'Short answer text is required.'], 422);
+            }
+        } elseif (in_array($quiz->type, ['multi_choice', 'order'], true)) {
+            $choiceVal = $data['choice'] ?? null;
+            $keys = is_array($choiceVal)
+                ? $choiceVal
+                : explode(',', trim((string) $choiceVal));
+
+            $keys = collect($keys)
+                ->map(fn($v) => strtoupper(trim((string) $v)))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            if (empty($keys)) {
+                return response()->json(['ok' => false, 'error' => 'At least one choice is required.'], 422);
+            }
+            $choiceStr = implode(',', $keys);
         } else {
-            $choiceStr = $choiceVal ? strtoupper(trim((string) $choiceVal)) : null;
+            $choiceStr = isset($data['choice']) ? strtoupper(trim((string) $data['choice'])) : null;
+            if (!$choiceStr) {
+                return response()->json(['ok' => false, 'error' => 'A choice is required.'], 422);
+            }
+            $answerText = isset($data['answer_text']) ? trim((string) $data['answer_text']) : null;
         }
 
         $team = CsTeam::where('id', $data['team_id'])->where('cs_session_id', $session->id)->firstOrFail();
@@ -388,7 +417,7 @@ class CsApiController extends Controller
             $quiz,
             $team,
             $choiceStr,
-            $data['answer_text'] ?? null
+            $answerText
         );
 
         if (!$ok) {

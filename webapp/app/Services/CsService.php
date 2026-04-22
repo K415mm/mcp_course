@@ -347,9 +347,30 @@ class CsService
 
         foreach ($quiz->entries()->with('team')->get() as $entry) {
             $answerKey = strtoupper(trim((string) ($entry->answer_key ?? '')));
+            $answerText = trim((string) ($entry->answer_text ?? ''));
             $awarded = 0;
 
-            if ($quiz->type === 'multi_choice' || str_contains($answerKey, ',')) {
+            if ($quiz->type === 'short_answer') {
+                if ($hasCorrect) {
+                    $normalizedText = mb_strtolower(preg_replace('/\s+/', ' ', trim($answerText)));
+                    $normalizedCorrect = collect($quiz->correct_answers ?? [])
+                        ->map(fn($v) => mb_strtolower(preg_replace('/\s+/', ' ', trim((string) $v))))
+                        ->filter()
+                        ->values()
+                        ->all();
+                    $awarded = in_array($normalizedText, $normalizedCorrect, true) ? max(0, (int) $quiz->base_points) : 0;
+                }
+            } elseif ($quiz->type === 'order') {
+                $chosenOrder = array_values(array_filter(array_map('trim', explode(',', $answerKey))));
+                if ($hasCorrect) {
+                    $awarded = ($chosenOrder === $correct) ? max(0, (int) $quiz->base_points) : 0;
+                } else {
+                    foreach ($chosenOrder as $k) {
+                        $opt = $options->firstWhere('key', $k);
+                        $awarded += (int) ($opt['points'] ?? 0);
+                    }
+                }
+            } elseif ($quiz->type === 'multi_choice' || str_contains($answerKey, ',')) {
                 $chosenKeys = array_filter(array_map('trim', explode(',', $answerKey)));
                 if ($hasCorrect) {
                     sort($chosenKeys);
@@ -382,6 +403,8 @@ class CsService
                 'teamId' => $entry->cs_team_id,
                 'teamName' => $entry->team?->name ?? 'Unknown',
                 'answerKey' => $entry->answer_key,
+                'answerText' => $entry->answer_text,
+                'quizType' => $quiz->type,
                 'awardedPoints' => $entry->awarded_points,
             ];
 
@@ -392,7 +415,8 @@ class CsService
                 'cs_player_id' => null,
                 'type' => 'question',
                 'content' => sprintf(
-                    'Quiz: %s | Réponse: %s%s',
+                    'Quiz (%s): %s | Réponse: %s%s',
+                    $quiz->type,
                     $quiz->question,
                     $entry->answer_key ?: '—',
                     $entry->answer_text ? (' (' . mb_strimwidth($entry->answer_text, 0, 120, '...') . ')') : ''
@@ -574,6 +598,7 @@ class CsService
                 'basePoints' => (int) $openQuiz->base_points,
                 'isOpen' => (bool) $openQuiz->is_open,
                 'myAnswer' => $player ? $openQuiz->entries()->where('cs_team_id', $player->cs_team_id)->value('answer_key') : null,
+                'myAnswerText' => $player ? $openQuiz->entries()->where('cs_team_id', $player->cs_team_id)->value('answer_text') : null,
                 'answerCount' => $openQuiz->entries()->count(),
                 'results' => $openQuiz->results ?? [],
             ];

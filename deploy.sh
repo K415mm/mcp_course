@@ -45,6 +45,9 @@ echo "Restarting queue workers and PHP containers..."
 $COMPOSE exec -T app php artisan queue:restart
 $COMPOSE restart app worker scheduler
 
+echo "Refreshing nginx upstream connections..."
+$COMPOSE restart nginx
+
 echo "Current container status:"
 $COMPOSE ps
 

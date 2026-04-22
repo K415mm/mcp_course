@@ -259,34 +259,52 @@ body.scanlines::after {
     position: relative;
     width: 100%;
     min-height: 0;
-    border: 1px solid rgba(120, 214, 255, .75);
+    border: 2px solid transparent;
     border-radius: 14px;
     background:
-        linear-gradient(180deg, rgba(11,15,22,.96) 0%, rgba(4,6,10,.96) 100%);
+        linear-gradient(180deg, rgba(20,5,5,.96) 0%, rgba(10,3,3,.96) 100%);
+    background-clip: padding-box;
     padding: 14px 14px 12px;
     box-shadow:
-        inset 0 0 32px rgba(0,0,0,.55),
-        inset 0 1px 0 rgba(120,214,255,.16),
-        0 0 28px rgba(0,0,0,.42);
+        inset 0 0 32px rgba(201,160,80,.15),
+        0 0 28px rgba(201,160,80,.2);
     display: flex;
     flex-direction: column;
+}
+.hero-board::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 16px;
+    z-index: -1;
+    background: linear-gradient(45deg, var(--cs-gold), transparent, var(--cs-gold2), transparent, var(--cs-gold));
+    background-size: 300% 300%;
+    animation: goldBorderShift 4s linear infinite;
+}
+@keyframes goldBorderShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 .hero-stage-label {
     font-family: 'Space Mono', monospace;
     font-size: .62rem;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: rgba(120, 214, 255, .82);
+    color: var(--cs-gold);
     margin-bottom: 10px;
+    text-shadow: 0 0 8px rgba(201,160,80,.4);
 }
 .hero-media-stage {
-    border: 1px solid rgba(120, 214, 255, .72);
+    border: 1px solid rgba(201, 160, 80, .4);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     background: #000;
+    position: relative;
+    cursor: grab;
 }
 .hero-media-stage {
     flex: 1;
@@ -1083,6 +1101,69 @@ const TOTAL_PHASES = {{ count($scenario['phases']) }};
 let lastBcId = 0, lastInjectId = 0, lastAtmo = '', endgameFired = false;
 let prevScores = {};
 
+// ── Zoom & Pan Controls for Main Media ────────────────────────────
+let mediaScale = 1;
+let mediaX = 0;
+let mediaY = 0;
+let isDraggingMedia = false;
+let startDragX = 0, startDragY = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const stage = document.getElementById('mainMediaStage');
+    if(!stage) return;
+
+    stage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const media = stage.querySelector('img, video');
+        if(!media) return;
+
+        const zoomIntensity = 0.1;
+        if(e.deltaY < 0) {
+            mediaScale += zoomIntensity;
+        } else {
+            mediaScale -= zoomIntensity;
+        }
+        mediaScale = Math.max(0.5, Math.min(mediaScale, 5));
+        updateMediaTransform(media);
+    });
+
+    stage.addEventListener('mousedown', (e) => {
+        const media = stage.querySelector('img, video');
+        if(!media) return;
+        isDraggingMedia = true;
+        startDragX = e.clientX - mediaX;
+        startDragY = e.clientY - mediaY;
+        stage.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDraggingMedia = false;
+        if(stage) stage.style.cursor = 'grab';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if(!isDraggingMedia) return;
+        const media = stage.querySelector('img, video');
+        if(!media) return;
+        
+        mediaX = e.clientX - startDragX;
+        mediaY = e.clientY - startDragY;
+        updateMediaTransform(media);
+    });
+});
+
+function updateMediaTransform(el) {
+    el.style.transform = `translate(${mediaX}px, ${mediaY}px) scale(${mediaScale})`;
+    el.style.transition = 'none';
+}
+
+function resetMediaTransform() {
+    mediaScale = 1;
+    mediaX = 0;
+    mediaY = 0;
+}
+// ──────────────────────────────────────────────────────────────────
+
 // ── Clock ─────────────────────────────────────────────────────────
 setInterval(() => {
     const n = new Date();
@@ -1134,6 +1215,10 @@ function renderMainMedia(content) {
 
 function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     if (!stage) return;
+    
+    // We only reset transform if it's the main stage
+    if(stage.id === 'mainMediaStage') resetMediaTransform();
+
     const media = Array.isArray(content?.media) ? content.media : [];
     const preferred = media.find(m => m && m.isLive) || media[0] || null;
     if (!preferred || !preferred.url) {
@@ -1145,7 +1230,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
         stage.innerHTML = `<video src="${preferred.url}" ${preferred.autoplay ? 'autoplay' : ''} ${preferred.loop ? 'loop' : ''} ${preferred.muted !== false ? 'muted' : ''} playsinline controls></video>`;
         return;
     }
-    stage.innerHTML = `<img src="${preferred.url}" alt="${preferred.title || 'media'}">`;
+    stage.innerHTML = `<img src="${preferred.url}" alt="${preferred.title || 'media'}" style="pointer-events: none;">`;
 }
 
 // ── Timer ─────────────────────────────────────────────────────────

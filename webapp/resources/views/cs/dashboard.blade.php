@@ -238,32 +238,62 @@ body.scanlines::after {
 @keyframes tPulse { 0%,100% { opacity:1 } 50% { opacity:.3 } }
 
 /* ── Teams grid ─────────────────────────────────────────────────── */
-.teams-grid {
+.dashboard-main {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px; align-items: start;
-    padding-top: 14px;
+    grid-template-columns: minmax(220px, 1.1fr) minmax(0, 4.6fr) minmax(220px, 1.1fr);
+    gap: 16px;
+    min-height: 0;
+    padding-top: 10px;
 }
-.media-stage-wrap {
-    grid-column: 2 / span 4;
-    border: 1px solid rgba(201,160,80,.28);
-    border-radius: 10px;
-    padding: 12px;
-    background: rgba(9,6,4,.72);
-    box-shadow: inset 0 0 24px rgba(201,160,80,.08), 0 0 18px rgba(0,0,0,.35);
+.team-rail {
+    display: grid;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    min-height: 0;
 }
-.media-stage {
-    height: 290px;
-    border: 1px solid rgba(120, 214, 255, .7);
+.center-stage {
+    min-height: 0;
+    display: flex;
+}
+.hero-board {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    border: 1px solid rgba(120, 214, 255, .75);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(11,15,22,.96) 0%, rgba(4,6,10,.96) 100%);
+    padding: 14px 14px 12px;
+    box-shadow:
+        inset 0 0 32px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(120,214,255,.16),
+        0 0 28px rgba(0,0,0,.42);
+    display: flex;
+    flex-direction: column;
+}
+.hero-stage-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .62rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(120, 214, 255, .82);
+    margin-bottom: 10px;
+}
+.hero-media-stage {
+    border: 1px solid rgba(120, 214, 255, .72);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: rgba(0,0,0,.35);
+    background: #000;
 }
-.media-stage img,
-.media-stage video {
+.hero-media-stage {
+    flex: 1;
+    min-height: 0;
+}
+.hero-media-stage img,
+.hero-media-stage video {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -274,45 +304,159 @@ body.scanlines::after {
     font-size: 1.2rem;
     color: rgba(255,255,255,.5);
 }
-.media-quiz-line {
-    margin-top: 8px;
-    text-align: left;
-    font-size: 1.05rem;
+.hero-quiz-panel {
+    margin-top: 12px;
+    border: 2px solid rgba(120, 214, 255, .88);
+    border-radius: 10px;
+    background:
+        linear-gradient(180deg, rgba(235,241,245,.98) 0%, rgba(217,226,233,.95) 100%);
+    color: #1195df;
+    padding: 14px 18px 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+}
+.hero-quiz-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    line-height: 1.25;
+}
+.hero-quiz-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    font-size: .94rem;
     font-weight: 700;
-    color: #f87171;
-    letter-spacing: .3px;
-    line-height: 1.35;
-    min-height: 2.7em;
-    max-height: 4.05em;
-    overflow: auto;
-    white-space: normal;
-    word-break: break-word;
-    padding: 0 2px;
+}
+.hero-quiz-choice {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(17,149,223,.09);
+    border: 1px solid rgba(17,149,223,.18);
+    line-height: 1.2;
+}
+.hero-quiz-choice.empty {
+    opacity: .7;
+}
+.right-stage {
+    display: block;
+    min-height: 0;
+}
+.right-stage .team-rail {
+    height: 100%;
 }
 
 /* === CARD DESIGN === same language as header: dark + gold border */
 .team-card {
-    background: linear-gradient(90deg,
-        rgba(10,4,4,.98) 0%,
-        rgba(24,8,8,.97) 30%,
-        rgba(35,12,8,.97) 50%,
-        rgba(24,8,8,.97) 70%,
-        rgba(10,4,4,.98) 100%
-    );
-    border-top: 2px solid var(--cs-gold);
-    border-bottom: 2px solid var(--cs-gold);
+    background:
+        radial-gradient(circle at 50% 0%, rgba(113,15,24,.16) 0%, rgba(0,0,0,0) 48%),
+        linear-gradient(180deg, rgba(15,5,6,.98) 0%, rgba(32,8,10,.96) 50%, rgba(16,5,7,.98) 100%);
+    border-top: 2px solid rgba(201,160,80,.75);
+    border-bottom: 2px solid rgba(201,160,80,.3);
     border-left: 1px solid var(--cs-border);
     border-right: 1px solid var(--cs-border);
-    border-radius: 10px;
-    padding: 10px 10px 8px;
+    border-radius: 12px;
+    padding: 14px 12px 12px;
     text-align: center;
-    position: relative; overflow: visible;
-    transition: border-color .4s, box-shadow .4s;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .4s, box-shadow .4s, transform .25s ease;
     backdrop-filter: blur(12px);
     box-shadow:
-        0 0 20px rgba(201,160,80,.1),
-        inset 0 1px 0 rgba(201,160,80,.15),
-        inset 0 -1px 0 rgba(201,160,80,.15);
+        0 0 20px rgba(201,160,80,.08),
+        inset 0 1px 0 rgba(201,160,80,.16),
+        inset 0 -1px 0 rgba(201,160,80,.08);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.team-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,0) 32%),
+        linear-gradient(90deg, rgba(201,160,80,0) 0%, rgba(201,160,80,.08) 50%, rgba(201,160,80,0) 100%);
+    pointer-events: none;
+}
+.team-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 18px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,160,80,.85), transparent);
+    pointer-events: none;
+}
+.team-card:hover {
+    transform: translateY(-2px);
+}
+.team-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 4px;
+}
+.team-logo-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 35%, rgba(201,160,80,.18) 0%, rgba(0,0,0,0) 68%);
+    box-shadow: inset 0 0 0 1px rgba(201,160,80,.14);
+}
+.team-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+.team-score-band {
+    position: relative;
+    margin-top: 2px;
+    padding: 6px 4px 4px;
+    min-height: 88px;
+    border-top: 1px solid rgba(201,160,80,.12);
+    border-bottom: 1px solid rgba(201,160,80,.12);
+    background:
+        linear-gradient(180deg, rgba(121,17,17,.18) 0%, rgba(42,8,8,.1) 55%, rgba(255,255,255,0) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+.team-score-label,
+.team-badge-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .52rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(201,160,80,.52);
+}
+.team-badge-panel {
+    padding-top: 7px;
+}
+.team-footer {
+    margin-top: auto;
+    padding-top: 6px;
+}
+.team-footer .t-online {
+    margin-top: 0;
+}
+.team-footer .t-online-text {
+    color: rgba(255,255,255,.72);
+}
+.team-footer .t-online-count {
+    color: #2dc653;
+    font-weight: 700;
 }
 
 /* ── Score flash animation ──────────────── */
@@ -415,23 +559,39 @@ body.scanlines::after {
 .dom-overlay.badge-dom .dom-delta { color: var(--cs-gold2); }
 .dom-overlay.badge-dom { background: radial-gradient(ellipse at center, rgba(35,18,0,.97) 0%, rgba(0,0,0,.99) 100%); }
 
-.t-icon-img { display: block; margin: 0 auto 6px; width: 48px; height: 48px; object-fit: contain; }
-.t-icon { font-size: 2.2rem; display: block; margin-bottom: 4px; }
-.t-name { font-size: .92rem; font-weight: 900; letter-spacing: .6px; color: #fff; line-height: 1.1; }
-.t-role { font-size: .68rem; color: rgba(201,160,80,.45); margin: 2px 0 6px; font-family: 'Space Mono',monospace; }
+.t-icon-img { display: block; margin: 0 auto; width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(201,160,80,.2)); }
+.t-icon { font-size: 1.6rem; display: block; line-height: 1; color: var(--tc); text-shadow: 0 0 16px rgba(201,160,80,.16); }
+.t-name { font-size: .96rem; font-weight: 900; letter-spacing: .8px; color: #fff; line-height: 1.02; text-transform: uppercase; }
+.t-role {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 18px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: rgba(201,160,80,.08);
+    border: 1px solid rgba(201,160,80,.12);
+    font-size: .54rem;
+    color: rgba(201,160,80,.68);
+    font-family: 'Space Mono',monospace;
+    letter-spacing: .8px;
+}
 .t-score {
     font-family: 'Space Mono', monospace;
-    font-size: 2.2rem; font-weight: 700;
-    /* Gold gradient score — deepens to team color on hover */
+    font-size: 3.6rem; font-weight: 800;
+    color: #ffd772;
     background: linear-gradient(180deg, var(--cs-gold2) 0%, var(--cs-gold) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
-    line-height: 1; transition: all .4s; display: block;
+    line-height: .9;
+    transition: all .4s;
+    display: block;
+    text-shadow: 0 0 24px rgba(201,160,80,.28);
 }
 .t-delta {
     display: none; position: absolute;
-    top: 38%; right: 8px; transform: translateY(-50%);
-    font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700;
+    top: 50%; right: 10px; transform: translateY(-50%);
+    font-family: 'Space Mono', monospace; font-size: 1.15rem; font-weight: 700;
     animation: deltaUp .9s ease forwards; pointer-events: none;
 }
 @keyframes deltaUp {
@@ -440,36 +600,50 @@ body.scanlines::after {
 }
 /* Badge image container — bigger + centered */
 .t-badge {
-    margin-top: 8px;
-    min-height: 64px;
+    margin-top: 4px;
+    min-height: 44px;
     display: flex; align-items: center; justify-content: center;
 }
 .t-badge img {
-    width: 62px; height: 62px; object-fit: contain;
-    filter: drop-shadow(0 0 16px rgba(201,160,80,.6));
+    width: 40px; height: 40px; object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(201,160,80,.48));
     transition: filter .5s, transform .3s;
 }
 .t-badge span {
-    font-size: 2.6rem; filter: drop-shadow(0 0 12px var(--cs-gold));
+    font-size: 1.8rem; filter: drop-shadow(0 0 12px var(--cs-gold));
 }
 .t-badge-nm {
-    font-family: 'Space Mono', monospace; font-size: .58rem; font-weight: bold;
-    color: var(--cs-gold); margin-top: 6px;
-    letter-spacing: 1.2px; text-transform: uppercase;
+    font-family: 'Space Mono', monospace; font-size: .5rem; font-weight: bold;
+    color: var(--cs-gold); margin-top: 2px;
+    letter-spacing: .9px; text-transform: uppercase;
+    line-height: 1.25;
 }
 .t-online {
-    font-family: 'Space Mono', monospace; font-size: .62rem;
-    color: rgba(255,255,255,.28); margin-top: 4px;
+    font-family: 'Space Mono', monospace; font-size: .56rem;
+    color: rgba(255,255,255,.32); margin-top: 4px;
     display: flex; align-items: center; gap: 4px; justify-content: center;
 }
-.dot-on { width: 5px; height: 5px; border-radius: 50%; background: #2dc653; display: inline-block; animation: dotPulse 2s infinite; }
+.dot-on { width: 6px; height: 6px; border-radius: 50%; background: #2dc653; display: inline-block; animation: dotPulse 2s infinite; box-shadow: 0 0 8px rgba(45,198,83,.65); }
 @keyframes dotPulse { 0%,100% { opacity:1 } 50% { opacity:.25 } }
 
 /* ── Bottom widgets ─────────────────────────────────────────────── */
 .widgets-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 10px; }
 @media (max-width: 1400px) { .widgets-row { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 980px) { .widgets-row { grid-template-columns: 1fr; } }
-@media (max-width: 1200px) { .media-stage-wrap { grid-column: 1 / -1; } }
+@media (max-width: 1320px) {
+    .dashboard-main {
+        grid-template-columns: minmax(180px, .9fr) minmax(0, 3.8fr) minmax(210px, 1.1fr);
+    }
+}
+@media (max-width: 1160px) {
+    .dashboard-main {
+        grid-template-columns: 1fr;
+    }
+    .team-rail {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: none;
+    }
+}
 
 .widget {
     background: rgba(13,27,46,.8);
@@ -835,13 +1009,27 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
     </div>
 
-    {{-- TEAMS GRID + MAIN MEDIA --}}
-    <div class="teams-grid" id="teamsGrid">
-        <div class="media-stage-wrap">
-            <div class="media-stage" id="mainMediaStage">
-                <div class="media-stage-empty">MEDIA</div>
+    {{-- MAIN STAGE --}}
+    <div class="dashboard-main">
+        <div class="team-rail" id="leftTeamRail"></div>
+
+        <div class="center-stage">
+            <div class="hero-board">
+                    <div class="hero-stage-label">Phase Briefing</div>
+                    <div class="hero-media-stage" id="mainMediaStage">
+                    <div class="media-stage-empty">MEDIA</div>
+                </div>
+                <div class="hero-quiz-panel">
+                    <div class="hero-quiz-title" id="mainQuizQuestion">Quiz question</div>
+                    <div class="hero-quiz-choices" id="mainQuizChoices">
+                        <span class="hero-quiz-choice empty">Answers will appear here</span>
+                    </div>
+                </div>
             </div>
-            <div class="media-quiz-line" id="mainQuizLine">Quiz</div>
+        </div>
+
+        <div class="right-stage">
+            <div class="team-rail" id="rightTeamRail"></div>
         </div>
     </div>
 
@@ -919,6 +1107,7 @@ function handlePhaseContent(content) {
 
     if (!media.length && !questions.length && !messages.length) {
         root.innerHTML = '<div class="feed-item">Aucun contenu de phase</div>';
+        renderMainMedia(null);
         return;
     }
 
@@ -931,12 +1120,15 @@ function handlePhaseContent(content) {
 setInterval(poll, 1000); poll();
 
 function renderMainMedia(content) {
-    const stage = document.getElementById('mainMediaStage');
+    renderMediaStage(document.getElementById('mainMediaStage'), content, 'MEDIA');
+}
+
+function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     if (!stage) return;
     const media = Array.isArray(content?.media) ? content.media : [];
     const preferred = media.find(m => m && m.isLive) || media[0] || null;
     if (!preferred || !preferred.url) {
-        stage.innerHTML = '<div class="media-stage-empty">MEDIA</div>';
+        stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
         return;
     }
 
@@ -1046,9 +1238,11 @@ const prevBadge = {}; // track badge tier per team
 
 function updateTeams(teams) {
     if (!teams) return;
-    const grid = document.getElementById('teamsGrid');
+    const leftRail = document.getElementById('leftTeamRail');
+    const rightRail = document.getElementById('rightTeamRail');
+    const leftCount = Math.ceil(teams.length / 2);
 
-    teams.forEach(t => {
+    teams.forEach((t, index) => {
         let el = document.getElementById('tc-' + t.id);
         if (!el) {
             el = document.createElement('div');
@@ -1057,15 +1251,32 @@ function updateTeams(teams) {
             el.style.cssText = `--tc:${t.color};`;
             el.innerHTML = `
                 <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
-                ${t.logoPath ? `<img src="${t.logoPath}" class="t-icon-img">` : `<span class="t-icon">${t.icon}</span>`}
-                <div class="t-name" style="color: var(--tc)">${t.name}</div>
-                <div class="t-role">${t.roleLabel}</div>
-                <div class="t-score" id="ts-${t.id}">${t.isScored ? t.score : 'MENTOR'}</div>
-                <div class="t-delta" id="td-${t.id}"></div>
-                <div class="t-badge" id="tb-${t.id}">${badgeImgHtml(t.badge)}</div>
-                <div class="t-badge-nm" id="tbn-${t.id}">${t.badge.name}</div>
-                <div class="t-online"><span class="dot-on"></span><span id="ton-${t.id}">${t.onlineCount}</span></div>`;
-            grid.appendChild(el);
+                <div class="team-header">
+                    <div class="team-logo-wrap">
+                        ${t.logoPath ? `<img src="${t.logoPath}" class="t-icon-img">` : `<span class="t-icon">${t.icon}</span>`}
+                    </div>
+                    <div class="team-copy">
+                        <div class="t-name" id="tn-${t.id}" style="color: var(--tc)">${t.name}</div>
+                        <div class="t-role" id="trl-${t.id}">${t.roleLabel}</div>
+                    </div>
+                </div>
+                <div class="team-score-band">
+                    <div class="team-score-label" id="tsl-${t.id}">${t.isScored ? 'Score' : 'Status'}</div>
+                    <div class="t-score" id="ts-${t.id}">${t.isScored ? t.score : 'MENTOR'}</div>
+                    <div class="t-delta" id="td-${t.id}"></div>
+                </div>
+                <div class="team-badge-panel">
+                    <div class="team-badge-label">Badge</div>
+                    <div class="t-badge" id="tb-${t.id}">${badgeImgHtml(t.badge)}</div>
+                    <div class="t-badge-nm" id="tbn-${t.id}">${t.badge.name}</div>
+                </div>
+                <div class="team-footer">
+                    <div class="t-online">
+                        <span class="dot-on"></span>
+                        <span class="t-online-text">Online</span>
+                        <span class="t-online-count" id="ton-${t.id}">${t.onlineCount}</span>
+                    </div>
+                </div>`;
             prevScores[t.id] = t.score;
             prevBadge[t.id]  = t.badge.name;
         } else {
@@ -1098,6 +1309,9 @@ function updateTeams(teams) {
                 }
             }
             scoreEl.textContent = t.isScored ? t.score : 'MENTOR';
+            document.getElementById('tsl-' + t.id).textContent = t.isScored ? 'Score' : 'Status';
+            document.getElementById('tn-' + t.id).textContent = t.name;
+            document.getElementById('trl-' + t.id).textContent = t.roleLabel;
 
             // ── Badge tier changed (unlock animation!) ──
             if (t.badge.name !== prevBdg) {
@@ -1117,6 +1331,11 @@ function updateTeams(teams) {
 
             document.getElementById('tbn-' + t.id).textContent = t.badge.name;
             document.getElementById('ton-' + t.id).textContent = t.onlineCount;
+        }
+
+        const targetRail = index < leftCount ? leftRail : rightRail;
+        if (targetRail && el.parentElement !== targetRail) {
+            targetRail.appendChild(el);
         }
     });
 }
@@ -1214,11 +1433,13 @@ function handleVote(vote) {
 
 function handleQuiz(quiz) {
     const el = document.getElementById('quizWidget');
-    const quizLine = document.getElementById('mainQuizLine');
+    const mainQuestion = document.getElementById('mainQuizQuestion');
+    const mainChoices = document.getElementById('mainQuizChoices');
     if (!el) return;
     if (!quiz) {
         el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucune question en cours</div>';
-        if (quizLine) quizLine.textContent = 'Quiz';
+        if (mainQuestion) mainQuestion.textContent = 'Quiz question';
+        if (mainChoices) mainChoices.innerHTML = '<span class="hero-quiz-choice empty">Answers will appear here</span>';
         return;
     }
 
@@ -1238,9 +1459,14 @@ function handleQuiz(quiz) {
         <div class="vote-bars">${optionsHtml}</div>
         ${resultHtml ? `<div style="margin-top:8px">${resultHtml}</div>` : ''}
     `;
-    if (quizLine) {
-        const text = (quiz.question || 'Quiz').trim();
-        quizLine.textContent = text;
+    if (mainQuestion) {
+        mainQuestion.textContent = (quiz.question || 'Quiz question').trim();
+    }
+    if (mainChoices) {
+        const heroChoices = (quiz.options || []).length
+            ? (quiz.options || []).map(o => `<span class="hero-quiz-choice">${o.key}. ${o.label}</span>`).join('')
+            : '<span class="hero-quiz-choice empty">Waiting for answer choices</span>';
+        mainChoices.innerHTML = heroChoices;
     }
 }
 

@@ -300,10 +300,48 @@ async function castVote(key) {
     }
 }
 
+let currentQuizType = 'single_choice';
+let multiChoiceSelection = [];
+
 async function castQuiz(key) {
     if (!TEAM_ID) return;
     const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
     if (res.ok) toast('success','Réponse quiz enregistrée');
+    else toast('warn', res.error || 'Réponse quiz non prise en compte');
+}
+
+function toggleMultiChoice(key) {
+    if (multiChoiceSelection.includes(key)) {
+        multiChoiceSelection = multiChoiceSelection.filter(k => k !== key);
+    } else {
+        multiChoiceSelection.push(key);
+    }
+    const btn = document.getElementById('mc-btn-'+key);
+    if (btn) {
+        const isSelected = multiChoiceSelection.includes(key);
+        if (isSelected) {
+            btn.classList.remove('btn-outline-info');
+            btn.classList.add('btn-info', 'text-dark');
+            btn.style.color = '#001018';
+        } else {
+            btn.classList.remove('btn-info', 'text-dark');
+            btn.classList.add('btn-outline-info');
+            btn.style.color = btn.style.borderColor;
+        }
+    }
+}
+
+async function submitMultiChoice() {
+    if (!TEAM_ID) return;
+    if (multiChoiceSelection.length === 0) {
+        toast('warn', 'Veuillez sélectionner au moins une réponse');
+        return;
+    }
+    const res = await api('quiz/submit','POST',{choice: multiChoiceSelection, team_id:TEAM_ID});
+    if (res.ok) {
+        toast('success','Réponses quiz enregistrées');
+        multiChoiceSelection = [];
+    }
     else toast('warn', res.error || 'Réponse quiz non prise en compte');
 }
 
@@ -450,16 +488,38 @@ function updateQuiz(quiz) {
 
     document.getElementById('quizQuestion').textContent = quiz.question ?? '';
     const myAnswer = quiz.myAnswer ?? null;
+    currentQuizType = quiz.type || 'single_choice';
     const opts = document.getElementById('quizOptions');
-    opts.innerHTML = (quiz.options || []).map(o => {
-        const selected = myAnswer === o.key;
-        const border = o.color || '#60a5fa';
-        return `<button onclick="castQuiz('${o.key}')" class="btn btn-sm ${selected ? 'btn-info text-dark' : 'btn-outline-info'}"
-            style="min-width:110px;border-color:${border};color:${selected ? '#001018' : border}">
-            ${o.key} · ${o.label}
-        </button>`;
-    }).join('');
+    
+    const alreadyAnswered = myAnswer !== null;
+    let html = '';
 
+    if (currentQuizType === 'multi_choice') {
+        const answeredKeys = alreadyAnswered ? myAnswer.split(',') : multiChoiceSelection;
+        html = (quiz.options || []).map(o => {
+            const selected = answeredKeys.includes(o.key);
+            const border = o.color || '#60a5fa';
+            return `<button onclick="toggleMultiChoice('${o.key}')" class="btn btn-sm ${selected ? 'btn-info text-dark' : 'btn-outline-info'}"
+                style="min-width:110px;border-color:${border};color:${selected ? '#001018' : border}" ${alreadyAnswered ? 'disabled' : ''} id="mc-btn-${o.key}">
+                ${o.key} · ${o.label}
+            </button>`;
+        }).join('');
+        
+        if (!alreadyAnswered) {
+            html += `<div class="w-100 mt-2"><button onclick="submitMultiChoice()" class="btn btn-sm btn-primary w-100 fw-bold">Valider les réponses multiples</button></div>`;
+        }
+    } else {
+        html = (quiz.options || []).map(o => {
+            const selected = myAnswer === o.key;
+            const border = o.color || '#60a5fa';
+            return `<button onclick="castQuiz('${o.key}')" class="btn btn-sm ${selected ? 'btn-info text-dark' : 'btn-outline-info'}"
+                style="min-width:110px;border-color:${border};color:${selected ? '#001018' : border}" ${alreadyAnswered ? 'disabled' : ''}>
+                ${o.key} · ${o.label}
+            </button>`;
+        }).join('');
+    }
+
+    opts.innerHTML = html;
     document.getElementById('quizMeta').textContent = `Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}`;
 }
 

@@ -3,16 +3,16 @@
     {
       "id": "p3-partner-proposal",
       "type": "image",
-      "title": "External Assistance Proposal",
-      "caption": "Offer includes conditional access requirement.",
+      "title": "Proposition d'Assistance Externe",
+      "caption": "L'offre inclut une exigence d'accès conditionnel.",
       "url": "/cs-assets/badges/observateur.png",
       "stage": "arbitration"
     },
     {
       "id": "p3-command-animation",
       "type": "animation",
-      "title": "Command Flow Animation",
-      "caption": "Shows conflict between central and sector decisions.",
+      "title": "Animation du Flux de Commandement",
+      "caption": "Montre le conflit entre les décisions centrales et sectorielles.",
       "url": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTNiM3AwbWYwNHBsZG8xYmRzNjk2NHE2bjNucmNpMHN3cHBjdGs3YyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/26BRzozg4TCBXv6QU/giphy.gif",
       "stage": "arbitration"
     }
@@ -22,14 +22,14 @@
       "type": "intel",
       "stage": "arbitration",
       "tag": "EXTERNAL_PARTNER",
-      "content": "A partner offers technical support with conditional data-sharing terms.",
+      "content": "Un partenaire offre un support technique avec des conditions de partage de données.",
       "related_media": ["p3-partner-proposal"]
     },
     {
       "type": "warn",
       "stage": "arbitration",
       "tag": "SECTOR_TENSION",
-      "content": "Sector leaders diverge on priorities and response sequencing.",
+      "content": "Les responsables de secteur divergent sur les priorités et le séquencement de la réponse.",
       "related_media": ["p3-command-animation"]
     }
   ],
@@ -38,47 +38,47 @@
       "id": "p3-q1",
       "type": "single_choice",
       "secret": true,
-      "question": "Which arbitration model do you select?",
+      "question": "Quel modèle d'arbitrage choisissez-vous ?",
       "points": 25,
       "time_limit": 75,
       "options": [
-        {"key": "A", "label": "Centralized command arbitration", "color": "#00b4d8", "points": 20},
-        {"key": "B", "label": "Sector-led delegated arbitration", "color": "#f4a261", "points": 15},
-        {"key": "C", "label": "Mixed ad-hoc crisis cell", "color": "#2dc653", "points": 25}
+        {"key": "A", "label": "Arbitrage par commandement centralisé", "color": "#00b4d8", "points": 20},
+        {"key": "B", "label": "Arbitrage délégué dirigé par le secteur", "color": "#f4a261", "points": 15},
+        {"key": "C", "label": "Cellule de crise ad-hoc mixte", "color": "#2dc653", "points": 25}
       ],
-      "note": "Keep secret voting for phase 4 equivalent."
+      "note": "Gardez le vote secret pour l'équivalent de la phase 4."
     },
     {
       "id": "p3-q2",
       "type": "multi_choice",
-      "question": "Choose all governance controls required before accepting external support.",
+      "question": "Choisissez tous les contrôles de gouvernance requis avant d'accepter un soutien externe.",
       "points": 15,
       "options": [
-        {"key": "A", "label": "Legal basis and scope control"},
-        {"key": "B", "label": "Unlimited network access"},
-        {"key": "C", "label": "Data minimization clauses"},
-        {"key": "D", "label": "Audit trail and exit criteria"}
+        {"key": "A", "label": "Base légale et contrôle du périmètre"},
+        {"key": "B", "label": "Accès réseau illimité"},
+        {"key": "C", "label": "Clauses de minimisation des données"},
+        {"key": "D", "label": "Piste d'audit et critères de sortie"}
       ],
       "acceptable_answers": ["A", "C", "D"]
     },
     {
       "id": "p3-q3",
       "type": "order",
-      "question": "Sort these arbitration tasks from first to fourth.",
+      "question": "Triez ces tâches d'arbitrage de la première à la quatrième.",
       "points": 10,
       "options": [
-        {"key": "A", "label": "Define authority boundaries"},
-        {"key": "B", "label": "Assign accountable lead"},
-        {"key": "C", "label": "Publish operational playbook"},
-        {"key": "D", "label": "Review sector objections"}
+        {"key": "A", "label": "Définir les limites d'autorité"},
+        {"key": "B", "label": "Assigner un responsable"},
+        {"key": "C", "label": "Publier un manuel opérationnel"},
+        {"key": "D", "label": "Examiner les objections du secteur"}
       ],
       "correct_order": ["A", "B", "D", "C"]
     },
     {
       "id": "p3-q4",
       "type": "short_answer",
-      "question": "What is one red line that ANCS mentor should highlight here?",
-      "prompt": "Answer in one clear sentence.",
+      "question": "Quelle est la ligne rouge que le mentor de l'ANCS devrait souligner ici ?",
+      "prompt": "Répondez en une phrase claire.",
       "points": 8
     }
   ]

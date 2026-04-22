@@ -363,7 +363,7 @@ class CsApiController extends Controller
         }
 
         $data = $request->validate([
-            'choice'  => 'nullable|string|max:100',
+            'choice'  => 'nullable',
             'answer_text' => 'nullable|string|max:1000',
             'team_id' => 'required|integer',
         ]);
@@ -374,11 +374,20 @@ class CsApiController extends Controller
         }
 
         $quiz = CsQuiz::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
+
+        // Handle array of choices for multi_choice
+        $choiceVal = $data['choice'] ?? null;
+        if (is_array($choiceVal)) {
+            $choiceStr = implode(',', array_map(fn($v) => strtoupper(trim((string) $v)), $choiceVal));
+        } else {
+            $choiceStr = $choiceVal ? strtoupper(trim((string) $choiceVal)) : null;
+        }
+
         $team = CsTeam::where('id', $data['team_id'])->where('cs_session_id', $session->id)->firstOrFail();
         $ok = $this->cs->submitQuizAnswer(
             $quiz,
             $team,
-            isset($data['choice']) ? strtoupper(trim((string) $data['choice'])) : null,
+            $choiceStr,
             $data['answer_text'] ?? null
         );
 

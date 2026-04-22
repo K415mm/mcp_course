@@ -3,16 +3,16 @@
     {
       "id": "p2-fake-post",
       "type": "image",
-      "title": "Fake Statement Screenshot",
-      "caption": "A forged statement is spreading online.",
+      "title": "Capture d'écran d'une Fausse Déclaration",
+      "caption": "Une déclaration falsifiée se propage en ligne.",
       "url": "/cs-assets/badges/cyber_hero.png",
       "stage": "media_crisis"
     },
     {
       "id": "p2-press-room",
       "type": "video",
-      "title": "Press Room Footage",
-      "caption": "Journalists request immediate response.",
+      "title": "Images de la Salle de Presse",
+      "caption": "Les journalistes exigent une réponse immédiate.",
       "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
       "autoplay": false,
       "loop": true,
@@ -25,14 +25,14 @@
       "type": "warn",
       "stage": "media_crisis",
       "tag": "MEDIA_DEADLINE",
-      "content": "National media requests official statement in less than 20 minutes.",
+      "content": "Les médias nationaux demandent une déclaration officielle dans moins de 20 minutes.",
       "related_media": ["p2-press-room"]
     },
     {
       "type": "alert",
       "stage": "media_crisis",
       "tag": "FAKE_COMMUNIQUE",
-      "content": "A forged government communique is now viral on social channels.",
+      "content": "Un communiqué gouvernemental falsifié est devenu viral sur les réseaux sociaux.",
       "related_media": ["p2-fake-post"]
     }
   ],
@@ -40,47 +40,47 @@
     {
       "id": "p2-q1",
       "type": "single_choice",
-      "question": "Which communication axis do you validate now?",
+      "question": "Quel axe de communication validez-vous maintenant ?",
       "points": 20,
       "time_limit": 70,
       "options": [
-        {"key": "A", "label": "Immediate full disclosure", "color": "#ef4444", "points": 12},
-        {"key": "B", "label": "Progressive confirmed disclosure", "color": "#f59e0b", "points": 18},
-        {"key": "C", "label": "Single voice ANCS + CERT + Gov", "color": "#22c55e", "points": 20}
+        {"key": "A", "label": "Divulgation totale immédiate", "color": "#ef4444", "points": 12},
+        {"key": "B", "label": "Divulgation progressive confirmée", "color": "#f59e0b", "points": 18},
+        {"key": "C", "label": "Voix unique ANCS + CERT + Gouvernement", "color": "#22c55e", "points": 20}
       ],
       "related_media": ["p2-press-room"]
     },
     {
       "id": "p2-q2",
       "type": "multi_choice",
-      "question": "Select all elements that must appear in first public statement.",
+      "question": "Sélectionnez tous les éléments qui doivent figurer dans la première déclaration publique.",
       "points": 12,
       "options": [
-        {"key": "A", "label": "Scope under validation"},
-        {"key": "B", "label": "Rumor amplification details"},
-        {"key": "C", "label": "Protection actions already active"},
-        {"key": "D", "label": "Next update timestamp"}
+        {"key": "A", "label": "Périmètre en cours de validation"},
+        {"key": "B", "label": "Détails de l'amplification des rumeurs"},
+        {"key": "C", "label": "Actions de protection déjà actives"},
+        {"key": "D", "label": "Heure de la prochaine mise à jour"}
       ],
       "acceptable_answers": ["A", "C", "D"]
     },
     {
       "id": "p2-q3",
       "type": "order",
-      "question": "Order these actions to neutralize fake communique impact.",
+      "question": "Ordonnez ces actions pour neutraliser l'impact du faux communiqué.",
       "points": 12,
       "options": [
-        {"key": "A", "label": "Verify official channels"},
-        {"key": "B", "label": "Publish authenticity notice"},
-        {"key": "C", "label": "Coordinate media partners"},
-        {"key": "D", "label": "Run social counter-messaging"}
+        {"key": "A", "label": "Vérifier les canaux officiels"},
+        {"key": "B", "label": "Publier un avis d'authenticité"},
+        {"key": "C", "label": "Coordonner avec les partenaires médias"},
+        {"key": "D", "label": "Lancer des contre-messages sociaux"}
       ],
       "correct_order": ["A", "B", "C", "D"]
     },
     {
       "id": "p2-q4",
       "type": "short_answer",
-      "question": "Write a 15-word anti-rumor message for citizen channels.",
-      "prompt": "Clarity first, no technical jargon.",
+      "question": "Rédigez un message anti-rumeur de 15 mots pour les canaux citoyens.",
+      "prompt": "Clarté avant tout, pas de jargon technique.",
       "points": 8
     }
   ]

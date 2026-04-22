@@ -3,8 +3,8 @@
     {
       "id": "p4-scoreboard",
       "type": "image",
-      "title": "Final Operations Snapshot",
-      "caption": "Use during debrief and lessons learned.",
+      "title": "Aperçu Final des Opérations",
+      "caption": "À utiliser lors du débriefing et des leçons apprises.",
       "url": "/cs-assets/badges/stratege.png",
       "stage": "debrief"
     }
@@ -14,46 +14,46 @@
       "type": "success",
       "stage": "debrief",
       "tag": "DEBRIEF_OPEN",
-      "content": "Debrief starts now: teams consolidate outcomes and residual risks.",
+      "content": "Le débriefing commence maintenant : les équipes consolident les résultats et les risques résiduels.",
       "related_media": ["p4-scoreboard"]
     },
     {
       "type": "info",
       "stage": "debrief",
       "tag": "ANCS_MENTOR_WRAP",
-      "content": "ANCS mentor provides recommendations for next exercise cycle."
+      "content": "Le mentor de l'ANCS fournit des recommandations pour le prochain cycle d'exercice."
     }
   ],
   "questions": [
     {
       "id": "p4-q1",
       "type": "single_choice",
-      "question": "Which improvement track has highest priority next cycle?",
+      "question": "Quel axe d'amélioration a la plus haute priorité pour le prochain cycle ?",
       "points": 15,
       "options": [
-        {"key": "A", "label": "Detection engineering", "color": "#00b4d8", "points": 15},
-        {"key": "B", "label": "Command governance", "color": "#f4a261", "points": 15},
-        {"key": "C", "label": "Public communication resilience", "color": "#2dc653", "points": 15}
+        {"key": "A", "label": "Ingénierie de détection", "color": "#00b4d8", "points": 15},
+        {"key": "B", "label": "Gouvernance du commandement", "color": "#f4a261", "points": 15},
+        {"key": "C", "label": "Résilience de la communication publique", "color": "#2dc653", "points": 15}
       ]
     },
     {
       "id": "p4-q2",
       "type": "multi_choice",
-      "question": "Select all lessons learned that should enter the national playbook.",
+      "question": "Sélectionnez toutes les leçons apprises qui devraient intégrer le manuel national.",
       "points": 12,
       "options": [
-        {"key": "A", "label": "Shared IOC repository"},
-        {"key": "B", "label": "Cross-sector drill cadence"},
-        {"key": "C", "label": "Silent media strategy"},
-        {"key": "D", "label": "Mentor role governance rules"}
+        {"key": "A", "label": "Référentiel d'IOC partagé"},
+        {"key": "B", "label": "Cadence d'exercices intersectoriels"},
+        {"key": "C", "label": "Stratégie médiatique silencieuse"},
+        {"key": "D", "label": "Règles de gouvernance du rôle de mentor"}
       ],
       "acceptable_answers": ["A", "B", "D"]
     },
     {
       "id": "p4-q3",
       "type": "short_answer",
-      "question": "Write one KPI to measure readiness before next exercise.",
-      "prompt": "Must be measurable and time-bound.",
+      "question": "Rédigez un KPI pour mesurer l'état de préparation avant le prochain exercice.",
+      "prompt": "Doit être mesurable et limité dans le temps.",
       "points": 8
     }
   ]

@@ -3,16 +3,16 @@
     {
       "id": "p1-finance-snapshot",
       "type": "image",
-      "title": "Finance Segment Snapshot",
-      "caption": "Suspicious encryption pattern in finance subnet.",
+      "title": "Aperçu du Segment Financier",
+      "caption": "Modèle de chiffrement suspect dans le sous-réseau financier.",
       "url": "/cs-assets/badges/analyst.png",
       "stage": "inject"
     },
     {
       "id": "p1-traffic-cam",
       "type": "video",
-      "title": "Transport Ops Feed",
-      "caption": "City transport status showing delay amplification.",
+      "title": "Flux des Opérations de Transport",
+      "caption": "Statut des transports urbains montrant une amplification des retards.",
       "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
       "autoplay": false,
       "loop": true,
@@ -25,14 +25,14 @@
       "type": "inject",
       "stage": "inject",
       "tag": "ENCRYPTION_SIGNAL",
-      "content": "Ransomware-like encryption behavior detected in a banking support segment.",
+      "content": "Comportement de type ransomware détecté dans un segment de support bancaire.",
       "related_media": ["p1-finance-snapshot"]
     },
     {
       "type": "intel",
       "stage": "inject",
       "tag": "CROSS_IOC",
-      "content": "Shared IOC appears in finance and transport telemetry streams.",
+      "content": "Un indicateur de compromission (IOC) partagé apparaît dans les flux de télémétrie des finances et des transports.",
       "related_media": ["p1-traffic-cam"]
     }
   ],
@@ -41,47 +41,47 @@
       "id": "p1-q1",
       "type": "single_choice",
       "secret": true,
-      "question": "Which national priority should lead this phase?",
+      "question": "Quelle priorité nationale doit guider cette phase ?",
       "points": 20,
       "time_limit": 60,
       "options": [
-        {"key": "A", "label": "Citizen core services continuity", "color": "#00b4d8", "points": 16},
-        {"key": "B", "label": "Financial flow stabilization", "color": "#f4a261", "points": 20},
-        {"key": "C", "label": "Critical mobility continuity", "color": "#2dc653", "points": 18}
+        {"key": "A", "label": "Continuité des services de base aux citoyens", "color": "#00b4d8", "points": 16},
+        {"key": "B", "label": "Stabilisation des flux financiers", "color": "#f4a261", "points": 20},
+        {"key": "C", "label": "Continuité de la mobilité critique", "color": "#2dc653", "points": 18}
       ],
-      "note": "Keep secret flag on for this phase."
+      "note": "Gardez le vote secret pour cette phase."
     },
     {
       "id": "p1-q2",
       "type": "multi_choice",
-      "question": "Pick all valid containment actions before public statement.",
+      "question": "Choisissez toutes les actions de confinement valides avant la déclaration publique.",
       "points": 15,
       "options": [
-        {"key": "A", "label": "Disable affected credential domains"},
-        {"key": "B", "label": "Patch and restart all systems immediately"},
-        {"key": "C", "label": "Start IOC threat hunting across sectors"},
-        {"key": "D", "label": "Preserve volatile evidence snapshots"}
+        {"key": "A", "label": "Désactiver les domaines d'identification affectés"},
+        {"key": "B", "label": "Patcher et redémarrer tous les systèmes immédiatement"},
+        {"key": "C", "label": "Lancer une chasse aux menaces sur les IOC dans tous les secteurs"},
+        {"key": "D", "label": "Préserver les captures de preuves volatiles"}
       ],
       "acceptable_answers": ["A", "C", "D"]
     },
     {
       "id": "p1-q3",
       "type": "order",
-      "question": "Sort communication sequence for first external release.",
+      "question": "Triez la séquence de communication pour la première publication externe.",
       "points": 10,
       "options": [
-        {"key": "A", "label": "Internal confirmation"},
-        {"key": "B", "label": "Regulator notification"},
-        {"key": "C", "label": "Public holding statement"},
-        {"key": "D", "label": "Media Q and A briefing"}
+        {"key": "A", "label": "Confirmation interne"},
+        {"key": "B", "label": "Notification au régulateur"},
+        {"key": "C", "label": "Déclaration d'attente publique"},
+        {"key": "D", "label": "Point de presse (Q&A)"}
       ],
       "correct_order": ["A", "B", "C", "D"]
     },
     {
       "id": "p1-q4",
       "type": "short_answer",
-      "question": "Provide one risk if transport and finance are treated as separate incidents.",
-      "prompt": "Max 20 words.",
+      "question": "Donnez un risque si les transports et la finance sont traités comme des incidents distincts.",
+      "prompt": "Max 20 mots.",
       "points": 8
     }
   ]

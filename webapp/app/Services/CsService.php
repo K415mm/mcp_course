@@ -349,11 +349,26 @@ class CsService
             $answerKey = strtoupper(trim((string) ($entry->answer_key ?? '')));
             $awarded = 0;
 
-            if ($hasCorrect) {
-                $awarded = in_array($answerKey, $correct, true) ? max(0, (int) $quiz->base_points) : 0;
+            if ($quiz->type === 'multi_choice' || str_contains($answerKey, ',')) {
+                $chosenKeys = array_filter(array_map('trim', explode(',', $answerKey)));
+                if ($hasCorrect) {
+                    sort($chosenKeys);
+                    $sortedCorrect = $correct;
+                    sort($sortedCorrect);
+                    $awarded = ($chosenKeys === $sortedCorrect) ? max(0, (int) $quiz->base_points) : 0;
+                } else {
+                    foreach ($chosenKeys as $k) {
+                        $opt = $options->firstWhere('key', $k);
+                        $awarded += (int) ($opt['points'] ?? 0);
+                    }
+                }
             } else {
-                $opt = $options->firstWhere('key', $answerKey);
-                $awarded = (int) ($opt['points'] ?? 0);
+                if ($hasCorrect) {
+                    $awarded = in_array($answerKey, $correct, true) ? max(0, (int) $quiz->base_points) : 0;
+                } else {
+                    $opt = $options->firstWhere('key', $answerKey);
+                    $awarded = (int) ($opt['points'] ?? 0);
+                }
             }
 
             $entry->awarded_points = max(0, $awarded);

@@ -3,16 +3,16 @@
     {
       "id": "p0-map-overview",
       "type": "image",
-      "title": "National Ops Map",
-      "caption": "Initial situational board for all teams.",
+      "title": "Carte des Opérations Nationales",
+      "caption": "Tableau de situation initial pour toutes les équipes.",
       "url": "/cs-assets/game_logo.png",
       "stage": "trigger"
     },
     {
       "id": "p0-news-loop",
       "type": "video",
-      "title": "Breaking News Feed",
-      "caption": "Use this clip before opening first quiz.",
+      "title": "Fil d'Actualité",
+      "caption": "Utilisez ce clip avant d'ouvrir le premier quiz.",
       "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
       "autoplay": false,
       "loop": true,
@@ -22,8 +22,8 @@
     {
       "id": "p0-threat-animation",
       "type": "animation",
-      "title": "Threat Pulse Animation",
-      "caption": "Visual pulse to increase pressure in room.",
+      "title": "Animation de Menace",
+      "caption": "Animation visuelle pour augmenter la pression.",
       "url": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTNiM3AwbWYwNHBsZG8xYmRzNjk2NHE2bjNucmNpMHN3cHBjdGs3YyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3o7qE1YN7aBOFPRw8E/giphy.gif",
       "stage": "briefing"
     }
@@ -33,70 +33,70 @@
       "type": "intel",
       "stage": "trigger",
       "tag": "NATIONAL_ALERT",
-      "content": "Multiple sectors report synchronized reconnaissance against public and private infrastructure.",
+      "content": "Plusieurs secteurs signalent une reconnaissance synchronisée contre les infrastructures publiques et privées.",
       "related_media": ["p0-map-overview"]
     },
     {
       "type": "warn",
       "stage": "briefing",
       "tag": "SOCIAL_SPIKE",
-      "content": "Misinformation volume is rising quickly and public trust signals are dropping.",
+      "content": "Le volume de désinformation augmente rapidement et les signaux de confiance du public chutent.",
       "related_media": ["p0-news-loop", "p0-threat-animation"]
     },
     {
       "type": "info",
       "stage": "briefing",
       "tag": "ANCS_ROLE",
-      "content": "ANCS enters as mentor observer: no score, no vote, advisory channel only."
+      "content": "L'ANCS intervient en tant qu'observateur mentor : pas de score, pas de vote, canal consultatif uniquement."
     }
   ],
   "questions": [
     {
       "id": "p0-q1",
       "type": "single_choice",
-      "question": "What is the first operational posture?",
+      "question": "Quelle est la première posture opérationnelle ?",
       "points": 20,
       "time_limit": 90,
       "options": [
-        {"key": "A", "label": "Contain and segment", "color": "#ef4444", "points": 20},
-        {"key": "B", "label": "Public communication first", "color": "#f59e0b", "points": 12},
-        {"key": "C", "label": "Cross-sector war-room", "color": "#22c55e", "points": 18}
+        {"key": "A", "label": "Contenir et segmenter", "color": "#ef4444", "points": 20},
+        {"key": "B", "label": "Communication publique en priorité", "color": "#f59e0b", "points": 12},
+        {"key": "C", "label": "Cellule de crise intersectorielle", "color": "#22c55e", "points": 18}
       ],
       "related_media": ["p0-map-overview"],
-      "note": "Use as opening strategic vote."
+      "note": "À utiliser comme vote stratégique d'ouverture."
     },
     {
       "id": "p0-q2",
       "type": "multi_choice",
-      "question": "Select all immediate actions valid in the first 15 minutes.",
+      "question": "Sélectionnez toutes les actions immédiates valides dans les 15 premières minutes.",
       "points": 15,
       "options": [
-        {"key": "A", "label": "Confirm incident scope with SOC leads"},
-        {"key": "B", "label": "Shut down all internet access nationwide"},
-        {"key": "C", "label": "Activate single crisis communication channel"},
-        {"key": "D", "label": "Freeze forensic evidence collection"}
+        {"key": "A", "label": "Confirmer la portée de l'incident avec les responsables du SOC"},
+        {"key": "B", "label": "Couper tous les accès internet à l'échelle nationale"},
+        {"key": "C", "label": "Activer un canal unique de communication de crise"},
+        {"key": "D", "label": "Geler la collecte de preuves numériques"}
       ],
       "acceptable_answers": ["A", "C"],
-      "note": "Score manually from decision quality."
+      "note": "Évaluer manuellement selon la qualité de la décision."
     },
     {
       "id": "p0-q3",
       "type": "order",
-      "question": "Order these actions from first to fourth.",
+      "question": "Ordonnez ces actions de la première à la quatrième.",
       "points": 15,
       "options": [
-        {"key": "A", "label": "Scope and validate telemetry"},
-        {"key": "B", "label": "Open inter-agency coordination cell"},
-        {"key": "C", "label": "Issue public holding statement"},
-        {"key": "D", "label": "Launch containment actions"}
+        {"key": "A", "label": "Délimiter et valider la télémétrie"},
+        {"key": "B", "label": "Ouvrir une cellule de coordination inter-agences"},
+        {"key": "C", "label": "Publier une déclaration d'attente publique"},
+        {"key": "D", "label": "Lancer les actions de confinement"}
       ],
       "correct_order": ["A", "D", "B", "C"]
     },
     {
       "id": "p0-q4",
       "type": "short_answer",
-      "question": "Write one sentence mission statement for this phase.",
-      "prompt": "Max 25 words. Must include objective + time horizon + owner.",
+      "question": "Rédigez un énoncé de mission d'une phrase pour cette phase.",
+      "prompt": "Max 25 mots. Doit inclure l'objectif + l'horizon temporel + le responsable.",
       "points": 10
     }
   ]

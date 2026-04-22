@@ -130,7 +130,13 @@
                     </div>
                     <div class="ms-auto text-end">
                         <span class="small"><span class="online-dot"></span><span class="text-white-50">En ligne</span></span>
-                        <div class="small text-white-50 mt-1">Score: <strong class="text-theme" id="myScore">{{ $player->team->score ?? 0 }}</strong></div>
+                        <div class="small text-white-50 mt-1">
+                            @if($player && !$player->team->is_scored)
+                                Rôle: <strong class="text-warning">Mentor non-score</strong>
+                            @else
+                                Score: <strong class="text-theme" id="myScore">{{ $player->team->score ?? 0 }}</strong>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,6 +175,16 @@
             </div>
         </div>
 
+        <div class="card mt-3" id="quizCard" style="display:none!important">
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+            <div class="card-body">
+                <h5 class="card-title mb-1"><i class="bi bi-patch-question me-2 text-info"></i>Question Quiz</h5>
+                <p class="small text-white-50 mb-2" id="quizQuestion"></p>
+                <div id="quizOptions" class="d-flex flex-wrap gap-2"></div>
+                <div id="quizMeta" class="small text-white-50 mt-2"></div>
+            </div>
+        </div>
+
     </div>
 
     {{-- RIGHT: Live feed + Teams --}}
@@ -182,6 +198,14 @@
                 <div id="broadcastFeed" style="max-height:220px;overflow-y:auto">
                     <div class="text-white-50 text-center py-3 small">En attente de communications...</div>
                 </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Phase Intel & Quiz</h5>
+                <div id="phaseContentParticipant" class="small text-white-50">Aucun contenu de phase.</div>
             </div>
         </div>
 
@@ -199,7 +223,7 @@
                             <div class="small text-white-50">{{ $t->role_label }}</div>
                         </div>
                         <div class="text-end">
-                            <div class="fw-bold" style="font-family:'Space Mono',monospace;color:{{ $t->color }}" id="sc-{{ $t->id }}">{{ $t->score }}</div>
+                            <div class="fw-bold" style="font-family:'Space Mono',monospace;color:{{ $t->color }}" id="sc-{{ $t->id }}">{{ $t->is_scored ? $t->score : 'MENTOR' }}</div>
                             <div class="small text-white-50" id="online-{{ $t->id }}">
                                 <span class="online-dot"></span>0
                             </div>
@@ -225,6 +249,7 @@ const TEAM_ID   = {{ $player?->cs_team_id ?? 'null' }};
 
 let selectedTeam = null, decisionType = 'decision';
 let lastBcId = 0, lastAtmo = '';
+const teamStateById = {};
 
 // ── API helper ─────────────────────────────────────────────
 async function api(path, method='GET', body=null) {
@@ -271,8 +296,15 @@ async function castVote(key) {
     if (res.ok) {
         toast('success','Vote enregistré');
     } else {
-        toast('warn','Vote non pris en compte (déjà voté ?)');
+        toast('warn', res.error || 'Vote non pris en compte');
     }
+}
+
+async function castQuiz(key) {
+    if (!TEAM_ID) return;
+    const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
+    if (res.ok) toast('success','Réponse quiz enregistrée');
+    else toast('warn', res.error || 'Réponse quiz non prise en compte');
 }
 
 // ── POLL ───────────────────────────────────────────────────
@@ -283,9 +315,40 @@ async function poll() {
         updatePhase(d.session);
         updateTeams(d.teams);
         updateBroadcasts(d.broadcasts);
+        renderPhaseContent(d.phaseContent);
         updateVote(d.vote);
+        updateQuiz(d.quiz);
         handleAtmo(d.session?.atmosphere);
     } catch(e) {}
+}
+
+function renderPhaseContent(content) {
+    const root = document.getElementById('phaseContentParticipant');
+    if (!root) return;
+    const data = content || {};
+    const media = Array.isArray(data.media) ? data.media : [];
+    const messages = Array.isArray(data.messages) ? data.messages : [];
+    const questions = Array.isArray(data.questions) ? data.questions : [];
+
+    if (!media.length && !messages.length && !questions.length) {
+        root.innerHTML = '<div class="text-white-50">Aucun contenu de phase.</div>';
+        return;
+    }
+
+    const mediaHtml = media.map((m) => {
+        if (m.type === 'video') {
+            return `<div class="mb-2"><div class="fw-bold">${m.title || 'Video'}</div><video src="${m.url}" class="w-100 rounded mt-1" controls ${m.muted ? 'muted' : ''} ${m.loop ? 'loop' : ''}></video><div class="text-white-50 small">${m.caption || ''}</div></div>`;
+        }
+        if (m.type === 'animation') {
+            return `<div class="mb-2"><div class="fw-bold">${m.title || 'Animation'}</div><img src="${m.url}" class="w-100 rounded mt-1" alt="${m.title || 'animation'}"><div class="text-white-50 small">${m.caption || ''}</div></div>`;
+        }
+        return `<div class="mb-2"><div class="fw-bold">${m.title || 'Image'}</div><img src="${m.url}" class="w-100 rounded mt-1" alt="${m.title || 'image'}"><div class="text-white-50 small">${m.caption || ''}</div></div>`;
+    }).join('');
+
+    const messagesHtml = messages.map((m) => `<div class="broadcast-item ${m.type || 'info'}"><div class="small text-white-50">${(m.type || 'info').toUpperCase()}</div>${m.content || ''}</div>`).join('');
+    const questionsHtml = questions.map((q, i) => `<div class="mb-2 p-2 rounded" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)"><div class="fw-bold">${i+1}. ${q.question || 'Quiz'}</div><div class="small text-white-50">Type: ${(q.type || 'single_choice').replace('_',' ')}</div></div>`).join('');
+
+    root.innerHTML = `${mediaHtml}${messagesHtml}${questionsHtml}`;
 }
 setInterval(poll, 2000); poll();
 
@@ -316,11 +379,12 @@ function updatePhase(s) {
 function updateTeams(teams) {
     if (!teams) return;
     teams.forEach(t => {
+        teamStateById[t.id] = t;
         const sc = document.getElementById('sc-'+t.id);
         const ol = document.getElementById('online-'+t.id);
-        if (sc) sc.textContent = t.score;
+        if (sc) sc.textContent = t.isScored ? t.score : 'MENTOR';
         if (ol) ol.innerHTML = `<span class="online-dot"></span>${t.onlineCount}`;
-        if (t.id == (TEAM_ID||0) && document.getElementById('myScore')) document.getElementById('myScore').textContent = t.score;
+        if (t.id == (TEAM_ID||0) && document.getElementById('myScore') && t.isScored) document.getElementById('myScore').textContent = t.score;
     });
 }
 
@@ -354,18 +418,49 @@ function updateVote(vote) {
     const card = document.getElementById('voteCard');
     if (!vote) { card.style.setProperty('display','none','important'); return; }
     card.style.removeProperty('display');
-    document.getElementById('voteQuestion').textContent = vote.question ?? '';
+    const teamInfo = teamStateById[TEAM_ID] || null;
+    const canVote = !!(teamInfo && teamInfo.canVote);
+    const isSecretOpen = !!(vote.isSecret && (vote.is_open ?? vote.isOpen));
+    document.getElementById('voteQuestion').textContent = `${vote.question ?? ''}${isSecretOpen ? ' (vote secret)' : ''}`;
     const myChoice = vote.myChoice ?? null;
     const opts = document.getElementById('voteOptions');
     opts.innerHTML = (vote.options||[]).map(o => {
-        const pct = Math.round((vote.tally?.[o.key]||0) / Math.max(1, Object.values(vote.tally||{}).reduce((a,b)=>a+b,0)) * 100);
+        const showPct = !isSecretOpen;
+        const pct = showPct ? Math.round((vote.tally?.[o.key]||0) / Math.max(1, Object.values(vote.tally||{}).reduce((a,b)=>a+b,0)) * 100) : null;
         const selected = myChoice === o.key;
         const border = o.color || 'var(--bs-theme)';
+        const disabled = !canVote ? 'disabled' : '';
+        const pctBadge = showPct ? `<span class="badge bg-dark ms-1">${pct}%</span>` : '';
         return `<button onclick="castVote('${o.key}')" class="btn btn-sm ${selected ? 'btn-theme' : 'btn-outline-theme'}"
+            ${disabled}
             style="min-width:80px;border-color:${border};color:${selected ? '#001018' : border}">
-            ${o.label} <span class="badge bg-dark ms-1">${pct}%</span>
+            ${o.label} ${pctBadge}
         </button>`;
     }).join('');
+    if (!canVote) {
+        opts.innerHTML += `<div class="small text-warning mt-2 w-100">Votre equipe a un role mentor et ne vote pas.</div>`;
+    }
+}
+
+function updateQuiz(quiz) {
+    const card = document.getElementById('quizCard');
+    if (!card) return;
+    if (!quiz || !quiz.isOpen) { card.style.setProperty('display','none','important'); return; }
+    card.style.removeProperty('display');
+
+    document.getElementById('quizQuestion').textContent = quiz.question ?? '';
+    const myAnswer = quiz.myAnswer ?? null;
+    const opts = document.getElementById('quizOptions');
+    opts.innerHTML = (quiz.options || []).map(o => {
+        const selected = myAnswer === o.key;
+        const border = o.color || '#60a5fa';
+        return `<button onclick="castQuiz('${o.key}')" class="btn btn-sm ${selected ? 'btn-info text-dark' : 'btn-outline-info'}"
+            style="min-width:110px;border-color:${border};color:${selected ? '#001018' : border}">
+            ${o.key} · ${o.label}
+        </button>`;
+    }).join('');
+
+    document.getElementById('quizMeta').textContent = `Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}`;
 }
 
 // ── ATMOSPHERE ─────────────────────────────────────────────

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CsVote extends Model
 {
     protected $fillable = [
-        'cs_session_id', 'question', 'options', 'is_open', 'results', 'phase_index',
+        'cs_session_id', 'question', 'options', 'is_open', 'is_secret', 'results', 'phase_index',
     ];
 
     protected function casts(): array
@@ -18,6 +18,7 @@ class CsVote extends Model
             'options'  => 'json',
             'results'  => 'json',
             'is_open'  => 'boolean',
+            'is_secret' => 'boolean',
         ];
     }
 
@@ -45,4 +46,3 @@ class CsVote extends Model
         return $counts;
     }
 }
-

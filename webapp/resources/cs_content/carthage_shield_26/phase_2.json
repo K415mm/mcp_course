@@ -1,0 +1,87 @@
+{
+  "media": [
+    {
+      "id": "p2-fake-post",
+      "type": "image",
+      "title": "Fake Statement Screenshot",
+      "caption": "A forged statement is spreading online.",
+      "url": "/cs-assets/badges/cyber_hero.png",
+      "stage": "media_crisis"
+    },
+    {
+      "id": "p2-press-room",
+      "type": "video",
+      "title": "Press Room Footage",
+      "caption": "Journalists request immediate response.",
+      "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "stage": "media_crisis"
+    }
+  ],
+  "messages": [
+    {
+      "type": "warn",
+      "stage": "media_crisis",
+      "tag": "MEDIA_DEADLINE",
+      "content": "National media requests official statement in less than 20 minutes.",
+      "related_media": ["p2-press-room"]
+    },
+    {
+      "type": "alert",
+      "stage": "media_crisis",
+      "tag": "FAKE_COMMUNIQUE",
+      "content": "A forged government communique is now viral on social channels.",
+      "related_media": ["p2-fake-post"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "p2-q1",
+      "type": "single_choice",
+      "question": "Which communication axis do you validate now?",
+      "points": 20,
+      "time_limit": 70,
+      "options": [
+        {"key": "A", "label": "Immediate full disclosure", "color": "#ef4444", "points": 12},
+        {"key": "B", "label": "Progressive confirmed disclosure", "color": "#f59e0b", "points": 18},
+        {"key": "C", "label": "Single voice ANCS + CERT + Gov", "color": "#22c55e", "points": 20}
+      ],
+      "related_media": ["p2-press-room"]
+    },
+    {
+      "id": "p2-q2",
+      "type": "multi_choice",
+      "question": "Select all elements that must appear in first public statement.",
+      "points": 12,
+      "options": [
+        {"key": "A", "label": "Scope under validation"},
+        {"key": "B", "label": "Rumor amplification details"},
+        {"key": "C", "label": "Protection actions already active"},
+        {"key": "D", "label": "Next update timestamp"}
+      ],
+      "acceptable_answers": ["A", "C", "D"]
+    },
+    {
+      "id": "p2-q3",
+      "type": "order",
+      "question": "Order these actions to neutralize fake communique impact.",
+      "points": 12,
+      "options": [
+        {"key": "A", "label": "Verify official channels"},
+        {"key": "B", "label": "Publish authenticity notice"},
+        {"key": "C", "label": "Coordinate media partners"},
+        {"key": "D", "label": "Run social counter-messaging"}
+      ],
+      "correct_order": ["A", "B", "C", "D"]
+    },
+    {
+      "id": "p2-q4",
+      "type": "short_answer",
+      "question": "Write a 15-word anti-rumor message for citizen channels.",
+      "prompt": "Clarity first, no technical jargon.",
+      "points": 8
+    }
+  ]
+}

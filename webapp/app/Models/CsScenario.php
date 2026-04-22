@@ -15,6 +15,7 @@ class CsScenario
             'phantom_grid'   => self::phantomGrid(),
             'atlas_breach'   => self::atlasBreach(),
             'ghost_protocol' => self::ghostProtocol(),
+            'carthage_shield_26' => self::carthageShield26(),
         ];
     }
 
@@ -191,6 +192,46 @@ class CsScenario
                 ['key' => 'A', 'label' => 'Ne pas payer',      'color' => '#e63946'],
                 ['key' => 'B', 'label' => 'Négocier',          'color' => '#f4a261'],
                 ['key' => 'C', 'label' => 'Payer & investiguer','color' => '#8b5cf6'],
+            ],
+        ];
+    }
+
+    // ── SCENARIO 4: CARTHAGE SHIELD 26 ─────────────────────────────
+    private static function carthageShield26(): array
+    {
+        return [
+            'key'              => 'carthage_shield_26',
+            'title'            => 'Carthage Shield 26',
+            'description'      => 'Scenario national 2026: attaque coordonnee multi-secteurs avec role mentor ANCS non-score.',
+            'difficulty'       => 'Expert',
+            'duration_minutes' => 140,
+            'attacker_name'    => 'RANSOMHUB / PHANTOM GRID',
+            'attacker_icon'    => '☠️',
+            'secret_vote_phases' => [1, 3],
+            'teams' => [
+                ['type' => 'ancs',      'name' => 'ANCS',      'role_label' => 'Mentorat national',      'color' => '#00b4d8', 'icon' => '🏛️', 'is_scored' => false, 'can_vote' => false, 'badge_eligible' => false, 'show_in_ranking' => false, 'role_mode' => 'mentor'],
+                ['type' => 'cert',      'name' => 'CERT',      'role_label' => 'Detection technique',    'color' => '#2dc653', 'icon' => '🔍', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'finance',   'name' => 'FINANCE',   'role_label' => 'Secteur bancaire',       'color' => '#f4a261', 'icon' => '🏦', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'transport', 'name' => 'TRANSPORT', 'role_label' => 'Mobilite critique',      'color' => '#8b5cf6', 'icon' => '🚆', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'egov',      'name' => 'E-GOV',     'role_label' => 'Services citoyens',      'color' => '#fbbf24', 'icon' => '🖥️', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'comm',      'name' => 'COMM',      'role_label' => 'Communication de crise', 'color' => '#e63946', 'icon' => '📡', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+            ],
+            'phantom_messages' => [
+                'Signal faible confirme. La chaine de confiance est compromise.',
+                'Le bruit mediatique est une arme. Gardez le cap.',
+                'Le pivot inter-sectoriel est en cours. Vos choix seront traces.',
+            ],
+            'phases' => [
+                ['index' => 0, 'name' => 'PHASE 1', 'tag' => 'REVEIL',      'desc' => 'Phantom Awakening',                    'duration_seconds' => 1800],
+                ['index' => 1, 'name' => 'PHASE 2', 'tag' => 'ESCALADE',    'desc' => 'Escalade et choix strategique',       'duration_seconds' => 2400],
+                ['index' => 2, 'name' => 'PHASE 3', 'tag' => 'MEDIA',       'desc' => 'Pression mediatique et institutionnelle','duration_seconds' => 2400],
+                ['index' => 3, 'name' => 'PHASE 4', 'tag' => 'ARBITRAGE',   'desc' => 'Arbitrage national et riposte',       'duration_seconds' => 1200],
+                ['index' => 4, 'name' => 'PHASE 5', 'tag' => 'DEBRIEF',     'desc' => 'Debrief et cloture',                  'duration_seconds' => 600],
+            ],
+            'vote_options' => [
+                ['key' => 'A', 'label' => 'Defensive',   'color' => '#00b4d8'],
+                ['key' => 'B', 'label' => 'Diplomatique','color' => '#f4a261'],
+                ['key' => 'C', 'label' => 'Coalition',   'color' => '#2dc653'],
             ],
         ];
     }

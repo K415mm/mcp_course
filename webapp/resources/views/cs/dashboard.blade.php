@@ -421,7 +421,9 @@ body.scanlines::after {
 @keyframes dotPulse { 0%,100% { opacity:1 } 50% { opacity:.25 } }
 
 /* ── Bottom widgets ─────────────────────────────────────────────── */
-.widgets-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.widgets-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 10px; }
+@media (max-width: 1400px) { .widgets-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 980px) { .widgets-row { grid-template-columns: 1fr; } }
 
 .widget {
     background: rgba(13,27,46,.8);
@@ -785,8 +787,8 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
     {{-- BOTTOM WIDGETS --}}
     <div class="widgets-row">
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-activity"></i>Activité Temps Réel</div>
-            <div class="feed-list" id="feedList"></div>
+            <div class="widget-hdr"><i class="bi bi-megaphone"></i>Announcements</div>
+            <div class="feed-list" id="announceLog"></div>
         </div>
         <div class="widget">
             <div class="widget-hdr"><i class="bi bi-hand-thumbs-up"></i>Vote Stratégique</div>
@@ -795,8 +797,18 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
             </div>
         </div>
         <div class="widget">
+            <div class="widget-hdr"><i class="bi bi-patch-question"></i>Question Quiz</div>
+            <div id="quizWidget">
+                <div class="vote-q fst-italic">Aucune question en cours</div>
+            </div>
+        </div>
+        <div class="widget">
             <div class="widget-hdr"><i class="bi bi-lightning-charge"></i>Injections Actives</div>
             <div class="feed-list" id="injectLog"></div>
+        </div>
+        <div class="widget">
+            <div class="widget-hdr"><i class="bi bi-collection-play"></i>Media & Quiz de Phase</div>
+            <div class="feed-list" id="phaseMediaQuiz"></div>
         </div>
     </div>
 
@@ -830,8 +842,29 @@ async function poll() {
         updateTeams(d.teams);
         handleActivity(d.broadcasts, d.injects);
         handleVote(d.vote);
+        handleQuiz(d.quiz);
+        handlePhaseContent(d.phaseContent);
         if (d.session.status === 'finished' && !endgameFired) fireEndgame(d.teams, d.session);
     } catch(e) {}
+}
+
+function handlePhaseContent(content) {
+    const root = document.getElementById('phaseMediaQuiz');
+    if (!root) return;
+    const data = content || {};
+    const media = Array.isArray(data.media) ? data.media : [];
+    const questions = Array.isArray(data.questions) ? data.questions : [];
+    const messages = Array.isArray(data.messages) ? data.messages : [];
+
+    if (!media.length && !questions.length && !messages.length) {
+        root.innerHTML = '<div class="feed-item">Aucun contenu de phase</div>';
+        return;
+    }
+
+    const mediaHtml = media.slice(0, 2).map(m => `<div class="feed-item"><div class="fi-ts">${(m.type || 'image').toUpperCase()}</div>${m.title || 'Media'}<div style="font-size:.65rem;opacity:.65">${m.caption || ''}</div></div>`).join('');
+    const qHtml = questions.slice(0, 2).map(q => `<div class="feed-item"><div class="fi-ts">QUIZ ${(q.type || 'single_choice').toUpperCase()}</div>${q.question || 'Question'}</div>`).join('');
+    const mHtml = messages.slice(0, 1).map(m => `<div class="feed-item ${m.type || 'info'}"><div class="fi-ts">MESSAGE</div>${m.content || ''}</div>`).join('');
+    root.innerHTML = `${mediaHtml}${mHtml}${qHtml}`;
 }
 setInterval(poll, 1000); poll();
 
@@ -948,7 +981,7 @@ function updateTeams(teams) {
                 ${t.logoPath ? `<img src="${t.logoPath}" class="t-icon-img">` : `<span class="t-icon">${t.icon}</span>`}
                 <div class="t-name" style="color: var(--tc)">${t.name}</div>
                 <div class="t-role">${t.roleLabel}</div>
-                <div class="t-score" id="ts-${t.id}">${t.score}</div>
+                <div class="t-score" id="ts-${t.id}">${t.isScored ? t.score : 'MENTOR'}</div>
                 <div class="t-delta" id="td-${t.id}"></div>
                 <div class="t-badge" id="tb-${t.id}">${badgeImgHtml(t.badge)}</div>
                 <div class="t-badge-nm" id="tbn-${t.id}">${t.badge.name}</div>
@@ -963,7 +996,7 @@ function updateTeams(teams) {
             const badgeEl   = document.getElementById('tb-' + t.id);
 
             // ── Score changed ──
-            if (t.score !== prev) {
+            if (t.isScored && t.score !== prev) {
                 const delta = t.score - prev;
                 const dEl   = document.getElementById('td-' + t.id);
                 dEl.textContent = (delta > 0 ? '+' : '') + delta;
@@ -985,7 +1018,7 @@ function updateTeams(teams) {
                     playTone(220, .18, 'sine', .12);
                 }
             }
-            scoreEl.textContent = t.score;
+            scoreEl.textContent = t.isScored ? t.score : 'MENTOR';
 
             // ── Badge tier changed (unlock animation!) ──
             if (t.badge.name !== prevBdg) {
@@ -1033,7 +1066,7 @@ function handleActivity(broadcasts, injects) {
 }
 
 function addFeed(type, msg) {
-    const fc = document.getElementById('feedList');
+    const fc = document.getElementById('announceLog');
     const n = new Date();
     const ts = [n.getHours(), n.getMinutes()].map(x => String(x).padStart(2,'0')).join(':');
     const d = document.createElement('div');
@@ -1054,9 +1087,12 @@ function handleVote(vote) {
         return;
     }
 
-    const total = Object.values(vote.tally || {}).reduce((a,b) => a+b, 0) || 1;
+    const isSecretOpen = !!(vote.isSecret && (vote.is_open ?? vote.isOpen));
+    const tallyData = vote.tally || {};
+    const hasVisibleTally = Object.keys(tallyData).length > 0;
+    const total = Object.values(tallyData).reduce((a,b) => a+b, 0) || 1;
     const isOpen = (vote.is_open ?? vote.isOpen ?? true) === true;
-    const winner = !isOpen ? Object.entries(vote.tally || {}).sort((a,b)=>b[1]-a[1])[0]?.[0] : null;
+    const winner = !isOpen ? Object.entries(tallyData).sort((a,b)=>b[1]-a[1])[0]?.[0] : null;
 
     // Detect vote just closed → flash announcement
     if (lastVoteId === vote.id && lastVoteOpen === true && !isOpen && winner) {
@@ -1067,7 +1103,7 @@ function handleVote(vote) {
     lastVoteOpen = isOpen;
 
     const barsHtml = (vote.options||[]).map(o => {
-        const count  = vote.tally[o.key] ?? 0;
+        const count  = tallyData[o.key] ?? 0;
         const pct    = Math.round(count / total * 100);
         const isWin  = winner === o.key;
         const safeColor = o.color || 'var(--bs-theme)';
@@ -1082,12 +1118,45 @@ function handleVote(vote) {
         </div>`;
     }).join('');
 
+    if (isSecretOpen && !hasVisibleTally) {
+        el.innerHTML = `
+            <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'} 🔒</div>
+            <div style="font-size:.8rem;opacity:.7;text-align:center;padding:10px 0">Vote secret en cours. Les resultats seront visibles a la cloture.</div>`;
+        return;
+    }
+
     el.innerHTML = `
-        <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'}</div>
+        <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'}${vote.isSecret ? ' 🔒' : ''}</div>
         <div class="vote-bars">${barsHtml}</div>
         ${winner ? `<div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:.8rem;color:#22c55e;font-weight:700">
             ✅ RÉSULTAT FINAL : ${winner}
         </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} reçus</div>`}`;
+}
+
+function handleQuiz(quiz) {
+    const el = document.getElementById('quizWidget');
+    if (!el) return;
+    if (!quiz) {
+        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucune question en cours</div>';
+        return;
+    }
+
+    const optionsHtml = (quiz.options || []).map(o => `
+        <div class="vote-bar-row">
+            <span class="vb-lbl"><span class="vb-key" style="color:${o.color || '#60a5fa'}">${o.key}</span><span class="vb-text">${o.label}</span></span>
+        </div>
+    `).join('');
+
+    const resultHtml = (quiz.results || []).slice(0, 6).map(r => `
+        <div style="font-size:.72rem;opacity:.85">${r.teamName}: ${r.answerKey || '—'} => <strong>${r.awardedPoints} pts</strong></div>
+    `).join('');
+
+    el.innerHTML = `
+        <div class="vote-q">${quiz.question ?? 'Question Quiz'}</div>
+        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses: ${quiz.answerCount || 0}</div>
+        <div class="vote-bars">${optionsHtml}</div>
+        ${resultHtml ? `<div style="margin-top:8px">${resultHtml}</div>` : ''}
+    `;
 }
 
 // ── Phantom ───────────────────────────────────────────────────────
@@ -1105,7 +1174,8 @@ function dismissPhantom() {
 // ── Endgame ───────────────────────────────────────────────────────
 function fireEndgame(teams, session) {
     endgameFired = true;
-    const sorted = [...teams].sort((a,b) => b.score - a.score);
+    const rankable = [...teams].filter(t => t.showInRanking !== false);
+    const sorted = rankable.sort((a,b) => b.score - a.score);
     const top3 = sorted.slice(0, 3);
     const rest = sorted.slice(3);
 

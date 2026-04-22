@@ -223,7 +223,47 @@ class CsInjectSeeder extends Seeder
             ],
         ];
 
-        $all = array_merge($phantom, $atlas, $ghost);
+        // ── CARTHAGE SHIELD 26 Injects ──────────────────────────────
+        $cs26 = [
+            [
+                'scenario_key' => 'carthage_shield_26',
+                'tag'          => 'ALERTE NATIONALE #1',
+                'content'      => 'Des indicateurs convergents montrent une compromission simultanée de FINANCE et TRANSPORT.',
+                'color'        => 'red',
+                'phase_hint'   => '1',
+                'is_surprise'  => false,
+                'sort_order'   => 10,
+            ],
+            [
+                'scenario_key' => 'carthage_shield_26',
+                'tag'          => 'INJECT MEDIA #2',
+                'content'      => 'Une rumeur de fuite massive devient virale. La pression publique s\'accelere.',
+                'color'        => 'amber',
+                'phase_hint'   => '2',
+                'is_surprise'  => false,
+                'sort_order'   => 20,
+            ],
+            [
+                'scenario_key' => 'carthage_shield_26',
+                'tag'          => 'ARBITRAGE #3',
+                'content'      => 'Les priorites sectorielles divergent. Une decision nationale est requise sous 15 minutes.',
+                'color'        => 'purple',
+                'phase_hint'   => '3',
+                'is_surprise'  => false,
+                'sort_order'   => 30,
+            ],
+            [
+                'scenario_key' => 'carthage_shield_26',
+                'tag'          => 'SURPRISE A',
+                'content'      => 'Un faux communique officiel circule et contredit la cellule de crise.',
+                'color'        => 'red',
+                'phase_hint'   => null,
+                'is_surprise'  => true,
+                'sort_order'   => 100,
+            ],
+        ];
+
+        $all = array_merge($phantom, $atlas, $ghost, $cs26);
         CsInject::insert($all);
     }
 }

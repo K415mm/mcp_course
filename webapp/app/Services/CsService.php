@@ -7,6 +7,8 @@ use App\Models\CsBroadcast;
 use App\Models\CsDecision;
 use App\Models\CsInject;
 use App\Models\CsPlayer;
+use App\Models\CsQuiz;
+use App\Models\CsQuizEntry;
 use App\Models\CsScenario;
 use App\Models\CsSession;
 use App\Models\CsSessionInject;
@@ -31,8 +33,9 @@ class CsService
             'atmosphere'   => 'calm',
         ]);
 
-        // Create the 6 teams
-        foreach (CsTeam::defaultTeams() as $teamData) {
+        // Create teams from scenario definition when available.
+        $teamDefinitions = $scenario['teams'] ?? CsTeam::defaultTeams();
+        foreach ($teamDefinitions as $teamData) {
             $session->teams()->create($teamData);
         }
 
@@ -180,6 +183,10 @@ class CsService
 
     public function adjustScore(CsTeam $team, int $delta): void
     {
+        if (!$team->is_scored) {
+            return;
+        }
+
         $team->increment('score', $delta);
         $team->score = max(0, $team->fresh()->score);
         $team->save();
@@ -241,7 +248,7 @@ class CsService
 
     // ── Votes ───────────────────────────────────────────────────────
 
-    public function openVote(CsSession $session, ?string $question = null, ?array $options = null): CsVote
+    public function openVote(CsSession $session, ?string $question = null, ?array $options = null, bool $isSecret = false): CsVote
     {
         // Close any existing open vote first
         $session->votes()->where('is_open', true)->update(['is_open' => false]);
@@ -258,6 +265,7 @@ class CsService
             'question'      => $question,
             'options'       => $options ?? $defaultOptions,
             'is_open'       => true,
+            'is_secret'     => $isSecret,
             'phase_index'   => $session->current_phase_index,
         ]);
     }
@@ -272,6 +280,7 @@ class CsService
     public function submitVote(CsVote $vote, CsTeam $team, string $choice): bool
     {
         if (!$vote->is_open) return false;
+        if (!$team->can_vote) return false;
         if ($vote->teamHasVoted($team)) return false;
 
         CsVoteEntry::create([
@@ -282,6 +291,108 @@ class CsService
         ]);
 
         return true;
+    }
+
+    // ── Quiz Questions (team-scored, separate from strategic vote) ──
+
+    public function openQuiz(
+        CsSession $session,
+        string $question,
+        array $options,
+        string $type = 'single_choice',
+        ?string $prompt = null,
+        ?array $correctAnswers = null,
+        int $basePoints = 0
+    ): CsQuiz {
+        $session->quizzes()->where('is_open', true)->update(['is_open' => false]);
+
+        return CsQuiz::create([
+            'cs_session_id' => $session->id,
+            'type' => $type,
+            'question' => $question,
+            'prompt' => $prompt,
+            'options' => $options,
+            'correct_answers' => $correctAnswers ?? [],
+            'base_points' => max(0, $basePoints),
+            'is_open' => true,
+            'phase_index' => $session->current_phase_index,
+        ]);
+    }
+
+    public function submitQuizAnswer(CsQuiz $quiz, CsTeam $team, ?string $answerKey, ?string $answerText = null): bool
+    {
+        if (!$quiz->is_open) return false;
+        if ($quiz->teamHasAnswered($team)) return false;
+        if (!$team->isScorable()) return false;
+
+        CsQuizEntry::create([
+            'cs_quiz_id' => $quiz->id,
+            'cs_team_id' => $team->id,
+            'answer_key' => $answerKey,
+            'answer_text' => $answerText,
+            'awarded_points' => 0,
+            'answered_at' => now(),
+        ]);
+
+        return true;
+    }
+
+    public function closeQuizAndScore(CsQuiz $quiz): array
+    {
+        $quiz->loadMissing('session');
+        $options = collect($quiz->options ?? []);
+        $correct = collect($quiz->correct_answers ?? [])->map(fn($v) => strtoupper(trim((string) $v)))->values()->all();
+        $hasCorrect = !empty($correct);
+        $results = [];
+
+        foreach ($quiz->entries()->with('team')->get() as $entry) {
+            $answerKey = strtoupper(trim((string) ($entry->answer_key ?? '')));
+            $awarded = 0;
+
+            if ($hasCorrect) {
+                $awarded = in_array($answerKey, $correct, true) ? max(0, (int) $quiz->base_points) : 0;
+            } else {
+                $opt = $options->firstWhere('key', $answerKey);
+                $awarded = (int) ($opt['points'] ?? 0);
+            }
+
+            $entry->awarded_points = max(0, $awarded);
+            $entry->save();
+
+            if ($entry->team) {
+                $this->adjustScore($entry->team, $entry->awarded_points);
+            }
+
+            $results[] = [
+                'teamId' => $entry->cs_team_id,
+                'teamName' => $entry->team?->name ?? 'Unknown',
+                'answerKey' => $entry->answer_key,
+                'awardedPoints' => $entry->awarded_points,
+            ];
+
+            // Mirror quiz evaluation in Decisions feed so mentor/admin can validate and adjust points.
+            CsDecision::create([
+                'cs_session_id' => $quiz->cs_session_id,
+                'cs_team_id' => $entry->cs_team_id,
+                'cs_player_id' => null,
+                'type' => 'question',
+                'content' => sprintf(
+                    'Quiz: %s | Réponse: %s%s',
+                    $quiz->question,
+                    $entry->answer_key ?: '—',
+                    $entry->answer_text ? (' (' . mb_strimwidth($entry->answer_text, 0, 120, '...') . ')') : ''
+                ),
+                'phase_index' => (int) $quiz->phase_index,
+                'score_awarded' => (int) $entry->awarded_points,
+            ]);
+        }
+
+        $quiz->update([
+            'is_open' => false,
+            'results' => $results,
+        ]);
+
+        return $results;
     }
 
     // ── Decisions ───────────────────────────────────────────────────
@@ -305,14 +416,24 @@ class CsService
 
     public function awardDecisionScore(CsDecision $decision, int $points): void
     {
-        $decision->update(['score_awarded' => $points]);
-        $decision->team->addScore($points);
+        $new = max(0, $points);
+        $old = (int) ($decision->score_awarded ?? 0);
+        $delta = $new - $old;
+
+        $decision->update(['score_awarded' => $new]);
+        if ($delta !== 0) {
+            $this->adjustScore($decision->team, $delta);
+        }
     }
 
     // ── Bonus Badges ────────────────────────────────────────────────
 
     public function awardBadge(CsSession $session, CsTeam $team, string $badgeType, ?User $moderator = null): CsBadge
     {
+        if (!$team->badge_eligible) {
+            throw new \RuntimeException('This team is not eligible for badges.');
+        }
+
         $catalog = CsBadge::catalog();
         $info    = $catalog[$badgeType] ?? ['icon' => '🏅', 'label' => $badgeType, 'points' => 5];
 
@@ -343,13 +464,16 @@ class CsService
 
     // ── Game State (main API payload) ───────────────────────────────
 
-    public function getState(CsSession $session, ?CsPlayer $player = null): array
+    public function getState(CsSession $session, ?CsPlayer $player = null, bool $isModerator = false): array
     {
         $session->load(['teams.players', 'moderator']);
         $scenario    = $session->scenario();
         $phases      = $session->phases();
         $currentPhase = $phases[$session->current_phase_index] ?? null;
         $openVote    = $session->openVote();
+        $openQuiz    = $session->openQuiz();
+        $phaseContent = app(\App\Services\CsContentBankService::class)
+            ->getPhaseContent($session->scenario_key, (int) $session->current_phase_index);
 
         // Last 5 broadcasts (include phantom separately)
         $broadcasts = $session->broadcasts()
@@ -392,14 +516,53 @@ class CsService
             'type'        => $t->type,
             'name'        => $t->name,
             'roleLabel'   => $t->role_label,
+            'roleMode'    => $t->role_mode,
             'color'       => $t->color,
             'icon'        => $t->icon,
             'logoPath'    => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
             'score'       => $t->score,
+            'isScored'    => (bool) $t->is_scored,
+            'canVote'     => (bool) $t->can_vote,
+            'badgeEligible' => (bool) $t->badge_eligible,
+            'showInRanking' => (bool) $t->show_in_ranking,
             'badge'       => $t->badge(),   // includes icon, name, image
             'playerCount' => $t->players->count(),
             'onlineCount' => $t->players->filter(fn($p) => $p->isOnline())->count(),
         ])->values()->all();
+
+        $voteData = null;
+        if ($openVote) {
+            $isSecret = (bool) $openVote->is_secret;
+            $canSeeTally = $isModerator || !$isSecret || !$openVote->is_open;
+            $voteData = [
+                'id'       => $openVote->id,
+                'question' => $openVote->question,
+                'options'  => $openVote->options,
+                'tally'    => $canSeeTally ? $openVote->tally() : [],
+                'isSecret' => $isSecret,
+                'is_secret'=> $isSecret,
+                'is_open'  => (bool) $openVote->is_open,
+                'isOpen'   => (bool) $openVote->is_open,
+                'myChoice' => $player ? $openVote->entries()->where('cs_team_id', $player->cs_team_id)->value('choice') : null,
+            ];
+        }
+
+        $quizData = null;
+        if ($openQuiz) {
+            $quizData = [
+                'id' => $openQuiz->id,
+                'type' => $openQuiz->type,
+                'question' => $openQuiz->question,
+                'prompt' => $openQuiz->prompt,
+                'options' => $openQuiz->options ?? [],
+                'correctAnswers' => $isModerator ? ($openQuiz->correct_answers ?? []) : [],
+                'basePoints' => (int) $openQuiz->base_points,
+                'isOpen' => (bool) $openQuiz->is_open,
+                'myAnswer' => $player ? $openQuiz->entries()->where('cs_team_id', $player->cs_team_id)->value('answer_key') : null,
+                'answerCount' => $openQuiz->entries()->count(),
+                'results' => $openQuiz->results ?? [],
+            ];
+        }
 
         // Player's own team decisions (if in a team)
         $myDecisions = $player ? CsDecision::where('cs_team_id', $player->cs_team_id)
@@ -438,15 +601,9 @@ class CsService
             'teams'      => $teams,
             'broadcasts' => $broadcasts,
             'injects'    => $injects,
-            'vote'       => $openVote ? [
-                'id'      => $openVote->id,
-                'question'=> $openVote->question,
-                'options' => $openVote->options,
-                'tally'   => $openVote->tally(),
-                'is_open' => (bool) $openVote->is_open,
-                'isOpen'  => (bool) $openVote->is_open,
-                'myChoice'=> $player ? $openVote->entries()->where('cs_team_id', $player->cs_team_id)->value('choice') : null,
-            ] : null,
+            'phaseContent' => $phaseContent,
+            'vote'       => $voteData,
+            'quiz'       => $quizData,
             'myTeamType'  => $player?->team?->type,
             'myDecisions' => $myDecisions,
         ];
@@ -457,7 +614,7 @@ class CsService
      */
     public function getModeratorState(CsSession $session): array
     {
-        $base     = $this->getState($session);
+        $base     = $this->getState($session, null, true);
         $scenario = $session->scenario();
 
         // All decisions for review

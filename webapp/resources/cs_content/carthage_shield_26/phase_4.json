@@ -1,0 +1,60 @@
+{
+  "media": [
+    {
+      "id": "p4-scoreboard",
+      "type": "image",
+      "title": "Final Operations Snapshot",
+      "caption": "Use during debrief and lessons learned.",
+      "url": "/cs-assets/badges/stratege.png",
+      "stage": "debrief"
+    }
+  ],
+  "messages": [
+    {
+      "type": "success",
+      "stage": "debrief",
+      "tag": "DEBRIEF_OPEN",
+      "content": "Debrief starts now: teams consolidate outcomes and residual risks.",
+      "related_media": ["p4-scoreboard"]
+    },
+    {
+      "type": "info",
+      "stage": "debrief",
+      "tag": "ANCS_MENTOR_WRAP",
+      "content": "ANCS mentor provides recommendations for next exercise cycle."
+    }
+  ],
+  "questions": [
+    {
+      "id": "p4-q1",
+      "type": "single_choice",
+      "question": "Which improvement track has highest priority next cycle?",
+      "points": 15,
+      "options": [
+        {"key": "A", "label": "Detection engineering", "color": "#00b4d8", "points": 15},
+        {"key": "B", "label": "Command governance", "color": "#f4a261", "points": 15},
+        {"key": "C", "label": "Public communication resilience", "color": "#2dc653", "points": 15}
+      ]
+    },
+    {
+      "id": "p4-q2",
+      "type": "multi_choice",
+      "question": "Select all lessons learned that should enter the national playbook.",
+      "points": 12,
+      "options": [
+        {"key": "A", "label": "Shared IOC repository"},
+        {"key": "B", "label": "Cross-sector drill cadence"},
+        {"key": "C", "label": "Silent media strategy"},
+        {"key": "D", "label": "Mentor role governance rules"}
+      ],
+      "acceptable_answers": ["A", "B", "D"]
+    },
+    {
+      "id": "p4-q3",
+      "type": "short_answer",
+      "question": "Write one KPI to measure readiness before next exercise.",
+      "prompt": "Must be measurable and time-bound.",
+      "points": 8
+    }
+  ]
+}

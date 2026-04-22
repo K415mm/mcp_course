@@ -69,6 +69,11 @@ class CsSession extends Model
         return $this->hasMany(CsVote::class);
     }
 
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(CsQuiz::class);
+    }
+
     public function injectLog(): HasMany
     {
         return $this->hasMany(CsSessionInject::class)->orderByDesc('triggered_at');
@@ -125,6 +130,11 @@ class CsSession extends Model
     public function openVote(): ?CsVote
     {
         return $this->votes()->where('is_open', true)->latest()->first();
+    }
+
+    public function openQuiz(): ?CsQuiz
+    {
+        return $this->quizzes()->where('is_open', true)->latest()->first();
     }
 
     public function teamByType(string $type): ?CsTeam

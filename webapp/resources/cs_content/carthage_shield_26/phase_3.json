@@ -1,0 +1,85 @@
+{
+  "media": [
+    {
+      "id": "p3-partner-proposal",
+      "type": "image",
+      "title": "External Assistance Proposal",
+      "caption": "Offer includes conditional access requirement.",
+      "url": "/cs-assets/badges/observateur.png",
+      "stage": "arbitration"
+    },
+    {
+      "id": "p3-command-animation",
+      "type": "animation",
+      "title": "Command Flow Animation",
+      "caption": "Shows conflict between central and sector decisions.",
+      "url": "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTNiM3AwbWYwNHBsZG8xYmRzNjk2NHE2bjNucmNpMHN3cHBjdGs3YyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/26BRzozg4TCBXv6QU/giphy.gif",
+      "stage": "arbitration"
+    }
+  ],
+  "messages": [
+    {
+      "type": "intel",
+      "stage": "arbitration",
+      "tag": "EXTERNAL_PARTNER",
+      "content": "A partner offers technical support with conditional data-sharing terms.",
+      "related_media": ["p3-partner-proposal"]
+    },
+    {
+      "type": "warn",
+      "stage": "arbitration",
+      "tag": "SECTOR_TENSION",
+      "content": "Sector leaders diverge on priorities and response sequencing.",
+      "related_media": ["p3-command-animation"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "p3-q1",
+      "type": "single_choice",
+      "secret": true,
+      "question": "Which arbitration model do you select?",
+      "points": 25,
+      "time_limit": 75,
+      "options": [
+        {"key": "A", "label": "Centralized command arbitration", "color": "#00b4d8", "points": 20},
+        {"key": "B", "label": "Sector-led delegated arbitration", "color": "#f4a261", "points": 15},
+        {"key": "C", "label": "Mixed ad-hoc crisis cell", "color": "#2dc653", "points": 25}
+      ],
+      "note": "Keep secret voting for phase 4 equivalent."
+    },
+    {
+      "id": "p3-q2",
+      "type": "multi_choice",
+      "question": "Choose all governance controls required before accepting external support.",
+      "points": 15,
+      "options": [
+        {"key": "A", "label": "Legal basis and scope control"},
+        {"key": "B", "label": "Unlimited network access"},
+        {"key": "C", "label": "Data minimization clauses"},
+        {"key": "D", "label": "Audit trail and exit criteria"}
+      ],
+      "acceptable_answers": ["A", "C", "D"]
+    },
+    {
+      "id": "p3-q3",
+      "type": "order",
+      "question": "Sort these arbitration tasks from first to fourth.",
+      "points": 10,
+      "options": [
+        {"key": "A", "label": "Define authority boundaries"},
+        {"key": "B", "label": "Assign accountable lead"},
+        {"key": "C", "label": "Publish operational playbook"},
+        {"key": "D", "label": "Review sector objections"}
+      ],
+      "correct_order": ["A", "B", "D", "C"]
+    },
+    {
+      "id": "p3-q4",
+      "type": "short_answer",
+      "question": "What is one red line that ANCS mentor should highlight here?",
+      "prompt": "Answer in one clear sentence.",
+      "points": 8
+    }
+  ]
+}

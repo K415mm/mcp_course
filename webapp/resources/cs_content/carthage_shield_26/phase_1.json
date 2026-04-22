@@ -1,0 +1,88 @@
+{
+  "media": [
+    {
+      "id": "p1-finance-snapshot",
+      "type": "image",
+      "title": "Finance Segment Snapshot",
+      "caption": "Suspicious encryption pattern in finance subnet.",
+      "url": "/cs-assets/badges/analyst.png",
+      "stage": "inject"
+    },
+    {
+      "id": "p1-traffic-cam",
+      "type": "video",
+      "title": "Transport Ops Feed",
+      "caption": "City transport status showing delay amplification.",
+      "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "stage": "inject"
+    }
+  ],
+  "messages": [
+    {
+      "type": "inject",
+      "stage": "inject",
+      "tag": "ENCRYPTION_SIGNAL",
+      "content": "Ransomware-like encryption behavior detected in a banking support segment.",
+      "related_media": ["p1-finance-snapshot"]
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "CROSS_IOC",
+      "content": "Shared IOC appears in finance and transport telemetry streams.",
+      "related_media": ["p1-traffic-cam"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "p1-q1",
+      "type": "single_choice",
+      "secret": true,
+      "question": "Which national priority should lead this phase?",
+      "points": 20,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "Citizen core services continuity", "color": "#00b4d8", "points": 16},
+        {"key": "B", "label": "Financial flow stabilization", "color": "#f4a261", "points": 20},
+        {"key": "C", "label": "Critical mobility continuity", "color": "#2dc653", "points": 18}
+      ],
+      "note": "Keep secret flag on for this phase."
+    },
+    {
+      "id": "p1-q2",
+      "type": "multi_choice",
+      "question": "Pick all valid containment actions before public statement.",
+      "points": 15,
+      "options": [
+        {"key": "A", "label": "Disable affected credential domains"},
+        {"key": "B", "label": "Patch and restart all systems immediately"},
+        {"key": "C", "label": "Start IOC threat hunting across sectors"},
+        {"key": "D", "label": "Preserve volatile evidence snapshots"}
+      ],
+      "acceptable_answers": ["A", "C", "D"]
+    },
+    {
+      "id": "p1-q3",
+      "type": "order",
+      "question": "Sort communication sequence for first external release.",
+      "points": 10,
+      "options": [
+        {"key": "A", "label": "Internal confirmation"},
+        {"key": "B", "label": "Regulator notification"},
+        {"key": "C", "label": "Public holding statement"},
+        {"key": "D", "label": "Media Q and A briefing"}
+      ],
+      "correct_order": ["A", "B", "C", "D"]
+    },
+    {
+      "id": "p1-q4",
+      "type": "short_answer",
+      "question": "Provide one risk if transport and finance are treated as separate incidents.",
+      "prompt": "Max 20 words.",
+      "points": 8
+    }
+  ]
+}

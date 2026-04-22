@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CsBadge;
 use App\Models\CsInject;
 use App\Models\CsPlayer;
+use App\Models\CsQuiz;
 use App\Models\CsSession;
 use App\Models\CsTeam;
 use App\Models\CsVote;
@@ -13,6 +14,7 @@ use App\Services\CsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class CsApiController extends Controller
 {
@@ -55,6 +57,7 @@ class CsApiController extends Controller
             'phaseIndex' => $phaseIndex,
             'messages' => $content['messages'],
             'questions' => $content['questions'],
+            'media' => $content['media'] ?? [],
         ]);
     }
 
@@ -211,6 +214,7 @@ class CsApiController extends Controller
             'options.*.color' => 'nullable|string|max:20',
             'options.*.points' => 'nullable|integer|min:0|max:100',
             'options.*.note' => 'nullable|string|max:1000',
+            'is_secret' => 'nullable|boolean',
         ]);
 
         $normalizedOptions = collect($data['options'])->map(function ($option) {
@@ -223,12 +227,18 @@ class CsApiController extends Controller
             ];
         })->values()->all();
 
+        $scenario = $session->scenario();
+        $autoSecretPhases = collect($scenario['secret_vote_phases'] ?? [])->map(fn($v) => (int) $v)->all();
+        $isAutoSecret = in_array((int) $session->current_phase_index, $autoSecretPhases, true);
+        $isSecret = array_key_exists('is_secret', $data) ? (bool) $data['is_secret'] : $isAutoSecret;
+
         $vote    = $this->cs->openVote(
             $session,
             $data['question'],
-            $normalizedOptions
+            $normalizedOptions,
+            $isSecret
         );
-        return response()->json(['ok' => true, 'voteId' => $vote->id]);
+        return response()->json(['ok' => true, 'voteId' => $vote->id, 'isSecret' => (bool) $vote->is_secret]);
     }
 
     // ── POST /api/cs/{code}/vote/close ─────────────────────────────────
@@ -280,20 +290,128 @@ class CsApiController extends Controller
     public function voteSubmit(Request $request, string $code): JsonResponse
     {
         $session = CsSession::where('code', $code)->firstOrFail();
+        if ($this->isSubmissionWindowClosed($session)) {
+            return response()->json(['ok' => false, 'error' => 'Phase time is over; vote is locked.'], 422);
+        }
+
         $data    = $request->validate([
             'choice'  => 'required|string|max:10',
             'team_id' => 'required|integer',
         ]);
+
+        $player = $this->resolvePlayer($request, $session);
+        if (!$player || !$player->team || (int) $player->cs_team_id !== (int) $data['team_id']) {
+            return response()->json(['ok' => false, 'error' => 'Invalid voting context.'], 403);
+        }
+
         $vote = CsVote::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
         $team = CsTeam::where('id', $data['team_id'])->where('cs_session_id', $session->id)->firstOrFail();
         $ok   = $this->cs->submitVote($vote, $team, $data['choice']);
-        return response()->json(['ok' => $ok]);
+        if (!$ok) {
+            return response()->json(['ok' => false, 'error' => 'Vote rejected. Team may be ineligible or already voted.'], 422);
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    // ── POST /api/cs/{code}/quiz/open ──────────────────────────────
+    public function quizOpen(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'question' => 'required|string|max:500',
+            'type' => 'nullable|in:single_choice,multi_choice,order,short_answer',
+            'prompt' => 'nullable|string|max:1000',
+            'options' => 'required|array|min:2|max:8',
+            'options.*.key' => 'required|string|max:10',
+            'options.*.label' => 'required|string|max:255',
+            'options.*.color' => 'nullable|string|max:20',
+            'options.*.points' => 'nullable|integer|min:0|max:100',
+            'correct_answers' => 'nullable|array',
+            'correct_answers.*' => 'nullable|string|max:20',
+            'base_points' => 'nullable|integer|min:0|max:100',
+        ]);
+
+        $normalizedOptions = collect($data['options'])->map(function ($option) {
+            return [
+                'key' => strtoupper(trim((string) ($option['key'] ?? ''))),
+                'label' => trim((string) ($option['label'] ?? '')),
+                'color' => $option['color'] ?? null,
+                'points' => isset($option['points']) ? (int) $option['points'] : 0,
+            ];
+        })->values()->all();
+
+        $quiz = $this->cs->openQuiz(
+            $session,
+            trim((string) $data['question']),
+            $normalizedOptions,
+            (string) ($data['type'] ?? 'single_choice'),
+            $data['prompt'] ?? null,
+            collect($data['correct_answers'] ?? [])->map(fn($v) => strtoupper(trim((string) $v)))->filter()->values()->all(),
+            (int) ($data['base_points'] ?? 0)
+        );
+
+        return response()->json(['ok' => true, 'quizId' => $quiz->id]);
+    }
+
+    // ── POST /api/cs/{code}/quiz/submit ────────────────────────────
+    public function quizSubmit(Request $request, string $code): JsonResponse
+    {
+        $session = CsSession::where('code', $code)->firstOrFail();
+        if ($this->isSubmissionWindowClosed($session)) {
+            return response()->json(['ok' => false, 'error' => 'Phase time is over; quiz is locked.'], 422);
+        }
+
+        $data = $request->validate([
+            'choice'  => 'nullable|string|max:100',
+            'answer_text' => 'nullable|string|max:1000',
+            'team_id' => 'required|integer',
+        ]);
+
+        $player = $this->resolvePlayer($request, $session);
+        if (!$player || !$player->team || (int) $player->cs_team_id !== (int) $data['team_id']) {
+            return response()->json(['ok' => false, 'error' => 'Invalid quiz context.'], 403);
+        }
+
+        $quiz = CsQuiz::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
+        $team = CsTeam::where('id', $data['team_id'])->where('cs_session_id', $session->id)->firstOrFail();
+        $ok = $this->cs->submitQuizAnswer(
+            $quiz,
+            $team,
+            isset($data['choice']) ? strtoupper(trim((string) $data['choice'])) : null,
+            $data['answer_text'] ?? null
+        );
+
+        if (!$ok) {
+            return response()->json(['ok' => false, 'error' => 'Quiz answer rejected.'], 422);
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    // ── POST /api/cs/{code}/quiz/close ─────────────────────────────
+    public function quizClose(string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $quiz = CsQuiz::where('cs_session_id', $session->id)->where('is_open', true)->first();
+        if (!$quiz) return response()->json(['ok' => false, 'error' => 'No open quiz']);
+
+        $results = $this->cs->closeQuizAndScore($quiz);
+        return response()->json([
+            'ok' => true,
+            'results' => $results,
+            'answeredTeams' => count($results),
+        ]);
     }
 
     // ── POST /api/cs/{code}/decision ───────────────────────────────
     public function decision(Request $request, string $code): JsonResponse
     {
         $session = CsSession::where('code', $code)->firstOrFail();
+        if ($this->isSubmissionWindowClosed($session)) {
+            return response()->json(['ok' => false, 'error' => 'Phase time is over; submissions are locked.'], 422);
+        }
+
         $data    = $request->validate([
             'type'      => 'required|in:decision,escalade,communication,question',
             'content'   => 'required|string|max:1000',
@@ -320,7 +438,9 @@ class CsApiController extends Controller
     public function awardScore(Request $request, string $code, int $decisionId): JsonResponse
     {
         $session  = $this->getModeratorSession($code);
-        $decision = \App\Models\CsDecision::findOrFail($decisionId);
+        $decision = \App\Models\CsDecision::where('id', $decisionId)
+            ->where('cs_session_id', $session->id)
+            ->firstOrFail();
         $data     = $request->validate(['points' => 'required|integer|min:0|max:100']);
         $this->cs->awardDecisionScore($decision, $data['points']);
         return response()->json(['ok' => true]);
@@ -334,7 +454,12 @@ class CsApiController extends Controller
         $data    = $request->validate([
             'badge_type' => 'required|in:first_responder,crisis_communicator,zero_silo,innovation',
         ]);
-        $badge = $this->cs->awardBadge($session, $team, $data['badge_type'], Auth::user());
+        try {
+            $badge = $this->cs->awardBadge($session, $team, $data['badge_type'], Auth::user());
+        } catch (\RuntimeException $e) {
+            throw ValidationException::withMessages(['team_id' => $e->getMessage()]);
+        }
+
         return response()->json([
             'ok'     => true,
             'badge'  => $badge->badge_icon . ' ' . $badge->badge_label,
@@ -377,5 +502,11 @@ class CsApiController extends Controller
             return CsPlayer::find($playerId);
         }
         return null;
+    }
+
+    private function isSubmissionWindowClosed(CsSession $session): bool
+    {
+        $remaining = $session->timerRemainingSeconds();
+        return $remaining !== null && $remaining <= 0;
     }
 }

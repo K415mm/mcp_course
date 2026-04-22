@@ -33,6 +33,14 @@
 .ld-award{font-size:.8rem}
 .dec-new{animation:decSlide .4s ease-out}
 @keyframes decSlide{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.decision-toolbar{position:sticky;top:0;z-index:2;background:rgba(13,27,42,.92);backdrop-filter:blur(2px);padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:8px;margin-bottom:8px}
+.decision-team-item{border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden;margin-bottom:8px;background:rgba(255,255,255,.03)}
+.decision-team-header{padding:0;background:transparent}
+.decision-team-btn{width:100%;text-align:left;background:rgba(255,255,255,.03);color:#fff;border:0;padding:10px 12px;font-size:.8rem;display:flex;align-items:center;gap:8px}
+.decision-team-btn:not(.collapsed){background:rgba(var(--bs-theme-rgb),.12)}
+.decision-team-body{padding:10px 10px 2px 10px}
+.decision-meta{font-size:.72rem;color:rgba(255,255,255,.58)}
+.quiz-answer-chip{display:inline-block;padding:2px 7px;border-radius:10px;font-size:.7rem;font-family:'Space Mono',monospace;background:rgba(var(--bs-theme-rgb),.18);color:var(--bs-theme)}
 
 /* ── Decision Matrix Panel ── */
 .matrix-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden}
@@ -369,6 +377,25 @@
             <div class="card">
                 <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                 <div class="card-body p-2">
+                    <div class="decision-toolbar">
+                        <div class="d-flex gap-2 align-items-center mb-2">
+                            <span id="decSummaryTeams" class="badge bg-dark">0 équipes</span>
+                            <span id="decSummaryAnswers" class="badge bg-info text-dark">0 réponses quiz</span>
+                            <span id="decSummaryTotal" class="badge bg-secondary">0 éléments</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" id="decTypeFilter" onchange="renderDecisionsPanel()">
+                                <option value="all">Tous</option>
+                                <option value="question">Quiz uniquement</option>
+                                <option value="decision">Décisions stratégiques</option>
+                                <option value="communication">Communications</option>
+                                <option value="escalade">Escalades</option>
+                            </select>
+                            <select class="form-select form-select-sm" id="decTeamFilter" onchange="renderDecisionsPanel()">
+                                <option value="all">Toutes les équipes</option>
+                            </select>
+                        </div>
+                    </div>
                     <div style="max-height:calc(100vh - 240px);overflow-y:auto" id="decisionsArea">
                         <div class="text-white-50 text-center py-3 small">En attente de décisions...</div>
                     </div>
@@ -395,6 +422,7 @@ const INITIAL_BANK_BY_PHASE = @json($initialBankByPhase ?? []);
 let lastDecId = 0, lastBadgeId = 0, lastDecCount = 0;
 let currentPhaseIndex = null;
 let currentBank = { messages: [], questions: [], media: [] };
+let decisionsCache = [];
 
 async function api(path, method='GET', body=null) {
     const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json'}};
@@ -856,52 +884,161 @@ teamScoredMap['{{ $t->type }}'] = {{ $t->is_scored ? 'true' : 'false' }};
 
 function updateDecisions(decisions) {
     if (!Array.isArray(decisions)) return;
-
-    const area = document.getElementById('decisionsArea');
-    const count = decisions.length;
-
-    // Update tab badge
-    document.getElementById('decCount').textContent = count;
-
-    if (count === 0) return;
-
-    // Check for new decisions since last poll
     const latest = decisions[0];
-    if (latest.id <= lastDecId) return;
+    const count = decisions.length;
+    document.getElementById('decCount').textContent = count;
+    if (latest && latest.id > lastDecId) {
+        lastDecId = latest.id;
+        lastDecCount = count;
+    }
+    decisionsCache = decisions.slice(0, 200);
+    populateDecisionTeamFilter(decisionsCache);
+    renderDecisionsPanel();
+}
 
-    // Rebuild the decisions area (keep last 20)
-    lastDecId = latest.id;
-    lastDecCount = count;
-
-    if (area.querySelector('.text-white-50.text-center')) area.innerHTML = '';
-
-    // Only prepend new ones
-    decisions.filter(d => d.id > (lastDecId - 1)).forEach(d => {
-        if (document.getElementById('dec-'+d.id)) return;
-        const typeIcons = {decision:'🎯', escalade:'📡', communication:'📢', question:'❓'};
-        const color = teamColorMap[d.teamType] || '#aaa';
-        const div = document.createElement('div');
-        div.id = 'dec-'+d.id;
-        div.className = 'decision-review dec-new';
-        const teamIsScored = teamScoredMap[d.teamType] ?? true;
-        const isMentorDecision = !teamIsScored;
-        div.innerHTML = `
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="dr-team" style="background:${color}22;color:${color}">${d.teamName}</span>
-                <span class="dr-type">${typeIcons[d.type]||'📋'} ${(d.type||'').toUpperCase()}</span>
-                <span class="ms-auto small text-white-50" style="font-size:.7rem">${new Date(d.at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})}</span>
-            </div>
-            <div style="font-size:.83rem">${d.content}</div>
-            <div class="d-flex gap-1 mt-2 align-items-center" ${isMentorDecision ? 'style="opacity:.5"' : ''}>
-                <span class="small text-white-50">Score:</span>
-                <input type="number" id="award-${d.id}" value="${d.scoreAwarded ?? 0}" min="0" max="100" class="form-control form-control-sm" style="width:70px" ${isMentorDecision ? 'disabled' : ''}>
-                <button onclick="awardScore(${d.id})" class="btn btn-sm btn-success ld-award" ${isMentorDecision ? 'disabled' : ''}>
-                    ${isMentorDecision ? 'Mentor non-score' : 'Valider / Ajuster'}
-                </button>
-                ${!isMentorDecision ? `<span class="small text-white-50 award-current">Actuel: ${d.scoreAwarded ?? 0} pts</span>` : ''}
-            </div>`;
-        area.insertBefore(div, area.firstChild);
+function populateDecisionTeamFilter(decisions) {
+    const el = document.getElementById('decTeamFilter');
+    if (!el) return;
+    const current = el.value || 'all';
+    const teams = Array.from(new Set(decisions.map(d => d.teamType).filter(Boolean)));
+    const opts = ['<option value="all">Toutes les équipes</option>'];
+    teams.forEach(tt => {
+        opts.push(`<option value="${escapeHtml(tt)}">${escapeHtml(teamNameMap[tt] || tt)}</option>`);
     });
+    el.innerHTML = opts.join('');
+    el.value = teams.includes(current) || current === 'all' ? current : 'all';
+}
+
+function renderDecisionsPanel() {
+    const area = document.getElementById('decisionsArea');
+    if (!area) return;
+    const typeFilter = document.getElementById('decTypeFilter')?.value || 'all';
+    const teamFilter = document.getElementById('decTeamFilter')?.value || 'all';
+
+    let filtered = decisionsCache.slice();
+    if (typeFilter !== 'all') filtered = filtered.filter(d => (d.type || '') === typeFilter);
+    if (teamFilter !== 'all') filtered = filtered.filter(d => (d.teamType || '') === teamFilter);
+
+    const teamCount = new Set(filtered.map(d => d.teamType).filter(Boolean)).size;
+    const answerCount = filtered.filter(d => d.type === 'question').length;
+    document.getElementById('decSummaryTeams').textContent = `${teamCount} équipes`;
+    document.getElementById('decSummaryAnswers').textContent = `${answerCount} réponses quiz`;
+    document.getElementById('decSummaryTotal').textContent = `${filtered.length} éléments`;
+
+    if (filtered.length === 0) {
+        area.innerHTML = '<div class="text-white-50 text-center py-3 small">Aucun élément pour ce filtre.</div>';
+        return;
+    }
+
+    const grouped = {};
+    filtered.forEach(d => {
+        const key = d.teamType || '__unknown__';
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(d);
+    });
+
+    const teamKeys = Object.keys(grouped).sort((a, b) => {
+        const maxA = Math.max(...grouped[a].map(x => x.id));
+        const maxB = Math.max(...grouped[b].map(x => x.id));
+        return maxB - maxA;
+    });
+
+    const typeIcons = {decision:'🎯', escalade:'📡', communication:'📢', question:'❓'};
+    const html = teamKeys.map((teamKey, idx) => {
+        const items = grouped[teamKey].sort((a, b) => b.id - a.id);
+        const color = teamColorMap[teamKey] || '#aaa';
+        const teamName = teamNameMap[teamKey] || items[0]?.teamName || 'Équipe';
+        const quizCount = items.filter(x => x.type === 'question').length;
+        const collapseId = `dec-team-${teamKey.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+        const entriesHtml = items.map(d => {
+            const teamIsScored = teamScoredMap[d.teamType] ?? true;
+            const isMentorDecision = !teamIsScored;
+            const quizInfo = d.type === 'question' ? parseQuizDecisionContent(d.content || '') : null;
+            const answerBlock = quizInfo ? renderQuizAnswerBlock(quizInfo) : `<div style="font-size:.83rem">${escapeHtml(d.content || '')}</div>`;
+            return `
+                <div id="dec-${d.id}" class="decision-review ${d.id === lastDecId ? 'dec-new' : ''}">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="dr-type">${typeIcons[d.type]||'📋'} ${escapeHtml((d.type||'').toUpperCase())}</span>
+                        <span class="ms-auto decision-meta">${new Date(d.at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})}</span>
+                    </div>
+                    ${answerBlock}
+                    <div class="d-flex gap-1 mt-2 align-items-center" ${isMentorDecision ? 'style="opacity:.5"' : ''}>
+                        <span class="small text-white-50">Score:</span>
+                        <input type="number" id="award-${d.id}" value="${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0}" min="0" max="100" class="form-control form-control-sm" style="width:70px" ${isMentorDecision ? 'disabled' : ''}>
+                        <button onclick="awardScore(${d.id})" class="btn btn-sm btn-success ld-award" ${isMentorDecision ? 'disabled' : ''}>
+                            ${isMentorDecision ? 'Mentor non-score' : 'Valider / Ajuster'}
+                        </button>
+                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">Actuel: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="decision-team-item">
+                <h2 class="decision-team-header" id="heading-${collapseId}">
+                    <button class="decision-team-btn ${idx === 0 ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${idx === 0 ? 'true' : 'false'}">
+                        <span class="dr-team" style="background:${color}22;color:${color}">${escapeHtml(teamName)}</span>
+                        <span class="badge bg-dark">${items.length}</span>
+                        <span class="badge bg-info text-dark">${quizCount} quiz</span>
+                        <span class="ms-auto decision-meta">${items[0]?.at ? new Date(items[0].at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                    </button>
+                </h2>
+                <div id="${collapseId}" class="collapse ${idx === 0 ? 'show' : ''}">
+                    <div class="decision-team-body">${entriesHtml}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    area.innerHTML = html;
+}
+
+function parseQuizDecisionContent(content) {
+    const raw = String(content || '');
+    const m = raw.match(/^Quiz\s*\(([^)]+)\)\s*:\s*(.*?)\s*\|\s*Réponse\s*:\s*(.*)$/i);
+    if (!m) return null;
+    const quizType = normalizeQuizType((m[1] || '').trim());
+    const question = (m[2] || '').trim();
+    const answerRaw = (m[3] || '').trim();
+    const am = answerRaw.match(/^(.*?)(?:\s*\((.*)\))?$/);
+    const answerKey = (am?.[1] || '').trim();
+    const answerText = (am?.[2] || '').trim();
+    return { quizType, question, answerKey, answerText };
+}
+
+function renderQuizAnswerBlock(q) {
+    const keyRaw = (q.answerKey || '').trim();
+    const textRaw = (q.answerText || '').trim();
+    const keyNorm = keyRaw && keyRaw !== '—' ? keyRaw : '';
+    let answer = '—';
+    if (q.quizType === 'order') {
+        answer = keyNorm ? keyNorm.split(',').map(x => x.trim()).filter(Boolean).join(' > ') : '—';
+    } else if (q.quizType === 'multi_choice') {
+        answer = keyNorm ? keyNorm.split(',').map(x => x.trim()).filter(Boolean).join(', ') : '—';
+    } else if (q.quizType === 'short_answer') {
+        answer = textRaw || keyNorm || '—';
+    } else {
+        answer = keyNorm || textRaw || '—';
+    }
+    return `
+        <div class="small mb-1">
+            <span class="quiz-answer-chip">${escapeHtml(q.quizType.replace('_',' '))}</span>
+            <span class="ms-1">${escapeHtml(q.question || 'Quiz')}</span>
+        </div>
+        <div style="font-size:.83rem">
+            <span class="text-white-50">Réponse:</span> ${escapeHtml(answer)}
+        </div>
+    `;
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 async function awardScore(id) {

@@ -325,17 +325,18 @@ class CsService
         if ($quiz->teamHasAnswered($team)) return false;
         if (!$team->isScorable()) return false;
 
+        $awarded = $this->calculateQuizAwardedPoints($quiz, $answerKey, $answerText);
         $entry = CsQuizEntry::create([
             'cs_quiz_id' => $quiz->id,
             'cs_team_id' => $team->id,
             'answer_key' => $answerKey,
             'answer_text' => $answerText,
-            'awarded_points' => 0,
+            'awarded_points' => $awarded,
             'answered_at' => now(),
         ]);
 
         // Make quiz answers immediately visible in moderator Decisions panel.
-        $this->upsertQuizDecision($quiz, $entry, 0);
+        $this->upsertQuizDecision($quiz, $entry, $awarded);
 
         return true;
     }
@@ -344,59 +345,11 @@ class CsService
     {
         $quiz->loadMissing('session');
         $quizType = $this->normalizeQuizType((string) $quiz->type);
-        $options = collect($quiz->options ?? []);
-        $correct = collect($quiz->correct_answers ?? [])->map(fn($v) => strtoupper(trim((string) $v)))->values()->all();
-        $hasCorrect = !empty($correct);
         $results = [];
 
         foreach ($quiz->entries()->with('team')->get() as $entry) {
-            $answerKey = strtoupper(trim((string) ($entry->answer_key ?? '')));
-            $answerText = trim((string) ($entry->answer_text ?? ''));
-            $awarded = 0;
-
-            if ($quizType === 'short_answer') {
-                if ($hasCorrect) {
-                    $normalizedText = mb_strtolower(preg_replace('/\s+/', ' ', trim($answerText)));
-                    $normalizedCorrect = collect($quiz->correct_answers ?? [])
-                        ->map(fn($v) => mb_strtolower(preg_replace('/\s+/', ' ', trim((string) $v))))
-                        ->filter()
-                        ->values()
-                        ->all();
-                    $awarded = in_array($normalizedText, $normalizedCorrect, true) ? max(0, (int) $quiz->base_points) : 0;
-                }
-            } elseif ($quizType === 'order') {
-                $chosenOrder = array_values(array_filter(array_map('trim', explode(',', $answerKey))));
-                if ($hasCorrect) {
-                    $awarded = ($chosenOrder === $correct) ? max(0, (int) $quiz->base_points) : 0;
-                } else {
-                    foreach ($chosenOrder as $k) {
-                        $opt = $options->firstWhere('key', $k);
-                        $awarded += (int) ($opt['points'] ?? 0);
-                    }
-                }
-            } elseif ($quizType === 'multi_choice' || str_contains($answerKey, ',')) {
-                $chosenKeys = array_filter(array_map('trim', explode(',', $answerKey)));
-                if ($hasCorrect) {
-                    sort($chosenKeys);
-                    $sortedCorrect = $correct;
-                    sort($sortedCorrect);
-                    $awarded = ($chosenKeys === $sortedCorrect) ? max(0, (int) $quiz->base_points) : 0;
-                } else {
-                    foreach ($chosenKeys as $k) {
-                        $opt = $options->firstWhere('key', $k);
-                        $awarded += (int) ($opt['points'] ?? 0);
-                    }
-                }
-            } else {
-                if ($hasCorrect) {
-                    $awarded = in_array($answerKey, $correct, true) ? max(0, (int) $quiz->base_points) : 0;
-                } else {
-                    $opt = $options->firstWhere('key', $answerKey);
-                    $awarded = (int) ($opt['points'] ?? 0);
-                }
-            }
-
-            $entry->awarded_points = max(0, $awarded);
+            $awarded = $this->calculateQuizAwardedPoints($quiz, $entry->answer_key, $entry->answer_text);
+            $entry->awarded_points = $awarded;
             $entry->save();
 
             if ($entry->team) {
@@ -739,6 +692,62 @@ class CsService
             'order', 'sort_order', 'sort order', 'ordering', 'rank', 'ranking' => 'order',
             default => 'single_choice',
         };
+    }
+
+    private function calculateQuizAwardedPoints(CsQuiz $quiz, ?string $answerKeyRaw, ?string $answerTextRaw): int
+    {
+        $quizType = $this->normalizeQuizType((string) $quiz->type);
+        $options = collect($quiz->options ?? []);
+        $correct = collect($quiz->correct_answers ?? [])->map(fn($v) => strtoupper(trim((string) $v)))->values()->all();
+        $hasCorrect = !empty($correct);
+
+        $answerKey = strtoupper(trim((string) ($answerKeyRaw ?? '')));
+        $answerText = trim((string) ($answerTextRaw ?? ''));
+        $awarded = 0;
+
+        if ($quizType === 'short_answer') {
+            if ($hasCorrect) {
+                $normalizedText = mb_strtolower(preg_replace('/\s+/', ' ', trim($answerText)));
+                $normalizedCorrect = collect($quiz->correct_answers ?? [])
+                    ->map(fn($v) => mb_strtolower(preg_replace('/\s+/', ' ', trim((string) $v))))
+                    ->filter()
+                    ->values()
+                    ->all();
+                $awarded = in_array($normalizedText, $normalizedCorrect, true) ? max(0, (int) $quiz->base_points) : 0;
+            }
+        } elseif ($quizType === 'order') {
+            $chosenOrder = array_values(array_filter(array_map('trim', explode(',', $answerKey))));
+            if ($hasCorrect) {
+                $awarded = ($chosenOrder === $correct) ? max(0, (int) $quiz->base_points) : 0;
+            } else {
+                foreach ($chosenOrder as $k) {
+                    $opt = $options->firstWhere('key', $k);
+                    $awarded += (int) ($opt['points'] ?? 0);
+                }
+            }
+        } elseif ($quizType === 'multi_choice' || str_contains($answerKey, ',')) {
+            $chosenKeys = array_filter(array_map('trim', explode(',', $answerKey)));
+            if ($hasCorrect) {
+                sort($chosenKeys);
+                $sortedCorrect = $correct;
+                sort($sortedCorrect);
+                $awarded = ($chosenKeys === $sortedCorrect) ? max(0, (int) $quiz->base_points) : 0;
+            } else {
+                foreach ($chosenKeys as $k) {
+                    $opt = $options->firstWhere('key', $k);
+                    $awarded += (int) ($opt['points'] ?? 0);
+                }
+            }
+        } else {
+            if ($hasCorrect) {
+                $awarded = in_array($answerKey, $correct, true) ? max(0, (int) $quiz->base_points) : 0;
+            } else {
+                $opt = $options->firstWhere('key', $answerKey);
+                $awarded = (int) ($opt['points'] ?? 0);
+            }
+        }
+
+        return max(0, $awarded);
     }
 
     private function upsertQuizDecision(CsQuiz $quiz, CsQuizEntry $entry, int $scoreAwarded, ?string $quizType = null): void

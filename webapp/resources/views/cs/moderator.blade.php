@@ -423,6 +423,8 @@ let lastDecId = 0, lastBadgeId = 0, lastDecCount = 0;
 let currentPhaseIndex = null;
 let currentBank = { messages: [], questions: [], media: [] };
 let decisionsCache = [];
+let decisionsSignature = '';
+const pendingAwardEdits = {};
 
 async function api(path, method='GET', body=null) {
     const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json'}};
@@ -446,7 +448,7 @@ async function poll() {
         updateOnlineCount(d.onlinePlayers ?? []);
     } catch(e) { console.warn('Poll error', e); }
 }
-setInterval(poll, 2000); poll();
+setInterval(poll, 5000); poll();
 
 // ── TIMER ───────────────────────────────────────────────────
 function updateTimer(timer) {
@@ -886,11 +888,15 @@ function updateDecisions(decisions) {
     if (!Array.isArray(decisions)) return;
     const latest = decisions[0];
     const count = decisions.length;
+    const signature = decisions.map(d => `${d.id}:${d.scoreAwarded}:${d.type}:${d.at}`).join('|');
+    const unchanged = signature === decisionsSignature;
     document.getElementById('decCount').textContent = count;
     if (latest && latest.id > lastDecId) {
         lastDecId = latest.id;
         lastDecCount = count;
     }
+    if (unchanged) return;
+    decisionsSignature = signature;
     decisionsCache = decisions.slice(0, 200);
     populateDecisionTeamFilter(decisionsCache);
     renderDecisionsPanel();
@@ -964,7 +970,7 @@ function renderDecisionsPanel() {
                     ${answerBlock}
                     <div class="d-flex gap-1 mt-2 align-items-center" ${isMentorDecision ? 'style="opacity:.5"' : ''}>
                         <span class="small text-white-50">Score:</span>
-                        <input type="number" id="award-${d.id}" value="${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0}" min="0" max="100" class="form-control form-control-sm" style="width:70px" ${isMentorDecision ? 'disabled' : ''}>
+                        <input type="number" id="award-${d.id}" value="${pendingAwardEdits[d.id] ?? (Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0)}" min="0" max="100" class="form-control form-control-sm" style="width:70px" oninput="setPendingAward(${d.id}, this.value)" ${isMentorDecision ? 'disabled' : ''}>
                         <button onclick="awardScore(${d.id})" class="btn btn-sm btn-success ld-award" ${isMentorDecision ? 'disabled' : ''}>
                             ${isMentorDecision ? 'Mentor non-score' : 'Valider / Ajuster'}
                         </button>
@@ -992,6 +998,10 @@ function renderDecisionsPanel() {
     }).join('');
 
     area.innerHTML = html;
+}
+
+function setPendingAward(id, value) {
+    pendingAwardEdits[id] = value;
 }
 
 function parseQuizDecisionContent(content) {
@@ -1045,6 +1055,9 @@ async function awardScore(id) {
     const pts = parseInt(document.getElementById('award-'+id).value);
     await api(`decision/${id}/award`,'POST',{points:pts});
     showNotif(`Score validé: ${pts} pts`,'success');
+    delete pendingAwardEdits[id];
+    decisionsSignature = '';
+    await poll();
     const card = document.getElementById(`dec-${id}`);
     if (card) {
         const note = card.querySelector('.award-current');

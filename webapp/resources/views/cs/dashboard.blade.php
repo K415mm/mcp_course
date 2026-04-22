@@ -244,6 +244,43 @@ body.scanlines::after {
     gap: 10px; align-items: start;
     padding-top: 14px;
 }
+.media-stage-wrap {
+    grid-column: 2 / span 4;
+    border: 1px solid rgba(201,160,80,.28);
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(9,6,4,.72);
+    box-shadow: inset 0 0 24px rgba(201,160,80,.08), 0 0 18px rgba(0,0,0,.35);
+}
+.media-stage {
+    height: 220px;
+    border: 1px solid rgba(120, 214, 255, .7);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: rgba(0,0,0,.35);
+}
+.media-stage img,
+.media-stage video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.media-stage-empty {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,.5);
+}
+.media-quiz-line {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ef4444;
+    letter-spacing: 1px;
+}
 
 /* === CARD DESIGN === same language as header: dark + gold border */
 .team-card {
@@ -424,6 +461,7 @@ body.scanlines::after {
 .widgets-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 10px; }
 @media (max-width: 1400px) { .widgets-row { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 980px) { .widgets-row { grid-template-columns: 1fr; } }
+@media (max-width: 1200px) { .media-stage-wrap { grid-column: 1 / -1; } }
 
 .widget {
     background: rgba(13,27,46,.8);
@@ -781,8 +819,15 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
     </div>
 
-    {{-- TEAMS GRID --}}
-    <div class="teams-grid" id="teamsGrid"></div>
+    {{-- TEAMS GRID + MAIN MEDIA --}}
+    <div class="teams-grid" id="teamsGrid">
+        <div class="media-stage-wrap">
+            <div class="media-stage" id="mainMediaStage">
+                <div class="media-stage-empty">MEDIA</div>
+            </div>
+            <div class="media-quiz-line" id="mainQuizLine">Quiz</div>
+        </div>
+    </div>
 
     {{-- BOTTOM WIDGETS --}}
     <div class="widgets-row">
@@ -865,8 +910,26 @@ function handlePhaseContent(content) {
     const qHtml = questions.slice(0, 2).map(q => `<div class="feed-item"><div class="fi-ts">QUIZ ${(q.type || 'single_choice').toUpperCase()}</div>${q.question || 'Question'}</div>`).join('');
     const mHtml = messages.slice(0, 1).map(m => `<div class="feed-item ${m.type || 'info'}"><div class="fi-ts">MESSAGE</div>${m.content || ''}</div>`).join('');
     root.innerHTML = `${mediaHtml}${mHtml}${qHtml}`;
+    renderMainMedia(content);
 }
 setInterval(poll, 1000); poll();
+
+function renderMainMedia(content) {
+    const stage = document.getElementById('mainMediaStage');
+    if (!stage) return;
+    const media = Array.isArray(content?.media) ? content.media : [];
+    const preferred = media.find(m => m && m.isLive) || media[0] || null;
+    if (!preferred || !preferred.url) {
+        stage.innerHTML = '<div class="media-stage-empty">MEDIA</div>';
+        return;
+    }
+
+    if ((preferred.type || 'image') === 'video') {
+        stage.innerHTML = `<video src="${preferred.url}" ${preferred.autoplay ? 'autoplay' : ''} ${preferred.loop ? 'loop' : ''} ${preferred.muted !== false ? 'muted' : ''} playsinline controls></video>`;
+        return;
+    }
+    stage.innerHTML = `<img src="${preferred.url}" alt="${preferred.title || 'media'}">`;
+}
 
 // ── Timer ─────────────────────────────────────────────────────────
 function updateTimer(timer, session) {
@@ -1135,9 +1198,11 @@ function handleVote(vote) {
 
 function handleQuiz(quiz) {
     const el = document.getElementById('quizWidget');
+    const quizLine = document.getElementById('mainQuizLine');
     if (!el) return;
     if (!quiz) {
         el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucune question en cours</div>';
+        if (quizLine) quizLine.textContent = 'Quiz';
         return;
     }
 
@@ -1157,6 +1222,10 @@ function handleQuiz(quiz) {
         <div class="vote-bars">${optionsHtml}</div>
         ${resultHtml ? `<div style="margin-top:8px">${resultHtml}</div>` : ''}
     `;
+    if (quizLine) {
+        const text = (quiz.question || 'Quiz').trim();
+        quizLine.textContent = text.length > 120 ? `${text.substring(0, 117)}...` : text;
+    }
 }
 
 // ── Phantom ───────────────────────────────────────────────────────

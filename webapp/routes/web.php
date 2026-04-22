@@ -167,6 +167,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/quiz/open',        [CsApiController::class, 'quizOpen'])->name('quiz.open');
             Route::post('/quiz/close',       [CsApiController::class, 'quizClose'])->name('quiz.close');
             Route::post('/quiz/submit',      [CsApiController::class, 'quizSubmit'])->name('quiz.submit');
+            Route::post('/media/save',       [CsApiController::class, 'mediaSave'])->name('media.save');
+            Route::post('/media/upload',     [CsApiController::class, 'mediaUpload'])->name('media.upload');
+            Route::post('/media/inject',     [CsApiController::class, 'mediaInject'])->name('media.inject');
+            Route::post('/media/delete',     [CsApiController::class, 'mediaDelete'])->name('media.delete');
             Route::post('/decision',         [CsApiController::class, 'decision'])->name('decision');
             Route::post('/decision/{id}/award',[CsApiController::class, 'awardScore'])->name('decision.award');
             Route::post('/badge/{teamId}',   [CsApiController::class, 'badgeAward'])->name('badge.award');

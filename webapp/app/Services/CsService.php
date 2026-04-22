@@ -16,6 +16,7 @@ use App\Models\CsTeam;
 use App\Models\CsVote;
 use App\Models\CsVoteEntry;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class CsService
 {
@@ -456,6 +457,32 @@ class CsService
         $openQuiz    = $session->openQuiz();
         $phaseContent = app(\App\Services\CsContentBankService::class)
             ->getPhaseContent($session->scenario_key, (int) $session->current_phase_index);
+        $sessionMedia = $this->getSessionMediaSnapshot($session);
+        $phaseRuntimeMedia = $sessionMedia['phase'][(string) ((int) $session->current_phase_index)] ?? [];
+        $liveRuntimeMedia = $sessionMedia['live'];
+
+        $bankMedia = collect($phaseContent['media'] ?? [])->map(function (array $m) {
+            $id = trim((string) ($m['id'] ?? ''));
+            return [
+                'id' => $id !== '' ? $id : ('bank_' . Str::ulid()->toBase32()),
+                'type' => (string) ($m['type'] ?? 'image'),
+                'title' => (string) ($m['title'] ?? ''),
+                'caption' => (string) ($m['caption'] ?? ''),
+                'url' => (string) ($m['url'] ?? ''),
+                'thumbnail' => (string) ($m['thumbnail'] ?? ''),
+                'autoplay' => (bool) ($m['autoplay'] ?? false),
+                'loop' => (bool) ($m['loop'] ?? false),
+                'muted' => (bool) ($m['muted'] ?? true),
+                'stage' => $m['stage'] ?? null,
+                'scope' => 'bank',
+                'isLive' => false,
+                'isEditable' => false,
+                'source' => 'phase_bank',
+            ];
+        })->values()->all();
+
+        $phaseContent['media'] = array_values(array_merge($liveRuntimeMedia, $phaseRuntimeMedia, $bankMedia));
+        $phaseContent['liveMedia'] = array_values($liveRuntimeMedia);
 
         // Last 5 broadcasts (include phantom separately)
         $broadcasts = $session->broadcasts()
@@ -800,5 +827,139 @@ class CsService
                     $this->upsertQuizDecision($quiz, $entry, (int) ($entry->awarded_points ?? 0), $quizType);
                 }
             });
+    }
+
+    public function getSessionMediaSnapshot(CsSession $session): array
+    {
+        $settings = is_array($session->settings) ? $session->settings : [];
+        $raw = $settings['media_state'] ?? [];
+        $state = [
+            'phase' => is_array($raw['phase'] ?? null) ? $raw['phase'] : [],
+            'live' => is_array($raw['live'] ?? null) ? $raw['live'] : [],
+        ];
+
+        foreach ($state['phase'] as $phaseKey => $items) {
+            $state['phase'][(string) $phaseKey] = $this->normalizeSessionMediaItems((array) $items, 'phase');
+        }
+        $state['live'] = $this->normalizeSessionMediaItems((array) $state['live'], 'live');
+
+        return $state;
+    }
+
+    public function upsertSessionMedia(CsSession $session, string $scope, array $payload, ?int $phaseIndex = null): array
+    {
+        $scope = strtolower(trim($scope)) === 'live' ? 'live' : 'phase';
+        $settings = is_array($session->settings) ? $session->settings : [];
+        $state = $this->getSessionMediaSnapshot($session);
+        $item = $this->normalizeSingleSessionMediaItem($payload, $scope);
+
+        if ($scope === 'live') {
+            $found = false;
+            foreach ($state['live'] as $idx => $existing) {
+                if ((string) ($existing['id'] ?? '') === (string) ($item['id'] ?? '')) {
+                    $state['live'][$idx] = array_merge($existing, $item, ['scope' => 'live', 'isLive' => true, 'isEditable' => true]);
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $state['live'][] = array_merge($item, ['scope' => 'live', 'isLive' => true, 'isEditable' => true]);
+            }
+        } else {
+            $phaseKey = (string) max(0, (int) ($phaseIndex ?? $session->current_phase_index));
+            $state['phase'][$phaseKey] = $state['phase'][$phaseKey] ?? [];
+            $found = false;
+            foreach ($state['phase'][$phaseKey] as $idx => $existing) {
+                if ((string) ($existing['id'] ?? '') === (string) ($item['id'] ?? '')) {
+                    $state['phase'][$phaseKey][$idx] = array_merge($existing, $item, ['scope' => 'phase', 'isLive' => false, 'isEditable' => true]);
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $state['phase'][$phaseKey][] = array_merge($item, ['scope' => 'phase', 'isLive' => false, 'isEditable' => true]);
+            }
+        }
+
+        $settings['media_state'] = $state;
+        $session->settings = $settings;
+        $session->save();
+
+        return array_merge($item, [
+            'scope' => $scope,
+            'isLive' => $scope === 'live',
+            'isEditable' => true,
+        ]);
+    }
+
+    public function removeSessionMedia(CsSession $session, string $scope, string $id, ?int $phaseIndex = null): ?array
+    {
+        $scope = strtolower(trim($scope)) === 'live' ? 'live' : 'phase';
+        $id = trim($id);
+        if ($id === '') {
+            return null;
+        }
+
+        $settings = is_array($session->settings) ? $session->settings : [];
+        $state = $this->getSessionMediaSnapshot($session);
+        $removed = null;
+
+        if ($scope === 'live') {
+            $state['live'] = array_values(array_filter($state['live'], function (array $item) use (&$removed, $id) {
+                $match = (string) ($item['id'] ?? '') === $id;
+                if ($match) {
+                    $removed = $item;
+                }
+                return !$match;
+            }));
+        } else {
+            $phaseKey = (string) max(0, (int) ($phaseIndex ?? $session->current_phase_index));
+            $phaseItems = $state['phase'][$phaseKey] ?? [];
+            $state['phase'][$phaseKey] = array_values(array_filter($phaseItems, function (array $item) use (&$removed, $id) {
+                $match = (string) ($item['id'] ?? '') === $id;
+                if ($match) {
+                    $removed = $item;
+                }
+                return !$match;
+            }));
+        }
+
+        $settings['media_state'] = $state;
+        $session->settings = $settings;
+        $session->save();
+
+        return $removed;
+    }
+
+    private function normalizeSessionMediaItems(array $items, string $scope): array
+    {
+        return collect($items)
+            ->filter(fn($item) => is_array($item))
+            ->map(fn(array $item) => $this->normalizeSingleSessionMediaItem($item, $scope))
+            ->values()
+            ->all();
+    }
+
+    private function normalizeSingleSessionMediaItem(array $item, string $scope): array
+    {
+        $id = trim((string) ($item['id'] ?? ''));
+        return [
+            'id' => $id !== '' ? $id : ('media_' . Str::ulid()->toBase32()),
+            'type' => (string) ($item['type'] ?? 'image'),
+            'title' => (string) ($item['title'] ?? ''),
+            'caption' => (string) ($item['caption'] ?? ''),
+            'url' => (string) ($item['url'] ?? ''),
+            'thumbnail' => (string) ($item['thumbnail'] ?? ''),
+            'autoplay' => (bool) ($item['autoplay'] ?? false),
+            'loop' => (bool) ($item['loop'] ?? false),
+            'muted' => (bool) ($item['muted'] ?? true),
+            'stage' => $item['stage'] ?? null,
+            'context' => (string) ($item['context'] ?? 'manual'),
+            'storage_path' => isset($item['storage_path']) ? (string) $item['storage_path'] : null,
+            'scope' => $scope === 'live' ? 'live' : 'phase',
+            'isLive' => $scope === 'live',
+            'isEditable' => true,
+            'source' => $scope === 'live' ? 'session_live' : 'session_phase',
+        ];
     }
 }

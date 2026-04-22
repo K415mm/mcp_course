@@ -14,6 +14,7 @@ use App\Services\CsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class CsApiController extends Controller
@@ -50,6 +51,26 @@ class CsApiController extends Controller
         $phaseIndex = max(0, $phaseIndex);
 
         $content = $this->contentBank->getPhaseContent($session->scenario_key, $phaseIndex);
+        $mediaState = $this->cs->getSessionMediaSnapshot($session);
+        $phaseRuntimeMedia = $mediaState['phase'][(string) $phaseIndex] ?? [];
+        $liveRuntimeMedia = $mediaState['live'] ?? [];
+        $bankMedia = collect($content['media'] ?? [])->map(function (array $m) {
+            return [
+                'id' => (string) ($m['id'] ?? ''),
+                'type' => (string) ($m['type'] ?? 'image'),
+                'title' => (string) ($m['title'] ?? ''),
+                'caption' => (string) ($m['caption'] ?? ''),
+                'url' => (string) ($m['url'] ?? ''),
+                'thumbnail' => (string) ($m['thumbnail'] ?? ''),
+                'autoplay' => (bool) ($m['autoplay'] ?? false),
+                'loop' => (bool) ($m['loop'] ?? false),
+                'muted' => (bool) ($m['muted'] ?? true),
+                'scope' => 'bank',
+                'isLive' => false,
+                'isEditable' => false,
+                'source' => 'phase_bank',
+            ];
+        })->values()->all();
 
         return response()->json([
             'ok' => true,
@@ -57,8 +78,129 @@ class CsApiController extends Controller
             'phaseIndex' => $phaseIndex,
             'messages' => $content['messages'],
             'questions' => $content['questions'],
-            'media' => $content['media'] ?? [],
+            'media' => array_values(array_merge($liveRuntimeMedia, $phaseRuntimeMedia, $bankMedia)),
+            'liveMedia' => array_values($liveRuntimeMedia),
         ]);
+    }
+
+    public function mediaSave(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'scope' => 'required|in:phase,live',
+            'phase_index' => 'nullable|integer|min:0',
+            'id' => 'nullable|string|max:120',
+            'type' => 'required|in:image,video,animation',
+            'title' => 'nullable|string|max:255',
+            'caption' => 'nullable|string|max:1000',
+            'url' => 'required|string|max:2000',
+            'thumbnail' => 'nullable|string|max:2000',
+            'autoplay' => 'nullable|boolean',
+            'loop' => 'nullable|boolean',
+            'muted' => 'nullable|boolean',
+            'context' => 'nullable|string|max:100',
+        ]);
+
+        $item = $this->cs->upsertSessionMedia(
+            $session,
+            $data['scope'],
+            $data,
+            $data['phase_index'] ?? null
+        );
+
+        return response()->json(['ok' => true, 'media' => $item]);
+    }
+
+    public function mediaUpload(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'file' => 'required|file|max:102400',
+            'scope' => 'nullable|in:phase,live',
+            'phase_index' => 'nullable|integer|min:0',
+            'title' => 'nullable|string|max:255',
+            'caption' => 'nullable|string|max:1000',
+            'type' => 'nullable|in:image,video,animation',
+            'autoplay' => 'nullable|boolean',
+            'loop' => 'nullable|boolean',
+            'muted' => 'nullable|boolean',
+            'context' => 'nullable|string|max:100',
+        ]);
+
+        $file = $request->file('file');
+        $path = $file->store('cs_media', 'public');
+        $mime = strtolower((string) $file->getMimeType());
+        $autoType = str_starts_with($mime, 'video/') ? 'video' : 'image';
+        if (str_contains($mime, 'gif')) {
+            $autoType = 'animation';
+        }
+
+        $item = $this->cs->upsertSessionMedia(
+            $session,
+            $data['scope'] ?? 'phase',
+            [
+                'type' => $data['type'] ?? $autoType,
+                'title' => $data['title'] ?? $file->getClientOriginalName(),
+                'caption' => $data['caption'] ?? '',
+                'url' => Storage::disk('public')->url($path),
+                'thumbnail' => '',
+                'autoplay' => (bool) ($data['autoplay'] ?? false),
+                'loop' => (bool) ($data['loop'] ?? false),
+                'muted' => (bool) ($data['muted'] ?? true),
+                'context' => $data['context'] ?? 'upload',
+                'storage_path' => $path,
+            ],
+            $data['phase_index'] ?? null
+        );
+
+        return response()->json(['ok' => true, 'media' => $item]);
+    }
+
+    public function mediaInject(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'media' => 'required|array',
+            'media.id' => 'nullable|string|max:120',
+            'media.type' => 'nullable|in:image,video,animation',
+            'media.title' => 'nullable|string|max:255',
+            'media.caption' => 'nullable|string|max:1000',
+            'media.url' => 'required|string|max:2000',
+            'media.thumbnail' => 'nullable|string|max:2000',
+            'media.autoplay' => 'nullable|boolean',
+            'media.loop' => 'nullable|boolean',
+            'media.muted' => 'nullable|boolean',
+            'media.storage_path' => 'nullable|string|max:1000',
+            'context' => 'nullable|string|max:100',
+        ]);
+
+        $media = $data['media'];
+        $media['context'] = $data['context'] ?? 'inject';
+        $item = $this->cs->upsertSessionMedia($session, 'live', $media, null);
+
+        return response()->json(['ok' => true, 'media' => $item]);
+    }
+
+    public function mediaDelete(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+        $data = $request->validate([
+            'scope' => 'required|in:phase,live',
+            'id' => 'required|string|max:120',
+            'phase_index' => 'nullable|integer|min:0',
+        ]);
+
+        $removed = $this->cs->removeSessionMedia(
+            $session,
+            $data['scope'],
+            $data['id'],
+            $data['phase_index'] ?? null
+        );
+        if ($removed && !empty($removed['storage_path'])) {
+            Storage::disk('public')->delete((string) $removed['storage_path']);
+        }
+
+        return response()->json(['ok' => true, 'removed' => (bool) $removed]);
     }
 
     // ── POST /api/cs/{code}/join ────────────────────────────────────

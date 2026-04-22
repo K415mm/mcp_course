@@ -266,6 +266,52 @@
                     <div class="small fw-bold text-theme mb-2">Media de phase</div>
                     <div id="bankMedia" class="small text-white-50">Chargement...</div>
                 </div>
+                <div class="bank-block mb-2">
+                    <div class="small fw-bold text-theme mb-2">Controle Media Live</div>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <select id="mediaType" class="form-select form-select-sm">
+                                <option value="image">Image</option>
+                                <option value="video">Video</option>
+                                <option value="animation">Animation</option>
+                            </select>
+                        </div>
+                        <div class="col-8">
+                            <input id="mediaTitle" class="form-control form-control-sm" placeholder="Titre du media">
+                        </div>
+                        <div class="col-12">
+                            <input id="mediaUrl" class="form-control form-control-sm" placeholder="URL media (https://...)">
+                        </div>
+                        <div class="col-12">
+                            <textarea id="mediaCaption" class="form-control form-control-sm" rows="2" placeholder="Description / Caption"></textarea>
+                        </div>
+                        <div class="col-12 d-flex gap-2 flex-wrap">
+                            <label class="form-check form-check-inline small">
+                                <input class="form-check-input" type="checkbox" id="mediaAutoplay">
+                                <span class="form-check-label">Autoplay</span>
+                            </label>
+                            <label class="form-check form-check-inline small">
+                                <input class="form-check-input" type="checkbox" id="mediaLoop">
+                                <span class="form-check-label">Loop</span>
+                            </label>
+                            <label class="form-check form-check-inline small">
+                                <input class="form-check-input" type="checkbox" id="mediaMuted" checked>
+                                <span class="form-check-label">Muted</span>
+                            </label>
+                        </div>
+                        <div class="col-12 d-flex gap-2 flex-wrap">
+                            <button class="btn btn-sm btn-outline-theme" onclick="saveMediaToPhase()">Ajouter a la phase</button>
+                            <button class="btn btn-sm btn-theme" onclick="saveMediaToLive()">Injecter live</button>
+                        </div>
+                        <div class="col-12">
+                            <input type="file" id="mediaFile" class="form-control form-control-sm" accept="image/*,video/*,.gif,.webp">
+                        </div>
+                        <div class="col-12 d-flex gap-2 flex-wrap">
+                            <button class="btn btn-sm btn-outline-info" onclick="uploadMediaToPhase()">Upload vers phase</button>
+                            <button class="btn btn-sm btn-info text-dark" onclick="uploadMediaToLive()">Upload & Inject live</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="bank-block">
                     <div class="small fw-bold text-theme mb-2">Questions / Quiz</div>
                     <div id="bankQuestions" class="small text-white-50">Chargement...</div>
@@ -433,6 +479,15 @@ async function api(path, method='GET', body=null) {
     return r.json();
 }
 
+async function apiUpload(path, formData) {
+    const r = await fetch(`/cs/${CODE}/api/${path}`, {
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': CSRF},
+        body: formData
+    });
+    return r.json();
+}
+
 // ── POLL ───────────────────────────────────────────────────
 async function poll() {
     try {
@@ -546,14 +601,137 @@ function renderBankMedia() {
         return;
     }
 
-    root.innerHTML = currentBank.media.map((m) => `
+    root.innerHTML = currentBank.media.map((m, idx) => `
         <div class="bank-item">
-            <p class="fw-bold mb-1">${m.title || m.id || 'Media'}</p>
-            <div class="bank-note">${(m.type || 'image').toUpperCase()}${m.stage ? ` · ${m.stage}` : ''}</div>
+            <p class="fw-bold mb-1">${m.title || m.id || 'Media'} ${m.isLive ? '<span class="badge bg-danger ms-1">LIVE</span>' : ''}</p>
+            <div class="bank-note">${(m.type || 'image').toUpperCase()}${m.stage ? ` · ${m.stage}` : ''}${m.scope ? ` · ${String(m.scope).toUpperCase()}` : ''}</div>
             <div class="small text-white-50 mt-1">${m.caption || ''}</div>
             <div class="small mt-1"><a href="${m.url || '#'}" target="_blank" rel="noopener">Ouvrir le media</a></div>
+            <div class="mt-2 d-flex gap-2 flex-wrap">
+                <button class="btn btn-sm btn-theme" onclick="pushMediaLive(${idx})">Injecter live</button>
+                ${m.isEditable ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteMedia(${idx})">Supprimer</button>` : ''}
+            </div>
         </div>
     `).join('');
+}
+
+function mediaPayloadFromForm() {
+    return {
+        type: document.getElementById('mediaType').value || 'image',
+        title: (document.getElementById('mediaTitle').value || '').trim(),
+        caption: (document.getElementById('mediaCaption').value || '').trim(),
+        url: (document.getElementById('mediaUrl').value || '').trim(),
+        autoplay: document.getElementById('mediaAutoplay').checked,
+        loop: document.getElementById('mediaLoop').checked,
+        muted: document.getElementById('mediaMuted').checked,
+    };
+}
+
+async function saveMediaToPhase() {
+    const payload = mediaPayloadFromForm();
+    if (!payload.url) {
+        showNotif('URL media requise', 'warn');
+        return;
+    }
+    const phaseIndex = parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0;
+    await api('media/save', 'POST', {
+        scope: 'phase',
+        phase_index: phaseIndex,
+        ...payload
+    });
+    showNotif('Media ajoute a la phase', 'success');
+    await refreshBank();
+}
+
+async function saveMediaToLive() {
+    const payload = mediaPayloadFromForm();
+    if (!payload.url) {
+        showNotif('URL media requise', 'warn');
+        return;
+    }
+    await api('media/save', 'POST', { scope: 'live', ...payload, context: 'manual_live' });
+    showNotif('Media injecte en live', 'success');
+    await refreshBank();
+}
+
+async function uploadMediaToPhase() {
+    const input = document.getElementById('mediaFile');
+    const file = input?.files?.[0];
+    if (!file) {
+        showNotif('Selectionner un fichier media', 'warn');
+        return;
+    }
+    const payload = mediaPayloadFromForm();
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('scope', 'phase');
+    fd.append('phase_index', String(parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0));
+    fd.append('type', payload.type);
+    fd.append('title', payload.title || file.name);
+    fd.append('caption', payload.caption || '');
+    fd.append('autoplay', payload.autoplay ? '1' : '0');
+    fd.append('loop', payload.loop ? '1' : '0');
+    fd.append('muted', payload.muted ? '1' : '0');
+    const res = await apiUpload('media/upload', fd);
+    if (!res?.ok) {
+        showNotif(res?.error || 'Upload media echoue', 'warn');
+        return;
+    }
+    input.value = '';
+    showNotif('Upload media termine', 'success');
+    await refreshBank();
+}
+
+async function uploadMediaToLive() {
+    const input = document.getElementById('mediaFile');
+    const file = input?.files?.[0];
+    if (!file) {
+        showNotif('Selectionner un fichier media', 'warn');
+        return;
+    }
+    const payload = mediaPayloadFromForm();
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('scope', 'live');
+    fd.append('type', payload.type);
+    fd.append('title', payload.title || file.name);
+    fd.append('caption', payload.caption || '');
+    fd.append('autoplay', payload.autoplay ? '1' : '0');
+    fd.append('loop', payload.loop ? '1' : '0');
+    fd.append('muted', payload.muted ? '1' : '0');
+    fd.append('context', 'upload_live');
+    const res = await apiUpload('media/upload', fd);
+    if (!res?.ok) {
+        showNotif(res?.error || 'Upload media live echoue', 'warn');
+        return;
+    }
+    input.value = '';
+    showNotif('Media live injecte', 'success');
+    await refreshBank();
+}
+
+async function pushMediaLive(index) {
+    const media = currentBank.media?.[index];
+    if (!media?.url) return;
+    await api('media/inject', 'POST', { media, context: 'bank_push' });
+    showNotif('Media diffuse sur dashboards', 'success');
+    await refreshBank();
+}
+
+async function deleteMedia(index) {
+    const media = currentBank.media?.[index];
+    if (!media?.id || !media?.scope || media.scope === 'bank') {
+        showNotif('Ce media n est pas supprimable', 'warn');
+        return;
+    }
+    if (!confirm('Supprimer ce media ?')) return;
+    await api('media/delete', 'POST', {
+        scope: media.scope,
+        id: media.id,
+        phase_index: parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0
+    });
+    showNotif('Media supprime', 'success');
+    await refreshBank();
 }
 
 function renderBankQuestions() {

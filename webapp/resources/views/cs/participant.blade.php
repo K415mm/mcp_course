@@ -90,6 +90,14 @@
     {{-- LEFT: Join / Participant info + Decisions --}}
     <div class="col-lg-7 mb-3">
 
+        <div class="card mb-3">
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Carte des Opérations Nationale</h5>
+                <div id="phaseSituationMedia" class="small text-white-50">Aucun visuel pour la phase en cours.</div>
+            </div>
+        </div>
+
         @if(!$player)
         {{-- JOIN FORM --}}
         <div class="card mb-3">
@@ -143,6 +151,16 @@
         </div>
         @endif
 
+        <div class="card mb-3" id="quizCard" style="display:none!important">
+            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
+            <div class="card-body">
+                <h5 class="card-title mb-1"><i class="bi bi-patch-question me-2 text-info"></i>Question Quiz</h5>
+                <p class="small text-white-50 mb-2" id="quizQuestion"></p>
+                <div id="quizOptions" class="d-flex flex-wrap gap-2"></div>
+                <div id="quizMeta" class="small text-white-50 mt-2"></div>
+            </div>
+        </div>
+
         {{-- DECISION SUBMISSION --}}
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
@@ -175,16 +193,6 @@
             </div>
         </div>
 
-        <div class="card mt-3" id="quizCard" style="display:none!important">
-            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
-            <div class="card-body">
-                <h5 class="card-title mb-1"><i class="bi bi-patch-question me-2 text-info"></i>Question Quiz</h5>
-                <p class="small text-white-50 mb-2" id="quizQuestion"></p>
-                <div id="quizOptions" class="d-flex flex-wrap gap-2"></div>
-                <div id="quizMeta" class="small text-white-50 mt-2"></div>
-            </div>
-        </div>
-
     </div>
 
     {{-- RIGHT: Live feed + Teams --}}
@@ -198,14 +206,6 @@
                 <div id="broadcastFeed" style="max-height:220px;overflow-y:auto">
                     <div class="text-white-50 text-center py-3 small">En attente de communications...</div>
                 </div>
-            </div>
-        </div>
-
-        <div class="card mb-3">
-            <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
-            <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Phase Intel & Quiz</h5>
-                <div id="phaseContentParticipant" class="small text-white-50">Aucun contenu de phase.</div>
             </div>
         </div>
 
@@ -250,6 +250,8 @@ const TEAM_ID   = {{ $player?->cs_team_id ?? 'null' }};
 let selectedTeam = null, decisionType = 'decision';
 let lastBcId = 0, lastAtmo = '';
 const teamStateById = {};
+let currentBroadcasts = [];
+let currentPhaseMessages = [];
 
 // ── API helper ─────────────────────────────────────────────
 async function api(path, method='GET', body=null) {
@@ -406,17 +408,13 @@ async function poll() {
 }
 
 function renderPhaseContent(content) {
-    const root = document.getElementById('phaseContentParticipant');
-    if (!root) return;
+    const mediaRoot = document.getElementById('phaseSituationMedia');
+    if (!mediaRoot) return;
     const data = content || {};
     const media = Array.isArray(data.media) ? data.media : [];
     const messages = Array.isArray(data.messages) ? data.messages : [];
-    const questions = Array.isArray(data.questions) ? data.questions : [];
-
-    if (!media.length && !messages.length && !questions.length) {
-        root.innerHTML = '<div class="text-white-50">Aucun contenu de phase.</div>';
-        return;
-    }
+    currentPhaseMessages = messages;
+    renderCommunications();
 
     const mediaHtml = media.map((m) => {
         if (m.type === 'video') {
@@ -427,11 +425,7 @@ function renderPhaseContent(content) {
         }
         return `<div class="mb-2"><div class="fw-bold">${m.title || 'Image'}</div><img src="${m.url}" class="w-100 rounded mt-1" alt="${m.title || 'image'}"><div class="text-white-50 small">${m.caption || ''}</div></div>`;
     }).join('');
-
-    const messagesHtml = messages.map((m) => `<div class="broadcast-item ${m.type || 'info'}"><div class="small text-white-50">${(m.type || 'info').toUpperCase()}</div>${m.content || ''}</div>`).join('');
-    const questionsHtml = questions.map((q, i) => `<div class="mb-2 p-2 rounded" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)"><div class="fw-bold">${i+1}. ${q.question || 'Quiz'}</div><div class="small text-white-50">Type: ${(q.type || 'single_choice').replace('_',' ')}</div></div>`).join('');
-
-    root.innerHTML = `${mediaHtml}${messagesHtml}${questionsHtml}`;
+    mediaRoot.innerHTML = mediaHtml || '<div class="text-white-50">Aucun visuel pour la phase en cours.</div>';
 }
 setInterval(poll, 2000); poll();
 
@@ -473,27 +467,51 @@ function updateTeams(teams) {
 
 // ── BROADCASTS ─────────────────────────────────────────────
 function updateBroadcasts(bcs) {
-    if (!bcs?.length) return;
+    if (!Array.isArray(bcs)) return;
     const latest = bcs[0];
-    if (latest.id <= lastBcId) return;
-    lastBcId = latest.id;
+    if (latest && latest.id > lastBcId) {
+        lastBcId = latest.id;
+        if (latest.isPhantom) showPhantom(latest.message);
+        else toast(latest.type || 'info', String(latest.message || '').substring(0, 80));
+    }
+    currentBroadcasts = bcs.filter(b => !b.isPhantom);
+    renderCommunications();
+}
 
-    if (latest.isPhantom) {
-        showPhantom(latest.message);
+function renderCommunications() {
+    const feed = document.getElementById('broadcastFeed');
+    if (!feed) return;
+
+    const phaseItems = currentPhaseMessages
+        .filter(m => ['info', 'warn', 'warning', 'alert'].includes(String(m.type || 'info').toLowerCase()))
+        .map(m => ({
+            at: null,
+            type: (m.type || 'info').toLowerCase() === 'warning' ? 'warn' : (m.type || 'info').toLowerCase(),
+            message: m.content || '',
+            source: 'Phase Intel',
+        }));
+
+    const mentorItems = currentBroadcasts.map(b => ({
+        at: b.at || null,
+        type: (b.type || 'info').toLowerCase(),
+        message: b.message || '',
+        source: 'Mentor Injector',
+    }));
+
+    const merged = [...mentorItems, ...phaseItems].slice(0, 30);
+    if (!merged.length) {
+        feed.innerHTML = '<div class="text-white-50 text-center py-3 small">En attente de communications...</div>';
         return;
     }
 
-    const feed = document.getElementById('broadcastFeed');
-    const wasEmpty = feed.querySelector('.text-white-50');
-    if (wasEmpty) feed.innerHTML = '';
-
-    const n = new Date(), t = [n.getHours(),n.getMinutes()].map(x=>String(x).padStart(2,'0')).join(':');
-    const div = document.createElement('div');
-    div.className = `broadcast-item ${latest.type||''}`;
-    div.innerHTML = `<div class="small text-white-50 mb-1">${t}</div>${latest.message}`;
-    feed.insertBefore(div, feed.firstChild);
-
-    toast(latest.type||'info', latest.message.substring(0,80));
+    feed.innerHTML = merged.map(item => {
+        const when = item.at ? new Date(item.at).toLocaleTimeString('fr', {hour:'2-digit', minute:'2-digit'}) : 'PHASE';
+        const type = item.type || 'info';
+        return `<div class="broadcast-item ${type}">
+            <div class="small text-white-50 mb-1">${when} · ${item.source}</div>
+            ${item.message}
+        </div>`;
+    }).join('');
 }
 
 // ── VOTE ───────────────────────────────────────────────────

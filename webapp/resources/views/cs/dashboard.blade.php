@@ -418,20 +418,27 @@ body.scanlines::after {
     align-items: center;
     gap: 3px;
 }
-.team-score-band {
-    position: relative;
-    margin-top: 2px;
-    padding: 6px 4px 4px;
-    min-height: 88px;
-    border-top: 1px solid rgba(201,160,80,.12);
-    border-bottom: 1px solid rgba(201,160,80,.12);
-    background:
-        linear-gradient(180deg, rgba(121,17,17,.18) 0%, rgba(42,8,8,.1) 55%, rgba(255,255,255,0) 100%);
+.team-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+    flex: 1;
+}
+.team-stat-box {
+    background: rgba(201,160,80,.04);
+    border: 1px solid rgba(201,160,80,.12);
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    padding: 10px 4px 6px;
+    position: relative;
+}
+.team-score-box {
+    background: linear-gradient(180deg, rgba(121,17,17,.18) 0%, rgba(42,8,8,.1) 100%);
+    border-color: rgba(201,160,80,.2);
 }
 .team-score-label,
 .team-badge-label {
@@ -440,9 +447,28 @@ body.scanlines::after {
     letter-spacing: 2px;
     text-transform: uppercase;
     color: rgba(201,160,80,.52);
+    position: absolute;
+    top: 6px;
+    width: 100%;
+    text-align: center;
 }
-.team-badge-panel {
-    padding-top: 7px;
+.t-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 3.2rem; font-weight: 800;
+    color: #ffd772;
+    background: linear-gradient(180deg, var(--cs-gold2) 0%, var(--cs-gold) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: .9;
+    transition: all .4s;
+    display: block;
+    text-shadow: 0 0 24px rgba(201,160,80,.28);
+    margin-top: 10px;
+}
+.t-badge {
+    margin-top: 14px;
+    min-height: 40px;
+    display: flex; align-items: center; justify-content: center;
 }
 .team-footer {
     margin-top: auto;
@@ -576,18 +602,6 @@ body.scanlines::after {
     font-family: 'Space Mono',monospace;
     letter-spacing: .8px;
 }
-.t-score {
-    font-family: 'Space Mono', monospace;
-    font-size: 3.6rem; font-weight: 800;
-    color: #ffd772;
-    background: linear-gradient(180deg, var(--cs-gold2) 0%, var(--cs-gold) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: .9;
-    transition: all .4s;
-    display: block;
-    text-shadow: 0 0 24px rgba(201,160,80,.28);
-}
 .t-delta {
     display: none; position: absolute;
     top: 50%; right: 10px; transform: translateY(-50%);
@@ -599,11 +613,6 @@ body.scanlines::after {
     100% { opacity: 0; transform: translateY(-140%); }
 }
 /* Badge image container — bigger + centered */
-.t-badge {
-    margin-top: 4px;
-    min-height: 44px;
-    display: flex; align-items: center; justify-content: center;
-}
 .t-badge img {
     width: 40px; height: 40px; object-fit: contain;
     filter: drop-shadow(0 0 15px rgba(201,160,80,.48));
@@ -1260,16 +1269,21 @@ function updateTeams(teams) {
                         <div class="t-role" id="trl-${t.id}">${t.roleLabel}</div>
                     </div>
                 </div>
-                <div class="team-score-band">
-                    <div class="team-score-label" id="tsl-${t.id}">${t.isScored ? 'Score' : 'Status'}</div>
-                    <div class="t-score" id="ts-${t.id}">${t.isScored ? t.score : 'MENTOR'}</div>
-                    <div class="t-delta" id="td-${t.id}"></div>
+                
+                <div class="team-stats-grid">
+                    <div class="team-stat-box">
+                        <div class="team-badge-label">Badge</div>
+                        <div class="t-badge" id="tb-${t.id}">${badgeImgHtml(t.badge)}</div>
+                        <div class="t-badge-nm" id="tbn-${t.id}">${t.badge.name}</div>
+                    </div>
+                    
+                    <div class="team-stat-box team-score-box">
+                        <div class="team-score-label" id="tsl-${t.id}">${t.isScored ? 'Score' : 'Status'}</div>
+                        <div class="t-score" id="ts-${t.id}">${t.isScored ? t.score : 'MENTOR'}</div>
+                        <div class="t-delta" id="td-${t.id}"></div>
+                    </div>
                 </div>
-                <div class="team-badge-panel">
-                    <div class="team-badge-label">Badge</div>
-                    <div class="t-badge" id="tb-${t.id}">${badgeImgHtml(t.badge)}</div>
-                    <div class="t-badge-nm" id="tbn-${t.id}">${t.badge.name}</div>
-                </div>
+
                 <div class="team-footer">
                     <div class="t-online">
                         <span class="dot-on"></span>

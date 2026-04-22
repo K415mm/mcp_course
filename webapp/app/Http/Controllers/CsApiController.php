@@ -320,7 +320,7 @@ class CsApiController extends Controller
         $session = $this->getModeratorSession($code);
         $data = $request->validate([
             'question' => 'required|string|max:500',
-            'type' => 'nullable|in:single_choice,multi_choice,order,short_answer',
+            'type' => 'nullable|string|max:50',
             'prompt' => 'nullable|string|max:1000',
             'options' => 'nullable|array|max:8',
             'options.*.key' => 'required|string|max:10',
@@ -332,7 +332,7 @@ class CsApiController extends Controller
             'base_points' => 'nullable|integer|min:0|max:100',
         ]);
 
-        $type = (string) ($data['type'] ?? 'single_choice');
+        $type = $this->normalizeQuizType((string) ($data['type'] ?? 'single_choice'));
         $normalizedOptions = collect($data['options'] ?? [])->map(function ($option) {
             return [
                 'key' => strtoupper(trim((string) ($option['key'] ?? ''))),
@@ -379,15 +379,16 @@ class CsApiController extends Controller
         }
 
         $quiz = CsQuiz::where('cs_session_id', $session->id)->where('is_open', true)->firstOrFail();
+        $quizType = $this->normalizeQuizType((string) $quiz->type);
         $choiceStr = null;
         $answerText = null;
 
-        if ($quiz->type === 'short_answer') {
+        if ($quizType === 'short_answer') {
             $answerText = trim((string) ($data['answer_text'] ?? ''));
             if ($answerText === '') {
                 return response()->json(['ok' => false, 'error' => 'Short answer text is required.'], 422);
             }
-        } elseif (in_array($quiz->type, ['multi_choice', 'order'], true)) {
+        } elseif (in_array($quizType, ['multi_choice', 'order'], true)) {
             $choiceVal = $data['choice'] ?? null;
             $keys = is_array($choiceVal)
                 ? $choiceVal
@@ -425,6 +426,17 @@ class CsApiController extends Controller
         }
 
         return response()->json(['ok' => true]);
+    }
+
+    private function normalizeQuizType(string $type): string
+    {
+        $v = strtolower(trim($type));
+        return match ($v) {
+            'multi_choice', 'multi choice', 'multichoice', 'multiple_choice', 'multiple choice', 'multi_chice', 'multi chice', 'multi-choise' => 'multi_choice',
+            'short_answer', 'short answer', 'shortanswer', 'text', 'open' => 'short_answer',
+            'order', 'sort_order', 'sort order', 'ordering', 'rank', 'ranking' => 'order',
+            default => 'single_choice',
+        };
     }
 
     // ── POST /api/cs/{code}/quiz/close ─────────────────────────────

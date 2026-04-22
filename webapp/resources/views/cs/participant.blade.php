@@ -305,6 +305,14 @@ let multiChoiceSelection = [];
 let orderSelection = [];
 let currentQuizState = null;
 
+function normalizeQuizType(type) {
+    const v = String(type || '').trim().toLowerCase();
+    if (['multi_choice', 'multi choice', 'multichoice', 'multiple_choice', 'multiple choice', 'multi_chice', 'multi chice', 'multi-choise'].includes(v)) return 'multi_choice';
+    if (['short_answer', 'short answer', 'shortanswer', 'text', 'open'].includes(v)) return 'short_answer';
+    if (['order', 'sort_order', 'sort order', 'ordering', 'rank', 'ranking'].includes(v)) return 'order';
+    return 'single_choice';
+}
+
 async function castQuiz(key) {
     if (!TEAM_ID) return;
     const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
@@ -527,7 +535,7 @@ function updateQuiz(quiz) {
     document.getElementById('quizQuestion').textContent = quiz.question ?? '';
     const myAnswer = quiz.myAnswer ?? null;
     const myAnswerText = quiz.myAnswerText ?? null;
-    currentQuizType = quiz.type || 'single_choice';
+    currentQuizType = normalizeQuizType(quiz.type);
     const opts = document.getElementById('quizOptions');
     
     const alreadyAnswered = (myAnswer !== null && myAnswer !== '') || (myAnswerText !== null && myAnswerText !== '');
@@ -585,7 +593,7 @@ function updateQuiz(quiz) {
 
     opts.innerHTML = html;
     const prompt = (quiz.prompt || '').trim();
-    document.getElementById('quizMeta').textContent = `Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}${prompt ? ' · ' + prompt : ''}`;
+    document.getElementById('quizMeta').textContent = `Type: ${currentQuizType.replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}${prompt ? ' · ' + prompt : ''}`;
 }
 
 // ── ATMOSPHERE ─────────────────────────────────────────────

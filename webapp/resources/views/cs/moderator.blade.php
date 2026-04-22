@@ -537,7 +537,7 @@ function renderBankQuestions() {
     root.innerHTML = currentBank.questions.map((q, idx) => `
         <div class="bank-item">
             <p class="fw-bold">${idx + 1}. ${q.question || 'Question sans titre'}</p>
-            <div class="bank-note mt-1">Type: ${(q.type || 'single_choice').toUpperCase()}${q.points ? ` · ${q.points} pts` : ''}${q.time_limit ? ` · ${q.time_limit}s` : ''}</div>
+            <div class="bank-note mt-1">Type: ${normalizeQuizType(q.type).toUpperCase()}${q.points ? ` · ${q.points} pts` : ''}${q.time_limit ? ` · ${q.time_limit}s` : ''}</div>
             <div class="bank-note mt-1">${(q.options || []).map(o => `${o.key}: ${o.label} (${o.points ?? 0} pts)`).join(' | ') || (q.prompt || 'Question ouverte')}</div>
             <div class="mt-2 d-flex justify-content-end gap-2 flex-wrap">
                 <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">Pre-remplir le vote</button>
@@ -580,7 +580,7 @@ function prefillQuizFromBank(index) {
     const opts = Array.isArray(question.options) ? question.options : [];
 
     document.getElementById('quizQ').value = question.question || '';
-    document.getElementById('quizType').value = question.type || 'single_choice';
+    document.getElementById('quizType').value = normalizeQuizType(question.type);
     document.getElementById('quizOpt').value = opts.map(opt => `${opt.key}|${opt.label}|${opt.color||'#00b4d8'}|${opt.points||0}`).join('\n');
     document.getElementById('quizCorrect').value = (question.acceptable_answers || question.correct_order || []).join(',');
     document.getElementById('quizBasePoints').value = question.points || 10;
@@ -728,7 +728,7 @@ function parseManualOptions(raw) {
 
 async function openQuiz() {
     const q = document.getElementById('quizQ').value.trim();
-    const type = document.getElementById('quizType').value;
+    const type = normalizeQuizType(document.getElementById('quizType').value);
     const options = parseManualOptions(document.getElementById('quizOpt').value);
     if (!q) return showNotif('Question quiz requise', 'danger');
     if (['single_choice', 'multi_choice', 'order'].includes(type) && (!options || options.length < 2)) {
@@ -770,11 +770,19 @@ function updateQuizTally(quiz) {
         return `<div class="small">${r.teamName}: ${answerDisplay} => <span class="text-theme">${r.awardedPoints} pts</span></div>`;
     }).join('');
     el.innerHTML = `
-        <div class="small fw-bold text-info mb-1">${quiz.question || 'Quiz'} (${(quiz.type || 'single_choice').replace('_',' ')})</div>
+        <div class="small fw-bold text-info mb-1">${quiz.question || 'Quiz'} (${normalizeQuizType(quiz.type).replace('_',' ')})</div>
         <div class="mb-1">${rows}</div>
         <div class="small text-white-50 mb-1">Réponses: ${quiz.answerCount || 0}</div>
         <div>${resultRows}</div>
     `;
+}
+
+function normalizeQuizType(type) {
+    const v = String(type || '').trim().toLowerCase();
+    if (['multi_choice', 'multi choice', 'multichoice', 'multiple_choice', 'multiple choice', 'multi_chice', 'multi chice', 'multi-choise'].includes(v)) return 'multi_choice';
+    if (['short_answer', 'short answer', 'shortanswer', 'text', 'open'].includes(v)) return 'short_answer';
+    if (['order', 'sort_order', 'sort order', 'ordering', 'rank', 'ranking'].includes(v)) return 'order';
+    return 'single_choice';
 }
 
 async function closeVoteWithScore() {

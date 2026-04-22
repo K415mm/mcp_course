@@ -340,6 +340,7 @@ class CsService
     public function closeQuizAndScore(CsQuiz $quiz): array
     {
         $quiz->loadMissing('session');
+        $quizType = $this->normalizeQuizType((string) $quiz->type);
         $options = collect($quiz->options ?? []);
         $correct = collect($quiz->correct_answers ?? [])->map(fn($v) => strtoupper(trim((string) $v)))->values()->all();
         $hasCorrect = !empty($correct);
@@ -350,7 +351,7 @@ class CsService
             $answerText = trim((string) ($entry->answer_text ?? ''));
             $awarded = 0;
 
-            if ($quiz->type === 'short_answer') {
+            if ($quizType === 'short_answer') {
                 if ($hasCorrect) {
                     $normalizedText = mb_strtolower(preg_replace('/\s+/', ' ', trim($answerText)));
                     $normalizedCorrect = collect($quiz->correct_answers ?? [])
@@ -360,7 +361,7 @@ class CsService
                         ->all();
                     $awarded = in_array($normalizedText, $normalizedCorrect, true) ? max(0, (int) $quiz->base_points) : 0;
                 }
-            } elseif ($quiz->type === 'order') {
+            } elseif ($quizType === 'order') {
                 $chosenOrder = array_values(array_filter(array_map('trim', explode(',', $answerKey))));
                 if ($hasCorrect) {
                     $awarded = ($chosenOrder === $correct) ? max(0, (int) $quiz->base_points) : 0;
@@ -370,7 +371,7 @@ class CsService
                         $awarded += (int) ($opt['points'] ?? 0);
                     }
                 }
-            } elseif ($quiz->type === 'multi_choice' || str_contains($answerKey, ',')) {
+            } elseif ($quizType === 'multi_choice' || str_contains($answerKey, ',')) {
                 $chosenKeys = array_filter(array_map('trim', explode(',', $answerKey)));
                 if ($hasCorrect) {
                     sort($chosenKeys);
@@ -404,7 +405,7 @@ class CsService
                 'teamName' => $entry->team?->name ?? 'Unknown',
                 'answerKey' => $entry->answer_key,
                 'answerText' => $entry->answer_text,
-                'quizType' => $quiz->type,
+                'quizType' => $quizType,
                 'awardedPoints' => $entry->awarded_points,
             ];
 
@@ -416,7 +417,7 @@ class CsService
                 'type' => 'question',
                 'content' => sprintf(
                     'Quiz (%s): %s | Réponse: %s%s',
-                    $quiz->type,
+                    $quizType,
                     $quiz->question,
                     $entry->answer_key ?: '—',
                     $entry->answer_text ? (' (' . mb_strimwidth($entry->answer_text, 0, 120, '...') . ')') : ''
@@ -590,7 +591,7 @@ class CsService
         if ($openQuiz) {
             $quizData = [
                 'id' => $openQuiz->id,
-                'type' => $openQuiz->type,
+                'type' => $this->normalizeQuizType((string) $openQuiz->type),
                 'question' => $openQuiz->question,
                 'prompt' => $openQuiz->prompt,
                 'options' => $openQuiz->options ?? [],
@@ -734,5 +735,16 @@ class CsService
             'badgeCatalog'    => $badgeCatalog,
             'decisionMatrix'  => $decisionMatrix,
         ]);
+    }
+
+    private function normalizeQuizType(string $type): string
+    {
+        $v = strtolower(trim($type));
+        return match ($v) {
+            'multi_choice', 'multi choice', 'multichoice', 'multiple_choice', 'multiple choice', 'multi_chice', 'multi chice', 'multi-choise' => 'multi_choice',
+            'short_answer', 'short answer', 'shortanswer', 'text', 'open' => 'short_answer',
+            'order', 'sort_order', 'sort order', 'ordering', 'rank', 'ranking' => 'order',
+            default => 'single_choice',
+        };
     }
 }

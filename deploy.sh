@@ -1,49 +1,51 @@
 #!/bin/bash
 ##############################################################
 # TUNAI LMS — Production Deploy Script
-# Usage: ssh root@134.199.186.91 "bash /var/www/mcp_course/deploy.sh"
-# Or from local: ssh -i ~/.ssh/tunai_do root@134.199.186.91 "bash /var/www/mcp_course/deploy.sh"
+# Real production runtime:
+#   - Docker Compose project: /home/dluser/lms
+#   - Git repo: /home/dluser/lms/mcp_course
+#   - Laravel app mount: /home/dluser/lms/mcp_course/webapp -> /var/www/html
+#
+# Remote usage:
+#   bash /home/dluser/lms/mcp_course/deploy.sh
+#
+# Via local SSH helper:
+#   python s:/tunai/ssh_worker.py "bash /home/dluser/lms/mcp_course/deploy.sh"
 ##############################################################
 
-set -e
-APP_ROOT=/var/www/mcp_course
-WEBAPP=$APP_ROOT/webapp
+set -euo pipefail
 
-echo "🚀 Starting deploy at $(date)"
+STACK_ROOT=/home/dluser/lms
+APP_ROOT=$STACK_ROOT/mcp_course
+COMPOSE="docker compose"
 
-# 1. Pull latest code
-echo "📥 Pulling from GitHub..."
-cd $APP_ROOT
-git pull origin main
+echo "Starting deploy at $(date)"
 
-# 2. PHP dependencies
-echo "📦 Installing Composer packages..."
-cd $WEBAPP
-composer install --no-dev --optimize-autoloader --no-interaction
+echo "Pulling latest code..."
+git -C "$APP_ROOT" pull origin main
 
-# 3. Run migrations
-echo "🗄️  Running migrations..."
-php artisan migrate --force
+echo "Checking compose stack..."
+cd "$STACK_ROOT"
+$COMPOSE ps >/dev/null
 
-# 4. Clear and rebuild caches
-echo "🔄 Rebuilding caches..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache
+echo "Installing Composer dependencies in app container..."
+$COMPOSE exec -T app composer install --no-dev --optimize-autoloader --no-interaction
 
-# 5. Fix storage permissions
-echo "🔐 Fixing permissions..."
-chown -R www-data:www-data $WEBAPP/storage $WEBAPP/bootstrap/cache
-chmod -R 775 $WEBAPP/storage $WEBAPP/bootstrap/cache
+echo "Running Laravel migrations..."
+$COMPOSE exec -T app php artisan migrate --force
 
-# 6. Restart queue workers
-echo "⚙️  Restarting queue workers..."
-php artisan queue:restart
-supervisorctl restart laravel-worker:* 2>/dev/null || echo "Supervisor not found, skipping"
+echo "Clearing and rebuilding Laravel caches..."
+$COMPOSE exec -T app php artisan optimize:clear
+$COMPOSE exec -T app php artisan config:cache
+$COMPOSE exec -T app php artisan route:cache
+$COMPOSE exec -T app php artisan view:cache
+$COMPOSE exec -T app php artisan event:cache
 
-# 7. Reload PHP-FPM
-echo "🔃 Reloading PHP-FPM..."
-systemctl reload php8.3-fpm
+echo "Restarting queue workers and PHP containers..."
+$COMPOSE exec -T app php artisan queue:restart
+$COMPOSE restart app worker scheduler
 
-echo "✅ Deploy complete at $(date)"
+echo "Current container status:"
+$COMPOSE ps
+
+echo "Deploy complete at $(date)"

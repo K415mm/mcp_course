@@ -24,16 +24,16 @@ class CsService
     private function eligibleSessionUsersQuery()
     {
         return User::query()
-            ->whereIn('role', [User::ROLE_STUDENT, User::ROLE_CSTUDENT])
+            ->whereIn('role', [User::ROLE_STUDENT, User::ROLE_CSTUDENT, User::ROLE_ADMIN, User::ROLE_MENTOR])
             ->whereNotNull('email_verified_at')
             ->whereNull('banned_at');
     }
 
     private function assertAssignableSessionUser(User $user): void
     {
-        if (!in_array($user->role, [User::ROLE_STUDENT, User::ROLE_CSTUDENT], true)) {
+        if (!in_array($user->role, [User::ROLE_STUDENT, User::ROLE_CSTUDENT, User::ROLE_ADMIN, User::ROLE_MENTOR], true)) {
             throw ValidationException::withMessages([
-                'user_id' => 'Only student users can be assigned to a Carthage Shield session.',
+                'user_id' => 'Only authorized users can be assigned to a Carthage Shield session.',
             ]);
         }
 
@@ -45,7 +45,7 @@ class CsService
 
         if (is_null($user->email_verified_at)) {
             throw ValidationException::withMessages([
-                'user_id' => 'Only verified student users can be assigned.',
+                'user_id' => 'Only verified users can be assigned.',
             ]);
         }
     }

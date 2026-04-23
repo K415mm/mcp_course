@@ -1081,7 +1081,6 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
         <div class="widget">
             <div class="widget-hdr"><i class="bi bi-lightning-charge"></i>Injections Actives</div>
             <div class="feed-list" id="injectLog"></div>
-        </div>
         <div class="widget">
             <div class="widget-hdr"><i class="bi bi-collection-play"></i>Media & Quiz de Phase</div>
             <div class="feed-list" id="phaseMediaQuiz"></div>
@@ -1093,11 +1092,6 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 {{-- HUD JS (theme, Bootstrap) --}}
 <script src="{{ asset('hud/js/vendor.min.js') }}"></script>
 <script src="{{ asset('hud/js/app.min.js') }}"></script>
-
-{{-- vis-network and sweetalert --}}
-<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('js/cs-network.js') }}?v={{ time() }}"></script>
 
 <script>
 const SESSION_CODE = '{{ $session->code }}';
@@ -1206,7 +1200,7 @@ function handlePhaseContent(content) {
 
     if (!media.length && !questions.length && !messages.length) {
         root.innerHTML = '<div class="feed-item">Aucun contenu de phase</div>';
-        renderMainMedia({ ...data, media });
+        renderMainMedia(null);
         return;
     }
 
@@ -1217,9 +1211,6 @@ function handlePhaseContent(content) {
     renderMainMedia({ ...data, media });
 }
 setInterval(poll, 1000); poll();
-
-// ── Main Media Stage ────────────────────────────────────────────────
-let currentCsNetworkMap = null;
 
 function renderMainMedia(content) {
     renderMediaStage(document.getElementById('mainMediaStage'), content, 'MEDIA');
@@ -1234,38 +1225,11 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     let media = Array.isArray(content?.media) ? content.media : [];
     media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
     
-    let preferred = media.find(m => m.isLive) || media.find(m => m.title && m.title.includes('Carte des Opérations'));
+    const preferred = media.find(m => m.isLive) || media[0] || null;
     
-    // Default to the interactive map if no live media is active
-    if (!preferred) {
-        preferred = {
-            type: 'interactive_map',
-            title: 'Carte des Opérations Nationales',
-            url: '#'
-        };
-    }
-
-    if (!preferred || (!preferred.url && preferred.type !== 'interactive_map')) {
+    if (!preferred || !preferred.url) {
         stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
-        if (currentCsNetworkMap) {
-            currentCsNetworkMap.network.destroy();
-            currentCsNetworkMap = null;
-        }
         return;
-    }
-
-    // Check for interactive map type
-    if ((preferred.type || 'image') === 'interactive_map' || (preferred.title && preferred.title.includes('Carte des Opérations'))) {
-        stage.innerHTML = `<div id="csNetworkMap" style="width:100%; height:100%; border-radius: 8px; background: rgba(0,0,0,0.2);"></div>`;
-        currentCsNetworkMap = new CsNetworkMap('csNetworkMap');
-        const phaseIndex = content?.session?.currentPhaseIndex || 0;
-        currentCsNetworkMap.setPhase(phaseIndex);
-        return;
-    }
-    
-    if (currentCsNetworkMap) {
-        currentCsNetworkMap.network.destroy();
-        currentCsNetworkMap = null;
     }
 
     if ((preferred.type || 'image') === 'video') {

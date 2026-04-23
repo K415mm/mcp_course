@@ -929,37 +929,37 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 .p3 { z-index: 1; animation: floatWinner 4s ease-in-out infinite 2s; }
 .p3 .pod-bar { border: 2px solid #b45309; background: linear-gradient(180deg, rgba(180,83,9,.3) 0%, rgba(180,83,9,.05) 100%); height: 220px; box-shadow: 0 0 40px rgba(180,83,9,.2); }
 
-.pod-icon { font-size: 3.5rem; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
-.pod-icon img { width: 70px !important; height: 70px !important; object-fit: contain; }
-.pod-name { font-size: 1.6rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-.pod-score { font-family: 'Space Mono', monospace; font-size: 2.8rem; color: #fff; font-weight: 700; text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 15px; }
+.pod-icon { font-size: 4rem; margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+.pod-icon img { width: 90px !important; height: 90px !important; object-fit: contain; }
+.pod-name { font-size: 2rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+.pod-score { font-family: 'Space Mono', monospace; font-size: 3.5rem; color: #fff; font-weight: 700; text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 20px; }
 .pod-badge { margin-top: auto; }
-.pod-badge img { width: 110px !important; height: 110px !important; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) !important; transition: transform 0.3s; }
-.p1 .pod-badge img { width: 140px !important; height: 140px !important; object-fit: contain; filter: drop-shadow(0 0 30px rgba(245,158,11,0.6)) !important; animation: pulseBadge 2s infinite; }
+.pod-badge img { width: 140px !important; height: 140px !important; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) !important; transition: transform 0.3s; }
+.p1 .pod-badge img { width: 180px !important; height: 180px !important; object-fit: contain; filter: drop-shadow(0 0 30px rgba(245,158,11,0.6)) !important; animation: pulseBadge 2s infinite; }
 @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
 .pod-base {
     width: 100%;
-    background: rgba(255,255,255,.1); padding: 12px;
+    background: rgba(255,255,255,.1); padding: 16px;
     border-radius: 0 0 16px 16px;
-    font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #fff; font-weight: 700; letter-spacing: 2px;
+    font-family: 'Space Mono', monospace; font-size: 1.4rem; color: #fff; font-weight: 800; letter-spacing: 3px;
     box-shadow: inset 0 2px 0 rgba(255,255,255,0.2);
 }
 
-.others-row { display: flex; gap: 20px; margin-top: 40px; justify-content: center; flex-wrap: wrap; max-width: 900px; }
+.others-row { display: flex; gap: 20px; margin-top: 50px; justify-content: center; flex-wrap: wrap; max-width: 1000px; }
 .other-tile {
-    text-align: center; padding: 15px 25px;
+    text-align: center; padding: 20px 30px;
     background: rgba(255,255,255,.05);
     border: 1px solid rgba(255,255,255,.15);
     border-radius: 12px;
     backdrop-filter: blur(5px);
     transition: transform 0.2s, background 0.2s;
-    min-width: 180px;
+    min-width: 200px;
 }
 .other-tile:hover { transform: translateY(-3px); background: rgba(255,255,255,.1); }
-.ot-rank { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: rgba(255,255,255,.5); letter-spacing: 1px; margin-bottom: 5px; }
-.ot-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; }
-.ot-score { font-family: 'Space Mono', monospace; font-size: 1.4rem; color: var(--bs-theme); font-weight: bold; }
+.ot-rank { font-family: 'Space Mono', monospace; font-size: 1rem; color: rgba(255,255,255,.5); letter-spacing: 1px; margin-bottom: 8px; }
+.ot-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
+.ot-score { font-family: 'Space Mono', monospace; font-size: 1.8rem; color: var(--bs-theme); font-weight: bold; }
 
 #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 960; }
 

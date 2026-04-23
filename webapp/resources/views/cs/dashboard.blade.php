@@ -1191,13 +1191,17 @@ function handlePhaseContent(content) {
     const root = document.getElementById('phaseMediaQuiz');
     if (!root) return;
     const data = content || {};
-    const media = Array.isArray(data.media) ? data.media : [];
+    let media = Array.isArray(data.media) ? data.media : [];
+    
+    // Only show media if it's injected by moderator or if it's the national map
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
+    
     const questions = Array.isArray(data.questions) ? data.questions : [];
     const messages = Array.isArray(data.messages) ? data.messages : [];
 
     if (!media.length && !questions.length && !messages.length) {
         root.innerHTML = '<div class="feed-item">Aucun contenu de phase</div>';
-        renderMainMedia(null);
+        renderMainMedia({ ...data, media });
         return;
     }
 
@@ -1205,7 +1209,7 @@ function handlePhaseContent(content) {
     const qHtml = questions.slice(0, 2).map(q => `<div class="feed-item"><div class="fi-ts">QUIZ ${(q.type || 'single_choice').toUpperCase()}</div>${q.question || 'Question'}</div>`).join('');
     const mHtml = messages.slice(0, 1).map(m => `<div class="feed-item ${m.type || 'info'}"><div class="fi-ts">MESSAGE</div>${m.content || ''}</div>`).join('');
     root.innerHTML = `${mediaHtml}${mHtml}${qHtml}`;
-    renderMainMedia(content);
+    renderMainMedia({ ...data, media });
 }
 setInterval(poll, 1000); poll();
 
@@ -1219,8 +1223,10 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     // We only reset transform if it's the main stage
     if(stage.id === 'mainMediaStage') resetMediaTransform();
 
-    const media = Array.isArray(content?.media) ? content.media : [];
-    const preferred = media.find(m => m && m.isLive) || media[0] || null;
+    let media = Array.isArray(content?.media) ? content.media : [];
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
+    
+    const preferred = media.find(m => m.isLive) || media[0] || null;
     if (!preferred || !preferred.url) {
         stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
         return;

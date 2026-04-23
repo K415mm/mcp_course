@@ -411,7 +411,11 @@ function renderPhaseContent(content) {
     const mediaRoot = document.getElementById('phaseSituationMedia');
     if (!mediaRoot) return;
     const data = content || {};
-    const media = Array.isArray(data.media) ? data.media : [];
+    let media = Array.isArray(data.media) ? data.media : [];
+    
+    // Only show media if it's injected by moderator or if it's the national map
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
+    
     const messages = Array.isArray(data.messages) ? data.messages : [];
     currentPhaseMessages = messages;
     renderCommunications();

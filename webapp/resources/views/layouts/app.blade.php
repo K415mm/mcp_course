@@ -341,8 +341,8 @@
                     </div>
 
                     <!-- CARTHAGE SHIELD Tabletop -->
-                    <div class="menu-item {{ request()->routeIs('cs.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.cs.index') }}" class="menu-link">
+                    <div class="menu-item {{ request()->routeIs('cs.*') || request()->routeIs('admin.cs.*') ? 'active' : '' }}">
+                        <a href="{{ Auth::user() && Auth::user()->isAdmin() ? route('admin.cs.index') : route('cs.lobby') }}" class="menu-link">
                             <span class="menu-icon"><i class="bi bi-shield-fill-exclamation"></i></span>
                             <span class="menu-text">Carthage Shield</span>
                             <span class="menu-badge" style="background:#00b4d8;color:#000;font-weight:700">EXER</span>

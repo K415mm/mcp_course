@@ -18,6 +18,31 @@ class CsController extends Controller
         protected CsContentBankService $contentBank
     ) {}
 
+    // ── Student Lobby: List my active sessions ──────────────────────────────
+    public function lobby()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // Get sessions where the user is a player OR the moderator, and the session is not finished
+        $mySessions = CsSession::where('status', '!=', 'finished')
+            ->where(function($query) use ($user) {
+                $query->where('moderator_id', $user->id)
+                      ->orWhereHas('players', function($q) use ($user) {
+                          $q->where('user_id', $user->id);
+                      });
+            })
+            ->with(['teams', 'moderator'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('cs.lobby', [
+            'mySessions' => $mySessions,
+        ]);
+    }
+
     // ── Admin/Moderator: List sessions ──────────────────────────────
     public function index()
     {
@@ -74,8 +99,20 @@ class CsController extends Controller
         $scenario = $session->scenario();
         $teams    = $session->teams;
 
-        $playerId = session('cs_player_' . $code);
-        $player   = $playerId ? CsPlayer::with('team')->find($playerId) : null;
+        // Check if the user is already assigned in the database
+        $player = CsPlayer::with('team')
+            ->where('cs_session_id', $session->id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        // Fallback to session check for anonymous players (if applicable)
+        if (!$player) {
+            $playerId = session('cs_player_' . $code);
+            $player   = $playerId ? CsPlayer::with('team')->find($playerId) : null;
+        } else {
+            // Update session just in case
+            session(['cs_player_' . $code => $player->id]);
+        }
 
         return response()->view('cs.participant', [
             'session'  => $session,

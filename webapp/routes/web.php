@@ -140,6 +140,7 @@ Route::middleware('auth')->group(function () {
     // These are inside 'verified' middleware so users need accounts,
     // BUT the join/participant view itself handles anonymous guests via session.
     Route::prefix('cs')->name('cs.')->group(function () {
+        Route::get('/', [CsController::class, 'lobby'])->name('lobby');                // student sessions list
         Route::get('/{code}', [CsController::class, 'show'])->name('show');            // participant join
         Route::get('/{code}/dashboard', [CsController::class, 'dashboard'])->name('dashboard'); // big screen (public)
         Route::get('/{code}/moderator', [CsController::class, 'moderator'])->name('moderator'); // moderator console

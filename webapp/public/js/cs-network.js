@@ -12,14 +12,16 @@ class CsNetworkMap {
         const options = {
             nodes: {
                 shape: 'circularImage',
-                size: 28,
+                size: 35,
                 font: { size: 14, color: '#ffffff', face: 'Space Mono', bold: true, background: 'rgba(0,0,0,0.6)' },
-                borderWidth: 3,
-                shadow: { enabled: true, color: 'rgba(0,0,0,0.8)', size: 12, x: 0, y: 0 }
+                borderWidth: 2,
+                shadow: { enabled: true, color: 'rgba(0,0,0,0.8)', size: 12, x: 0, y: 0 },
+                color: { background: 'transparent', border: 'transparent' }
             },
             edges: {
-                width: 2,
-                shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 5, x: 0, y: 0 },
+                width: 3,
+                color: { color: '#c9a050', highlight: '#f0c060', opacity: 0.8 },
+                shadow: { enabled: true, color: 'rgba(0,0,0,0.8)', size: 5, x: 0, y: 0 },
                 smooth: { type: 'continuous' }
             },
             physics: {
@@ -64,21 +66,21 @@ class CsNetworkMap {
         };
 
         const baseNodes = [
-            { id: 'ancs', label: 'ANCS', image: icons.ancs, color: { background: '#00b4d8', border: '#0077a8' }, description: 'Agence Nationale de Cybersécurité - Rôle de Coordination' },
-            { id: 'cert', label: 'CERT-TN', image: icons.cert, color: { background: '#2dc653', border: '#1e8f3a' }, description: 'Équipe de réponse aux urgences informatiques' },
-            { id: 'finance', label: 'Finance', image: icons.finance, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Secteur Bancaire et Systèmes de Paiements' },
-            { id: 'transport', label: 'Transport', image: icons.transport, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Infrastructures de Transport Nationales' },
-            { id: 'egov', label: 'E-Gov', image: icons.egov, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Services Publics et e-Gouvernement' },
-            { id: 'comm', label: 'Comms', image: icons.comm, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Médias et Communication de Crise' },
-            { id: 'phantom', label: 'PHANTOM', image: icons.phantom, color: { background: '#3b0a0a', border: '#ef4444' }, size: 35, description: 'Groupe Cybercriminel Avancé' }
+            { id: 'ancs', label: 'ANCS', image: icons.ancs, description: 'Agence Nationale de Cybersécurité - Rôle de Coordination' },
+            { id: 'cert', label: 'CERT-TN', image: icons.cert, description: 'Équipe de réponse aux urgences informatiques' },
+            { id: 'finance', label: 'Finance', image: icons.finance, description: 'Secteur Bancaire et Systèmes de Paiements' },
+            { id: 'transport', label: 'Transport', image: icons.transport, description: 'Infrastructures de Transport Nationales' },
+            { id: 'egov', label: 'E-Gov', image: icons.egov, description: 'Services Publics et e-Gouvernement' },
+            { id: 'comm', label: 'Comms', image: icons.comm, description: 'Médias et Communication de Crise' },
+            { id: 'phantom', label: 'PHANTOM', image: icons.phantom, size: 45, description: 'Groupe Cybercriminel Avancé' }
         ];
 
         const baseEdges = [
-            { id: 'e1', from: 'ancs', to: 'cert', dashes: true, color: { color: '#00b4d8' } },
-            { id: 'e2', from: 'cert', to: 'finance', color: { color: '#2dc653' } },
-            { id: 'e3', from: 'cert', to: 'transport', color: { color: '#2dc653' } },
-            { id: 'e4', from: 'cert', to: 'egov', color: { color: '#2dc653' } },
-            { id: 'e5', from: 'ancs', to: 'comm', color: { color: '#00b4d8' } }
+            { id: 'e1', from: 'ancs', to: 'cert', dashes: true },
+            { id: 'e2', from: 'cert', to: 'finance' },
+            { id: 'e3', from: 'cert', to: 'transport' },
+            { id: 'e4', from: 'cert', to: 'egov' },
+            { id: 'e5', from: 'ancs', to: 'comm' }
         ];
 
         let phaseNodes = JSON.parse(JSON.stringify(baseNodes));
@@ -88,43 +90,38 @@ class CsNetworkMap {
             case 0: // Phase 1: Reveil
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
-                this.updateNode(phaseNodes, 'finance', { color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'transport', { color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'finance', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'transport', { image: icons.phantom });
                 break;
             case 1: // Phase 2: Escalade
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
                 phaseEdges.push({ id: 'a3', from: 'phantom', to: 'egov', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
-                this.updateNode(phaseNodes, 'finance', { color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'transport', { color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'egov', { color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'finance', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'transport', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'egov', { image: icons.phantom });
                 break;
             case 2: // Phase 3: Media
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to', width: 2 });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to', width: 2 });
                 phaseEdges.push({ id: 'a3', from: 'phantom', to: 'egov', color: { color: '#ef4444' }, arrows: 'to', width: 2 });
                 phaseEdges.push({ id: 'a4', from: 'phantom', to: 'comm', color: { color: '#ef4444', dashes: true }, arrows: 'to', width: 4 });
-                this.updateNode(phaseNodes, 'comm', { color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'finance', { color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'transport', { color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'egov', { color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'comm', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'finance', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'transport', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'egov', { image: icons.phantom });
                 break;
             case 3: // Phase 4: Arbitrage
-                phaseNodes.push({ id: 'intl', label: 'INTL', image: icons.intl, shape: 'circularImage', color: { background: '#8b5cf6', border: '#6d28d9' }, description: 'Alliés Internationaux / INTERPOL' });
+                phaseNodes.push({ id: 'intl', label: 'INTL', image: icons.intl, shape: 'circularImage', description: 'Alliés Internationaux / INTERPOL' });
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to' });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to' });
-                phaseEdges.push({ id: 'c1', from: 'intl', to: 'ancs', color: { color: '#8b5cf6' }, arrows: 'to', width: 3 });
-                phaseEdges.push({ id: 'c2', from: 'intl', to: 'cert', color: { color: '#8b5cf6' }, arrows: 'to', width: 3 });
-                this.updateNode(phaseNodes, 'finance', { color: { background: '#b45309', border: '#f59e0b' } });
-                this.updateNode(phaseNodes, 'transport', { color: { background: '#b45309', border: '#f59e0b' } });
-                this.updateNode(phaseNodes, 'egov', { color: { background: '#1e8f3a', border: '#2dc653' } });
-                this.updateNode(phaseNodes, 'comm', { color: { background: '#1e8f3a', border: '#2dc653' } });
+                phaseEdges.push({ id: 'c1', from: 'intl', to: 'ancs', color: { color: '#c9a050' }, arrows: 'to', width: 3 });
+                phaseEdges.push({ id: 'c2', from: 'intl', to: 'cert', color: { color: '#c9a050' }, arrows: 'to', width: 3 });
+                this.updateNode(phaseNodes, 'finance', { image: icons.phantom });
+                this.updateNode(phaseNodes, 'transport', { image: icons.phantom });
                 break;
             case 4: // Phase 5: Debrief
                 phaseNodes = phaseNodes.filter(n => n.id !== 'phantom');
-                phaseNodes.forEach(n => {
-                    if(n.id !== 'ancs' && n.id !== 'cert') n.color = { background: '#1e8f3a', border: '#2dc653' };
-                });
                 break;
         }
 

@@ -1325,9 +1325,9 @@ function updateAtmo(mode) {
 // ── Teams ─────────────────────────────────────────────────────────
 function badgeImgHtml(badge) {
     if (badge.image) {
-        return `<img src="${badge.image}" alt="${badge.name}" onerror="this.replaceWith(document.createTextNode('${badge.icon}'))">`;
+        return `<img src="${badge.image}" alt="${badge.name}" style="max-height:60px; max-width:60px; width:auto; height:auto;" onerror="this.replaceWith(document.createTextNode('${badge.icon}'))">`;
     }
-    return `<span>${badge.icon}</span>`;
+    return `<span style="font-size:2rem">${badge.icon}</span>`;
 }
 
 function triggerAnim(el, cls, dur = 900) {
@@ -1638,7 +1638,7 @@ function fireEndgame(teams, session) {
     // Podium order: silver, gold, bronze
     const order = [1, 0, 2];
     const classes = ['p2', 'p1', 'p3'];
-    const ranks = ['🥇 1ÈRE', '🥈 2ÈME', '🥉 3ÈME'];
+    const ranks = ['🥈 2ÈME', '🥇 1ÈRE', '🥉 3ÈME'];
 
     document.getElementById('podiumEl').innerHTML = order.map((ri, ci) => {
         const t = top3[ri]; if (!t) return '';
@@ -1647,9 +1647,10 @@ function fireEndgame(teams, session) {
                 <div class="pod-icon">${t.logoPath ? `<img src="${t.logoPath}" alt="logo">` : t.icon}</div>
                 <div class="pod-name">${t.name}</div>
                 <div class="pod-score">${t.score}</div>
-                <div class="pod-badge">${t.badge.image
-                    ? `<img src="${t.badge.image}" alt="${t.badge.name}">`
+                <div class="pod-badge" style="font-size: 2.5rem;">${t.badge.image
+                    ? `<img src="${t.badge.image}" alt="${t.badge.name}" style="max-height:80px; width:auto;">`
                     : t.badge.icon}</div>
+                <div class="pod-badge-name" style="font-size: 0.8rem; margin-top: 5px;">${t.badge.name}</div>
             </div>
             <div class="pod-base">${ranks[ri]}</div>
         </div>`;

@@ -424,20 +424,20 @@ function renderPhaseContent(content) {
     currentPhaseMessages = messages;
     renderCommunications();
 
-    if (media.length === 0) {
-        mediaRoot.innerHTML = '<div class="text-white-50">Aucun visuel pour la phase en cours.</div>';
-        if (currentCsNetworkMap) {
-            currentCsNetworkMap.network.destroy();
-            currentCsNetworkMap = null;
-        }
-        return;
+    let preferred = media.find(m => m.isLive) || media.find(m => m.title && m.title.includes('Carte des Opérations'));
+    
+    // Default to the interactive map if no live media is active
+    if (!preferred) {
+        preferred = {
+            type: 'interactive_map',
+            title: 'Carte des Opérations Nationales',
+            url: '#'
+        };
     }
-
-    const preferred = media[0];
 
     // Render interactive network map
     if ((preferred.type || 'image') === 'interactive_map' || (preferred.title && preferred.title.includes('Carte des Opérations'))) {
-        mediaRoot.innerHTML = `<div id="csParticipantNetworkMap" style="width:100%; height:400px; border-radius: 8px;"></div>`;
+        mediaRoot.innerHTML = `<div id="csParticipantNetworkMap" style="width:100%; height:400px; border-radius: 8px; background: rgba(0,0,0,0.2);"></div>`;
         currentCsNetworkMap = new CsNetworkMap('csParticipantNetworkMap');
         const phaseIndex = latestSessionState?.currentPhaseIndex || 0;
         currentCsNetworkMap.setPhase(phaseIndex);
@@ -447,6 +447,11 @@ function renderPhaseContent(content) {
     if (currentCsNetworkMap) {
         currentCsNetworkMap.network.destroy();
         currentCsNetworkMap = null;
+    }
+
+    if (media.length === 0) {
+        mediaRoot.innerHTML = '<div class="text-white-50">Aucun visuel pour la phase en cours.</div>';
+        return;
     }
 
     const mediaHtml = media.map((m) => {

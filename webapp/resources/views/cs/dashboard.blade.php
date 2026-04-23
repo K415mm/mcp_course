@@ -1234,8 +1234,18 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     let media = Array.isArray(content?.media) ? content.media : [];
     media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
     
-    const preferred = media.find(m => m.isLive) || media[0] || null;
-    if (!preferred || !preferred.url) {
+    let preferred = media.find(m => m.isLive) || media.find(m => m.title && m.title.includes('Carte des Opérations'));
+    
+    // Default to the interactive map if no live media is active
+    if (!preferred) {
+        preferred = {
+            type: 'interactive_map',
+            title: 'Carte des Opérations Nationales',
+            url: '#'
+        };
+    }
+
+    if (!preferred || (!preferred.url && preferred.type !== 'interactive_map')) {
         stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
         if (currentCsNetworkMap) {
             currentCsNetworkMap.network.destroy();
@@ -1246,7 +1256,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
 
     // Check for interactive map type
     if ((preferred.type || 'image') === 'interactive_map' || (preferred.title && preferred.title.includes('Carte des Opérations'))) {
-        stage.innerHTML = `<div id="csNetworkMap" style="width:100%; height:100%; border-radius: 8px;"></div>`;
+        stage.innerHTML = `<div id="csNetworkMap" style="width:100%; height:100%; border-radius: 8px; background: rgba(0,0,0,0.2);"></div>`;
         currentCsNetworkMap = new CsNetworkMap('csNetworkMap');
         const phaseIndex = content?.session?.currentPhaseIndex || 0;
         currentCsNetworkMap.setPhase(phaseIndex);

@@ -160,7 +160,9 @@
                         <div class="ms-auto text-end">
                             <div class="score-val" id="msc-{{ $t->id }}">{{ $t->is_scored ? $t->score : 'MENTOR' }}</div>
                             <div class="small text-white-50" id="mon-{{ $t->id }}">
-                                <i class="bi bi-person-fill text-success"></i> 0
+                                <i class="bi bi-person-fill text-success"></i> <span id="monv-{{ $t->id }}">0</span>
+                                <span class="mx-1">·</span>
+                                <i class="bi bi-people-fill"></i> <span id="mpc-{{ $t->id }}">0</span>
                             </div>
                         </div>
                     </div>
@@ -877,9 +879,13 @@ function updateTeams(teams) {
         teamScoredMap[t.type] = !!t.isScored;
         const sc = document.getElementById('msc-'+t.id);
         const on = document.getElementById('mon-'+t.id);
+        const onv = document.getElementById('monv-'+t.id);
+        const pc = document.getElementById('mpc-'+t.id);
         const bg = document.getElementById('mbadge-'+t.id);
         if (sc) sc.textContent = t.isScored ? t.score : 'MENTOR';
-        if (on) on.innerHTML = `<i class="bi bi-person-fill text-success"></i> ${t.onlineCount}`;
+        if (onv) onv.textContent = t.onlineCount;
+        else if (on) on.innerHTML = `<i class="bi bi-person-fill text-success"></i> ${t.onlineCount}`;
+        if (pc) pc.textContent = t.playerCount;
         if (bg) bg.textContent = t.badge.icon;
     });
     renderAssignmentControls();
@@ -940,8 +946,36 @@ function updatePlayersRoster(players, assignableUsers) {
     assignableUsersCache = Array.isArray(assignableUsers) ? assignableUsers.slice() : [];
     const usersCount = document.getElementById('usersCount');
     if (usersCount) usersCount.textContent = playersRosterCache.length;
+    syncTeamCountsFromRoster();
     renderAssignmentControls();
     renderPlayersRoster();
+}
+
+function syncTeamCountsFromRoster() {
+    const totalsByTeamId = {};
+    const onlineByTeamId = {};
+    playersRosterCache.forEach(p => {
+        if (!p || !p.teamId) return;
+        if (p.isBanned) return;
+        totalsByTeamId[p.teamId] = (totalsByTeamId[p.teamId] || 0) + 1;
+        if (p.isOnline) {
+            onlineByTeamId[p.teamId] = (onlineByTeamId[p.teamId] || 0) + 1;
+        }
+    });
+
+    Object.values(teamsById).forEach(t => {
+        if (!t) return;
+        const total = totalsByTeamId[t.id] || 0;
+        const online = onlineByTeamId[t.id] || 0;
+        t.playerCount = total;
+        t.onlineCount = online;
+        const onv = document.getElementById('monv-' + t.id);
+        const pc = document.getElementById('mpc-' + t.id);
+        const on = document.getElementById('mon-' + t.id);
+        if (onv) onv.textContent = String(online);
+        else if (on) on.innerHTML = `<i class="bi bi-person-fill text-success"></i> ${online}`;
+        if (pc) pc.textContent = String(total);
+    });
 }
 
 function renderPlayersRoster() {

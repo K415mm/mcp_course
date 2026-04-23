@@ -1374,6 +1374,8 @@ function updateTeams(teams) {
                         <span class="dot-on"></span>
                         <span class="t-online-text">Online</span>
                         <span class="t-online-count" id="ton-${t.id}">${t.onlineCount}</span>
+                        <span class="ms-1" style="color:rgba(255,255,255,.6)">/</span>
+                        <span class="ms-1" id="tpc-${t.id}" style="color:rgba(255,255,255,.6);font-weight:700">${t.playerCount}</span>
                     </div>
                 </div>`;
             prevScores[t.id] = t.score;
@@ -1430,6 +1432,8 @@ function updateTeams(teams) {
 
             document.getElementById('tbn-' + t.id).textContent = t.badge.name;
             document.getElementById('ton-' + t.id).textContent = t.onlineCount;
+            const tpcEl = document.getElementById('tpc-' + t.id);
+            if (tpcEl) tpcEl.textContent = t.playerCount;
         }
 
         const targetRail = index < leftCount ? leftRail : rightRail;

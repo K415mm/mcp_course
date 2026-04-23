@@ -99,7 +99,11 @@ async function apiChecked(path, method='GET', body=null) {
     if (body) opts.body = JSON.stringify(body);
     const r = await fetch(`/cs/${CODE}/api/${path}`, opts);
     let data = {};
-    try { data = await r.json(); } catch (e) { throw new Error('Réponse serveur invalide.'); }
+    try { 
+        data = await r.json(); 
+    } catch (e) { 
+        throw new Error(`Erreur HTTP ${r.status}: ${r.statusText}`); 
+    }
     if (!r.ok || data?.ok === false || data?.success === false) {
         const validationMessage = data?.errors ? Object.values(data.errors).flat()[0] : null;
         throw new Error(data?.error || validationMessage || 'Opération refusée.');

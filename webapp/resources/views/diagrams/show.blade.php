@@ -22,7 +22,7 @@
             <a href="{{ route('diagrams.edit', $diagram->id) }}" class="btn btn-outline-secondary btn-sm">
                 <i class="bi bi-pencil me-1"></i>Edit
             </a>
-            <form method="POST" action="{{ route('diagrams.destroy', $diagram->id) }}" onsubmit="return confirm('Delete this diagram?')">
+            <form method="POST" action="{{ route('diagrams.destroy', $diagram->id) }}" onsubmit="return confirmFormSubmit(event, 'Delete this diagram?')">
                 @csrf @method('DELETE')
                 <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash3"></i></button>
             </form>

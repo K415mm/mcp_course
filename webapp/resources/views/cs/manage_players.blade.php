@@ -116,7 +116,7 @@ function showNotif(msg, type='info') {
     if (typeof window.showToast === 'function') {
         window.showToast(msg, type);
     } else {
-        alert(`${type.toUpperCase()}: ${msg}`);
+        swalAlert(`${type.toUpperCase()}: ${msg}`);
     }
 }
 
@@ -285,7 +285,7 @@ async function savePlayer(playerId) {
 }
 
 async function banPlayerAction(playerId) {
-    const reason = prompt('Raison du bannissement (optionnel) :', '') ?? '';
+    const reason = await swalPrompt('Raison du bannissement (optionnel) :', '') ?? '';
     try {
         await apiChecked(`players/${playerId}/ban`, 'POST', { reason: reason.trim() });
         showNotif('Joueur banni.', 'success');
@@ -306,7 +306,7 @@ async function unbanPlayerAction(playerId) {
 }
 
 async function removePlayerAction(playerId) {
-    if (!confirm('Supprimer ce joueur de la session ? Il devra être ré-assigné.')) return;
+    if (!await swalConfirm('Supprimer ce joueur de la session ? Il devra être ré-assigné.')) return;
     try {
         await apiChecked(`players/${playerId}`, 'DELETE');
         showNotif('Joueur supprimé de la session.', 'success');

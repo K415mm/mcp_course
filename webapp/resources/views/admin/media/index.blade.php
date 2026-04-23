@@ -78,7 +78,7 @@
                             <a href="{{ $item->url() }}" target="_blank" class="btn btn-xs btn-outline-secondary"
                                 title="View"><i class="bi bi-eye"></i></a>
                             <form method="POST" action="{{ route('admin.media.destroy', $item) }}" class="d-inline"
-                                onsubmit="return confirm('Delete this file?')">
+                                onsubmit="return confirmFormSubmit(event, 'Delete this file?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-xs btn-outline-danger"><i class="bi bi-trash"></i></button>
                             </form>
@@ -132,7 +132,7 @@
         }
 
         function copyUrl(url) {
-            navigator.clipboard.writeText(url).then(() => alert('URL copied!\n' + url));
+            navigator.clipboard.writeText(url).then(() => swalAlert('URL copied!\n' + url));
         }
     </script>
     <style>

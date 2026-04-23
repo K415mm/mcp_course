@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateButtonState();
                 // Check if there is a next lesson link, visually highlight it
             } else {
-                alert(data.message || 'Verification failed. Did you spend enough time?');
+                swalAlert(data.message || 'Verification failed. Did you spend enough time?');
                 updateButtonState(); // Re-evaluate
             }
         } catch(e) {

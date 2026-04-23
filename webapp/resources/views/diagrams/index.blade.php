@@ -66,7 +66,7 @@
                                 </button>
                             </form>
                             <form method="POST" action="{{ route('diagrams.destroy', $diagram->id) }}"
-                                  onsubmit="return confirm('Delete this diagram?')" class="d-inline">
+                                  onsubmit="return confirmFormSubmit(event, 'Delete this diagram?')" class="d-inline">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
                             </form>

@@ -20,7 +20,7 @@
         </div>
         <div class="d-flex gap-2">
             <form action="{{ route('admin.content.bulkPublish') }}" method="POST"
-                onsubmit="return confirm('Publish all draft files?')">
+                onsubmit="return confirmFormSubmit(event, 'Publish all draft files?')">
                 @csrf
                 <button type="submit" class="btn btn-outline-success btn-sm">
                     <i class="bi bi-check2-all me-1"></i>Publish All
@@ -117,7 +117,7 @@
                                     <!-- Delete -->
                                     @if($e['path'])
                                         <form method="POST" action="{{ route('admin.content.destroy') }}"
-                                            onsubmit="return confirm('Delete {{ $e['file'] }}? This cannot be undone.')">
+                                            onsubmit="return confirmFormSubmit(event, 'Delete {{ $e['file'] }}? This cannot be undone.')">
                                             @csrf @method('DELETE')
                                             <input type="hidden" name="path" value="{{ $e['path'] }}">
                                             <button class="btn btn-xs btn-outline-danger" title="Delete"><i

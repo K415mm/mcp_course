@@ -137,7 +137,7 @@
                                         </button>
                                         {{-- Revoke --}}
                                         <form method="POST" action="{{ route('admin.invitations.destroy', $inv->id) }}"
-                                              onsubmit="return confirm('Revoke this invitation?')">
+                                              onsubmit="return confirmFormSubmit(event, 'Revoke this invitation?')">
                                             @csrf @method('DELETE')
                                             <button class="btn btn-xs btn-outline-danger" title="Revoke">
                                                 <i class="bi bi-trash3"></i>

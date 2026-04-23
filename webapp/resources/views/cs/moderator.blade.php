@@ -763,7 +763,7 @@ async function deleteMedia(index) {
         showNotif('Ce media n est pas supprimable', 'warn');
         return;
     }
-    if (!confirm('Supprimer ce media ?')) return;
+    if (!await swalConfirm('Supprimer ce media ?')) return;
     await api('media/delete', 'POST', {
         scope: media.scope,
         id: media.id,
@@ -1131,7 +1131,7 @@ function updateVoteTally(vote) {
 
 // ── INJECT ──────────────────────────────────────────────────
 async function triggerInject(id) {
-    if (!confirm('Déclencher cet inject ?')) return;
+    if (!await swalConfirm('Déclencher cet inject ?')) return;
     await api(`inject/${id}`,'POST');
     showNotif('Inject déclenché','success');
 }
@@ -1391,7 +1391,7 @@ function switchTab(name) {
 
 // ── END ─────────────────────────────────────────────────────
 async function confirmEnd() {
-    if (!confirm('Terminer l\'exercice ? Cette action est irréversible.')) return;
+    if (!await swalConfirm('Terminer l\'exercice ? Cette action est irréversible.')) return;
     await api('end','POST');
     showNotif('Exercice terminé !','success');
 }

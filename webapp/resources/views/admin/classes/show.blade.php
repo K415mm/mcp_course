@@ -66,7 +66,7 @@
                                     <i class="bi bi-journal-code text-theme me-2"></i>
                                     {{ $c['title'] ?? $courseSlug }}
                                 </div>
-                                <form action="{{ route('admin.courses.unassignClasses') }}" method="POST" onsubmit="return confirm('Remove course from this class? Students will lose access.');">
+                                <form action="{{ route('admin.courses.unassignClasses') }}" method="POST" onsubmit="return confirmFormSubmit(event, 'Remove course from this class? Students will lose access.');">
                                     @csrf
                                     <input type="hidden" name="course_slug" value="{{ $courseSlug }}">
                                     <input type="hidden" name="class_id" value="{{ $class->id }}">
@@ -138,7 +138,7 @@
                                     </td>
                                     <td>{{ $student->email }}</td>
                                     <td>
-                                        <form action="{{ route('admin.classes.removeStudent', [$class->id, $student->id]) }}" method="POST" onsubmit="return confirm('Remove student from this class?');">
+                                        <form action="{{ route('admin.classes.removeStudent', [$class->id, $student->id]) }}" method="POST" onsubmit="return confirmFormSubmit(event, 'Remove student from this class?');">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
                                         </form>

@@ -165,14 +165,14 @@ async function assignUser(userId, teamType, btn) {
         if (data.success) {
             location.reload();
         } else {
-            alert(data.error || 'Erreur');
+            swalAlert(data.error || 'Erreur');
             btn.disabled = false;
         }
-    } catch (e) { alert('Erreur réseau'); btn.disabled = false; }
+    } catch (e) { swalAlert('Erreur réseau'); btn.disabled = false; }
 }
 
 async function removeUser(userId, btn) {
-    if (!confirm('Retirer ce joueur ?')) return;
+    if (!await swalConfirm('Retirer ce joueur ?')) return;
     btn.disabled = true;
     try {
         const res = await fetch(`${API}/remove-player`, {
@@ -184,10 +184,10 @@ async function removeUser(userId, btn) {
         if (data.success) {
             location.reload();
         } else {
-            alert(data.error || 'Erreur');
+            swalAlert(data.error || 'Erreur');
             btn.disabled = false;
         }
-    } catch (e) { alert('Erreur réseau'); btn.disabled = false; }
+    } catch (e) { swalAlert('Erreur réseau'); btn.disabled = false; }
 }
 </script>
 @endpush

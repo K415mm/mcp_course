@@ -577,6 +577,95 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     @endif
 
+    <!-- SweetAlert2 for modern alerts and confirms -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.swalAlert = function(message, type = 'info') {
+            return Swal.fire({
+                text: message,
+                icon: type,
+                confirmButtonColor: 'var(--bs-theme, #0d6efd)',
+                background: 'var(--bs-body-bg, #fff)',
+                color: 'var(--bs-body-color, #000)'
+            });
+        };
+
+        window.swalConfirm = function(message, callback) {
+            return Swal.fire({
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Confirmer',
+                cancelButtonText: 'Annuler',
+                background: 'var(--bs-body-bg, #fff)',
+                color: 'var(--bs-body-color, #000)'
+            }).then((result) => {
+                if (result.isConfirmed && typeof callback === 'function') {
+                    callback();
+                }
+                return result.isConfirmed;
+            });
+        };
+
+        window.swalPrompt = async function(message, defaultValue = '') {
+            const result = await Swal.fire({
+                text: message,
+                input: 'text',
+                inputValue: defaultValue,
+                showCancelButton: true,
+                confirmButtonColor: 'var(--bs-theme, #0d6efd)',
+                cancelButtonColor: '#6c757d',
+                background: 'var(--bs-body-bg, #fff)',
+                color: 'var(--bs-body-color, #000)'
+            });
+            return result.isConfirmed ? result.value : null;
+        };
+
+        window.confirmFormSubmit = function(event, message) {
+            event.preventDefault();
+            const form = event.target.closest('form') || event.target;
+            Swal.fire({
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Confirmer',
+                cancelButtonText: 'Annuler',
+                background: 'var(--bs-body-bg, #fff)',
+                color: 'var(--bs-body-color, #000)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false;
+        };
+        
+        window.confirmLinkClick = function(event, message) {
+            event.preventDefault();
+            const href = event.currentTarget.getAttribute('href');
+            Swal.fire({
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Confirmer',
+                cancelButtonText: 'Annuler',
+                background: 'var(--bs-body-bg, #fff)',
+                color: 'var(--bs-body-color, #000)'
+            }).then((result) => {
+                if (result.isConfirmed && href) {
+                    window.location.href = href;
+                }
+            });
+            return false;
+        };
+    </script>
+
     @stack('scripts')
 </body>
 

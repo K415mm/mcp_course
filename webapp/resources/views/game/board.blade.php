@@ -55,7 +55,7 @@
             @endif
             <form method="POST" action="{{ route('game.leave', $session) }}" class="d-inline">
                 @csrf
-                <button class="btn btn-sm btn-outline-secondary" onclick="return confirm('Quitter la session ?')">
+                <button class="btn btn-sm btn-outline-secondary" onclick="return confirmLinkClick(event, 'Quitter la session ?')">
                     <i class="bi bi-box-arrow-left"></i>
                 </button>
             </form>
@@ -269,7 +269,7 @@
                 </div>
 
                 <hr style="border-color:rgba(217,119,6,.2);margin:.75rem 0;">
-                <button class="btn btn-sm btn-danger w-100" onclick="if(confirm('Terminer la partie maintenant ? Cette action est irréversible.')) game.endGame()">
+                <button class="btn btn-sm btn-danger w-100" onclick="swalConfirm('Terminer la partie maintenant ? Cette action est irréversible.', () => game.endGame())">
                     <i class="bi bi-stop-circle me-1"></i>Terminer la partie
                 </button>
             </div>

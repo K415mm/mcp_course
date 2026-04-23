@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Delete ────────────────────────────────────────────────────
     document.getElementById('btn-delete-note')?.addEventListener('click', async () => {
-        if (!noteId || !confirm('Delete this note permanently?')) return;
+        if (!noteId || !await swalConfirm('Delete this note permanently?')) return;
         const res = await fetch(`/notes/${noteId}`, {
             method: 'DELETE', headers: { 'X-CSRF-TOKEN': csrf }
         });

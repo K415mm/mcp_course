@@ -171,7 +171,7 @@
 
                         <button type="submit" class="btn btn-sm btn-outline-theme w-100 mb-2">Enregistrer</button>
                     </form>
-                    <form method="POST" action="{{ route('admin.cs.entities.destroy', $entity) }}" onsubmit="return confirm('Supprimer cette entité ?');">
+                    <form method="POST" action="{{ route('admin.cs.entities.destroy', $entity) }}" onsubmit="return confirmFormSubmit(event, 'Supprimer cette entité ?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-outline-danger w-100">Supprimer</button>

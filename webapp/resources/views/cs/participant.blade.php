@@ -240,12 +240,16 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="{{ asset('js/cs-network.js') }}?v={{ time() }}"></script>
 <script>
 const CODE = '{{ $session->code }}';
 const CSRF = '{{ csrf_token() }}';
 const PHASES = {{ count($scenario['phases']) }};
 const PLAYER_ID = {{ $player?->id ?? 'null' }};
 const TEAM_ID   = {{ $player?->cs_team_id ?? 'null' }};
+
+let currentCsNetworkMap = null;
 
 let selectedTeam = null, decisionType = 'decision';
 let lastBcId = 0, lastAtmo = '';
@@ -420,6 +424,31 @@ function renderPhaseContent(content) {
     currentPhaseMessages = messages;
     renderCommunications();
 
+    if (media.length === 0) {
+        mediaRoot.innerHTML = '<div class="text-white-50">Aucun visuel pour la phase en cours.</div>';
+        if (currentCsNetworkMap) {
+            currentCsNetworkMap.network.destroy();
+            currentCsNetworkMap = null;
+        }
+        return;
+    }
+
+    const preferred = media[0];
+
+    // Render interactive network map
+    if ((preferred.type || 'image') === 'interactive_map' || (preferred.title && preferred.title.includes('Carte des Opérations'))) {
+        mediaRoot.innerHTML = `<div id="csParticipantNetworkMap" style="width:100%; height:400px; border-radius: 8px;"></div>`;
+        currentCsNetworkMap = new CsNetworkMap('csParticipantNetworkMap');
+        const phaseIndex = latestSessionState?.currentPhaseIndex || 0;
+        currentCsNetworkMap.setPhase(phaseIndex);
+        return;
+    }
+
+    if (currentCsNetworkMap) {
+        currentCsNetworkMap.network.destroy();
+        currentCsNetworkMap = null;
+    }
+
     const mediaHtml = media.map((m) => {
         if (m.type === 'video') {
             return `<div class="mb-2"><div class="fw-bold">${m.title || 'Video'}</div><video src="${m.url}" class="w-100 rounded mt-1" controls ${m.muted ? 'muted' : ''} ${m.loop ? 'loop' : ''}></video><div class="text-white-50 small">${m.caption || ''}</div></div>`;
@@ -429,7 +458,7 @@ function renderPhaseContent(content) {
         }
         return `<div class="mb-2"><div class="fw-bold">${m.title || 'Image'}</div><img src="${m.url}" class="w-100 rounded mt-1" alt="${m.title || 'image'}"><div class="text-white-50 small">${m.caption || ''}</div></div>`;
     }).join('');
-    mediaRoot.innerHTML = mediaHtml || '<div class="text-white-50">Aucun visuel pour la phase en cours.</div>';
+    mediaRoot.innerHTML = mediaHtml;
 }
 setInterval(poll, 2000); poll();
 

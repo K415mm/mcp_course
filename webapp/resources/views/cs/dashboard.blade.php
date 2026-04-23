@@ -1094,6 +1094,11 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 <script src="{{ asset('hud/js/vendor.min.js') }}"></script>
 <script src="{{ asset('hud/js/app.min.js') }}"></script>
 
+{{-- vis-network and sweetalert --}}
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('js/cs-network.js') }}?v={{ time() }}"></script>
+
 <script>
 const SESSION_CODE = '{{ $session->code }}';
 const TOTAL_PHASES = {{ count($scenario['phases']) }};
@@ -1213,6 +1218,9 @@ function handlePhaseContent(content) {
 }
 setInterval(poll, 1000); poll();
 
+// ── Main Media Stage ────────────────────────────────────────────────
+let currentCsNetworkMap = null;
+
 function renderMainMedia(content) {
     renderMediaStage(document.getElementById('mainMediaStage'), content, 'MEDIA');
 }
@@ -1229,7 +1237,25 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     const preferred = media.find(m => m.isLive) || media[0] || null;
     if (!preferred || !preferred.url) {
         stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
+        if (currentCsNetworkMap) {
+            currentCsNetworkMap.network.destroy();
+            currentCsNetworkMap = null;
+        }
         return;
+    }
+
+    // Check for interactive map type
+    if ((preferred.type || 'image') === 'interactive_map' || (preferred.title && preferred.title.includes('Carte des Opérations'))) {
+        stage.innerHTML = `<div id="csNetworkMap" style="width:100%; height:100%; border-radius: 8px;"></div>`;
+        currentCsNetworkMap = new CsNetworkMap('csNetworkMap');
+        const phaseIndex = content?.session?.currentPhaseIndex || 0;
+        currentCsNetworkMap.setPhase(phaseIndex);
+        return;
+    }
+    
+    if (currentCsNetworkMap) {
+        currentCsNetworkMap.network.destroy();
+        currentCsNetworkMap = null;
     }
 
     if ((preferred.type || 'image') === 'video') {

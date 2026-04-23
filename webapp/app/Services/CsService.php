@@ -171,12 +171,6 @@ class CsService
         User $targetUser,
         User $actor
     ): CsPlayer {
-        if (!$session->isLobby()) {
-            throw ValidationException::withMessages([
-                'session' => 'User assignment is only allowed before session start.',
-            ]);
-        }
-
         $this->assertAssignableSessionUser($targetUser);
 
         $team = $session->teams()->where('type', $teamType)->firstOrFail();

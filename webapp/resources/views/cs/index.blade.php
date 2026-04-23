@@ -155,9 +155,17 @@
             <div class="card h-100">
                 <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                 <div class="card-body">
-                    <h5 class="card-title mb-3"><i class="bi bi-collection me-2 text-theme"></i>Sessions existantes
-                        <span class="badge bg-dark text-white-50 ms-2">{{ $sessions->total() }}</span>
-                    </h5>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="card-title mb-0"><i class="bi bi-collection me-2 text-theme"></i>Sessions existantes
+                            <span class="badge bg-dark text-white-50 ms-2">{{ $sessions->total() }}</span>
+                        </h5>
+                        <form method="POST" action="{{ route('admin.cs.clean_finished') }}" onsubmit="return confirmFormSubmit(event, 'Supprimer toutes les sessions terminées ? Cette action est irréversible.')">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Nettoyer les sessions terminées">
+                                <i class="bi bi-trash"></i> Nettoyer
+                            </button>
+                        </form>
+                    </div>
 
                     @forelse($sessions as $s)
                     <div class="session-row">

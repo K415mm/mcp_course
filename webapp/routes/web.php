@@ -193,6 +193,7 @@ Route::middleware('auth')->group(function () {
         // ── CARTHAGE SHIELD sessions ──
         Route::get('/cs',  [CsController::class, 'index'])->name('cs.index');
         Route::post('/cs', [CsController::class, 'store'])->name('cs.store');
+        Route::post('/cs/clean-finished', [CsController::class, 'cleanFinished'])->name('cs.clean_finished');
 
         Route::get('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'index'])->name('cs.entities.index');
         Route::post('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'store'])->name('cs.entities.store');

@@ -60,7 +60,13 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div class="fw-bold text-theme" style="font-size: 1.1rem;"><i class="bi bi-shield-lock me-2"></i>Joueurs actifs dans la session</div>
-                        <div class="badge bg-dark fs-6">Total: <span id="usersCount">0</span></div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0" id="playerSearch" placeholder="Rechercher (nom, email, entité)..." onkeyup="renderPlayersRoster()">
+                            </div>
+                            <div class="badge bg-dark fs-6">Total: <span id="usersCount">0</span></div>
+                        </div>
                     </div>
                     <div class="text-white-50 mb-3">
                         Déplacez, renommez, bannissez, ou supprimez les joueurs. Les changements s'appliqueront immédiatement pour tous les écrans.
@@ -194,8 +200,21 @@ function renderPlayersRoster() {
         return;
     }
 
+    const searchQuery = (document.getElementById('playerSearch')?.value || '').toLowerCase();
     const teams = currentTeamsList();
-    const rows = playersRosterCache
+    
+    const filteredPlayers = playersRosterCache.filter(player => {
+        if (!searchQuery) return true;
+        const s = `${player.displayName || ''} ${player.email || ''} ${player.teamName || ''} ${player.teamType || ''}`.toLowerCase();
+        return s.includes(searchQuery);
+    });
+    
+    if (!filteredPlayers.length) {
+        root.innerHTML = '<div class="text-white-50 text-center py-5">Aucun joueur ne correspond à la recherche.</div>';
+        return;
+    }
+
+    const rows = filteredPlayers
         .slice()
         .sort((a, b) => `${a.teamName || ''}${a.displayName || ''}`.localeCompare(`${b.teamName || ''}${b.displayName || ''}`))
         .map(player => {

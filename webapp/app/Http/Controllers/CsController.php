@@ -34,6 +34,18 @@ class CsController extends Controller
         ]);
     }
 
+    // ── Admin/Moderator: Clean finished sessions ──────────────────────────────
+    public function cleanFinished()
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Accès réservé aux administrateurs.');
+        }
+
+        CsSession::where('status', 'finished')->delete();
+
+        return redirect()->route('admin.cs.index')->with('success', 'Toutes les sessions terminées ont été supprimées.');
+    }
+
     // ── Admin: Create session ───────────────────────────────────────
     public function store(Request $request)
     {

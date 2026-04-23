@@ -46,31 +46,6 @@ class CsNetworkMap {
                 }
             }
         });
-        
-        // Custom drawing for cool animations (pulse effect on threat nodes)
-        this.network.on("afterDrawing", (ctx) => {
-            const time = new Date().getTime();
-            const nodes = this.nodes.get();
-            nodes.forEach(node => {
-                if (node.isThreat || node.isAlert) {
-                    const pos = this.network.getPositions([node.id])[node.id];
-                    if (!pos) return;
-                    
-                    const radius = (time % 1500) / 1500;
-                    const maxRadius = node.isThreat ? 60 : 45;
-                    const color = node.isThreat ? `rgba(239, 68, 68, ${1 - radius})` : `rgba(245, 158, 11, ${1 - radius})`;
-                    
-                    ctx.beginPath();
-                    ctx.arc(pos.x, pos.y, 20 + radius * maxRadius, 0, 2 * Math.PI, false);
-                    ctx.fillStyle = color;
-                    ctx.fill();
-                }
-            });
-            // Force redraw for animation if there are threats
-            if (nodes.some(n => n.isThreat || n.isAlert)) {
-                this.network.redraw();
-            }
-        });
     }
 
     setPhase(phaseIndex) {
@@ -84,7 +59,7 @@ class CsNetworkMap {
             transport: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h2.23l2-2H14l2 2h2.23v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-3.58-4-8-4zM7.5 17c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm3.5-7H6V6h5v4zm2 0V6h5v4h-5zm3.5 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>',
             egov: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>',
             comm: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z"/></svg>',
-            phantom: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 6c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm3 8h-3v-2h3v2zm1-4h-5V9.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v2.5z"/></svg>',
+            phantom: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ef4444"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 6c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm3 8h-3v-2h3v2zm1-4h-5V9.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v2.5z"/></svg>',
             intl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.09 13.36 4 12.69 4 12s.09-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.34.16-2h4.68c.09.66.16 1.32.16 2s-.07 1.34-.16 2zm1.63 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zm1.38-7.56c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.17.64.26 1.31.26 2s-.09 1.36-.26 2h-3.38z"/></svg>'
         };
 
@@ -95,7 +70,7 @@ class CsNetworkMap {
             { id: 'transport', label: 'Transport', image: icons.transport, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Infrastructures de Transport Nationales' },
             { id: 'egov', label: 'E-Gov', image: icons.egov, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Services Publics et e-Gouvernement' },
             { id: 'comm', label: 'Comms', image: icons.comm, color: { background: '#0f2847', border: '#3a90e8' }, description: 'Médias et Communication de Crise' },
-            { id: 'phantom', label: 'PHANTOM', image: icons.phantom, isThreat: true, color: { background: '#ef4444', border: '#b91c1c' }, size: 35, description: 'Groupe Cybercriminel Avancé' }
+            { id: 'phantom', label: 'PHANTOM', image: icons.phantom, color: { background: '#3b0a0a', border: '#ef4444' }, size: 35, description: 'Groupe Cybercriminel Avancé' }
         ];
 
         const baseEdges = [
@@ -113,23 +88,23 @@ class CsNetworkMap {
             case 0: // Phase 1: Reveil
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
-                this.updateNode(phaseNodes, 'finance', { isAlert: true, color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'transport', { isAlert: true, color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'finance', { color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'transport', { color: { background: '#9b0e20', border: '#ef4444' } });
                 break;
             case 1: // Phase 2: Escalade
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
                 phaseEdges.push({ id: 'a3', from: 'phantom', to: 'egov', color: { color: '#ef4444' }, arrows: 'to', width: 4 });
-                this.updateNode(phaseNodes, 'finance', { isAlert: true, color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'transport', { isAlert: true, color: { background: '#9b0e20', border: '#ef4444' } });
-                this.updateNode(phaseNodes, 'egov', { isAlert: true, color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'finance', { color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'transport', { color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'egov', { color: { background: '#9b0e20', border: '#ef4444' } });
                 break;
             case 2: // Phase 3: Media
                 phaseEdges.push({ id: 'a1', from: 'phantom', to: 'finance', color: { color: '#ef4444' }, arrows: 'to', width: 2 });
                 phaseEdges.push({ id: 'a2', from: 'phantom', to: 'transport', color: { color: '#ef4444' }, arrows: 'to', width: 2 });
                 phaseEdges.push({ id: 'a3', from: 'phantom', to: 'egov', color: { color: '#ef4444' }, arrows: 'to', width: 2 });
                 phaseEdges.push({ id: 'a4', from: 'phantom', to: 'comm', color: { color: '#ef4444', dashes: true }, arrows: 'to', width: 4 });
-                this.updateNode(phaseNodes, 'comm', { isAlert: true, color: { background: '#9b0e20', border: '#ef4444' } });
+                this.updateNode(phaseNodes, 'comm', { color: { background: '#9b0e20', border: '#ef4444' } });
                 this.updateNode(phaseNodes, 'finance', { color: { background: '#9b0e20', border: '#ef4444' } });
                 this.updateNode(phaseNodes, 'transport', { color: { background: '#9b0e20', border: '#ef4444' } });
                 this.updateNode(phaseNodes, 'egov', { color: { background: '#9b0e20', border: '#ef4444' } });

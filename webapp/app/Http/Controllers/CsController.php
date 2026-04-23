@@ -126,4 +126,26 @@ class CsController extends Controller
           ->header('Pragma', 'no-cache')
           ->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
     }
+
+    // ── Manage Players View ─────────────────────────────────────────
+    public function managePlayers(string $code)
+    {
+        $session = CsSession::where('code', $code)
+            ->with(['teams', 'moderator'])
+            ->firstOrFail();
+
+        if (!Auth::check() || !Auth::user()->canModerateCs()) {
+            abort(403, 'Accès réservé aux admins et mentors.');
+        }
+
+        $scenario = $session->scenario();
+
+        return response()->view('cs.manage_players', [
+            'session'  => $session,
+            'scenario' => $scenario,
+            'teams'    => $session->teams,
+        ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+          ->header('Pragma', 'no-cache')
+          ->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
+    }
 }

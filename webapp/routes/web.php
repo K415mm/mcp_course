@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{code}', [CsController::class, 'show'])->name('show');            // participant join
         Route::get('/{code}/dashboard', [CsController::class, 'dashboard'])->name('dashboard'); // big screen (public)
         Route::get('/{code}/moderator', [CsController::class, 'moderator'])->name('moderator'); // moderator console
+        Route::get('/{code}/manage-players', [CsController::class, 'managePlayers'])->name('managePlayers'); // manage players view
 
         // CS API endpoints (used by all 3 views, CSRF-protected)
         Route::prefix('/{code}/api')->name('api.')->group(function () {

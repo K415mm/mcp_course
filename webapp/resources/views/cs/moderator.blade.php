@@ -386,13 +386,18 @@
 
         {{-- Tabs --}}
         <div class="d-flex gap-1 mb-2">
-            <button class="mod-tab" id="tab-injects" onclick="switchTab('injects')"><i class="bi bi-lightning me-1"></i>Injects <span id="injectCount" class="badge bg-dark ms-1">{{ $injects->count() }}</span></button>
+            <button class="mod-tab active" id="tab-injects" onclick="switchTab('injects')"><i class="bi bi-lightning me-1"></i>Injects <span id="injectCount" class="badge bg-dark ms-1">{{ $injects->count() }}</span></button>
             <button class="mod-tab" id="tab-decisions" onclick="switchTab('decisions')"><i class="bi bi-clipboard-check me-1"></i>Décisions <span id="decCount" class="badge bg-dark ms-1">0</span></button>
-            <button class="mod-tab active" id="tab-users" onclick="switchTab('users')"><i class="bi bi-people me-1"></i>Users <span id="usersCount" class="badge bg-dark ms-1">0</span></button>
+        </div>
+
+        <div class="mb-3">
+            <a href="{{ route('cs.managePlayers', $session->code) }}" class="btn btn-outline-info w-100" target="_blank">
+                <i class="bi bi-people-fill me-2"></i>Gestion des Joueurs <span id="usersCount" class="badge bg-dark ms-1">0</span>
+            </a>
         </div>
 
         {{-- Injects Tab --}}
-        <div class="tab-pane" id="pane-injects">
+        <div class="tab-pane show" id="pane-injects">
             <div class="card">
                 <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                 <div class="card-body p-2">
@@ -454,35 +459,6 @@
                     </div>
                     <div style="max-height:calc(100vh - 240px);overflow-y:auto" id="decisionsArea">
                         <div class="text-white-50 text-center py-3 small">En attente de décisions...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Users Tab --}}
-        <div class="tab-pane show" id="pane-users">
-            <div class="card">
-                <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
-                <div class="card-body p-2">
-                    <div class="user-admin-card">
-                        <div class="small fw-bold text-theme mb-2"><i class="bi bi-person-plus me-1"></i>Pré-affectation avant démarrage</div>
-                        <div class="small text-white-50 mb-2" id="assignUsersHelp">
-                            Ajoutez des étudiants vérifiés aux entités avant le lancement de la session.
-                        </div>
-                        <select class="form-select form-select-sm mb-2" id="assignTeamType"></select>
-                        <select class="form-select form-select-sm mb-2" id="assignUserIds" multiple size="8"></select>
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-sm btn-theme fw-bold" id="assignUsersBtn" onclick="assignSelectedUsers()">Assigner à l'entité</button>
-                        </div>
-                        <div class="user-meta-line mt-2" id="assignableCount">0 étudiants disponibles</div>
-                    </div>
-
-                    <div class="small fw-bold text-theme mb-2"><i class="bi bi-shield-lock me-1"></i>Gestion des joueurs en session</div>
-                    <div class="user-meta-line mb-2">
-                        Après démarrage, vous pouvez déplacer, renommer, bannir, débannir ou supprimer les joueurs déjà affectés.
-                    </div>
-                    <div style="max-height:calc(100vh - 360px);overflow-y:auto" id="playersRosterArea">
-                        <div class="text-white-50 text-center py-3 small">Chargement des joueurs...</div>
                     </div>
                 </div>
             </div>
@@ -906,39 +882,7 @@ function currentTeamsList() {
 }
 
 function renderAssignmentControls() {
-    const teamSelect = document.getElementById('assignTeamType');
-    const userSelect = document.getElementById('assignUserIds');
-    const assignBtn = document.getElementById('assignUsersBtn');
-    const help = document.getElementById('assignUsersHelp');
-    const count = document.getElementById('assignableCount');
-    if (!teamSelect || !userSelect || !assignBtn || !help || !count) return;
-
-    const selectedTeam = teamSelect.value;
-    const teams = currentTeamsList();
-    teamSelect.innerHTML = teams.length
-        ? teams.map(team => `<option value="${escapeHtml(team.type)}">${escapeHtml(team.icon || '🛡️')} ${escapeHtml(team.name)}</option>`).join('')
-        : '<option value="">Aucune entité disponible</option>';
-    if (teams.some(team => team.type === selectedTeam)) {
-        teamSelect.value = selectedTeam;
-    }
-
-    const selectedUsers = Array.from(userSelect.selectedOptions).map(option => option.value);
-    userSelect.innerHTML = assignableUsersCache.length
-        ? assignableUsersCache.map(user => `<option value="${user.id}">${escapeHtml(user.name)} · ${escapeHtml(user.email)}</option>`).join('')
-        : '';
-    selectedUsers.forEach(id => {
-        const option = Array.from(userSelect.options).find(opt => opt.value === id);
-        if (option) option.selected = true;
-    });
-
-    const isLobby = String(latestSessionState?.status || '').toLowerCase() === 'lobby';
-    teamSelect.disabled = !isLobby || !teams.length;
-    userSelect.disabled = !isLobby || !assignableUsersCache.length;
-    assignBtn.disabled = !isLobby || !teams.length || !assignableUsersCache.length;
-    help.textContent = isLobby
-        ? 'Ajoutez des étudiants vérifiés aux entités avant le lancement de la session.'
-        : 'La pré-affectation est verrouillée après le démarrage. Utilisez la liste des joueurs ci-dessous pour les manipuler.';
-    count.textContent = `${assignableUsersCache.length} étudiants disponibles`;
+    // Only implemented in manage-players view
 }
 
 function updatePlayersRoster(players, assignableUsers) {
@@ -947,8 +891,6 @@ function updatePlayersRoster(players, assignableUsers) {
     const usersCount = document.getElementById('usersCount');
     if (usersCount) usersCount.textContent = playersRosterCache.length;
     syncTeamCountsFromRoster();
-    renderAssignmentControls();
-    renderPlayersRoster();
 }
 
 function syncTeamCountsFromRoster() {
@@ -978,135 +920,13 @@ function syncTeamCountsFromRoster() {
     });
 }
 
-function renderPlayersRoster() {
-    const root = document.getElementById('playersRosterArea');
-    if (!root) return;
-    if (!playersRosterCache.length) {
-        root.innerHTML = '<div class="text-white-50 text-center py-3 small">Aucun joueur affecté pour cette session.</div>';
-        return;
-    }
-
-    const teams = currentTeamsList();
-    const rows = playersRosterCache
-        .slice()
-        .sort((a, b) => `${a.teamName || ''}${a.displayName || ''}`.localeCompare(`${b.teamName || ''}${b.displayName || ''}`))
-        .map(player => {
-            const teamOptions = teams.map(team => `
-                <option value="${escapeHtml(team.type)}" ${team.type === player.teamType ? 'selected' : ''}>
-                    ${escapeHtml(team.name)}
-                </option>
-            `).join('');
-            const badges = [
-                `<span class="user-mini-badge" style="color:${player.isOnline ? '#22c55e' : 'rgba(255,255,255,.6)'}">${player.isOnline ? 'ONLINE' : 'OFFLINE'}</span>`,
-                `<span class="user-mini-badge" style="color:${player.isBanned ? '#ef4444' : '#60a5fa'}">${player.isBanned ? 'BANNED' : 'ACTIVE'}</span>`,
-                player.assignmentSource ? `<span class="user-mini-badge">${escapeHtml(String(player.assignmentSource).toUpperCase())}</span>` : '',
-            ].join(' ');
-
-            return `
-                <div class="user-roster-row ${player.isBanned ? 'banned' : ''}" id="player-row-${player.id}">
-                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
-                        <div>
-                            <div class="fw-bold" style="font-size:.86rem">${escapeHtml(player.displayName || 'Unnamed player')}</div>
-                            <div class="user-meta-line">${escapeHtml(player.email || 'No linked email')} · ${escapeHtml(player.teamName || 'Sans entité')}</div>
-                        </div>
-                        <div class="d-flex gap-1 flex-wrap justify-content-end">${badges}</div>
-                    </div>
-                    ${player.isBanned && player.bannedReason ? `<div class="user-meta-line mb-2 text-danger">Raison: ${escapeHtml(player.bannedReason)}</div>` : ''}
-                    <div class="user-roster-actions">
-                        <input type="text" class="form-control form-control-sm" id="player-name-${player.id}" value="${escapeHtml(player.displayName || '')}" maxlength="80">
-                        <select class="form-select form-select-sm" id="player-team-${player.id}">
-                            ${teamOptions}
-                        </select>
-                        <button class="btn btn-sm btn-outline-theme" onclick="savePlayer(${player.id})">Save</button>
-                        <button class="btn btn-sm ${player.isBanned ? 'btn-outline-success' : 'btn-outline-warning'}" onclick="${player.isBanned ? `unbanPlayerAction(${player.id})` : `banPlayerAction(${player.id})`}">
-                            ${player.isBanned ? 'Unban' : 'Ban'}
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="removePlayerAction(${player.id})">Delete</button>
-                    </div>
-                </div>
-            `;
-        })
-        .join('');
-
-    root.innerHTML = rows;
-}
-
-async function assignSelectedUsers() {
-    const teamType = document.getElementById('assignTeamType')?.value;
-    const selectedIds = Array.from(document.getElementById('assignUserIds')?.selectedOptions || []).map(option => parseInt(option.value, 10)).filter(Boolean);
-    if (!teamType) {
-        showNotif('Choisissez une entité cible.', 'warn');
-        return;
-    }
-    if (!selectedIds.length) {
-        showNotif('Sélectionnez au moins un étudiant.', 'warn');
-        return;
-    }
-
-    try {
-        if (selectedIds.length === 1) {
-            await apiChecked('players/assign', 'POST', { user_id: selectedIds[0], team_type: teamType });
-        } else {
-            await apiChecked('players/assign-bulk', 'POST', { user_ids: selectedIds, team_type: teamType });
-        }
-        showNotif(`${selectedIds.length} utilisateur(s) affecté(s).`, 'success');
-        await poll();
-    } catch (e) {
-        showNotif(e.message || 'Affectation refusée.', 'danger');
-    }
-}
-
-async function savePlayer(playerId) {
-    const name = (document.getElementById(`player-name-${playerId}`)?.value || '').trim();
-    const teamType = document.getElementById(`player-team-${playerId}`)?.value;
-    if (!name || !teamType) {
-        showNotif('Nom et entité sont requis.', 'warn');
-        return;
-    }
-
-    try {
-        await apiChecked(`players/${playerId}`, 'PUT', {
-            display_name: name,
-            team_type: teamType,
-        });
-        showNotif('Joueur mis à jour.', 'success');
-        await poll();
-    } catch (e) {
-        showNotif(e.message || 'Mise à jour refusée.', 'danger');
-    }
-}
-
-async function banPlayerAction(playerId) {
-    const reason = prompt('Raison du bannissement (optionnel) :', '') ?? '';
-    try {
-        await apiChecked(`players/${playerId}/ban`, 'POST', { reason: reason.trim() });
-        showNotif('Joueur banni.', 'success');
-        await poll();
-    } catch (e) {
-        showNotif(e.message || 'Bannissement refusé.', 'danger');
-    }
-}
-
-async function unbanPlayerAction(playerId) {
-    try {
-        await apiChecked(`players/${playerId}/unban`, 'POST');
-        showNotif('Joueur débanni.', 'success');
-        await poll();
-    } catch (e) {
-        showNotif(e.message || 'Débannissement refusé.', 'danger');
-    }
-}
-
-async function removePlayerAction(playerId) {
-    if (!confirm('Supprimer ce joueur de la session ?')) return;
-    try {
-        await apiChecked(`players/${playerId}`, 'DELETE');
-        showNotif('Joueur supprimé de la session.', 'success');
-        await poll();
-    } catch (e) {
-        showNotif(e.message || 'Suppression refusée.', 'danger');
-    }
-}
+// Only implemented in manage-players view
+function renderPlayersRoster() {}
+async function assignSelectedUsers() {}
+async function savePlayer(playerId) {}
+async function banPlayerAction(playerId) {}
+async function unbanPlayerAction(playerId) {}
+async function removePlayerAction(playerId) {}
 
 // ── DECISION MATRIX ─────────────────────────────────────────
 function updateMatrix(matrix) {

@@ -88,7 +88,9 @@ class CsSession extends Model
 
     public function scenario(): array
     {
-        return CsScenario::find($this->scenario_key) ?? CsScenario::find('phantom_grid');
+        return NeptuneScenario::find($this->scenario_key) 
+            ?? CsScenario::find($this->scenario_key) 
+            ?? CsScenario::find('phantom_grid');
     }
 
     public function phases(): array

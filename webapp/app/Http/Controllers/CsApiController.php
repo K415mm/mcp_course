@@ -837,9 +837,9 @@ class CsApiController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    // ── Private helpers ─────────────────────────────────────────────
+    // ── Protected helpers ───────────────────────────────────────────
 
-    private function getModeratorSession(string $code): CsSession
+    protected function getModeratorSession(string $code): CsSession
     {
         $session = CsSession::where('code', $code)->firstOrFail();
         if (!Auth::check() || !Auth::user()->canModerateCs()) {
@@ -848,12 +848,12 @@ class CsApiController extends Controller
         return $session;
     }
 
-    private function isModerator(CsSession $session): bool
+    protected function isModerator(CsSession $session): bool
     {
         return Auth::check() && Auth::user()->canModerateCs();
     }
 
-    private function resolvePlayer(Request $request, CsSession $session): ?CsPlayer
+    protected function resolvePlayer(Request $request, CsSession $session): ?CsPlayer
     {
         $playerId = session('cs_player_' . $session->code);
         if ($playerId) {
@@ -864,7 +864,7 @@ class CsApiController extends Controller
         return null;
     }
 
-    private function isSubmissionWindowClosed(CsSession $session): bool
+    protected function isSubmissionWindowClosed(CsSession $session): bool
     {
         $remaining = $session->timerRemainingSeconds();
         return $remaining !== null && $remaining <= 0;

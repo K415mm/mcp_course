@@ -1,0 +1,34 @@
+{
+  "media": [],
+  "messages": [
+    {
+      "type": "inject",
+      "stage": "inject",
+      "tag": "STRATEGIC COORD",
+      "content": "ENISA activated, Italy & Spain confirm incidents, IMO emergency session in 72h. Mediterranean security and governance architecture is the central policy question."
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "LESSONS IDENTIFIED",
+      "content": "Post-Incident Analysis: 5 critical systemic gaps identified. Delay in CERT notification, no BCP testing, lack of real-time IoC sharing, legal gaps for flags of convenience, GPS/AIS not in SOLAS."
+    }
+  ],
+  "questions": [
+    {
+      "id": "p4-q1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "EU/NATO + POLITICAL CELL — REGIONAL ARCHITECTURE (D-04)",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Propose EU-mandated Mediterranean Maritime CERT (6-month timeline)", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Strengthen France-Italy-Spain bilateral framework first", "color": "#00aaff", "points": 50},
+        {"key": "C", "label": "C → Immediately integrate Southern Mediterranean states into unified structure", "color": "#ffaa00", "points": 70},
+        {"key": "D", "label": "D → Mandate IMO binding international cyber-maritime standard via SOLAS", "color": "#aa88ff", "points": 100}
+      ],
+      "note": "A Mediterranean Maritime CERT provides institutional capabilities while a binding IMO standard provides global normative leverage."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "media": [],
+  "messages": [
+    {
+      "type": "inject",
+      "stage": "inject",
+      "tag": "FORENSIC INTEL",
+      "content": "4-Stage Attack Vector Confirmed. TTPs match APT-POSEIDON: Stage 1: Spear-phishing Kongsberg update PDF. Stage 2: CVE-2024-28921 DNP3 zero-day pivot. Stage 3: Siemens S7-1500 firmware implant. Stage 4: Coordinated trigger."
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "POLITICAL DECISION",
+      "content": "Attribution Decision Required. Threat intelligence points to state-linked APT-POSEIDON. France must decide: public attribution or confidential coordination? Allies and markets are watching."
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "NAVAL INTEL",
+      "content": "SIGINT confirms unidentified hydrographic research vessel operating near MEDEX-3 submarine cable. Panamanian flag of convenience, electronic emissions suggest deep-sea ROV operations."
+    }
+  ],
+  "questions": [
+    {
+      "id": "p2-q1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "POLITICAL CELL — ATTRIBUTION STRATEGY (D-02)",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Immediate public attribution for deterrence", "color": "#ff3355", "points": 20},
+        {"key": "B", "label": "B → Confidential IoC sharing with EU/NATO — no public attribution yet", "color": "#00ffcc", "points": 100},
+        {"key": "C", "label": "C → Request 48h delay to confirm attribution with certainty", "color": "#ffaa00", "points": 60},
+        {"key": "D", "label": "D → File IMO complaint + invoke NATO Article 5 immediately", "color": "#00aaff", "points": -50}
+      ],
+      "note": "TLP:RED sharing preserves operational discretion while activating collective response. Premature public attribution compromises intelligence sources."
+    }
+  ]
+}

@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr" data-bs-theme="dark">
+@php
+    $isEn = ($scenario['language'] ?? 'fr') === 'en';
+@endphp
+<html lang="{{ $isEn ? 'en' : 'fr' }}" data-bs-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $scenario['title'] ?? 'CARTHAGE SHIELD' }} — Grand Écran</title>
+<title>{{ $scenario['title'] ?? ($isEn ? 'NEPTUNE STRIKE' : 'CARTHAGE SHIELD') }} — {{ $isEn ? 'Grand Screen' : 'Grand Écran' }}</title>
 
 {{-- HUD theme assets (same as app layout) --}}
 <link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
@@ -965,6 +968,66 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
+
+/* ── Neptune Strike Theme Overrides ───────────────────────── */
+body.scenario-neptune_strike {
+    --cs-gold:    #00ffcc;
+    --cs-gold2:   #00ffcc;
+    --cs-red:     #00aaff;
+    --cs-red2:    #00aaff;
+    --cs-dark:    #000c14;
+    --cs-dark2:   rgba(0,12,20,.92);
+    --cs-border:  rgba(0,255,204,.25);
+    --cs-glow-g:  rgba(0,255,204,.35);
+    --cs-glow-r:  rgba(0,170,255,.45);
+}
+body.scenario-neptune_strike .logo-txt .shield-word {
+    background: linear-gradient(90deg, var(--cs-red) 0%, #33ccff 50%, var(--cs-red) 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+body.scenario-neptune_strike .team-card {
+    background:
+        radial-gradient(circle at 50% 0%, rgba(0,255,204,.1) 0%, rgba(0,0,0,0) 48%),
+        linear-gradient(180deg, rgba(0,8,16,.98) 0%, rgba(0,16,32,.96) 50%, rgba(0,8,16,.98) 100%) !important;
+}
+body.scenario-neptune_strike .widget {
+    background: rgba(0,15,30,.8) !important;
+}
+body.scenario-neptune_strike .hero-board {
+    background: linear-gradient(180deg, rgba(0,10,20,.96) 0%, rgba(0,5,10,.96) 100%) !important;
+    box-shadow:
+        inset 0 0 32px rgba(0,255,204,.15),
+        0 0 28px rgba(0,255,204,.2) !important;
+}
+body.scenario-neptune_strike .team-score-box {
+    background: linear-gradient(180deg, rgba(0,170,255,.12) 0%, rgba(0,40,80,.05) 100%) !important;
+}
+body.scenario-neptune_strike .cs-medallion::before {
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(0,255,204,.12) 15%,
+        rgba(0,255,204,.25) 50%,
+        rgba(0,255,204,.12) 85%,
+        transparent 100%
+    ) !important;
+    border-top: 1px solid rgba(0,255,204,.3) !important;
+    border-bottom: 1px solid rgba(0,255,204,.3) !important;
+}
+body.scenario-neptune_strike .cs-header {
+    background: linear-gradient(90deg,
+        rgba(0,8,16,.98) 0%,
+        rgba(0,16,32,.97) 30%,
+        rgba(0,24,48,.97) 50%,
+        rgba(0,16,32,.97) 70%,
+        rgba(0,8,16,.98) 100%
+    ) !important;
+    box-shadow:
+        0 0 40px rgba(0,255,204,.2),
+        inset 0 1px 0 rgba(0,255,204,.15),
+        inset 0 -1px 0 rgba(0,170,255,.2) !important;
+}
 </style>
 </head>
 <body>
@@ -972,17 +1035,17 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
 {{-- PHANTOM overlay --}}
 <div class="phantom-ov" id="phantomOv" onclick="dismissPhantom()">
-    <div class="ph-label">MESSAGE INTERCEPTÉ — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="ph-label">{{ $isEn ? 'INTERCEPTED MESSAGE' : 'MESSAGE INTERCEPTÉ' }} — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
     <div class="ph-skull">{{ $scenario['attacker_icon'] ?? '☠️' }}</div>
     <div class="ph-msg" id="phMsg" data-txt=""></div>
-    <div class="ph-dismiss">CLIQUER POUR FERMER</div>
+    <div class="ph-dismiss">{{ $isEn ? 'CLICK TO CLOSE' : 'CLIQUER POUR FERMER' }}</div>
 </div>
 
 {{-- ENDGAME overlay --}}
 <div class="endgame-ov" id="endgameOv">
     <canvas id="confettiCanvas"></canvas>
-    <div class="eg-label">FIN DE L'EXERCICE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
-    <div class="eg-title">{{ $scenario['title'] ?? 'CARTHAGE SHIELD' }}</div>
+    <div class="eg-label">{{ $isEn ? 'END OF EXERCISE' : "FIN DE L'EXERCICE" }} — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="eg-title">{{ $scenario['title'] ?? ($isEn ? 'NEPTUNE STRIKE' : 'CARTHAGE SHIELD') }}</div>
     <div class="podium" id="podiumEl"></div>
     <div class="others-row" id="othersEl"></div>
 </div>
@@ -997,7 +1060,7 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
     <div class="dom-team-icon" id="domIcon"></div>
     <div class="dom-name" id="domName"></div>
     <div class="dom-delta" id="domDelta"></div>
-    <div class="dom-label" id="domLabel">POINTS ATTRIBUÉS</div>
+    <div class="dom-label" id="domLabel">{{ $isEn ? 'POINTS AWARDED' : 'POINTS ATTRIBUÉS' }}</div>
 </div>
 
 {{-- MAIN LAYOUT --}}
@@ -1008,7 +1071,13 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
         {{-- LEFT: Title + Phase bar --}}
         <div class="cs-left">
-            <div class="logo-txt">CARTHAGE <span class="shield-word">SHIELD</span></div>
+            <div class="logo-txt">
+                @if($isEn)
+                    NEPTUNE <span class="shield-word">STRIKE</span>
+                @else
+                    CARTHAGE <span class="shield-word">SHIELD</span>
+                @endif
+            </div>
             <div class="d-flex align-items-center gap-2">
                 <div class="phase-bar">
                     @foreach($scenario['phases'] as $p)
@@ -1022,13 +1091,19 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
         {{-- CENTER: Protruding game medallion (absolute positioned) --}}
         <div class="cs-medallion">
-            <img src="/cs-assets/game_logo.png" class="cs-medal-img" alt="Carthage Shield">
+            @if($isEn)
+                <div class="cs-medal-img d-flex align-items-center justify-content-center" style="width:110px;height:110px;border-radius:50%;background:rgba(0,255,204,0.1);border:2px solid #00ffcc;box-shadow:0 0 20px rgba(0,255,204,0.4)">
+                    <span style="font-size:3.5rem;color:#00ffcc;text-shadow:0 0 15px #00ffcc">⚓</span>
+                </div>
+            @else
+                <img src="/cs-assets/game_logo.png" class="cs-medal-img" alt="Carthage Shield">
+            @endif
         </div>
 
         {{-- RIGHT: Status + clock + big timer --}}
         <div class="cs-right">
             <div class="d-flex flex-column align-items-end gap-1">
-                <div class="status-badge" id="statusBadge">EN ATTENTE</div>
+                <div class="status-badge" id="statusBadge">{{ $isEn ? 'AWAITING' : 'EN ATTENTE' }}</div>
                 <div class="clock-sm" id="clockSm">--:--:--</div>
             </div>
             <div class="timer-big" id="mainTimer">--:--</div>
@@ -1042,14 +1117,14 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
         <div class="center-stage">
             <div class="hero-board">
-                    <div class="hero-stage-label">Phase Briefing</div>
-                    <div class="hero-media-stage" id="mainMediaStage">
+                <div class="hero-stage-label">{{ $isEn ? 'Phase Briefing' : 'Phase Briefing' }}</div>
+                <div class="hero-media-stage" id="mainMediaStage">
                     <div class="media-stage-empty">MEDIA</div>
                 </div>
                 <div class="hero-quiz-panel">
                     <div class="hero-quiz-title" id="mainQuizQuestion">Quiz question</div>
                     <div class="hero-quiz-choices" id="mainQuizChoices">
-                        <span class="hero-quiz-choice empty">Answers will appear here</span>
+                        <span class="hero-quiz-choice empty">{{ $isEn ? 'Answers will appear here' : 'Answers will appear here' }}</span>
                     </div>
                 </div>
             </div>
@@ -1063,26 +1138,27 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
     {{-- BOTTOM WIDGETS --}}
     <div class="widgets-row">
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-megaphone"></i>Announcements</div>
+            <div class="widget-hdr"><i class="bi bi-megaphone"></i>{{ $isEn ? 'Announcements' : 'Announcements' }}</div>
             <div class="feed-list" id="announceLog"></div>
         </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-hand-thumbs-up"></i>Vote Stratégique</div>
+            <div class="widget-hdr"><i class="bi bi-hand-thumbs-up"></i>{{ $isEn ? 'Strategic Vote' : 'Vote Stratégique' }}</div>
             <div id="voteWidget">
-                <div class="vote-q fst-italic">Aucun vote en cours</div>
+                <div class="vote-q fst-italic">{{ $isEn ? 'No vote in progress' : 'Aucun vote en cours' }}</div>
             </div>
         </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-patch-question"></i>Question Quiz</div>
+            <div class="widget-hdr"><i class="bi bi-patch-question"></i>{{ $isEn ? 'Quiz Question' : 'Question Quiz' }}</div>
             <div id="quizWidget">
-                <div class="vote-q fst-italic">Aucune question en cours</div>
+                <div class="vote-q fst-italic">{{ $isEn ? 'No question in progress' : 'Aucune question en cours' }}</div>
             </div>
         </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-lightning-charge"></i>Injections Actives</div>
+            <div class="widget-hdr"><i class="bi bi-lightning-charge"></i>{{ $isEn ? 'Active Injects' : 'Injections Actives' }}</div>
             <div class="feed-list" id="injectLog"></div>
+        </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-collection-play"></i>Media & Quiz de Phase</div>
+            <div class="widget-hdr"><i class="bi bi-collection-play"></i>{{ $isEn ? 'Phase Media & Quiz' : 'Media & Quiz de Phase' }}</div>
             <div class="feed-list" id="phaseMediaQuiz"></div>
         </div>
     </div>
@@ -1094,8 +1170,245 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 <script src="{{ asset('hud/js/app.min.js') }}"></script>
 
 <script>
+<script>
 const SESSION_CODE = '{{ $session->code }}';
 const TOTAL_PHASES = {{ count($scenario['phases']) }};
+const SCENARIO_KEY = '{{ $scenario['key'] }}';
+const IS_EN = {{ $isEn ? 'true' : 'false' }};
+document.body.classList.add('scenario-' + SCENARIO_KEY);
+
+let lastBcId = 0, lastInjectId = 0, lastAtmo = '', endgameFired = false;
+let prevScores = {};
+let latestSessionPhaseIdx = null;
+let animationLoopRunning = false;
+
+// Canvas refs
+let bgCv, mainCv, bgCtx, ctx, W, H;
+const stars = Array.from({length:60},()=>({x:Math.random(),y:Math.random()*.44,r:Math.random()*.85+.2,a:Math.random()*.7+.3,t:Math.random()*6.28}));
+const ships = [
+  {name:'MV OLYMPIA',x:.28,y:.62,spd:.00008,dir:1,col:'#1a4060',alert:false,lbl:'IMO CLASS 3',type:'cargo'},
+  {name:'MV ADRIATIC STAR',x:.63,y:.55,spd:.00006,dir:-1,col:'#1a3050',alert:true,lbl:'80,000T CRUDE',type:'tanker'},
+  {name:'MV SILVER HORIZON',x:.52,y:.71,spd:.00005,dir:1,col:'#102030',alert:false,lbl:'AIS DARK',type:'susp'},
+];
+const cables=[
+  {pts:[[.05,.82],[.2,.76],[.4,.8],[.6,.74],[.8,.78],[.95,.81]],name:'SEA-ME-WE 5'},
+  {pts:[[.1,.86],[.3,.84],[.5,.88],[.7,.85],[.9,.83]],name:'MEDEX-3'},
+];
+const cmdNodes=[
+  {lbl:'ANSSI\nCERT',x:.5,y:.38,col:'#00ffcc',ring:true},
+  {lbl:'MARINE\nNATIONALE',x:.2,y:.56,col:'#00aaff'},
+  {lbl:'PORT\nMARSEILLE',x:.78,y:.56,col:'#ffaa00'},
+  {lbl:'SGDSN',x:.35,y:.73,col:'#ff6688'},
+  {lbl:'EUNAVFOR\nNATO',x:.65,y:.73,col:'#aa88ff'},
+  {lbl:'ENISA',x:.12,y:.38,col:'#44ddaa'},
+  {lbl:'IMO',x:.88,y:.38,col:'#ffdd44'},
+];
+const cmdLinks=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,3],[2,4],[5,6]];
+
+const HUD_BY_SCENE = {
+  ocean:  {lat:"43°17'N",lon:"005°22'E",time:'06:42:00',vtms:'NOMINAL',scada:'NOMINAL',ais:'ACTIVE',threat:'LOW',apt:'MONITORING',marsec:'BRAVO',pct:5},
+  port:   {lat:"43°18'N",lon:"005°21'E",time:'06:42:33',vtms:'OFFLINE',scada:'COMPROMISED',ais:'DISRUPTED',threat:'CRITICAL',apt:'73% MATCH',marsec:'CHARLIE',pct:80},
+  cable:  {lat:"43°09'N",lon:"005°55'E",time:'07:17:12',vtms:'DEGRADED',scada:'NOMINAL',ais:'DARK',threat:'HIGH',apt:'APT-POSEIDON',marsec:'CHARLIE',pct:50},
+  hack:   {lat:'--',lon:'--',time:'07:57:44',vtms:'OFFLINE',scada:'COMPROMISED',ais:'SPOOFED',threat:'EXTREME',apt:'CONFIRMED',marsec:'DELTA',pct:98},
+  command:{lat:"48°52'N",lon:"002°21'E",time:'09:12:00',vtms:'RESTORING',scada:'ISOLATED',ais:'MONITORED',threat:'MEDIUM',apt:'ATTRIBUTED',marsec:'CHARLIE',pct:45}
+};
+
+const G = {
+  cinScene: 'ocean',
+  sceneIdx: 0,
+  frame: 0,
+  t: 0
+};
+
+function setScene(sc) {
+  G.cinScene = sc;
+  const el = document.getElementById('scene-title');
+  if (el) {
+    el.classList.remove('on');
+    const scLabels = {
+      ocean: IS_EN ? 'PHASE I · INITIAL DETECTION' : 'PHASE I · DÉTECTION INITIALE',
+      port: IS_EN ? 'PHASE I–II · ATTACK ACTIVE' : 'PHASE I-II · ATTAQUE ACTIVE',
+      cable: IS_EN ? 'PHASE II · HYBRID THREAT' : 'PHASE II · MENACE HYBRIDE',
+      hack: IS_EN ? 'PHASE III · ESCALATION' : 'PHASE III · ESCALADE',
+      command: IS_EN ? 'PHASE IV · STRATEGIC RESPONSE' : 'PHASE IV · RÉPONSE STRATÉGIQUE'
+    };
+    const scSubs = {
+      ocean: IS_EN ? 'JUNE 9 2026 · 06:42 LOCAL · SITUATION NOMINALE' : '9 JUIN 2026 · 06:42 LOCAL · SITUATION NOMINALE',
+      port: 'T+00:00 · SYSTEM FAILURE ACTIVE',
+      cable: IS_EN ? 'MV SILVER HORIZON · ROV DETECTED' : 'MV SILVER HORIZON · ROV DÉTECTÉ',
+      hack: 'T+01:15 · MULTI-VECTOR ATTACK ACTIVE',
+      command: 'CRISIS COORDINATION CELL ACTIVATED'
+    };
+    
+    const stPh = document.getElementById('st-ph');
+    const stH = document.getElementById('st-h');
+    const stS = document.getElementById('st-s');
+    
+    if (stPh) stPh.textContent = scLabels[sc] || '';
+    if (stH) stH.textContent = sc.toUpperCase();
+    if (stS) stS.textContent = scSubs[sc] || '';
+    
+    setTimeout(() => {
+      el.classList.add('on');
+      setTimeout(() => el.classList.remove('on'), 3500);
+    }, 50);
+  }
+}
+
+function initCanvas() {
+  bgCv = document.getElementById('bg-cv');
+  mainCv = document.getElementById('main-cv');
+  const container = document.getElementById('neptuneCanvasContainer');
+  if (!bgCv || !mainCv || !container) return;
+  
+  W = container.clientWidth || 800;
+  H = container.clientHeight || 450;
+  bgCv.width = mainCv.width = W;
+  bgCv.height = mainCv.height = H;
+  
+  bgCtx = bgCv.getContext('2d');
+  ctx = mainCv.getContext('2d');
+  
+  const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      W = entry.contentRect.width;
+      H = entry.contentRect.height;
+      if (bgCv && mainCv) {
+        bgCv.width = mainCv.width = W;
+        bgCv.height = mainCv.height = H;
+      }
+    }
+  });
+  resizeObserver.observe(container);
+}
+
+function renderLoop() {
+  if (!animationLoopRunning) return;
+  G.t += .016; G.frame++;
+  drawBG(); drawScene(); updateHUD();
+  requestAnimationFrame(renderLoop);
+}
+
+function drawBG() {
+  if (!bgCtx) return;
+  bgCtx.clearRect(0,0,W,H);
+  const sc = G.cinScene;
+  if(sc==='ocean'||sc==='port'||sc==='cable') {
+    const sh = H*.42;
+    const sg = bgCtx.createLinearGradient(0,0,0,sh);
+    sg.addColorStop(0,'#000810'); sg.addColorStop(.5,'#001525'); sg.addColorStop(1,'#002035');
+    bgCtx.fillStyle=sg; bgCtx.fillRect(0,0,W,sh);
+    stars.forEach(s=>{s.t+=.007;const a=s.a*(.7+.3*Math.sin(s.t));bgCtx.beginPath();bgCtx.arc(s.x*W,s.y*sh,s.r,0,Math.PI*2);bgCtx.fillStyle=`rgba(255,255,255,${a})`;bgCtx.fill();});
+    bgCtx.beginPath();bgCtx.arc(W*.86,sh*.22,10,0,Math.PI*2);bgCtx.fillStyle='rgba(215,225,255,.78)';bgCtx.fill();
+    bgCtx.beginPath();bgCtx.arc(W*.86+4,sh*.22-2,9,0,Math.PI*2);bgCtx.fillStyle='#000810';bgCtx.fill();
+    const hg=bgCtx.createLinearGradient(0,sh-10,0,sh+15);hg.addColorStop(0,'rgba(0,180,120,.07)');hg.addColorStop(1,'transparent');bgCtx.fillStyle=hg;bgCtx.fillRect(0,sh-10,W,25);
+    const seaG=bgCtx.createLinearGradient(0,sh,0,H);seaG.addColorStop(0,'#002d50');seaG.addColorStop(.3,'#001c35');seaG.addColorStop(1,'#000d1a');bgCtx.fillStyle=seaG;bgCtx.fillRect(0,sh,W,H-sh);
+    for(let w=0;w<5;w++){const wy=sh+(H-sh)*(w/5)+Math.sin(G.t*.4+w)*2;bgCtx.beginPath();bgCtx.moveTo(0,wy);for(let x=0;x<=W;x+=8)bgCtx.lineTo(x,wy+Math.sin(x*.02+G.t*.5+w*.8)*3);bgCtx.strokeStyle=`rgba(0,255,204,${.025+w*.012})`;bgCtx.lineWidth=1;bgCtx.stroke();}
+  } else if(sc==='hack') {
+    bgCtx.fillStyle='#000004';bgCtx.fillRect(0,0,W,H);
+    bgCtx.font='10px Share Tech Mono';
+    for(let c=0;c<Math.floor(W/12);c++){for(let r=0;r<3;r++){const y=((G.frame*2+c*20+r*40)%(H+40))-20;bgCtx.fillStyle=`rgba(255,30,50,${.02+Math.random()*.03})`;bgCtx.fillText('01ABCDEF'[Math.floor(Math.random()*8)],c*12,y);}}
+  } else if(sc==='command') {
+    const g=bgCtx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.7);g.addColorStop(0,'#000d18');g.addColorStop(1,'#000004');bgCtx.fillStyle=g;bgCtx.fillRect(0,0,W,H);
+    bgCtx.strokeStyle='rgba(0,255,204,.04)';bgCtx.lineWidth=.5;
+    for(let x=0;x<W;x+=30){bgCtx.beginPath();bgCtx.moveTo(x,0);bgCtx.lineTo(x,H);bgCtx.stroke();}
+    for(let y=0;y<H;y+=30){bgCtx.beginPath();bgCtx.moveTo(0,y);bgCtx.lineTo(W,y);bgCtx.stroke();}
+  }
+}
+
+function drawShip(x,y,ship,flip=false) {
+  if (!ctx) return;
+  const sc=(ship.type==='tanker'?1.25:ship.type==='susp'?.78:1) * 0.9;
+  ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);ctx.scale(sc,sc);
+  ctx.beginPath();ctx.moveTo(-48,0);ctx.quadraticCurveTo(-53,8,-38,10);ctx.lineTo(38,10);ctx.quadraticCurveTo(53,8,56,0);ctx.quadraticCurveTo(53,-2,38,-3);ctx.lineTo(-38,-3);ctx.closePath();
+  ctx.fillStyle=ship.col;ctx.fill();ctx.strokeStyle=ship.type==='susp'?'rgba(255,100,0,.45)':'rgba(0,200,180,.18)';ctx.lineWidth=.7;ctx.stroke();
+  ctx.fillStyle='#0d2030';ctx.fillRect(-4,-15,22,12);ctx.fillRect(1,-24,13,10);ctx.fillRect(4,-32,7,9);
+  if(ship.type!=='susp'){ctx.beginPath();ctx.arc(56,-2,2,0,Math.PI*2);ctx.fillStyle=`rgba(255,240,150,${.65+.3*Math.sin(G.frame*.08)})`;ctx.fill();}
+  if(ship.alert){ctx.beginPath();ctx.arc(0,-24,3+2*Math.sin(G.frame*.12),0,Math.PI*2);ctx.strokeStyle=`rgba(255,50,80,${.45+.4*Math.sin(G.frame*.12)})`;ctx.lineWidth=1;ctx.stroke();}
+  ctx.restore();
+  ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillStyle=ship.type==='susp'?'rgba(255,140,0,.55)':'rgba(0,255,204,.4)';ctx.fillText(ship.name,x,y-19*sc-5);
+}
+
+function drawScene() {
+  if (!ctx) return;
+  ctx.clearRect(0,0,W,H);
+  const sc=G.cinScene, sh=H*.42;
+  if(sc==='ocean'||sc==='port'||sc==='cable') {
+    if(sc==='ocean'){
+      ships.forEach((s,i)=>{s.x+=s.spd*s.dir;if(s.x>1.1)s.x=-.1;if(s.x<-.1)s.x=1.1;drawShip(s.x*W,sh+(H-sh)*(.14+i*.22),s,s.dir<0);});
+      ctx.fillStyle='#0a1a28';ctx.fillRect(W*.05-2,sh-16,4,16);
+      ctx.beginPath();ctx.arc(W*.05,sh-16,3,0,Math.PI*2);ctx.fillStyle=`rgba(255,240,100,${.45+.45*Math.sin(G.frame*.05)})`;ctx.fill();
+      ctx.save();ctx.translate(W*.05,sh-16);ctx.rotate(G.frame*.012);const bg2=ctx.createLinearGradient(0,0,W*.22,0);bg2.addColorStop(0,'rgba(255,240,100,.1)');bg2.addColorStop(1,'transparent');ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(W*.22,-H*.05);ctx.lineTo(W*.22,H*.05);ctx.fillStyle=bg2;ctx.fill();ctx.restore();
+    }
+    if(sc==='port'){
+      ctx.fillStyle='#0a1520';ctx.fillRect(0,sh,W*.42,H-sh);ctx.fillStyle='#0d1e2e';ctx.fillRect(0,sh,W*.42,3);
+      [W*.08,W*.18,W*.29].forEach((cx,ci)=>{
+        ctx.fillStyle='#0a1820';ctx.fillRect(cx-2,sh-32,4,32);
+        ctx.beginPath();ctx.moveTo(cx,sh-32);ctx.lineTo(cx+26,sh-41);ctx.strokeStyle=`rgba(255,50,80,${.45+.4*Math.sin(G.frame*.12+ci)})`;ctx.lineWidth=1;ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx+26,sh-41);ctx.lineTo(cx+26,sh-13);ctx.strokeStyle=`rgba(255,50,80,${.35+.3*Math.sin(G.frame*.1+ci)})`;ctx.lineWidth=0.7;ctx.stroke();
+      });
+      for(let r=0;r<3;r++)for(let c=0;c<7;c++){ctx.fillStyle=['#1a3040','#0f2030','#162535','#0a1a28'][(r+c)%4];ctx.fillRect(2+c*25,sh+8+r*12,24,10);ctx.strokeStyle='rgba(0,100,150,.2)';ctx.lineWidth=.2;ctx.strokeRect(2+c*25,sh+8+r*12,24,10);}
+      ctx.fillStyle='#3a0810';ctx.fillRect(W*.05,sh+8,24,10);ctx.strokeStyle=`rgba(255,50,80,${.35+.35*Math.sin(G.frame*.1)})`;ctx.lineWidth=.4;ctx.strokeRect(W*.05,sh+8,24,10);
+      drawShip(W*.62,sh+(H-sh)*.36,ships[0]);
+      ctx.fillStyle=`rgba(255,20,40,${.015+.012*Math.sin(G.frame*.08)})`;ctx.fillRect(0,sh,W*.42,H-sh);
+    }
+    if(sc==='cable'){
+      const fg=ctx.createLinearGradient(0,H*.68,0,H);fg.addColorStop(0,'#001020');fg.addColorStop(1,'#000508');ctx.fillStyle=fg;ctx.fillRect(0,H*.68,W,H*.32);
+      cables.forEach((cable,ci)=>{
+        const pts=cable.pts.map(p=>[p[0]*W,p[1]*H]);
+        ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+        for(let i=1;i<pts.length;i++){const mx=(pts[i-1][0]+pts[i][0])/2,my=(pts[i-1][1]+pts[i][1])/2;ctx.quadraticCurveTo(pts[i-1][0],pts[i-1][1],mx,my);}
+        ctx.lineTo(pts[pts.length-1][0],pts[pts.length-1][1]);ctx.strokeStyle=`rgba(0,255,204,${.22+.08*Math.sin(G.frame*.05+ci)})`;ctx.lineWidth=1;ctx.stroke();
+        const pp=(G.frame*.007+ci*.45)%1,pi2=Math.floor(pp*(pts.length-1));
+        if(pi2<pts.length-1){const f=pp*(pts.length-1)-pi2,px2=pts[pi2][0]+(pts[pi2+1][0]-pts[pi2][0])*f,py2=pts[pi2][1]+(pts[pi2+1][1]-pts[pi2][1])*f;ctx.beginPath();ctx.arc(px2,py2,1.5,0,Math.PI*2);ctx.fillStyle='#00ffcc';ctx.fill();}
+      });
+      drawShip(W*.54,H*.44,ships[2]);
+      const rx=W*.54+Math.sin(G.frame*.016)*11,ry=H*.77;
+      ctx.save();ctx.translate(rx,ry);ctx.fillStyle='#0a1520';ctx.fillRect(-10,-4,20,8);ctx.strokeStyle='rgba(255,150,0,.6)';ctx.lineWidth=.4;ctx.strokeRect(-10,-4,20,8);ctx.beginPath();ctx.arc(10,0,1.1,0,Math.PI*2);ctx.fillStyle=`rgba(255,200,0,${.5+.4*Math.sin(G.frame*.2)})`;ctx.fill();ctx.beginPath();ctx.moveTo(0,-4);ctx.lineTo(0,-(H*.3));ctx.strokeStyle='rgba(180,140,60,.22)';ctx.lineWidth=.4;ctx.stroke();ctx.restore();
+    }
+  } else if(sc==='hack') {
+    const panels=[
+      {t:'VTMS ACCESS',bl:true},
+      {t:'SCADA BREACH',bl:false},
+      {t:'AIS SPOOFER',bl:true},
+      {t:'C2 BEACON',bl:false},
+      {t:'APT-POSEIDON',bl:true},
+      {t:'NETWORK MAP',bl:false},
+    ];
+    const cols=3,panW=(W-10)/cols,panH=(H-30)/2;
+    panels.forEach((p,i)=>{
+      const c=i%cols,r=Math.floor(i/cols),px=5+c*panW,py=15+r*panH*.72,pw=panW-3,ph=panH*.66;
+      const ba=p.bl?.48+.48*Math.sin(G.frame*.12+i):1;
+      ctx.fillStyle='rgba(20,5,8,.86)';ctx.fillRect(px,py,pw,ph);ctx.strokeStyle=`rgba(255,50,80,${ba*.5})`;ctx.lineWidth=.4;ctx.strokeRect(px,py,pw,ph);
+      ctx.font='bold 9px Share Tech Mono';ctx.fillStyle=`rgba(255,${p.bl?'80':'130'},100,${ba})`;ctx.textAlign='left';ctx.fillText('> '+p.t,px+4,py+10);
+    });
+  } else if(sc==='command') {
+    cmdLinks.forEach(([a2,b])=>{
+      const na=cmdNodes[a2],nb=cmdNodes[b];const ax=na.x*W,ay=na.y*H,bx=nb.x*W,by=nb.y*H;
+      const pr=((G.frame*.006+a2*.2)%1);const px2=ax+(bx-ax)*pr,py2=ay+(by-ay)*pr;
+      ctx.strokeStyle='rgba(0,200,160,.09)';ctx.lineWidth=.4;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+      ctx.beginPath();ctx.arc(px2,py2,1,0,Math.PI*2);ctx.fillStyle=`rgba(0,255,200,${.3+.3*Math.sin(G.frame*.1+a2)})`;ctx.fill();
+    });
+    cmdNodes.forEach((nd,ni)=>{
+      const nx=nd.x*W,ny=nd.y*H,ic=ni===0,r=ic?22:15;
+      const h=nd.col ? parseInt(nd.col.slice(1),16) : 0,cr=(h>>16)&255,cg=(h>>8)&255,cb=h&255;
+      ctx.beginPath();ctx.arc(nx,ny,r,0,Math.PI*2);ctx.fillStyle=`rgba(${cr},${cg},${cb},.09)`;ctx.fill();ctx.strokeStyle=`rgba(${cr},${cg},${cb},.6)`;ctx.lineWidth=ic?0.8:0.6;ctx.stroke();
+      const lines=nd.lbl.split('\n');ctx.font='7px Share Tech Mono';ctx.textAlign='center';
+      lines.forEach((ln,li)=>{ctx.fillStyle=nd.col;ctx.fillText(ln,nx,ny-(lines.length-1)*3+li*6);});
+    });
+  }
+}
+
+function updateHUD() {
+  const d = HUD_BY_SCENE[G.cinScene];
+  if(!d) return;
+  const setH=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setH('h-lat',d.lat); setH('h-lon',d.lon); setH('h-time',d.time); setH('h-vtms',d.vtms);
+  setH('h-scada',d.scada); setH('h-ais',d.ais); setH('h-threat',d.threat); setH('h-apt',d.apt);
+  setH('h-marsec',d.marsec);
+  const el=document.getElementById('ts-fill');if(el)el.style.width=d.pct+'%';
+}
 
 let lastBcId = 0, lastInjectId = 0, lastAtmo = '', endgameFired = false;
 let prevScores = {};
@@ -1199,7 +1512,7 @@ function handlePhaseContent(content) {
     const messages = Array.isArray(data.messages) ? data.messages : [];
 
     if (!media.length && !questions.length && !messages.length) {
-        root.innerHTML = '<div class="feed-item">Aucun contenu de phase</div>';
+        root.innerHTML = `<div class="feed-item">\${IS_EN ? 'No phase content' : 'Aucun contenu de phase'}</div>`;
         renderMainMedia(null);
         return;
     }
@@ -1227,6 +1540,57 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     
     const preferred = media.find(m => m.isLive) || media[0] || null;
     
+    if (SCENARIO_KEY === 'neptune_strike' && !preferred) {
+        if (!document.getElementById('neptuneCanvasContainer')) {
+            stage.innerHTML = `
+                <div id="neptuneCanvasContainer" class="position-relative overflow-hidden w-100 h-100 rounded" style="background: #000;">
+                    <canvas id="bg-cv" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
+                    <canvas id="main-cv" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
+                    <div id="alert-ov" style="position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .1s; z-index:3;"></div>
+                    <div class="scanlines" style="position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px); pointer-events:none; z-index:2;"></div>
+                    <div class="vignette" style="position:absolute; inset:0; background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.72) 100%); pointer-events:none; z-index:2;"></div>
+                    <div id="hud" style="position:absolute; inset:0; pointer-events:none; z-index:4; font-family:'Share Tech Mono',monospace; font-size:12px; color:rgba(0,255,204,0.65); padding:12px; line-height:1.2">
+                        <div class="d-flex justify-content-between">
+                            <div>LAT: <span id="h-lat" class="hv">--</span> | LON: <span id="h-lon" class="hv">--</span></div>
+                            <div>TIME: <span id="h-time" class="hv">--</span></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>VTMS: <span id="h-vtms" class="hv">--</span></div>
+                            <div>SCADA: <span id="h-scada" class="hv">--</span></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>AIS: <span id="h-ais" class="hv">--</span></div>
+                            <div>APT: <span id="h-apt" class="hv">--</span></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>THREAT: <span id="h-threat" class="hv">--</span></div>
+                            <div>MARSEC: <span id="h-marsec" class="hv">--</span></div>
+                        </div>
+                        <div style="position:absolute; bottom:0; left:0; right:0; height:4px; background:#030c14;">
+                            <div id="ts-fill" style="height:100%; background:linear-gradient(90deg,#00ffcc,#ffaa00,#ff3355); transition:width .4s; width:0%;"></div>
+                        </div>
+                    </div>
+                    <div id="scene-title" class="position-absolute text-center text-white" style="top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:5; opacity:0; transition:opacity .5s;">
+                        <div id="st-ph" style="font-family:'Share Tech Mono',monospace; font-size:12px; color:#00ffcc; letter-spacing:2px; margin-bottom:4px;"></div>
+                        <div id="st-h" style="font-family:'Orbitron',monospace; font-weight:700; font-size:16px; letter-spacing:1px; text-shadow:0 0 20px rgba(0,255,204,0.5); text-transform:uppercase;"></div>
+                        <div id="st-s" style="font-family:'Share Tech Mono',monospace; font-size:10px; color:rgba(255,255,255,0.5); letter-spacing:1px;"></div>
+                    </div>
+                </div>
+            `;
+            initCanvas();
+            if (!animationLoopRunning) {
+                animationLoopRunning = true;
+                renderLoop();
+            }
+        }
+        const sceneOrder = ['ocean', 'cable', 'port', 'hack', 'command'];
+        const targetScene = sceneOrder[latestSessionPhaseIdx ?? 0] || 'ocean';
+        if (targetScene !== G.cinScene) {
+            setScene(targetScene);
+        }
+        return;
+    }
+    
     if (!preferred || !preferred.url) {
         stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
         return;
@@ -1253,9 +1617,9 @@ function updateTimer(timer, session) {
     el.className = 'timer-big' + (secs <= 60 ? ' danger' : secs <= 180 ? ' warn' : '');
 
     if (timer.isRunning) {
-        sb.textContent = 'EN COURS'; sb.className = 'status-badge running';
+        sb.textContent = IS_EN ? 'RUNNING' : 'EN COURS'; sb.className = 'status-badge running';
     } else {
-        sb.textContent = session.status === 'finished' ? 'TERMINÉ' : 'EN ATTENTE';
+        sb.textContent = session.status === 'finished' ? (IS_EN ? 'FINISHED' : 'TERMINÉ') : (IS_EN ? 'AWAITING' : 'EN ATTENTE');
         sb.className = 'status-badge';
     }
 }
@@ -1263,6 +1627,7 @@ function updateTimer(timer, session) {
 // ── Phase ─────────────────────────────────────────────────────────
 function updatePhase(session) {
     const idx = session.currentPhaseIndex;
+    latestSessionPhaseIdx = idx;
     document.getElementById('phaseLabel').textContent = session.currentPhase?.name ?? '—';
     for (let i = 0; i < TOTAL_PHASES; i++) {
         const el = document.getElementById('ph-seg-' + i);
@@ -1279,7 +1644,7 @@ function updateAtmo(mode) {
     if (mode && mode !== 'calm' && mode !== 'neutral') document.body.classList.add('atmo-' + mode);
     if (mode === 'crisis' || mode === 'hacked') document.body.classList.add('scanlines');
     addFeed(mode === 'crisis' ? 'alert' : mode === 'victory' ? 'success' : 'info',
-        `ATMOSPHÈRE → ${mode.toUpperCase()}`);
+        IS_EN ? `ATMOSPHERE → ${mode.toUpperCase()}` : `ATMOSPHÈRE → ${mode.toUpperCase()}`);
         
     if (mode === 'crisis') playLocalSound('crisis');
     else if (mode === 'tension') playLocalSound('tension');
@@ -1308,7 +1673,7 @@ function fireDomination(t, delta, isBadge) {
     
     document.getElementById('domIcon').innerHTML = t.logoPath ? `<img src="${t.logoPath}" style="width:72px;height:72px;object-fit:contain">` : `<span style="font-size:3.5rem">${t.icon}</span>`;
     document.getElementById('domName').textContent = t.name;
-    document.getElementById('domLabel').textContent = isBadge ? "NOUVEAU BADGE DÉVERROUILLÉ !" : "POINTS ATTRIBUÉS";
+    document.getElementById('domLabel').textContent = isBadge ? (IS_EN ? "NEW BADGE UNLOCKED!" : "NOUVEAU BADGE DÉVERROUILLÉ !") : (IS_EN ? "POINTS AWARDED" : "POINTS ATTRIBUÉS");
     
     if (isBadge) {
         ov.classList.add('badge-dom');
@@ -1428,7 +1793,7 @@ function updateTeams(teams) {
                 const img = badgeEl.querySelector('img') || badgeEl.querySelector('span');
                 if (img) { img.classList.add('badge-unlocked'); }
                 // Log in feed
-                addFeed('success', `🏅 ${t.name} — Nouveau badge : <strong>${t.badge.name}</strong>`);
+                addFeed('success', IS_EN ? `🏅 ${t.name} — New badge: <strong>${t.badge.name}</strong>` : `🏅 ${t.name} — Nouveau badge : <strong>${t.badge.name}</strong>`);
                 // Domination overlay for badge
                 fireDomination(t, 0, true);
             } else {
@@ -1488,7 +1853,7 @@ let lastVoteId = null, lastVoteOpen = null;
 function handleVote(vote) {
     const el = document.getElementById('voteWidget');
     if (!vote) {
-        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucun vote en cours</div>';
+        el.innerHTML = `<div class="vote-q fst-italic" style="opacity:.5">${IS_EN ? 'No vote in progress' : 'Aucun vote en cours'}</div>`;
         lastVoteId  = null;
         lastVoteOpen = null;
         return;
@@ -1503,7 +1868,7 @@ function handleVote(vote) {
 
     // Detect vote just closed → flash announcement
     if (lastVoteId === vote.id && lastVoteOpen === true && !isOpen && winner) {
-        addFeed('success', `🗳️ Vote fermé — Choix national: <strong>${winner}</strong>`);
+        addFeed('success', IS_EN ? `🗳️ Vote closed — National choice: <strong>${winner}</strong>` : `🗳️ Vote fermé — Choix national: <strong>${winner}</strong>`);
         playTone(523, .4, 'triangle', .3);
     }
     lastVoteId   = vote.id;
@@ -1546,9 +1911,9 @@ function handleQuiz(quiz) {
     const mainChoices = document.getElementById('mainQuizChoices');
     if (!el) return;
     if (!quiz) {
-        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucune question en cours</div>';
+        el.innerHTML = `<div class="vote-q fst-italic" style="opacity:.5">\${IS_EN ? 'No question in progress' : 'Aucune question en cours'}</div>`;
         if (mainQuestion) mainQuestion.textContent = 'Quiz question';
-        if (mainChoices) mainChoices.innerHTML = '<span class="hero-quiz-choice empty">Answers will appear here</span>';
+        if (mainChoices) mainChoices.innerHTML = `<span class="hero-quiz-choice empty">\${IS_EN ? 'Answers will appear here' : 'Answers will appear here'}</span>`;
         return;
     }
 
@@ -1563,8 +1928,8 @@ function handleQuiz(quiz) {
     `).join('');
 
     el.innerHTML = `
-        <div class="vote-q">${quiz.question ?? 'Question Quiz'}</div>
-        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses: ${quiz.answerCount || 0}</div>
+        <div class="vote-q">${quiz.question ?? (IS_EN ? 'Quiz Question' : 'Question Quiz')}</div>
+        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} · ${IS_EN ? 'Answers:' : 'Réponses:'} ${quiz.answerCount || 0}</div>
         <div class="vote-bars">${optionsHtml}</div>
         ${resultHtml ? `<div style="margin-top:8px">${resultHtml}</div>` : ''}
     `;
@@ -1574,7 +1939,7 @@ function handleQuiz(quiz) {
     if (mainChoices) {
         const heroChoices = (quiz.options || []).length
             ? (quiz.options || []).map(o => `<span class="hero-quiz-choice">${o.key}. ${o.label}</span>`).join('')
-            : '<span class="hero-quiz-choice empty">Waiting for answer choices</span>';
+            : `<span class="hero-quiz-choice empty">\${IS_EN ? 'Waiting for answer choices' : 'Waiting for answer choices'}</span>`;
         mainChoices.innerHTML = heroChoices;
     }
 }
@@ -1602,7 +1967,7 @@ function fireEndgame(teams, session) {
     // Podium order: silver, gold, bronze
     const order = [1, 0, 2];
     const classes = ['p2', 'p1', 'p3'];
-    const ranks = ['🥈 2ÈME', '🥇 1ÈRE', '🥉 3ÈME'];
+    const ranks = IS_EN ? ['🥈 2ND', '🥇 1ST', '🥉 3RD'] : ['🥈 2ÈME', '🥇 1ÈRE', '🥉 3ÈME'];
 
     document.getElementById('podiumEl').innerHTML = order.map((ri, ci) => {
         const t = top3[ri]; if (!t) return '';
@@ -1623,7 +1988,7 @@ function fireEndgame(teams, session) {
     if (rest.length) {
         document.getElementById('othersEl').innerHTML = rest.map((t,i) =>
             `<div class="other-tile">
-                <div class="ot-rank">${i+4}ÈME</div>
+                <div class="ot-rank">${i+4}${IS_EN ? 'TH' : 'ÈME'}</div>
                 <div class="ot-name">${t.icon} ${t.name}</div>
                 <div class="ot-score">${t.score} pts</div>
             </div>`).join('');

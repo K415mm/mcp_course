@@ -1,0 +1,34 @@
+{
+  "media": [],
+  "messages": [
+    {
+      "type": "inject",
+      "stage": "inject",
+      "tag": "CRITICAL IMMEDIATE",
+      "content": "GPS spoofing confirmed in approach channel. MV Adriatic Star drifting, GMDSS broadcasting corrupted distress signals. Fos-sur-Mer LNG terminal OT receiving unauthorized valve-open commands."
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "MEDIA CRISIS",
+      "content": "BFM TV Live: 'Cyberattaque sur les ports français'. Frozen cranes, shipping companies diverting, French maritime stocks down 2.3%."
+    }
+  ],
+  "questions": [
+    {
+      "id": "p3-q1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "ALL ROLES — PARALLEL CRISIS RESPONSE (D-03)",
+      "points": 120,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Priority: redirect MV Adriatic Star (CROSS + tugs)", "color": "#00aaff", "points": 60},
+        {"key": "B", "label": "B → Priority: isolate Fos LNG terminal OT immediately", "color": "#ffaa00", "points": 60},
+        {"key": "C", "label": "C → Activate parallel cells — simultaneous dual response", "color": "#00ffcc", "points": 120},
+        {"key": "D", "label": "D → Request EU reinforcements before acting (30-min delay)", "color": "#ff3355", "points": -80}
+      ],
+      "note": "Multi-vector crises require parallel cell activation. Sequential response is catastrophic."
+    }
+  ]
+}

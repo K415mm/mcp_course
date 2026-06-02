@@ -1,5 +1,8 @@
 @extends('layouts.app')
-@section('title', 'CARTHAGE SHIELD — Console Modérateur')
+@php
+    $isEn = ($scenario['language'] ?? 'fr') === 'en';
+@endphp
+@section('title', ($isEn ? 'NEPTUNE STRIKE' : 'CARTHAGE SHIELD') . ' — ' . ($isEn ? 'Moderator Console' : 'Console Modérateur'))
 
 @push('head')
 <style>
@@ -84,6 +87,31 @@
 .user-meta-line{font-size:.72rem;color:rgba(255,255,255,.55)}
 .user-roster-actions{display:grid;grid-template-columns:minmax(0,1fr) 150px auto auto auto;gap:8px;align-items:center}
 @media (max-width: 1200px){.user-roster-actions{grid-template-columns:1fr 1fr}.user-roster-actions .btn{width:100%}}
+/* ── Neptune Strike Theme Overrides ───────────────────────── */
+body.scenario-neptune_strike {
+    --bs-theme: #00ffcc !important;
+    --bs-theme-rgb: 0, 255, 204 !important;
+}
+.scenario-neptune_strike .text-theme {
+    color: #00ffcc !important;
+}
+.scenario-neptune_strike .btn-outline-theme {
+    border-color: #00ffcc !important;
+    color: #00ffcc !important;
+}
+.scenario-neptune_strike .btn-outline-theme:hover {
+    background: #00ffcc !important;
+    color: #000000 !important;
+}
+.scenario-neptune_strike .btn-theme {
+    background: rgba(0, 255, 204, 0.15) !important;
+    border-color: #00ffcc !important;
+    color: #00ffcc !important;
+}
+.scenario-neptune_strike .btn-theme:hover {
+    background: #00ffcc !important;
+    color: #000000 !important;
+}
 </style>
 @endpush
 
@@ -98,7 +126,7 @@
             <div class="card-body py-3">
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <div>
-                        <div class="cs-title-sm text-theme">🛡️ CONSOLE MODÉRATEUR</div>
+                        <div class="cs-title-sm text-theme">🛡️ {{ $isEn ? 'MODERATOR CONSOLE' : 'CONSOLE MODÉRATEUR' }}</div>
                         <div class="small text-white-50 mt-1">
                             {{ $session->name }}
                             &middot; <span class="cs-mono">{{ $session->code }}</span>
@@ -122,7 +150,7 @@
                         </div>
                     </div>
                     <div class="d-flex gap-2 flex-wrap ms-2">
-                        <span class="small text-white-50">Atmosphère:</span>
+                        <span class="small text-white-50">{{ $isEn ? 'Atmosphere:' : 'Atmosphère:' }}</span>
                         @foreach([['calm','#22c55e'],['tension','#f59e0b'],['crisis','#ef4444'],['hacked','#7c3aed'],['victory','#fbbf24']] as [$m,$cl])
                         <button class="atmo-btn" id="atmo-{{ $m }}" style="border-color:{{ $cl }};color:{{ $cl }}" onclick="setAtmo('{{ $m }}')">{{ strtoupper($m) }}</button>
                         @endforeach
@@ -137,7 +165,7 @@
                     </button>
                     @endforeach
                     <span class="small text-white-50 ms-2" id="phaseLabel">—</span>
-                    <span class="badge bg-dark ms-1 small" id="onlineCount">0 en ligne</span>
+                    <span class="badge bg-dark ms-1 small" id="onlineCount">0 {{ $isEn ? 'online' : 'en ligne' }}</span>
                 </div>
             </div>
         </div>
@@ -475,6 +503,9 @@
 const CODE  = '{{ $session->code }}';
 const CSRF  = '{{ csrf_token() }}';
 const PHASES = {{ count($scenario['phases']) }};
+const SCENARIO_KEY = '{{ $scenario['key'] }}';
+const IS_EN = {{ $isEn ? 'true' : 'false' }};
+document.body.classList.add('scenario-' + SCENARIO_KEY);
 
 // Pre-load the scenario phases for the matrix (passed from server)
 const SCENARIO_PHASES = @json($scenario['phases']);
@@ -732,44 +763,27 @@ async function uploadMediaToLive() {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('scope', 'live');
-    fd.append('type', payload.type);
-    fd.append('title', payload.title || file.name);
-    fd.append('caption', payload.caption || '');
-    fd.append('autoplay', payload.autoplay ? '1' : '0');
-    fd.append('loop', payload.loop ? '1' : '0');
-    fd.append('muted', payload.muted ? '1' : '0');
-    fd.append('context', 'upload_live');
-    const res = await apiUpload('media/upload', fd);
-    if (!res?.ok) {
-        showNotif(res?.error || 'Upload media live echoue', 'warn');
-        return;
-    }
-    input.value = '';
-    showNotif('Media live injecte', 'success');
-    await refreshBank();
-}
-
-async function pushMediaLive(index) {
+    fd.append('type'async function pushMediaLive(index) {
     const media = currentBank.media?.[index];
     if (!media?.url) return;
     await api('media/inject', 'POST', { media, context: 'bank_push' });
-    showNotif('Media diffuse sur dashboards', 'success');
+    showNotif(IS_EN ? 'Media broadcasted to dashboards' : 'Media diffuse sur dashboards', 'success');
     await refreshBank();
 }
 
 async function deleteMedia(index) {
     const media = currentBank.media?.[index];
     if (!media?.id || !media?.scope || media.scope === 'bank') {
-        showNotif('Ce media n est pas supprimable', 'warn');
+        showNotif(IS_EN ? 'This media cannot be deleted' : 'Ce media n est pas supprimable', 'warn');
         return;
     }
-    if (!await swalConfirm('Supprimer ce media ?')) return;
+    if (!await swalConfirm(IS_EN ? 'Delete this media?' : 'Supprimer ce media ?')) return;
     await api('media/delete', 'POST', {
         scope: media.scope,
         id: media.id,
         phase_index: parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0
     });
-    showNotif('Media supprime', 'success');
+    showNotif(IS_EN ? 'Media deleted' : 'Media supprime', 'success');
     await refreshBank();
 }
 
@@ -777,7 +791,7 @@ function renderBankQuestions() {
     const root = document.getElementById('bankQuestions');
     if (!root) return;
     if (!currentBank.questions.length) {
-        root.innerHTML = '<div class="text-white-50">Aucune question disponible pour cette phase.</div>';
+        root.innerHTML = `<div class="text-white-50">\${IS_EN ? 'No questions available for this phase.' : 'Aucune question disponible pour cette phase.'}</div>`;
         return;
     }
 
@@ -787,9 +801,9 @@ function renderBankQuestions() {
             <div class="bank-note mt-1">Type: ${normalizeQuizType(q.type).toUpperCase()}${q.points ? ` · ${q.points} pts` : ''}${q.time_limit ? ` · ${q.time_limit}s` : ''}</div>
             <div class="bank-note mt-1">${(q.options || []).map(o => `${o.key}: ${o.label} (${o.points ?? 0} pts)`).join(' | ') || (q.prompt || 'Question ouverte')}</div>
             <div class="mt-2 d-flex justify-content-end gap-2 flex-wrap">
-                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">Pre-remplir le vote</button>
-                <button class="btn btn-sm btn-info text-dark" onclick="prefillQuizFromBank(${idx})">Pre-remplir Quiz</button>
-                <button class="btn btn-sm btn-theme" onclick="openQuizFromBank(${idx})">Diffuser Quiz</button>
+                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">\${IS_EN ? 'Prefill Vote' : 'Pre-remplir le vote'}</button>
+                <button class="btn btn-sm btn-info text-dark" onclick="prefillQuizFromBank(${idx})">\${IS_EN ? 'Prefill Quiz' : 'Pre-remplir Quiz'}</button>
+                <button class="btn btn-sm btn-theme" onclick="openQuizFromBank(${idx})">\${IS_EN ? 'Broadcast Quiz' : 'Diffuser Quiz'}</button>
             </div>
         </div>
     `).join('');
@@ -799,14 +813,14 @@ async function sendBankMessage(index) {
     const msg = currentBank.messages[index];
     if (!msg?.content) return;
     await api('broadcast', 'POST', { message: msg.content, type: msg.type || 'info' });
-    showNotif('Message de la bibliotheque diffuse', 'success');
+    showNotif(IS_EN ? 'Library message broadcasted' : 'Message de la bibliotheque diffuse', 'success');
 }
 
 function prefillVoteFromBank(index) {
     const question = currentBank.questions[index];
     if (!question) return;
     if ((question.type || 'single_choice') !== 'single_choice') {
-        showNotif('Ce quiz n est pas un vote simple. Prefill uniquement pour single-choice.', 'warn');
+        showNotif(IS_EN ? 'This quiz is not a single choice vote. Prefill only for single-choice.' : 'Ce quiz n est pas un vote simple. Prefill uniquement for single-choice.', 'warn');
         return;
     }
 
@@ -816,8 +830,8 @@ function prefillVoteFromBank(index) {
     document.getElementById('vOpt').value = opts.map(opt => `${opt.key}|${opt.label}|${opt.color||'#00b4d8'}|${opt.points||0}|${opt.note||''}`).join('\n');
 
     const info = document.getElementById('preparedVoteInfo');
-    const notes = opts.map(opt => `${opt.key}: ${opt.note || 'pas de note'}`).join(' | ');
-    info.textContent = `Question préchargée (${opts.length} options). Guide: ${notes}`;
+    const notes = opts.map(opt => `${opt.key}: ${opt.note || (IS_EN ? 'no note' : 'pas de note')}`).join(' | ');
+    info.textContent = IS_EN ? `Preloaded question (\${opts.length} options). Guide: \${notes}` : `Question préchargée (\${opts.length} options). Guide: \${notes}`;
     document.getElementById('voteSecretSwitch').checked = question.secret === true;
 }
 
@@ -829,6 +843,20 @@ function prefillQuizFromBank(index) {
     document.getElementById('quizQ').value = question.question || '';
     document.getElementById('quizType').value = normalizeQuizType(question.type);
     document.getElementById('quizOpt').value = opts.map(opt => `${opt.key}|${opt.label}|${opt.color||'#00b4d8'}|${opt.points||0}`).join('\n');
+    document.getElementById('quizCorrect').value = (question.acceptable_answers || question.correct_order || []).join(',');
+    document.getElementById('quizBasePoints').value = question.points || 10;
+    showNotif(IS_EN ? 'Quiz prefilled from library' : 'Quiz pré-rempli depuis la bibliothèque', 'success');
+}
+
+async function openQuizFromBank(index) {
+    prefillQuizFromBank(index);
+    await openQuiz();
+}
+
+// ── ONLINE COUNT ────────────────────────────────────────────
+function updateOnlineCount(players) {
+    document.getElementById('onlineCount').textContent = `${players.length} \${IS_EN ? 'online' : 'en ligne'}`;
+}points||0}`).join('\n');
     document.getElementById('quizCorrect').value = (question.acceptable_answers || question.correct_order || []).join(',');
     document.getElementById('quizBasePoints').value = question.points || 10;
     showNotif('Quiz pré-rempli depuis la bibliothèque', 'success');
@@ -870,7 +898,7 @@ function updateTeams(teams) {
 
 async function adjustScore(teamId, delta) {
     if (teamsById[teamId] && !teamsById[teamId].isScored) {
-        showNotif('Equipe mentor non-scoree', 'warn');
+        showNotif(IS_EN ? 'Mentor team is not scored' : 'Equipe mentor non-scoree', 'warn');
         return;
     }
     await api(`score/${teamId}`, 'POST', {delta: parseInt(delta)});
@@ -932,7 +960,7 @@ async function removePlayerAction(playerId) {}
 function updateMatrix(matrix) {
     const panel = document.getElementById('matrixPanel');
     if (!matrix) {
-        panel.innerHTML = '<div class="text-white-50 text-center py-4 small"><i class="bi bi-grid-3x3-gap me-2"></i>Pas de matrice pour cette phase</div>';
+        panel.innerHTML = `<div class="text-white-50 text-center py-4 small"><i class="bi bi-grid-3x3-gap me-2"></i>\${IS_EN ? 'No matrix for this phase' : 'Pas de matrice pour cette phase'}</div>`;
         return;
     }
     const optColors = {A:'#ef4444', B:'#22c55e', C:'#f59e0b'};
@@ -950,7 +978,7 @@ function updateMatrix(matrix) {
     const injectsHtml = (matrix.injects ?? []).map(i => `<li style="font-size:.78rem;color:rgba(255,255,255,.55)">${i}</li>`).join('');
     panel.innerHTML = `
         <div class="matrix-panel">
-            <div class="matrix-header text-theme"><i class="bi bi-grid-3x3-gap me-2"></i>MATRICE DE DÉCISION</div>
+            <div class="matrix-header text-theme"><i class="bi bi-grid-3x3-gap me-2"></i>\${IS_EN ? 'DECISION MATRIX' : 'MATRICE DE DÉCISION'}</div>
             ${matrix.context ? `<div class="matrix-context">${matrix.context}</div>` : ''}
             ${injectsHtml ? `<ul class="mb-0 ps-3 py-2" style="border-bottom:1px solid rgba(255,255,255,.06)">${injectsHtml}</ul>` : ''}
             ${optsHtml}
@@ -965,38 +993,38 @@ async function broadcast() {
     if (!msg) return;
     await api('broadcast','POST',{message:msg, type});
     document.getElementById('bcMsg').value = '';
-    showNotif('Diffusé !');
+    showNotif(IS_EN ? 'Broadcasted!' : 'Diffusé !');
 }
 async function phantom() {
     const msg = document.getElementById('bcMsg').value.trim() || 'PHANTOM GRID HAS BREACHED YOUR NETWORK.';
     await api('phantom','POST',{message:msg});
     document.getElementById('bcMsg').value = '';
-    showNotif('☠️ Message PHANTOM envoyé');
+    showNotif(IS_EN ? '☠️ PHANTOM message sent' : '☠️ Message PHANTOM envoyé');
 }
 
 // ── VOTE ────────────────────────────────────────────────────
 async function openVote() {
     const q = document.getElementById('voteQ').value.trim();
     if (!q) {
-        showNotif('Question requise', 'danger');
+        showNotif(IS_EN ? 'Question required' : 'Question requise', 'danger');
         return;
     }
 
     const options = parseManualOptions(document.getElementById('vOpt').value);
 
     if (!options || options.length < 2) {
-        showNotif('Au moins 2 options sont requises', 'danger');
+        showNotif(IS_EN ? 'At least 2 options are required' : 'Au moins 2 options sont requises', 'danger');
         return;
     }
 
     const isSecret = document.getElementById('voteSecretSwitch').checked;
     const response = await api('vote/open', 'POST', { question: q, options, is_secret: isSecret });
     if (!response?.ok) {
-        showNotif('Impossible d ouvrir le vote', 'danger');
+        showNotif(IS_EN ? 'Unable to open vote' : 'Impossible d ouvrir le vote', 'danger');
         return;
     }
-    showNotif(`Vote ouvert${isSecret ? ' (secret)' : ''}`);
-    document.getElementById('preparedVoteInfo').textContent = 'Vote en cours...';
+    showNotif(IS_EN ? `Vote opened\${isSecret ? ' (secret)' : ''}` : `Vote ouvert\${isSecret ? ' (secret)' : ''}`);
+    document.getElementById('preparedVoteInfo').textContent = IS_EN ? 'Vote in progress...' : 'Vote en cours...';
 }
 
 function parseManualOptions(raw) {
@@ -1038,9 +1066,9 @@ async function openQuiz() {
     const q = document.getElementById('quizQ').value.trim();
     const type = normalizeQuizType(document.getElementById('quizType').value);
     const options = parseManualOptions(document.getElementById('quizOpt').value);
-    if (!q) return showNotif('Question quiz requise', 'danger');
+    if (!q) return showNotif(IS_EN ? 'Quiz question required' : 'Question quiz requise', 'danger');
     if (['single_choice', 'multi_choice', 'order'].includes(type) && (!options || options.length < 2)) {
-        return showNotif('Ce type de quiz doit contenir au moins 2 choix', 'danger');
+        return showNotif(IS_EN ? 'This quiz type must contain at least 2 choices' : 'Ce type de quiz doit contenir au moins 2 choix', 'danger');
     }
 
     const correctRaw = (document.getElementById('quizCorrect').value || '').trim();
@@ -1054,21 +1082,21 @@ async function openQuiz() {
         correct_answers,
         base_points,
     });
-    if (!r?.ok) return showNotif(r?.error || 'Impossible d ouvrir le quiz', 'danger');
-    showNotif('Quiz ouvert', 'success');
+    if (!r?.ok) return showNotif(r?.error || (IS_EN ? 'Unable to open quiz' : 'Impossible d ouvrir le quiz'), 'danger');
+    showNotif(IS_EN ? 'Quiz opened' : 'Quiz ouvert', 'success');
 }
 
 async function closeQuizWithScore() {
     const r = await api('quiz/close', 'POST');
-    if (!r?.ok) return showNotif(r?.error || 'Erreur fermeture quiz', 'danger');
-    showNotif(`Quiz fermé — ${r.answeredTeams || 0} équipes scorées`, 'success');
+    if (!r?.ok) return showNotif(r?.error || (IS_EN ? 'Error closing quiz' : 'Erreur fermeture quiz'), 'danger');
+    showNotif(IS_EN ? `Quiz closed — \${r.answeredTeams || 0} teams scored` : `Quiz fermé — \${r.answeredTeams || 0} équipes scorées`, 'success');
 }
 
 function updateQuizTally(quiz) {
     const el = document.getElementById('quizTally');
     if (!el) return;
     if (!quiz) {
-        el.innerHTML = '<div class="small text-white-50">Aucun quiz en cours</div>';
+        el.innerHTML = `<div class="small text-white-50">\${IS_EN ? 'No active quiz' : 'Aucun quiz en cours'}</div>`;
         return;
     }
 
@@ -1080,7 +1108,7 @@ function updateQuizTally(quiz) {
     el.innerHTML = `
         <div class="small fw-bold text-info mb-1">${quiz.question || 'Quiz'} (${normalizeQuizType(quiz.type).replace('_',' ')})</div>
         <div class="mb-1">${rows}</div>
-        <div class="small text-white-50 mb-1">Réponses: ${quiz.answerCount || 0}</div>
+        <div class="small text-white-50 mb-1">\${IS_EN ? 'Answers:' : 'Réponses:'} ${quiz.answerCount || 0}</div>
         <div>${resultRows}</div>
     `;
 }
@@ -1097,13 +1125,13 @@ async function closeVoteWithScore() {
     const d = await api('vote/close','POST');
     if (d.ok) {
         const msg = d.isTie
-            ? `Vote fermé — Egalite (${(d.tiedKeys || []).join(', ')}) — aucun point attribue`
+            ? (IS_EN ? `Vote closed — Tie (${(d.tiedKeys || []).join(', ')}) — no points awarded` : `Vote fermé — Egalite (${(d.tiedKeys || []).join(', ')}) — aucun point attribue`)
             : (d.awardedPoints > 0
-                ? `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts attribues`
-                : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner}`);
+                ? (IS_EN ? `Vote closed — Winner: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts awarded` : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts attribues`)
+                : (IS_EN ? `Vote closed — Winner: ${d.winnerLabel || d.winner}` : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner}`));
         showNotif(msg, 'success');
     } else {
-        showNotif(d.error || 'Erreur', 'danger');
+        showNotif(d.error || (IS_EN ? 'Error' : 'Erreur'), 'danger');
     }
 }
 function updateVoteTally(vote) {
@@ -1131,9 +1159,9 @@ function updateVoteTally(vote) {
 
 // ── INJECT ──────────────────────────────────────────────────
 async function triggerInject(id) {
-    if (!await swalConfirm('Déclencher cet inject ?')) return;
+    if (!await swalConfirm(IS_EN ? 'Trigger this inject?' : 'Déclencher cet inject ?')) return;
     await api(`inject/${id}`,'POST');
-    showNotif('Inject déclenché','success');
+    showNotif(IS_EN ? 'Inject triggered' : 'Inject déclenché','success');
 }
 function filterInjects() {
     const val = document.getElementById('injectTargetFilter').value;
@@ -1205,12 +1233,12 @@ function renderDecisionsPanel() {
 
     const teamCount = new Set(filtered.map(d => d.teamType).filter(Boolean)).size;
     const answerCount = filtered.filter(d => d.type === 'question').length;
-    document.getElementById('decSummaryTeams').textContent = `${teamCount} équipes`;
-    document.getElementById('decSummaryAnswers').textContent = `${answerCount} réponses quiz`;
-    document.getElementById('decSummaryTotal').textContent = `${filtered.length} éléments`;
+    document.getElementById('decSummaryTeams').textContent = `\${teamCount} \${IS_EN ? 'teams' : 'équipes'}`;
+    document.getElementById('decSummaryAnswers').textContent = `\${answerCount} \${IS_EN ? 'quiz answers' : 'réponses quiz'}`;
+    document.getElementById('decSummaryTotal').textContent = `\${filtered.length} \${IS_EN ? 'items' : 'éléments'}`;
 
     if (filtered.length === 0) {
-        area.innerHTML = '<div class="text-white-50 text-center py-3 small">Aucun élément pour ce filtre.</div>';
+        area.innerHTML = `<div class="text-white-50 text-center py-3 small">\${IS_EN ? 'No items for this filter.' : 'Aucun élément pour ce filtre.'}</div>`;
         return;
     }
 
@@ -1250,9 +1278,9 @@ function renderDecisionsPanel() {
                         <span class="small text-white-50">Score:</span>
                         <input type="number" id="award-${d.id}" value="${pendingAwardEdits[d.id] ?? (Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0)}" min="0" max="100" class="form-control form-control-sm" style="width:70px" oninput="setPendingAward(${d.id}, this.value)" ${isMentorDecision ? 'disabled' : ''}>
                         <button onclick="awardScore(${d.id})" class="btn btn-sm btn-success ld-award" ${isMentorDecision ? 'disabled' : ''}>
-                            ${isMentorDecision ? 'Mentor non-score' : 'Valider / Ajuster'}
+                            ${isMentorDecision ? (IS_EN ? 'Non-scored Mentor' : 'Mentor non-score') : (IS_EN ? 'Validate / Adjust' : 'Valider / Ajuster')}
                         </button>
-                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">Actuel: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
+                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">\${IS_EN ? 'Current' : 'Actuel'}: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
                     </div>
                 </div>
             `;
@@ -1332,24 +1360,24 @@ function escapeHtml(value) {
 async function awardScore(id) {
     const pts = parseInt(document.getElementById('award-'+id).value);
     await api(`decision/${id}/award`,'POST',{points:pts});
-    showNotif(`Score validé: ${pts} pts`,'success');
+    showNotif(IS_EN ? `Score validated: \${pts} pts` : `Score validé: \${pts} pts`,'success');
     delete pendingAwardEdits[id];
     decisionsSignature = '';
     await poll();
     const card = document.getElementById(`dec-${id}`);
     if (card) {
         const note = card.querySelector('.award-current');
-        if (note) note.textContent = `Actuel: ${pts} pts`;
+        if (note) note.textContent = `\${IS_EN ? 'Current' : 'Actuel'}: \${pts} pts`;
     }
 }
 
 // ── BONUS BADGES ────────────────────────────────────────────
 async function awardBadge(type) {
     const teamId = document.getElementById('badgeTeamSelect').value;
-    if (!teamId) { showNotif('Sélectionnez une équipe d\'abord','danger'); return; }
+    if (!teamId) { showNotif(IS_EN ? 'Select a team first' : 'Sélectionnez une équipe d\'abord','danger'); return; }
     const d = await api(`badge/${teamId}`,'POST',{badge_type: type});
     if (d.ok) showNotif(`${d.badge} → +${d.points} pts`,'success');
-    else showNotif(d.error || 'Erreur badge','danger');
+    else showNotif(d.error || (IS_EN ? 'Badge error' : 'Erreur badge'),'danger');
 }
 
 function updateBadgeLog(badges) {
@@ -1391,9 +1419,9 @@ function switchTab(name) {
 
 // ── END ─────────────────────────────────────────────────────
 async function confirmEnd() {
-    if (!await swalConfirm('Terminer l\'exercice ? Cette action est irréversible.')) return;
+    if (!await swalConfirm(IS_EN ? 'End the exercise? This action is irreversible.' : 'Terminer l\'exercice ? Cette action est irréversible.')) return;
     await api('end','POST');
-    showNotif('Exercice terminé !','success');
+    showNotif(IS_EN ? 'Exercise finished!' : 'Exercice terminé !','success');
 }
 
 // ── NOTIF ───────────────────────────────────────────────────

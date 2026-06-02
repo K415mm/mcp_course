@@ -1,0 +1,12 @@
+{
+  "media": [],
+  "messages": [
+    {
+      "type": "info",
+      "stage": "inject",
+      "tag": "EXERCISE DEBRIEF",
+      "content": "Exercise complete. Review team decisions, systemic gaps, and strategic recommendations."
+    }
+  ],
+  "questions": []
+}

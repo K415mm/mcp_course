@@ -1,0 +1,50 @@
+{
+  "media": [
+    {
+      "id": "p1-ocean-med",
+      "type": "image",
+      "title": "Western Mediterranean Operations Area",
+      "caption": "AIS tracking and VTMS systems monitoring nominal traffic.",
+      "url": "/cs-assets/badges/observateur.png",
+      "stage": "inject"
+    }
+  ],
+  "messages": [
+    {
+      "type": "inject",
+      "stage": "inject",
+      "tag": "CRITICAL ALERT",
+      "content": "Simultaneous OT System Failure — Port Marseille-Fos. SCADA system controlling Terminal J cranes frozen. MV Olympia with IMO Class 3 hazardous cargo immobilized at Quay J4. Remote connection from IPs in Romania and UAE.",
+      "related_media": ["p1-ocean-med"]
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "WEAK SIGNAL",
+      "content": "CROSS Med reports MV Silver Horizon disabled AIS transponder for 47 minutes last night, near the SEA-ME-WE 5 submarine cable landing point."
+    },
+    {
+      "type": "intel",
+      "stage": "inject",
+      "tag": "AI ALERT",
+      "content": "SENTINEL v3.2 correlation alert: 3 similar incidents in past 72 hours (Port of Genoa, Tanger Med, Valencia). Consistent with APT-POSEIDON. Recommendation: MARSEC CYBER ALPHA."
+    }
+  ],
+  "questions": [
+    {
+      "id": "p1-q1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "MARITIME CERT — IMMEDIATE RESPONSE DECISION (D-01)",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Immediately isolate OT from IT networks (segmentation)", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Maintain connectivity to trace attacker in real time", "color": "#ff3355", "points": -20},
+        {"key": "C", "label": "C → Alert port authorities first — await confirmation", "color": "#ffaa00", "points": -30},
+        {"key": "D", "label": "D → Activate BCP — switch to manual degraded mode", "color": "#00aaff", "points": 80}
+      ],
+      "note": "OT/IT isolation limits lateral movement, preserves forensic integrity. switch to manual BCP mode ensures safety."
+    }
+  ]
+}

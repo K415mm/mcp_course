@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Auth;
 class NeptuneApiController extends CsApiController
 {
     public function __construct(
-        protected NeptuneService $cs,
-        protected NeptuneContentBankService $contentBank
+        NeptuneService $cs,
+        NeptuneContentBankService $contentBank
     ) {
         parent::__construct($cs, $contentBank);
     }

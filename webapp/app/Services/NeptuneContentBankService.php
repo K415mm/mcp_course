@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class NeptuneContentBankService
+class NeptuneContentBankService extends CsContentBankService
 {
     public function getPhaseContent(string $scenarioKey, int $phaseIndex): array
     {

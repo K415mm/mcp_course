@@ -1,11 +1,24 @@
-@extends('layouts.app')
+<!DOCTYPE html>
 @php
     $isEn = true;
 @endphp
-@section('title', 'NEPTUNE STRIKE' . ' — ' . 'Moderator Console')
-
-@push('head')
+<html lang="en" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>NEPTUNE STRIKE — Moderator Console</title>
+{{-- HUD theme assets --}}
+<link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
+<link href="{{ asset('hud/css/app.min.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ── Neptune Strike Standalone Page ── */
+body { padding-top: 0 !important; }
+.sidebar, nav.app-sidebar, .page-header, footer { display: none !important; }
+.page-wrapper { margin-left: 0 !important; padding: 0 !important; }
+.content-wrapper { margin: 0 !important; }
 /* ── Base ──────────────────────────────────────────────── */
 .cs-mono{font-family:'Space Mono',monospace}
 .cs-title-sm{font-family:'Space Mono',monospace;font-weight:700;font-size:1.4rem;letter-spacing:2px}
@@ -113,9 +126,8 @@ body {
     color: #000000 !important;
 }
 </style>
-@endpush
-
-@section('content')
+</head>
+<body>
 <div class="container-fluid py-3" id="csMod">
 <div class="row gx-3">
 
@@ -496,9 +508,10 @@ body {
 
 </div>
 </div>
-@endsection
+</div>
 
-@push('scripts')
+<script src="{{ asset('hud/js/vendor.min.js') }}"></script>
+<script src="{{ asset('hud/js/app.min.js') }}"></script>
 <script>
 const CODE  = '{{ $session->code }}';
 const CSRF  = '{{ csrf_token() }}';
@@ -1434,4 +1447,5 @@ function showNotif(msg, type='success') {
     setTimeout(() => { div.style.opacity='0'; setTimeout(()=>div.remove(),400); }, 4000);
 }
 </script>
-@endpush
+</body>
+</html>

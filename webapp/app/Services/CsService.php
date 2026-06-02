@@ -698,6 +698,7 @@ class CsService
                 'content'       => $si->inject->content,
                 'color'         => $si->inject->color,
                 'isSuprise'     => (bool) $si->inject->is_surprise,
+                'sort_order'    => (int) $si->inject->sort_order,
                 'targetTeam'    => $si->inject->target_team_type,
                 'at'            => $si->triggered_at->toIso8601String(),
             ])->values()->all();

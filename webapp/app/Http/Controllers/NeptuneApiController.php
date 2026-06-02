@@ -70,7 +70,7 @@ class NeptuneApiController extends CsApiController
         return $session;
     }
 
-    // Override state to scope session query
+    // Override state to scope session query and append teamDecisions
     public function state(Request $request, string $code): JsonResponse
     {
         $session = CsSession::where('code', $code)
@@ -80,10 +80,98 @@ class NeptuneApiController extends CsApiController
 
         $player = $this->resolvePlayer($request, $session);
 
-        if ($this->isModerator($session)) {
-            return response()->json($this->cs->getModeratorState($session));
+        $stateData = $this->isModerator($session)
+            ? $this->cs->getModeratorState($session)
+            : $this->cs->getState($session, $player);
+
+        $decisions = \App\Models\CsDecision::where('cs_session_id', $session->id)
+            ->where('type', 'decision')
+            ->get()
+            ->map(fn($d) => [
+                'team_type' => $d->team->type,
+                'inject_id' => $d->settings['inject_id'] ?? null,
+                'choice'    => $d->settings['choice'] ?? null,
+                'points'    => $d->settings['points'] ?? 0,
+            ])->all();
+
+        $stateData['teamDecisions'] = $decisions;
+
+        return response()->json($stateData);
+    }
+
+    // Override decision to support auto-scored multiple-choice inject questions
+    public function decision(Request $request, string $code): JsonResponse
+    {
+        $session = CsSession::where('code', $code)->where('scenario_key', 'neptune_strike')->firstOrFail();
+
+        $data = $request->validate([
+            'choice'    => 'required|string|in:a,b,c,d,A,B,C,D',
+            'inject_id' => 'required|string',
+            'player_id' => 'required|integer',
+        ]);
+
+        $resolved = $this->resolvePlayer($request, $session);
+        if (!$resolved || (int) $resolved->id !== (int) $data['player_id']) {
+            return response()->json(['ok' => false, 'error' => 'Invalid player session context.'], 403);
         }
 
-        return response()->json($this->cs->getState($session, $player));
+        $player = CsPlayer::where('id', $data['player_id'])
+            ->where('cs_session_id', $session->id)
+            ->with('team')
+            ->firstOrFail();
+
+        // Check if this team has already submitted a decision for this inject in this session
+        $existing = \App\Models\CsDecision::where('cs_session_id', $session->id)
+            ->where('cs_team_id', $player->cs_team_id)
+            ->where('type', 'decision')
+            ->where('settings->inject_id', strtoupper($data['inject_id']))
+            ->first();
+
+        if ($existing) {
+            return response()->json(['ok' => false, 'error' => 'Decision already submitted'], 422);
+        }
+
+        // Score mapping
+        $choice = strtolower($data['choice']);
+        $injectId = strtoupper($data['inject_id']);
+        
+        $scores = [];
+        if ($injectId === 'D-01') {
+            $scores = ['a' => 100, 'b' => -20, 'c' => -30, 'd' => 80];
+        } elseif ($injectId === 'D-02') {
+            $scores = ['a' => 20, 'b' => 100, 'c' => 60, 'd' => -50];
+        } elseif ($injectId === 'D-03') {
+            $scores = ['a' => 60, 'b' => 60, 'c' => 120, 'd' => -80];
+        } elseif ($injectId === 'D-04') {
+            $scores = ['a' => 100, 'b' => 50, 'c' => 70, 'd' => 100];
+        }
+
+        $pts = $scores[$choice] ?? 0;
+
+        // Save decision in cs_decisions table
+        $decision = \App\Models\CsDecision::create([
+            'cs_session_id' => $session->id,
+            'cs_team_id'    => $player->cs_team_id,
+            'cs_player_id'  => $player->id,
+            'type'          => 'decision',
+            'content'       => "Option " . strtoupper($choice) . " chosen.",
+            'settings'      => [
+                'inject_id' => $injectId,
+                'choice'    => $choice,
+                'points'    => $pts
+            ]
+        ]);
+
+        // Update team score in database
+        $team = $player->team;
+        $team->score = max(0, $team->score + $pts);
+        $team->save();
+
+        return response()->json([
+            'ok' => true,
+            'decision_id' => $decision->id,
+            'points' => $pts,
+            'team_score' => $team->score
+        ]);
     }
 }

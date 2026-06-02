@@ -6,33 +6,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $scenario['title'] ?? 'NEPTUNE STRIKE' }} — Grand Screen</title>
+<title>{{ $scenario['title'] ?? 'NEPTUNE STRIKE' }} â€” Grand Screen</title>
 
 {{-- HUD theme assets (same as app layout) --}}
 <link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
 <link href="{{ asset('hud/css/app.min.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* ═══════════════════════════════════════════════════════════
-   CARTHAGE SHIELD — HUD DESIGN SYSTEM
-   Palette: Crimson #c0152a | Gold #c9a050 | Deep #0d1117
-   ═══════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   NEPTUNE STRIKE â€” GRAND SCREEN DESIGN SYSTEM
+   Palette: Cyan #00ffcc | Blue #00aaff | Deep Navy #000810
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ── CSS Tokens ───────────────────────────────────────────── */
+/* â”€â”€ CSS Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
-    --cs-gold:    #c9a050;
-    --cs-gold2:   #f0c060;
-    --cs-red:     #c0152a;
-    --cs-red2:    #9b0e20;
-    --cs-dark:    #0d1117;
-    --cs-dark2:   rgba(10,5,5,.92);
-    --cs-border:  rgba(201,160,80,.25);
-    --cs-glow-g:  rgba(201,160,80,.35);
-    --cs-glow-r:  rgba(192,21,42,.45);
+    --cs-gold:    #00ffcc;
+    --cs-gold2:   #00e5b4;
+    --cs-red:     #00aaff;
+    --cs-red2:    #0077dd;
+    --cs-dark:    #000810;
+    --cs-dark2:   rgba(0,5,12,.94);
+    --cs-border:  rgba(0,255,204,.2);
+    --cs-glow-g:  rgba(0,255,204,.3);
+    --cs-glow-r:  rgba(0,170,255,.3);
 }
 
-/* ── Atmosphere transitions ───────────────────────────────── */
+/* â”€â”€ Atmosphere transitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 body { transition: background 2s ease; }
 body.atmo-tension  { background: #070800 !important; }
 body.atmo-crisis   { background: #0d0303 !important; }
@@ -45,7 +46,7 @@ body.scanlines::after {
     pointer-events: none; z-index: 999;
 }
 
-/* ── Layout ─────────────────────────────────────────────────────── */
+/* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cs-layout {
     display: grid;
     grid-template-rows: 88px 1fr 220px;
@@ -55,22 +56,22 @@ body.scanlines::after {
     position: relative; z-index: 1;
 }
 
-/* ═══════════════════════════════════════════════════
-   HEADER — Gold/Crimson HUD Bar with center medallion
-   ═══════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HEADER â€” Teal/Blue HUD Bar
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .cs-header {
     position: relative;
     display: flex; align-items: center;
     height: 88px;
-    /* Deep dark + gold/red gradient */
+    /* Deep navy + teal gradient */
     background: linear-gradient(90deg,
-        rgba(10,4,4,.98) 0%,
-        rgba(24,8,8,.97) 30%,
-        rgba(35,12,8,.97) 50%,
-        rgba(24,8,8,.97) 70%,
-        rgba(10,4,4,.98) 100%
+        rgba(0,3,12,.98) 0%,
+        rgba(0,10,24,.97) 30%,
+        rgba(0,16,32,.97) 50%,
+        rgba(0,10,24,.97) 70%,
+        rgba(0,3,12,.98) 100%
     );
-    /* Gold top border, red bottom accent */
+    /* Cyan top border, blue bottom accent */
     border-top: 2px solid var(--cs-gold);
     border-bottom: 1px solid var(--cs-red);
     border-left: 1px solid var(--cs-border);
@@ -78,22 +79,22 @@ body.scanlines::after {
     border-radius: 10px;
     backdrop-filter: blur(12px);
     box-shadow:
-        0 0 40px rgba(192,21,42,.2),
-        inset 0 1px 0 rgba(201,160,80,.15),
-        inset 0 -1px 0 rgba(192,21,42,.2);
-    overflow: visible;  /* allow medallion to overflow */
+        0 0 40px rgba(0,170,255,.15),
+        inset 0 1px 0 rgba(0,255,204,.12),
+        inset 0 -1px 0 rgba(0,170,255,.15);
+    overflow: visible;
     padding: 0 28px;
 }
 
-/* Subtle inner gold shimmer line across top */
+/* Subtle inner teal shimmer line across top */
 .cs-header::before {
     content: '';
     position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
     background: linear-gradient(90deg, transparent, var(--cs-gold2), transparent);
-    opacity: .5;
+    opacity: .4;
 }
 
-/* ── Left block: title + phase bar ───────────────────── */
+/* â”€â”€ Left block: title + phase bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cs-left {
     display: flex; flex-direction: column; justify-content: center; gap: 5px;
     flex: 1; min-width: 0;
@@ -101,31 +102,31 @@ body.scanlines::after {
 .logo-txt {
     font-family: 'Space Mono', monospace;
     font-weight: 700; font-size: 1.3rem; letter-spacing: 4px;
-    /* Gold gradient text */
+    /* Cyan gradient text */
     background: linear-gradient(90deg, var(--cs-gold) 0%, var(--cs-gold2) 50%, var(--cs-gold) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
     text-shadow: none;
 }
 .logo-txt .shield-word {
-    background: linear-gradient(90deg, var(--cs-red) 0%, #e83352 50%, var(--cs-red) 100%);
+    background: linear-gradient(90deg, var(--cs-red) 0%, #22d3f0 50%, var(--cs-red) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 .scenario-sub {
     font-size: .72rem;
-    color: rgba(201,160,80,.55);
+    color: rgba(0,255,204,.45);
     font-family: 'Space Mono', monospace;
     letter-spacing: 1px;
 }
 
-/* ── Phase bar ───────────────────────────────────────── */
+/* â”€â”€ Phase bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .phase-bar { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
 .ph-seg {
     width: 28px; height: 4px; border-radius: 2px;
-    background: rgba(201,160,80,.12); transition: all .5s;
+    background: rgba(0,255,204,.12); transition: all .5s;
 }
-.ph-seg.done  { background: rgba(201,160,80,.5); opacity: .8; }
+.ph-seg.done  { background: rgba(0,255,204,.5); opacity: .8; }
 .ph-seg.active {
     background: var(--cs-gold);
     animation: segPulse 2s infinite;
@@ -138,7 +139,7 @@ body.scanlines::after {
     letter-spacing: 2px; margin-left: 6px; opacity: .8;
 }
 
-/* ── CENTER MEDALLION ────────────────────────────────── */
+/* â”€â”€ CENTER MEDALLION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cs-medallion {
     position: absolute;
     left: 50%; transform: translateX(-50%);
@@ -158,18 +159,18 @@ body.scanlines::after {
     width: 220px; height: 44px;
     background: linear-gradient(90deg,
         transparent 0%,
-        rgba(201,160,80,.12) 15%,
-        rgba(201,160,80,.25) 50%,
-        rgba(201,160,80,.12) 85%,
+        rgba(0,255,204,.12) 15%,
+        rgba(0,255,204,.25) 50%,
+        rgba(0,255,204,.12) 85%,
         transparent 100%
     );
-    border-top: 1px solid rgba(201,160,80,.3);
-    border-bottom: 1px solid rgba(201,160,80,.3);
+    border-top: 1px solid rgba(0,255,204,.3);
+    border-bottom: 1px solid rgba(0,255,204,.3);
     border-radius: 4px;
 }
 /* Corner decorations */
 .cs-medallion::after {
-    content: '✦';
+    content: 'âœ¦';
     position: absolute;
     font-size: .9rem;
     color: var(--cs-gold);
@@ -186,16 +187,16 @@ body.scanlines::after {
     object-fit: contain;
     position: relative; z-index: 2;
     filter:
-        drop-shadow(0 0 18px rgba(201,160,80,.7))
-        drop-shadow(0 0 6px rgba(192,21,42,.5));
+        drop-shadow(0 0 18px rgba(0,255,204,.7))
+        drop-shadow(0 0 6px rgba(0,170,255,.5));
     animation: medalFloat 4s ease-in-out infinite;
 }
 @keyframes medalFloat {
-    0%,100% { transform: translateY(0);    filter: drop-shadow(0 0 18px rgba(201,160,80,.7)) drop-shadow(0 0 6px rgba(192,21,42,.5)); }
-    50%      { transform: translateY(-4px); filter: drop-shadow(0 0 26px rgba(201,160,80,.9)) drop-shadow(0 0 10px rgba(192,21,42,.6)); }
+    0%,100% { transform: translateY(0);    filter: drop-shadow(0 0 18px rgba(0,255,204,.7)) drop-shadow(0 0 6px rgba(0,170,255,.5)); }
+    50%      { transform: translateY(-4px); filter: drop-shadow(0 0 26px rgba(0,255,204,.9)) drop-shadow(0 0 10px rgba(0,170,255,.6)); }
 }
 
-/* ── Right block: status + timer ─────────────────────── */
+/* â”€â”€ Right block: status + timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .cs-right {
     display: flex; align-items: center; gap: 18px;
     flex-shrink: 0;
@@ -204,8 +205,8 @@ body.scanlines::after {
     font-family: 'Space Mono', monospace;
     font-size: .6rem; padding: 4px 12px;
     border-radius: 99px; letter-spacing: 2px;
-    border: 1px solid rgba(201,160,80,.25);
-    color: rgba(201,160,80,.5);
+    border: 1px solid rgba(0,255,204,.25);
+    color: rgba(0,255,204,.5);
 }
 .status-badge.running {
     border-color: #2dc653; color: #2dc653;
@@ -214,18 +215,18 @@ body.scanlines::after {
 }
 .clock-sm {
     font-family: 'Space Mono', monospace;
-    font-size: .78rem; color: rgba(201,160,80,.4);
+    font-size: .78rem; color: rgba(0,255,204,.4);
     margin-top: 2px;
 }
 .timer-big {
     font-family: 'Space Mono', monospace;
     font-size: 2.8rem; font-weight: 700;
-    /* Gold gradient timer */
+    /* Teal gradient timer */
     background: linear-gradient(180deg, var(--cs-gold2) 0%, var(--cs-gold) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1; transition: all .5s;
-    filter: drop-shadow(0 0 12px rgba(201,160,80,.5));
+    filter: drop-shadow(0 0 12px rgba(0,255,204,.5));
 }
 .timer-big.warn {
     background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%);
@@ -240,7 +241,7 @@ body.scanlines::after {
 }
 @keyframes tPulse { 0%,100% { opacity:1 } 50% { opacity:.3 } }
 
-/* ── Teams grid ─────────────────────────────────────────────────── */
+/* â”€â”€ Teams grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dashboard-main {
     display: grid;
     grid-template-columns: minmax(220px, 1.1fr) minmax(0, 4.6fr) minmax(220px, 1.1fr);
@@ -265,12 +266,12 @@ body.scanlines::after {
     border: 2px solid transparent;
     border-radius: 14px;
     background:
-        linear-gradient(180deg, rgba(20,5,5,.96) 0%, rgba(10,3,3,.96) 100%);
+        linear-gradient(180deg, rgba(0,5,16,.96) 0%, rgba(0,3,10,.96) 100%);
     background-clip: padding-box;
     padding: 14px 14px 12px;
     box-shadow:
-        inset 0 0 32px rgba(201,160,80,.15),
-        0 0 28px rgba(201,160,80,.2);
+        inset 0 0 32px rgba(0,255,204,.15),
+        0 0 28px rgba(0,255,204,.2);
     display: flex;
     flex-direction: column;
 }
@@ -282,9 +283,9 @@ body.scanlines::after {
     z-index: -1;
     background: linear-gradient(45deg, var(--cs-gold), transparent, var(--cs-gold2), transparent, var(--cs-gold));
     background-size: 300% 300%;
-    animation: goldBorderShift 4s linear infinite;
+    animation: tealBorderShift 4s linear infinite;
 }
-@keyframes goldBorderShift {
+@keyframes tealBorderShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
@@ -296,10 +297,10 @@ body.scanlines::after {
     text-transform: uppercase;
     color: var(--cs-gold);
     margin-bottom: 10px;
-    text-shadow: 0 0 8px rgba(201,160,80,.4);
+    text-shadow: 0 0 8px rgba(0,255,204,.4);
 }
 .hero-media-stage {
-    border: 1px solid rgba(201, 160, 80, .4);
+    border: 1px solid rgba(0, 255, 204, .25);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -372,10 +373,10 @@ body.scanlines::after {
 /* === CARD DESIGN === same language as header: dark + gold border */
 .team-card {
     background:
-        radial-gradient(circle at 50% 0%, rgba(113,15,24,.16) 0%, rgba(0,0,0,0) 48%),
-        linear-gradient(180deg, rgba(15,5,6,.98) 0%, rgba(32,8,10,.96) 50%, rgba(16,5,7,.98) 100%);
-    border-top: 2px solid rgba(201,160,80,.75);
-    border-bottom: 2px solid rgba(201,160,80,.3);
+        radial-gradient(circle at 50% 0%, rgba(0,30,60,.16) 0%, rgba(0,0,0,0) 48%),
+        linear-gradient(180deg, rgba(0,5,12,.98) 0%, rgba(0,8,20,.96) 50%, rgba(0,5,14,.98) 100%);
+    border-top: 2px solid rgba(0,255,204,.75);
+    border-bottom: 2px solid rgba(0,255,204,.3);
     border-left: 1px solid var(--cs-border);
     border-right: 1px solid var(--cs-border);
     border-radius: 12px;
@@ -386,9 +387,9 @@ body.scanlines::after {
     transition: border-color .4s, box-shadow .4s, transform .25s ease;
     backdrop-filter: blur(12px);
     box-shadow:
-        0 0 20px rgba(201,160,80,.08),
-        inset 0 1px 0 rgba(201,160,80,.16),
-        inset 0 -1px 0 rgba(201,160,80,.08);
+        0 0 20px rgba(0,255,204,.08),
+        inset 0 1px 0 rgba(0,255,204,.16),
+        inset 0 -1px 0 rgba(0,255,204,.08);
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -400,7 +401,7 @@ body.scanlines::after {
     inset: 0;
     background:
         linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,0) 32%),
-        linear-gradient(90deg, rgba(201,160,80,0) 0%, rgba(201,160,80,.08) 50%, rgba(201,160,80,0) 100%);
+        linear-gradient(90deg, rgba(0,255,204,0) 0%, rgba(0,255,204,.08) 50%, rgba(0,255,204,0) 100%);
     pointer-events: none;
 }
 .team-card::after {
@@ -410,7 +411,7 @@ body.scanlines::after {
     left: 18px;
     right: 18px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,160,80,.85), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0,255,204,.85), transparent);
     pointer-events: none;
 }
 .team-card:hover {
@@ -430,8 +431,8 @@ body.scanlines::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 50% 35%, rgba(201,160,80,.18) 0%, rgba(0,0,0,0) 68%);
-    box-shadow: inset 0 0 0 1px rgba(201,160,80,.14);
+    background: radial-gradient(circle at 50% 35%, rgba(0,255,204,.18) 0%, rgba(0,0,0,0) 68%);
+    box-shadow: inset 0 0 0 1px rgba(0,255,204,.14);
 }
 .team-copy {
     display: flex;
@@ -447,8 +448,8 @@ body.scanlines::after {
     flex: 1;
 }
 .team-stat-box {
-    background: rgba(201,160,80,.04);
-    border: 1px solid rgba(201,160,80,.12);
+    background: rgba(0,255,204,.04);
+    border: 1px solid rgba(0,255,204,.12);
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -459,7 +460,7 @@ body.scanlines::after {
 }
 .team-score-box {
     background: linear-gradient(180deg, rgba(121,17,17,.18) 0%, rgba(42,8,8,.1) 100%);
-    border-color: rgba(201,160,80,.2);
+    border-color: rgba(0,255,204,.2);
 }
 .team-score-label,
 .team-badge-label {
@@ -467,7 +468,7 @@ body.scanlines::after {
     font-size: .52rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: rgba(201,160,80,.52);
+    color: rgba(0,255,204,.52);
     position: absolute;
     top: 6px;
     width: 100%;
@@ -483,7 +484,7 @@ body.scanlines::after {
     line-height: .9;
     transition: all .4s;
     display: block;
-    text-shadow: 0 0 24px rgba(201,160,80,.28);
+    text-shadow: 0 0 24px rgba(0,255,204,.28);
     margin-top: 10px;
 }
 .t-badge {
@@ -506,7 +507,7 @@ body.scanlines::after {
     font-weight: 700;
 }
 
-/* ── Score flash animation ──────────────── */
+/* â”€â”€ Score flash animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes scoreFlash {
     0%   { transform: scale(1); }
     20%  { transform: scale(1.22); color: #fff;
@@ -516,28 +517,28 @@ body.scanlines::after {
 }
 .score-pop { animation: scoreFlash .65s cubic-bezier(.36,.07,.19,.97); }
 
-/* ── Badge unlock — energetic spin───────────── */
+/* â”€â”€ Badge unlock â€” energetic spinâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes badgeBlast {
     0%   { transform: scale(0) rotate(-30deg);  opacity: 0; filter: brightness(5) blur(4px); }
     25%  { transform: scale(1.6) rotate(15deg); opacity: 1; filter: brightness(3) drop-shadow(0 0 30px gold); }
     45%  { transform: scale(.85) rotate(-8deg); filter: brightness(2) drop-shadow(0 0 18px gold); }
     65%  { transform: scale(1.15) rotate(4deg); }
     80%  { transform: scale(.96) rotate(-1deg); }
-    100% { transform: scale(1)   rotate(0deg);  filter: drop-shadow(0 0 8px rgba(201,160,80,.7)); }
+    100% { transform: scale(1)   rotate(0deg);  filter: drop-shadow(0 0 8px rgba(0,255,204,.7)); }
 }
 .badge-unlocked { animation: badgeBlast 1s cubic-bezier(.34,1.56,.64,1) forwards; }
 
-/* ── Card gold glow on score ────────────── */
+/* â”€â”€ Card gold glow on score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes cardGlow {
-    0%,100% { box-shadow: none; border-color: rgba(201,160,80,.25); }
+    0%,100% { box-shadow: none; border-color: rgba(0,255,204,.25); }
     40%     {
-        box-shadow: 0 0 28px rgba(201,160,80,.5), 0 0 60px rgba(201,160,80,.2);
-        border-color: rgba(201,160,80,.7);
+        box-shadow: 0 0 28px rgba(0,255,204,.5), 0 0 60px rgba(0,255,204,.2);
+        border-color: rgba(0,255,204,.7);
     }
 }
 .score-glow { animation: cardGlow 1s ease; }
 
-/* ══ DOMINATION OVERLAY ═══════════════════════════════ */
+/* â•â• DOMINATION OVERLAY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 /* Full-screen flash when a team gets points */
 .dom-overlay {
     display: none;
@@ -557,7 +558,7 @@ body.scanlines::after {
 .dom-badge-img {
     width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;
     animation: domBadgePop .5s cubic-bezier(.34,1.56,.64,1) both;
-    filter: drop-shadow(0 0 40px rgba(201,160,80,.9));
+    filter: drop-shadow(0 0 40px rgba(0,255,204,.9));
 }
 .dom-badge-img img { width: 100%; height: 100%; object-fit: contain; }
 .dom-badge-img span { font-size: 10rem; }
@@ -573,7 +574,7 @@ body.scanlines::after {
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
     text-transform: uppercase;
-    filter: drop-shadow(0 0 20px rgba(201,160,80,.8));
+    filter: drop-shadow(0 0 20px rgba(0,255,204,.8));
 }
 .dom-delta {
     font-family: 'Space Mono', monospace;
@@ -588,14 +589,14 @@ body.scanlines::after {
 .dom-label {
     font-family: 'Space Mono', monospace;
     font-size: .75rem; letter-spacing: 6px;
-    color: rgba(201,160,80,.5);
+    color: rgba(0,255,204,.5);
     margin-top: 6px;
     animation: domDelta .5s .4s both;
 }
 /* Corner ornaments */
 .dom-corner {
     position: absolute;
-    font-size: 1.5rem; color: rgba(201,160,80,.35);
+    font-size: 1.5rem; color: rgba(0,255,204,.35);
 }
 .dom-corner.tl { top: 20px; left: 24px; }
 .dom-corner.tr { top: 20px; right: 24px; transform: scaleX(-1); }
@@ -606,8 +607,8 @@ body.scanlines::after {
 .dom-overlay.badge-dom .dom-delta { color: var(--cs-gold2); }
 .dom-overlay.badge-dom { background: radial-gradient(ellipse at center, rgba(35,18,0,.97) 0%, rgba(0,0,0,.99) 100%); }
 
-.t-icon-img { display: block; margin: 0 auto; width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(201,160,80,.2)); }
-.t-icon { font-size: 1.6rem; display: block; line-height: 1; color: var(--tc); text-shadow: 0 0 16px rgba(201,160,80,.16); }
+.t-icon-img { display: block; margin: 0 auto; width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(0,255,204,.2)); }
+.t-icon { font-size: 1.6rem; display: block; line-height: 1; color: var(--tc); text-shadow: 0 0 16px rgba(0,255,204,.16); }
 .t-name { font-size: .96rem; font-weight: 900; letter-spacing: .8px; color: #fff; line-height: 1.02; text-transform: uppercase; }
 .t-role {
     display: inline-flex;
@@ -616,10 +617,10 @@ body.scanlines::after {
     min-height: 18px;
     padding: 1px 7px;
     border-radius: 999px;
-    background: rgba(201,160,80,.08);
-    border: 1px solid rgba(201,160,80,.12);
+    background: rgba(0,255,204,.08);
+    border: 1px solid rgba(0,255,204,.12);
     font-size: .54rem;
-    color: rgba(201,160,80,.68);
+    color: rgba(0,255,204,.68);
     font-family: 'Space Mono',monospace;
     letter-spacing: .8px;
 }
@@ -633,10 +634,10 @@ body.scanlines::after {
     0%   { opacity: 1; transform: translateY(-50%); }
     100% { opacity: 0; transform: translateY(-140%); }
 }
-/* Badge image container — bigger + centered */
+/* Badge image container â€” bigger + centered */
 .t-badge img {
     width: 40px; height: 40px; object-fit: contain;
-    filter: drop-shadow(0 0 15px rgba(201,160,80,.48));
+    filter: drop-shadow(0 0 15px rgba(0,255,204,.48));
     transition: filter .5s, transform .3s;
 }
 .t-badge span {
@@ -656,7 +657,7 @@ body.scanlines::after {
 .dot-on { width: 6px; height: 6px; border-radius: 50%; background: #2dc653; display: inline-block; animation: dotPulse 2s infinite; box-shadow: 0 0 8px rgba(45,198,83,.65); }
 @keyframes dotPulse { 0%,100% { opacity:1 } 50% { opacity:.25 } }
 
-/* ── Bottom widgets ─────────────────────────────────────────────── */
+/* â”€â”€ Bottom widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .widgets-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 10px; }
 @media (max-width: 1400px) { .widgets-row { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 980px) { .widgets-row { grid-template-columns: 1fr; } }
@@ -728,16 +729,16 @@ body.scanlines::after {
     word-break: break-word;
 }
 
-/* ══ ATMOSPHERE SYSTEM ═══════════════════════════════════════════ */
+/* â•â• ATMOSPHERE SYSTEM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 /* Each mode tints the whole dashboard */
 body { transition: background 2.5s ease; }
 
-/* ✔ CALM (default) — gold/dark */
+/* âœ” CALM (default) â€” gold/dark */
 body.atmo-calm {
     --atmo-accent: var(--cs-gold);
-    --atmo-card-border: rgba(201,160,80,.25);
+    --atmo-card-border: rgba(0,255,204,.25);
 }
-/* ⚠ TENSION — amber amber */
+/* âš  TENSION â€” amber amber */
 body.atmo-tension {
     --atmo-accent: #f59e0b;
     --atmo-card-border: rgba(245,158,11,.3);
@@ -751,7 +752,7 @@ body.atmo-tension .team-card {
     border-color: rgba(245,158,11,.2);
 }
 
-/* 🚨 CRISIS — deep red pulsing */
+/* ðŸš¨ CRISIS â€” deep red pulsing */
 body.atmo-crisis {
     --atmo-accent: #ef4444;
     --atmo-card-border: rgba(239,68,68,.35);
@@ -802,7 +803,7 @@ body.atmo-crisis.scanlines::after {
 }
 @keyframes scanMove { from { background-position: 0 0; } to { background-position: 0 100px; } }
 
-/* 👾 HACKED — glitch green matrix */
+/* ðŸ‘¾ HACKED â€” glitch green matrix */
 body.atmo-hacked {
     --atmo-accent: #00ff88;
     --atmo-card-border: rgba(0,255,136,.25);
@@ -835,7 +836,7 @@ body.atmo-hacked.scanlines::after {
     animation: scanMove 4s linear infinite;
 }
 
-/* 🏆 VICTORY — all gold everything */
+/* ðŸ† VICTORY â€” all gold everything */
 body.atmo-victory {
     background: radial-gradient(ellipse at 50% 0%, rgba(50,30,0,.9) 0%, rgba(8,5,0,.98) 100%) !important;
     animation: victoryPulse 3s ease-in-out infinite;
@@ -846,14 +847,14 @@ body.atmo-victory {
 }
 body.atmo-victory .cs-header {
     border-top-color: var(--cs-gold2) !important;
-    box-shadow: 0 0 80px rgba(201,160,80,.3), inset 0 1px 0 rgba(240,192,96,.4) !important;
+    box-shadow: 0 0 80px rgba(0,255,204,.3), inset 0 1px 0 rgba(240,192,96,.4) !important;
 }
-body.atmo-victory .team-card { border-color: rgba(201,160,80,.4); }
+body.atmo-victory .team-card { border-color: rgba(0,255,204,.4); }
 
-/* 🌍 NEUTRAL */
+/* ðŸŒ NEUTRAL */
 body.atmo-neutral { }
 
-/* ── Screen shake (crisis/hacked alert) ──────────────── */
+/* â”€â”€ Screen shake (crisis/hacked alert) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes screenShake {
     0%,100% { transform: none; }
     10%     { transform: translate(-3px,-2px) rotate(-.3deg); }
@@ -894,7 +895,7 @@ body.atmo-neutral { }
 .ph-dismiss { font-family: 'Space Mono', monospace; font-size: .65rem; color: rgba(239,68,68,.35); letter-spacing: 4px; margin-top: 22px; animation: blink 2s infinite; }
 @keyframes blink { 0%,100% { opacity:.3 } 50% { opacity:1 } }
 
-/* ── ENDGAME overlay ─────────────────────────────────────────────── */
+/* â”€â”€ ENDGAME overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .endgame-ov {
     display: none; position: fixed; inset: 0;
     background: radial-gradient(circle at 50% 40%, rgba(10, 25, 40, 0.98) 0%, rgba(0, 0, 0, 1) 100%);
@@ -969,7 +970,7 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
 
-/* ── Neptune Strike Theme Overrides ───────────────────────── */
+/* â”€â”€ Neptune Strike Theme Overrides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 body {
     --cs-gold:    #00ffcc;
     --cs-gold2:   #00ffcc;
@@ -1035,8 +1036,8 @@ body.scenario-neptune_strike .hero-board {
 
 {{-- PHANTOM overlay --}}
 <div class="phantom-ov" id="phantomOv" onclick="dismissPhantom()">
-    <div class="ph-label">INTERCEPTED MESSAGE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
-    <div class="ph-skull">{{ $scenario['attacker_icon'] ?? '☠️' }}</div>
+    <div class="ph-label">INTERCEPTED MESSAGE â€” {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="ph-skull">{{ $scenario['attacker_icon'] ?? 'â˜ ï¸' }}</div>
     <div class="ph-msg" id="phMsg" data-txt=""></div>
     <div class="ph-dismiss">CLICK TO CLOSE</div>
 </div>
@@ -1044,7 +1045,7 @@ body.scenario-neptune_strike .hero-board {
 {{-- ENDGAME overlay --}}
 <div class="endgame-ov" id="endgameOv">
     <canvas id="confettiCanvas"></canvas>
-    <div class="eg-label">END OF EXERCISE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="eg-label">END OF EXERCISE â€” {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
     <div class="eg-title">{{ $scenario['title'] ?? 'NEPTUNE STRIKE' }}</div>
     <div class="podium" id="podiumEl"></div>
     <div class="others-row" id="othersEl"></div>
@@ -1052,10 +1053,10 @@ body.scenario-neptune_strike .hero-board {
 
 {{-- DOMINATION OVERLAY (score/badge flash) --}}
 <div class="dom-overlay" id="domOverlay">
-    <span class="dom-corner tl">❖</span>
-    <span class="dom-corner tr">❖</span>
-    <span class="dom-corner bl">❖</span>
-    <span class="dom-corner br">❖</span>
+    <span class="dom-corner tl">â–</span>
+    <span class="dom-corner tr">â–</span>
+    <span class="dom-corner bl">â–</span>
+    <span class="dom-corner br">â–</span>
     <div class="dom-badge-img" id="domBadge" style="display:none"></div>
     <div class="dom-team-icon" id="domIcon"></div>
     <div class="dom-name" id="domName"></div>
@@ -1066,7 +1067,7 @@ body.scenario-neptune_strike .hero-board {
 {{-- MAIN LAYOUT --}}
 <div class="cs-layout">
 
-    {{-- ══ HEADER ══ --}}
+    {{-- â•â• HEADER â•â• --}}
     <div class="cs-header">
 
         {{-- LEFT: Title + Phase bar --}}
@@ -1079,7 +1080,7 @@ body.scenario-neptune_strike .hero-board {
                     @foreach($scenario['phases'] as $p)
                     <div class="ph-seg" id="ph-seg-{{ $p['index'] }}"></div>
                     @endforeach
-                    <span class="phase-label" id="phaseLabel">{{ $scenario['phases'][0]['name'] ?? '—' }}</span>
+                    <span class="phase-label" id="phaseLabel">{{ $scenario['phases'][0]['name'] ?? 'â€”' }}</span>
                 </div>
             </div>
             <div class="scenario-sub">{{ $scenario['title'] ?? '' }} &mdash; {{ $session->name }}</div>
@@ -1088,7 +1089,7 @@ body.scenario-neptune_strike .hero-board {
         {{-- CENTER: Protruding game medallion (absolute positioned) --}}
         <div class="cs-medallion">
             <div class="cs-medal-img d-flex align-items-center justify-content-center" style="width:110px;height:110px;border-radius:50%;background:rgba(0,255,204,0.1);border:2px solid #00ffcc;box-shadow:0 0 20px rgba(0,255,204,0.4)">
-                    <span style="font-size:3.5rem;color:#00ffcc;text-shadow:0 0 15px #00ffcc">⚓</span>
+                    <span style="font-size:3.5rem;color:#00ffcc;text-shadow:0 0 15px #00ffcc">âš“</span>
                 </div>
         </div>
 
@@ -1198,11 +1199,11 @@ const cmdNodes=[
 const cmdLinks=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,3],[2,4],[5,6]];
 
 const HUD_BY_SCENE = {
-  ocean:  {lat:"43°17'N",lon:"005°22'E",time:'06:42:00',vtms:'NOMINAL',scada:'NOMINAL',ais:'ACTIVE',threat:'LOW',apt:'MONITORING',marsec:'BRAVO',pct:5},
-  port:   {lat:"43°18'N",lon:"005°21'E",time:'06:42:33',vtms:'OFFLINE',scada:'COMPROMISED',ais:'DISRUPTED',threat:'CRITICAL',apt:'73% MATCH',marsec:'CHARLIE',pct:80},
-  cable:  {lat:"43°09'N",lon:"005°55'E",time:'07:17:12',vtms:'DEGRADED',scada:'NOMINAL',ais:'DARK',threat:'HIGH',apt:'APT-POSEIDON',marsec:'CHARLIE',pct:50},
+  ocean:  {lat:"43Â°17'N",lon:"005Â°22'E",time:'06:42:00',vtms:'NOMINAL',scada:'NOMINAL',ais:'ACTIVE',threat:'LOW',apt:'MONITORING',marsec:'BRAVO',pct:5},
+  port:   {lat:"43Â°18'N",lon:"005Â°21'E",time:'06:42:33',vtms:'OFFLINE',scada:'COMPROMISED',ais:'DISRUPTED',threat:'CRITICAL',apt:'73% MATCH',marsec:'CHARLIE',pct:80},
+  cable:  {lat:"43Â°09'N",lon:"005Â°55'E",time:'07:17:12',vtms:'DEGRADED',scada:'NOMINAL',ais:'DARK',threat:'HIGH',apt:'APT-POSEIDON',marsec:'CHARLIE',pct:50},
   hack:   {lat:'--',lon:'--',time:'07:57:44',vtms:'OFFLINE',scada:'COMPROMISED',ais:'SPOOFED',threat:'EXTREME',apt:'CONFIRMED',marsec:'DELTA',pct:98},
-  command:{lat:"48°52'N",lon:"002°21'E",time:'09:12:00',vtms:'RESTORING',scada:'ISOLATED',ais:'MONITORED',threat:'MEDIUM',apt:'ATTRIBUTED',marsec:'CHARLIE',pct:45}
+  command:{lat:"48Â°52'N",lon:"002Â°21'E",time:'09:12:00',vtms:'RESTORING',scada:'ISOLATED',ais:'MONITORED',threat:'MEDIUM',apt:'ATTRIBUTED',marsec:'CHARLIE',pct:45}
 };
 
 const G = {
@@ -1218,17 +1219,17 @@ function setScene(sc) {
   if (el) {
     el.classList.remove('on');
     const scLabels = {
-      ocean: 'PHASE I · INITIAL DETECTION',
-      port: 'PHASE I–II · ATTACK ACTIVE',
-      cable: 'PHASE II · HYBRID THREAT',
-      hack: 'PHASE III · ESCALATION',
-      command: 'PHASE IV · STRATEGIC RESPONSE'
+      ocean: 'PHASE I Â· INITIAL DETECTION',
+      port: 'PHASE Iâ€“II Â· ATTACK ACTIVE',
+      cable: 'PHASE II Â· HYBRID THREAT',
+      hack: 'PHASE III Â· ESCALATION',
+      command: 'PHASE IV Â· STRATEGIC RESPONSE'
     };
     const scSubs = {
-      ocean: 'JUNE 9 2026 · 06:42 LOCAL · SITUATION NOMINALE',
-      port: 'T+00:00 · SYSTEM FAILURE ACTIVE',
-      cable: 'MV SILVER HORIZON · ROV DETECTED',
-      hack: 'T+01:15 · MULTI-VECTOR ATTACK ACTIVE',
+      ocean: 'JUNE 9 2026 Â· 06:42 LOCAL Â· SITUATION NOMINALE',
+      port: 'T+00:00 Â· SYSTEM FAILURE ACTIVE',
+      cable: 'MV SILVER HORIZON Â· ROV DETECTED',
+      hack: 'T+01:15 Â· MULTI-VECTOR ATTACK ACTIVE',
       command: 'CRISIS COORDINATION CELL ACTIVATED'
     };
     
@@ -1405,7 +1406,7 @@ function updateHUD() {
 let lastBcId = 0, lastInjectId = 0, lastAtmo = '', endgameFired = false;
 let prevScores = {};
 
-// ── Zoom & Pan Controls for Main Media ────────────────────────────
+// â”€â”€ Zoom & Pan Controls for Main Media â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let mediaScale = 1;
 let mediaX = 0;
 let mediaY = 0;
@@ -1466,16 +1467,16 @@ function resetMediaTransform() {
     mediaX = 0;
     mediaY = 0;
 }
-// ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ── Clock ─────────────────────────────────────────────────────────
+// â”€â”€ Clock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 setInterval(() => {
     const n = new Date();
     document.getElementById('clockSm').textContent =
         [n.getHours(), n.getMinutes(), n.getSeconds()].map(x => String(x).padStart(2,'0')).join(':');
 }, 1000);
 
-// ── Poll ──────────────────────────────────────────────────────────
+// â”€â”€ Poll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function poll() {
     try {
         const d = await fetch(`/neptune/${SESSION_CODE}/api/state`).then(r => r.json());
@@ -1498,7 +1499,7 @@ function handlePhaseContent(content) {
     let media = Array.isArray(data.media) ? data.media : [];
     
     // Only show media if it's injected by moderator or if it's the national map
-    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des OpÃ©rations'))));
     
     const questions = Array.isArray(data.questions) ? data.questions : [];
     const messages = Array.isArray(data.messages) ? data.messages : [];
@@ -1528,7 +1529,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     if(stage.id === 'mainMediaStage') resetMediaTransform();
 
     let media = Array.isArray(content?.media) ? content.media : [];
-    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des OpÃ©rations'))));
     
     const preferred = media.find(m => m.isLive) || media[0] || null;
     
@@ -1595,7 +1596,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     stage.innerHTML = `<img src="${preferred.url}" alt="${preferred.title || 'media'}" style="pointer-events: none;">`;
 }
 
-// ── Timer ─────────────────────────────────────────────────────────
+// â”€â”€ Timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateTimer(timer, session) {
     let secs;
     if (timer.isRunning && timer.endsAt)
@@ -1616,11 +1617,11 @@ function updateTimer(timer, session) {
     }
 }
 
-// ── Phase ─────────────────────────────────────────────────────────
+// â”€â”€ Phase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updatePhase(session) {
     const idx = session.currentPhaseIndex;
     latestSessionPhaseIdx = idx;
-    document.getElementById('phaseLabel').textContent = session.currentPhase?.name ?? '—';
+    document.getElementById('phaseLabel').textContent = session.currentPhase?.name ?? 'â€”';
     for (let i = 0; i < TOTAL_PHASES; i++) {
         const el = document.getElementById('ph-seg-' + i);
         if (!el) continue;
@@ -1628,7 +1629,7 @@ function updatePhase(session) {
     }
 }
 
-// ── Atmosphere ────────────────────────────────────────────────────
+// â”€â”€ Atmosphere â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateAtmo(mode) {
     if (mode === lastAtmo) return;
     lastAtmo = mode;
@@ -1636,14 +1637,14 @@ function updateAtmo(mode) {
     if (mode && mode !== 'calm' && mode !== 'neutral') document.body.classList.add('atmo-' + mode);
     if (mode === 'crisis' || mode === 'hacked') document.body.classList.add('scanlines');
     addFeed(mode === 'crisis' ? 'alert' : mode === 'victory' ? 'success' : 'info',
-        IS_EN ? `ATMOSPHERE → ${mode.toUpperCase()}` : `ATMOSPHÈRE → ${mode.toUpperCase()}`);
+        IS_EN ? `ATMOSPHERE â†’ ${mode.toUpperCase()}` : `ATMOSPHÃˆRE â†’ ${mode.toUpperCase()}`);
         
     if (mode === 'crisis') playLocalSound('crisis');
     else if (mode === 'tension') playLocalSound('tension');
     else if (mode === 'hacked') playLocalSound('hacked');
 }
 
-// ── Teams ─────────────────────────────────────────────────────────
+// â”€â”€ Teams â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function badgeImgHtml(badge) {
     if (badge.image) {
         return `<img src="${badge.image}" alt="${badge.name}" style="max-height:60px; max-width:60px; width:auto; height:auto;" onerror="this.replaceWith(document.createTextNode('${badge.icon}'))">`;
@@ -1749,7 +1750,7 @@ function updateTeams(teams) {
             const scoreEl   = document.getElementById('ts-' + t.id);
             const badgeEl   = document.getElementById('tb-' + t.id);
 
-            // ── Score changed ──
+            // â”€â”€ Score changed â”€â”€
             if (t.isScored && t.score !== prev) {
                 const delta = t.score - prev;
                 const dEl   = document.getElementById('td-' + t.id);
@@ -1777,7 +1778,7 @@ function updateTeams(teams) {
             document.getElementById('tn-' + t.id).textContent = t.name;
             document.getElementById('trl-' + t.id).textContent = t.roleLabel;
 
-            // ── Badge tier changed (unlock animation!) ──
+            // â”€â”€ Badge tier changed (unlock animation!) â”€â”€
             if (t.badge.name !== prevBdg) {
                 prevBadge[t.id] = t.badge.name;
                 badgeEl.innerHTML = badgeImgHtml(t.badge);
@@ -1785,7 +1786,7 @@ function updateTeams(teams) {
                 const img = badgeEl.querySelector('img') || badgeEl.querySelector('span');
                 if (img) { img.classList.add('badge-unlocked'); }
                 // Log in feed
-                addFeed('success', IS_EN ? `🏅 ${t.name} — New badge: <strong>${t.badge.name}</strong>` : `🏅 ${t.name} — Nouveau badge : <strong>${t.badge.name}</strong>`);
+                addFeed('success', IS_EN ? `ðŸ… ${t.name} â€” New badge: <strong>${t.badge.name}</strong>` : `ðŸ… ${t.name} â€” Nouveau badge : <strong>${t.badge.name}</strong>`);
                 // Domination overlay for badge
                 fireDomination(t, 0, true);
             } else {
@@ -1805,7 +1806,7 @@ function updateTeams(teams) {
         }
     });
 }
-// ── Activity feed ─────────────────────────────────────────────────
+// â”€â”€ Activity feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function handleActivity(broadcasts, injects) {
     if (broadcasts?.length) {
         const b = broadcasts[0];
@@ -1840,7 +1841,7 @@ function addFeed(type, msg) {
     while (fc.children.length > 15) fc.removeChild(fc.lastChild);
 }
 
-// ── Vote ──────────────────────────────────────────────────────────
+// â”€â”€ Vote â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let lastVoteId = null, lastVoteOpen = null;
 function handleVote(vote) {
     const el = document.getElementById('voteWidget');
@@ -1858,9 +1859,9 @@ function handleVote(vote) {
     const isOpen = (vote.is_open ?? vote.isOpen ?? true) === true;
     const winner = !isOpen ? Object.entries(tallyData).sort((a,b)=>b[1]-a[1])[0]?.[0] : null;
 
-    // Detect vote just closed → flash announcement
+    // Detect vote just closed â†’ flash announcement
     if (lastVoteId === vote.id && lastVoteOpen === true && !isOpen && winner) {
-        addFeed('success', IS_EN ? `🗳️ Vote closed — National choice: <strong>${winner}</strong>` : `🗳️ Vote fermé — Choix national: <strong>${winner}</strong>`);
+        addFeed('success', IS_EN ? `ðŸ—³ï¸ Vote closed â€” National choice: <strong>${winner}</strong>` : `ðŸ—³ï¸ Vote fermÃ© â€” Choix national: <strong>${winner}</strong>`);
         playTone(523, .4, 'triangle', .3);
     }
     lastVoteId   = vote.id;
@@ -1874,7 +1875,7 @@ function handleVote(vote) {
         const safeLabel = o.label || `Option ${o.key}`;
         return `<div class="vote-bar-row" style="${isWin ? 'opacity:1' : (winner ? 'opacity:.55' : '')}">
             <span class="vb-lbl">
-                <span class="vb-key" style="color:${safeColor}">${isWin ? '🏆' : o.key}</span>
+                <span class="vb-key" style="color:${safeColor}">${isWin ? 'ðŸ†' : o.key}</span>
                 <span class="vb-text" title="${safeLabel}">${safeLabel}</span>
             </span>
             <div class="vb-track"><div class="vb-fill" style="width:${pct}%;background:${safeColor};${isWin ? `box-shadow:0 0 6px ${safeColor}` : ''}"></div></div>
@@ -1884,17 +1885,17 @@ function handleVote(vote) {
 
     if (isSecretOpen && !hasVisibleTally) {
         el.innerHTML = `
-            <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'} 🔒</div>
+            <div class="vote-q">${vote.question ?? 'Vote stratÃ©gique en cours'} ðŸ”’</div>
             <div style="font-size:.8rem;opacity:.7;text-align:center;padding:10px 0">Vote secret en cours. Les resultats seront visibles a la cloture.</div>`;
         return;
     }
 
     el.innerHTML = `
-        <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'}${vote.isSecret ? ' 🔒' : ''}</div>
+        <div class="vote-q">${vote.question ?? 'Vote stratÃ©gique en cours'}${vote.isSecret ? ' ðŸ”’' : ''}</div>
         <div class="vote-bars">${barsHtml}</div>
         ${winner ? `<div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:.8rem;color:#22c55e;font-weight:700">
-            ✅ RÉSULTAT FINAL : ${winner}
-        </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} reçus</div>`}`;
+            âœ… RÃ‰SULTAT FINAL : ${winner}
+        </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} reÃ§us</div>`}`;
 }
 
 function handleQuiz(quiz) {
@@ -1916,12 +1917,12 @@ function handleQuiz(quiz) {
     `).join('');
 
     const resultHtml = (quiz.results || []).slice(0, 6).map(r => `
-        <div style="font-size:.72rem;opacity:.85">${r.teamName}: ${r.answerKey || '—'} => <strong>${r.awardedPoints} pts</strong></div>
+        <div style="font-size:.72rem;opacity:.85">${r.teamName}: ${r.answerKey || 'â€”'} => <strong>${r.awardedPoints} pts</strong></div>
     `).join('');
 
     el.innerHTML = `
         <div class="vote-q">${quiz.question ?? ('Quiz Question')}</div>
-        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} · ${'Answers:'} ${quiz.answerCount || 0}</div>
+        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} Â· ${'Answers:'} ${quiz.answerCount || 0}</div>
         <div class="vote-bars">${optionsHtml}</div>
         ${resultHtml ? `<div style="margin-top:8px">${resultHtml}</div>` : ''}
     `;
@@ -1936,7 +1937,7 @@ function handleQuiz(quiz) {
     }
 }
 
-// ── Phantom ───────────────────────────────────────────────────────
+// â”€â”€ Phantom â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showPhantom(msg) {
     const el = document.getElementById('phMsg');
     el.textContent = msg; el.dataset.txt = msg;
@@ -1948,7 +1949,7 @@ function dismissPhantom() {
     document.getElementById('phantomOv').classList.remove('show');
 }
 
-// ── Endgame ───────────────────────────────────────────────────────
+// â”€â”€ Endgame â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fireEndgame(teams, session) {
     endgameFired = true;
     const rankable = [...teams].filter(t => t.showInRanking !== false);
@@ -1959,7 +1960,7 @@ function fireEndgame(teams, session) {
     // Podium order: silver, gold, bronze
     const order = [1, 0, 2];
     const classes = ['p2', 'p1', 'p3'];
-    const ranks = IS_EN ? ['🥈 2ND', '🥇 1ST', '🥉 3RD'] : ['🥈 2ÈME', '🥇 1ÈRE', '🥉 3ÈME'];
+    const ranks = IS_EN ? ['ðŸ¥ˆ 2ND', 'ðŸ¥‡ 1ST', 'ðŸ¥‰ 3RD'] : ['ðŸ¥ˆ 2ÃˆME', 'ðŸ¥‡ 1ÃˆRE', 'ðŸ¥‰ 3ÃˆME'];
 
     document.getElementById('podiumEl').innerHTML = order.map((ri, ci) => {
         const t = top3[ri]; if (!t) return '';
@@ -1991,7 +1992,7 @@ function fireEndgame(teams, session) {
     playLocalSound('victory');
 }
 
-// ── Confetti ──────────────────────────────────────────────────────
+// â”€â”€ Confetti â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function launchConfetti() {
     const canvas = document.getElementById('confettiCanvas');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -2017,7 +2018,7 @@ function launchConfetti() {
     })();
 }
 
-// ── Audio ─────────────────────────────────────────────────────────
+// â”€â”€ Audio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let audioCtx = null;
 function getAudio() { if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
 function playTone(f, d, type='sine', vol=.2) {
@@ -2071,3 +2072,5 @@ function fmt(s) {
 </script>
 </body>
 </html>
+
+

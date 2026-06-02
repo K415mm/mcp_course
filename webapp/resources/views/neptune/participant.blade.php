@@ -1,12 +1,25 @@
-@extends('layouts.app')
+<!DOCTYPE html>
 @php
     $isEn = true;
     $title = $scenario['title'] ?? 'NEPTUNE STRIKE';
 @endphp
-@section('title', $title . ' — ' . $session->name)
-
-@push('head')
+<html lang="en" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>{{ $title }} — {{ $session->name }}</title>
+{{-- HUD theme assets --}}
+<link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
+<link href="{{ asset('hud/css/app.min.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ── Neptune Strike Standalone Page ── */
+body { padding-top: 0 !important; }
+.sidebar, nav.app-sidebar, .page-header, footer { display: none !important; }
+.page-wrapper { margin-left: 0 !important; padding: 0 !important; }
+.content-wrapper { margin: 0 !important; }
 /* ── CS Participant Styles ────────────────────────────────── */
 body {
     --bs-theme: #00ffcc !important;
@@ -78,9 +91,8 @@ body {
 .online-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px}
 
 </style>
-@endpush
-
-@section('content')
+</head>
+<body>
 <div class="container-fluid py-3" id="csParticipant">
 
 {{-- PHANTOM Modal --}}
@@ -273,9 +285,9 @@ body {
 
 </div>
 </div>
-@endsection
 
-@push('scripts')
+<script src="{{ asset('hud/js/vendor.min.js') }}"></script>
+<script src="{{ asset('hud/js/app.min.js') }}"></script>
 <script>
 const CODE = '{{ $session->code }}';
 const CSRF = '{{ csrf_token() }}';
@@ -972,4 +984,5 @@ function toast(type, msg) {
     setTimeout(() => div.remove(), 4000);
 }
 </script>
-@endpush
+</body>
+</html>

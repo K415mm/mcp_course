@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
 
         // Seed CARTHAGE SHIELD inject catalog
         $this->call(CsInjectSeeder::class);
+        $this->call(NeptuneInjectSeeder::class);
     }
 }

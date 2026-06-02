@@ -349,6 +349,15 @@
                         </a>
                     </div>
 
+                    <!-- NEPTUNE STRIKE Tabletop -->
+                    <div class="menu-item {{ request()->routeIs('neptune.*') || request()->routeIs('admin.neptune.*') ? 'active' : '' }}">
+                        <a href="{{ Auth::user() && Auth::user()->isAdmin() ? route('admin.neptune.index') : route('neptune.lobby') }}" class="menu-link">
+                            <span class="menu-icon"><i class="bi bi-anchor"></i></span>
+                            <span class="menu-text">Neptune Strike</span>
+                            <span class="menu-badge" style="background:#00ffcc;color:#000;font-weight:700">GAME</span>
+                        </a>
+                    </div>
+
                     @auth
                         @php
                             $user = Auth::user();
@@ -425,6 +434,12 @@
                                 <a href="{{ route('admin.cs.index') }}" class="menu-link">
                                     <span class="menu-icon"><i class="bi bi-shield-fill-exclamation"></i></span>
                                     <span class="menu-text">CARTHAGE SHIELD</span>
+                                </a>
+                            </div>
+                            <div class="menu-item {{ request()->routeIs('admin.neptune.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.neptune.index') }}" class="menu-link">
+                                    <span class="menu-icon"><i class="bi bi-anchor"></i></span>
+                                    <span class="menu-text">NEPTUNE STRIKE</span>
                                 </a>
                             </div>
                         @endif

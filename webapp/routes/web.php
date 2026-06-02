@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\UserController as AdminUsers;
 use App\Http\Controllers\Admin\QuizController as AdminQuiz;
 use App\Http\Controllers\CsController;
 use App\Http\Controllers\CsApiController;
+use App\Http\Controllers\NeptuneController;
+use App\Http\Controllers\NeptuneApiController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
@@ -189,12 +191,67 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    // ── NEPTUNE STRIKE — Public join routes ─────────────────
+    Route::prefix('neptune')->name('neptune.')->group(function () {
+        Route::get('/', [NeptuneController::class, 'lobby'])->name('lobby');
+        Route::get('/{code}', [NeptuneController::class, 'show'])->name('show');
+        Route::get('/{code}/dashboard', [NeptuneController::class, 'dashboard'])->name('dashboard');
+        Route::get('/{code}/moderator', [NeptuneController::class, 'moderator'])->name('moderator');
+        Route::get('/{code}/manage-players', [NeptuneController::class, 'managePlayers'])->name('managePlayers');
+
+        Route::prefix('/{code}/api')->name('api.')->group(function () {
+            Route::get('/state',             [NeptuneApiController::class, 'state'])->name('state');
+            Route::get('/bank',              [NeptuneApiController::class, 'getBank'])->name('bank');
+            Route::post('/join',             [NeptuneApiController::class, 'join'])->name('join');
+            Route::post('/heartbeat',        [NeptuneApiController::class, 'heartbeat'])->name('heartbeat');
+            Route::post('/timer/start',      [NeptuneApiController::class, 'timerStart'])->name('timer.start');
+            Route::post('/timer/pause',      [NeptuneApiController::class, 'timerPause'])->name('timer.pause');
+            Route::post('/timer/reset',      [NeptuneApiController::class, 'timerReset'])->name('timer.reset');
+            Route::post('/timer/set',        [NeptuneApiController::class, 'timerSet'])->name('timer.set');
+            Route::post('/phase/advance',    [NeptuneApiController::class, 'phaseAdvance'])->name('phase.advance');
+            Route::post('/phase/goto',       [NeptuneApiController::class, 'phaseGoto'])->name('phase.goto');
+            Route::post('/score/{teamId}',   [NeptuneApiController::class, 'scoreAdjust'])->name('score.adjust');
+            Route::post('/teams',            [NeptuneApiController::class, 'teamStore'])->name('teams.store');
+            Route::put('/teams/{teamId}',    [NeptuneApiController::class, 'teamUpdate'])->name('teams.update');
+            Route::delete('/teams/{teamId}', [NeptuneApiController::class, 'teamDelete'])->name('teams.delete');
+            Route::post('/players/assign',   [NeptuneApiController::class, 'assignPlayer'])->name('players.assign');
+            Route::post('/players/assign-bulk', [NeptuneApiController::class, 'assignPlayersBulk'])->name('players.assignBulk');
+            Route::put('/players/{playerId}', [NeptuneApiController::class, 'updatePlayer'])->name('players.update');
+            Route::delete('/players/{playerId}', [NeptuneApiController::class, 'removePlayer'])->name('players.remove');
+            Route::post('/players/{playerId}/ban', [NeptuneApiController::class, 'banPlayer'])->name('players.ban');
+            Route::post('/players/{playerId}/unban', [NeptuneApiController::class, 'unbanPlayer'])->name('players.unban');
+            Route::post('/broadcast',        [NeptuneApiController::class, 'broadcast'])->name('broadcast');
+            Route::post('/phantom',          [NeptuneApiController::class, 'phantom'])->name('phantom');
+            Route::post('/inject/{injectId}',[NeptuneApiController::class, 'inject'])->name('inject');
+            Route::post('/atmosphere',       [NeptuneApiController::class, 'atmosphere'])->name('atmosphere');
+            Route::post('/vote/open',        [NeptuneApiController::class, 'voteOpen'])->name('vote.open');
+            Route::post('/vote/close',       [NeptuneApiController::class, 'voteClose'])->name('vote.close');
+            Route::post('/vote/submit',      [NeptuneApiController::class, 'voteSubmit'])->name('vote.submit');
+            Route::post('/quiz/open',        [NeptuneApiController::class, 'quizOpen'])->name('quiz.open');
+            Route::post('/quiz/close',       [NeptuneApiController::class, 'quizClose'])->name('quiz.close');
+            Route::post('/quiz/submit',      [NeptuneApiController::class, 'quizSubmit'])->name('quiz.submit');
+            Route::post('/media/save',       [NeptuneApiController::class, 'mediaSave'])->name('media.save');
+            Route::post('/media/upload',     [NeptuneApiController::class, 'mediaUpload'])->name('media.upload');
+            Route::post('/media/inject',     [NeptuneApiController::class, 'mediaInject'])->name('media.inject');
+            Route::post('/media/delete',     [NeptuneApiController::class, 'mediaDelete'])->name('media.delete');
+            Route::post('/decision',         [NeptuneApiController::class, 'decision'])->name('decision');
+            Route::post('/decision/{id}/award',[NeptuneApiController::class, 'awardScore'])->name('decision.award');
+            Route::post('/badge/{teamId}',   [NeptuneApiController::class, 'badgeAward'])->name('badge.award');
+            Route::post('/end',              [NeptuneApiController::class, 'end'])->name('end');
+        });
+    });
+
     // ── CARTHAGE SHIELD — Admin session management + all other Admin routes ───────
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         // ── CARTHAGE SHIELD sessions ──
         Route::get('/cs',  [CsController::class, 'index'])->name('cs.index');
         Route::post('/cs', [CsController::class, 'store'])->name('cs.store');
         Route::post('/cs/clean-finished', [CsController::class, 'cleanFinished'])->name('cs.clean_finished');
+
+        // ── NEPTUNE STRIKE sessions ──
+        Route::get('/neptune',  [NeptuneController::class, 'index'])->name('neptune.index');
+        Route::post('/neptune', [NeptuneController::class, 'store'])->name('neptune.store');
+        Route::post('/neptune/clean-finished', [NeptuneController::class, 'cleanFinished'])->name('neptune.clean_finished');
 
         Route::get('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'index'])->name('cs.entities.index');
         Route::post('/cs/entities', [\App\Http\Controllers\Admin\CsEntityController::class, 'store'])->name('cs.entities.store');

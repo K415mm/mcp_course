@@ -892,21 +892,7 @@ async function openQuizFromBank(index) {
 
 // ── ONLINE COUNT ────────────────────────────────────────────
 function updateOnlineCount(players) {
-    document.getElementById('onlineCount').textContent = `${players.length} \${'online'}`;
-}points||0}`).join('\n');
-    document.getElementById('quizCorrect').value = (question.acceptable_answers || question.correct_order || []).join(',');
-    document.getElementById('quizBasePoints').value = question.points || 10;
-    showNotif('Quiz pré-rempli depuis la bibliothèque', 'success');
-}
-
-async function openQuizFromBank(index) {
-    prefillQuizFromBank(index);
-    await openQuiz();
-}
-
-// ── ONLINE COUNT ────────────────────────────────────────────
-function updateOnlineCount(players) {
-    document.getElementById('onlineCount').textContent = `${players.length} en ligne`;
+    document.getElementById('onlineCount').textContent = `${players.length} ${IS_EN ? 'online' : 'en ligne'}`;
 }
 
 // ── TEAMS ───────────────────────────────────────────────────

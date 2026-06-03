@@ -200,6 +200,103 @@
         </div>
     @endif
 
+    <!-- Serious Games & TTX Simulations Grid -->
+    <div class="row mt-4 mb-2">
+        <div class="col-12">
+            <h5 class="fw-semibold mb-3"><i class="bi bi-controller me-2 text-theme"></i>Serious Games & TTX Simulations</h5>
+        </div>
+        
+        <!-- CyberBreach -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <a href="{{ route('game.lobby') }}" class="text-decoration-none">
+                <div class="card module-card h-100" style="border-color: rgba(232, 58, 58, 0.25);">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 me-3 flex-shrink-0"
+                                style="width:44px;height:44px;background:rgba(232, 58, 58, 0.15);">
+                                <i class="bi bi-controller" style="color:#e83a3a;font-size:1.2rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="badge text-white module-badge mb-1" style="background:#e83a3a;">GAME</span>
+                                <h6 class="mb-0 fw-semibold text-inverse">CyberBreach</h6>
+                            </div>
+                        </div>
+                        <p class="text-muted fs-12px mb-3">Immersive card-based tabletop simulation. Coordinate response playbooks to defend DevCo's core systems.</p>
+                        <span class="text-danger fs-12px fw-semibold">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Play CyberBreach
+                        </span>
+                    </div>
+                    <div class="card-arrow">
+                        <div class="card-arrow-top-left"></div>
+                        <div class="card-arrow-top-right"></div>
+                        <div class="card-arrow-bottom-left"></div>
+                        <div class="card-arrow-bottom-right"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Carthage Shield -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <a href="{{ Auth::user() && Auth::user()->isAdmin() ? route('admin.cs.index') : route('cs.lobby') }}" class="text-decoration-none">
+                <div class="card module-card h-100" style="border-color: rgba(0, 180, 216, 0.25);">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 me-3 flex-shrink-0"
+                                style="width:44px;height:44px;background:rgba(0, 180, 216, 0.15);">
+                                <i class="bi bi-shield-fill-exclamation" style="color:#00b4d8;font-size:1.2rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="badge mb-1" style="background:#00b4d8;color:#000;font-weight:700;">EXERCISE</span>
+                                <h6 class="mb-0 fw-semibold text-inverse">Carthage Shield</h6>
+                            </div>
+                        </div>
+                        <p class="text-muted fs-12px mb-3">National cybersecurity crisis tabletop exercise. Coordinate inter-sector response under pressure.</p>
+                        <span class="fs-12px fw-semibold" style="color:#00b4d8;">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Enter Carthage Shield
+                        </span>
+                    </div>
+                    <div class="card-arrow">
+                        <div class="card-arrow-top-left"></div>
+                        <div class="card-arrow-top-right"></div>
+                        <div class="card-arrow-bottom-left"></div>
+                        <div class="card-arrow-bottom-right"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Neptune Strike -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <a href="{{ Auth::user() && Auth::user()->isAdmin() ? route('admin.neptune.index') : route('neptune.lobby') }}" class="text-decoration-none">
+                <div class="card module-card h-100" style="border-color: rgba(0, 255, 204, 0.25);">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 me-3 flex-shrink-0"
+                                style="width:44px;height:44px;background:rgba(0, 255, 204, 0.15);">
+                                <i class="bi bi-anchor" style="color:#00ffcc;font-size:1.2rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="badge mb-1" style="background:#00ffcc;color:#000;font-weight:700;">GAME</span>
+                                <h6 class="mb-0 fw-semibold text-inverse">Neptune Strike</h6>
+                            </div>
+                        </div>
+                        <p class="text-muted fs-12px mb-3">Maritime cyber crisis simulation. Navigate naval command, CERT, and port authorities to contain threat actors.</p>
+                        <span class="fs-12px fw-semibold" style="color:#00ffcc;">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Play Neptune Strike
+                        </span>
+                    </div>
+                    <div class="card-arrow">
+                        <div class="card-arrow-top-left"></div>
+                        <div class="card-arrow-top-right"></div>
+                        <div class="card-arrow-bottom-left"></div>
+                        <div class="card-arrow-bottom-right"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
     @if($cinematicAnimationsEnabled ?? true)
         <!-- Cinematic Network Analysis Background Stream -->
         <img id="cinematic-network" src="{{ asset('img/workshops/network_analysis.png') }}" 

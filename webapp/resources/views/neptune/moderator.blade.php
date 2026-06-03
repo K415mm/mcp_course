@@ -431,9 +431,18 @@ body {
         </div>
 
         <div class="mb-3">
-            <a href="{{ route('neptune.managePlayers', $session->code) }}" class="btn btn-outline-info w-100" target="_blank">
-                <i class="bi bi-people-fill me-2"></i>Gestion des Joueurs <span id="usersCount" class="badge bg-dark ms-1">0</span>
+            <a href="{{ route('neptune.managePlayers', $session->code) }}" class="btn btn-outline-info w-100 mb-2" target="_blank">
+                <i class="bi bi-people-fill me-2"></i>Player Management <span id="usersCount" class="badge bg-dark ms-1">0</span>
             </a>
+            <a href="{{ route('neptune.show', $session->code) }}" class="btn btn-outline-theme w-100 mb-2" target="_blank">
+                <i class="bi bi-person-workspace me-2"></i>Team View
+            </a>
+            <a href="{{ route('neptune.dashboard', $session->code) }}" class="btn btn-outline-secondary w-100 mb-2" target="_blank">
+                <i class="bi bi-display me-2"></i>Grand Screen
+            </a>
+            <button onclick="copyJoinLink()" class="btn btn-outline-warning w-100">
+                <i class="bi bi-clipboard me-2"></i>Copy Join Link
+            </button>
         </div>
 
         {{-- Injects Tab --}}
@@ -511,7 +520,6 @@ body {
 </div>
 
 <script src="{{ asset('hud/js/vendor.min.js') }}"></script>
-<script src="{{ asset('hud/js/app.min.js') }}"></script>
 <script>
 const CODE  = '{{ $session->code }}';
 const CSRF  = '{{ csrf_token() }}';
@@ -776,7 +784,23 @@ async function uploadMediaToLive() {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('scope', 'live');
-    fd.append('type'async function pushMediaLive(index) {
+    fd.append('type', payload.type);
+    fd.append('title', payload.title || file.name);
+    fd.append('caption', payload.caption || '');
+    fd.append('autoplay', payload.autoplay ? '1' : '0');
+    fd.append('loop', payload.loop ? '1' : '0');
+    fd.append('muted', payload.muted ? '1' : '0');
+    const res = await apiUpload('media/upload', fd);
+    if (!res?.ok) {
+        showNotif(res?.error || 'Upload media echoue', 'warn');
+        return;
+    }
+    input.value = '';
+    showNotif('Upload media termine', 'success');
+    await refreshBank();
+}
+
+async function pushMediaLive(index) {
     const media = currentBank.media?.[index];
     if (!media?.url) return;
     await api('media/inject', 'POST', { media, context: 'bank_push' });
@@ -1387,7 +1411,7 @@ async function awardScore(id) {
 // ── BONUS BADGES ────────────────────────────────────────────
 async function awardBadge(type) {
     const teamId = document.getElementById('badgeTeamSelect').value;
-    if (!teamId) { showNotif('Select a team first'abord','danger'); return; }
+    if (!teamId) { showNotif('Select a team first','danger'); return; }
     const d = await api(`badge/${teamId}`,'POST',{badge_type: type});
     if (d.ok) showNotif(`${d.badge} → +${d.points} pts`,'success');
     else showNotif(d.error || ('Badge error'),'danger');
@@ -1430,9 +1454,20 @@ function switchTab(name) {
     document.getElementById('pane-'+name).classList.add('show');
 }
 
+// ── COPY JOIN LINK ──────────────────────────────────────────
+function copyJoinLink() {
+    const url = window.location.origin + '/neptune/' + CODE;
+    navigator.clipboard.writeText(url).then(() => {
+        showNotif('Join link copied!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showNotif('Failed to copy link', 'danger');
+    });
+}
+
 // ── END ─────────────────────────────────────────────────────
 async function confirmEnd() {
-    if (!await swalConfirm('End the exercise? This action is irreversible.'exercice ? Cette action est irréversible.')) return;
+    if (!await swalConfirm('End the exercise? This action is irreversible.')) return;
     await api('end','POST');
     showNotif('Exercise finished!','success');
 }

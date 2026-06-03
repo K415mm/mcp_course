@@ -19,14 +19,25 @@
 <div class="container-fluid py-4" id="csManagePlayers">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
                 <div>
                     <h2 class="mb-1 text-theme cs-mono"><i class="bi bi-people-fill me-2"></i>Manage Players</h2>
                     <div class="text-white-50">Session: {{ $session->name }} ({{ $session->code }})</div>
                 </div>
-                <a href="{{ route('neptune.moderator', $session->code) }}" class="btn btn-outline-theme fw-bold">
-                    <i class="bi bi-arrow-left me-1"></i>Return to session
-                </a>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ route('neptune.show', $session->code) }}" class="btn btn-outline-theme fw-bold" target="_blank">
+                        <i class="bi bi-person-workspace me-1"></i>Team View
+                    </a>
+                    <a href="{{ route('neptune.dashboard', $session->code) }}" class="btn btn-outline-secondary fw-bold" target="_blank">
+                        <i class="bi bi-display me-1"></i>Grand Screen
+                    </a>
+                    <button onclick="copyJoinLink()" class="btn btn-outline-warning fw-bold">
+                        <i class="bi bi-clipboard me-1"></i>Copy Join Link
+                    </button>
+                    <a href="{{ route('neptune.moderator', $session->code) }}" class="btn btn-outline-info fw-bold">
+                        <i class="bi bi-arrow-left me-1"></i>Return to session
+                    </a>
+                </div>
             </div>
 
             {{-- Assign Students --}}
@@ -120,9 +131,25 @@ async function apiChecked(path, method='GET', body=null) {
 function showNotif(msg, type='info') {
     if (typeof window.showToast === 'function') {
         window.showToast(msg, type);
-    } else {
-        swalAlert(`${type.toUpperCase()}: ${msg}`);
+        return;
     }
+    const colors = {success:'#22c55e',danger:'#ef4444',warn:'#f59e0b',info:'#3b82f6'};
+    const div = document.createElement('div');
+    div.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;padding:10px 18px;border-radius:8px;background:#0d1b2a;border:1px solid ${colors[type]||colors.info};color:#fff;font-size:.85rem;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:opacity .4s;max-width:380px`;
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => { div.style.opacity='0'; setTimeout(()=>div.remove(),400); }, 4000);
+}
+
+// ── COPY JOIN LINK ──────────────────────────────────────────
+function copyJoinLink() {
+    const url = window.location.origin + '/neptune/' + CODE;
+    navigator.clipboard.writeText(url).then(() => {
+        showNotif('Join link copied!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showNotif('Failed to copy link', 'danger');
+    });
 }
 
 function escapeHtml(str) {

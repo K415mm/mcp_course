@@ -287,7 +287,6 @@ body {
 </div>
 
 <script src="{{ asset('hud/js/vendor.min.js') }}"></script>
-<script src="{{ asset('hud/js/app.min.js') }}"></script>
 <script>
 const CODE = '{{ $session->code }}';
 const CSRF = '{{ csrf_token() }}';
@@ -556,7 +555,7 @@ function pickTeam(type, el) {
 }
 async function joinSession() {
     const name = document.getElementById('displayName').value.trim();
-    if (!name) { toast('warn', 'Enter your display name'affichage'); return; }
+    if (!name) { toast('warn', 'Enter your display name'); return; }
     if (!selectedTeam) { toast('warn', 'Choose a team'); return; }
     const d = await api('join','POST',{team_type:selectedTeam, display_name:name});
     if (d.success) location.reload();

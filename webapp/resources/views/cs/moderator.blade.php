@@ -391,9 +391,18 @@
         </div>
 
         <div class="mb-3">
-            <a href="{{ route('cs.managePlayers', $session->code) }}" class="btn btn-outline-info w-100" target="_blank">
+            <a href="{{ route('cs.managePlayers', $session->code) }}" class="btn btn-outline-info w-100 mb-2" target="_blank">
                 <i class="bi bi-people-fill me-2"></i>Gestion des Joueurs <span id="usersCount" class="badge bg-dark ms-1">0</span>
             </a>
+            <a href="{{ route('cs.show', $session->code) }}" class="btn btn-outline-theme w-100 mb-2" target="_blank">
+                <i class="bi bi-person-workspace me-2"></i>Vue Participant (Jeu)
+            </a>
+            <a href="{{ route('cs.dashboard', $session->code) }}" class="btn btn-outline-secondary w-100 mb-2" target="_blank">
+                <i class="bi bi-display me-2"></i>Grand Écran (Podium)
+            </a>
+            <button onclick="copyJoinLink()" class="btn btn-outline-warning w-100">
+                <i class="bi bi-clipboard me-2"></i>Copier le Lien d'Invitation
+            </button>
         </div>
 
         {{-- Injects Tab --}}
@@ -1387,6 +1396,17 @@ function switchTab(name) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show'));
     document.getElementById('tab-'+name).classList.add('active');
     document.getElementById('pane-'+name).classList.add('show');
+}
+
+// ── COPY JOIN LINK ──────────────────────────────────────────
+function copyJoinLink() {
+    const url = window.location.origin + '/cs/' + CODE;
+    navigator.clipboard.writeText(url).then(() => {
+        showNotif('Lien d\'invitation copié !', 'success');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showNotif('Erreur lors de la copie', 'danger');
+    });
 }
 
 // ── END ─────────────────────────────────────────────────────

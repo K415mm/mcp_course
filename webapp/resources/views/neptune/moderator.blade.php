@@ -828,7 +828,7 @@ function renderBankQuestions() {
     const root = document.getElementById('bankQuestions');
     if (!root) return;
     if (!currentBank.questions.length) {
-        root.innerHTML = `<div class="text-white-50">\${'No questions available for this phase.'}</div>`;
+        root.innerHTML = `<div class="text-white-50">No questions available for this phase.</div>`;
         return;
     }
 
@@ -838,9 +838,9 @@ function renderBankQuestions() {
             <div class="bank-note mt-1">Type: ${normalizeQuizType(q.type).toUpperCase()}${q.points ? ` · ${q.points} pts` : ''}${q.time_limit ? ` · ${q.time_limit}s` : ''}</div>
             <div class="bank-note mt-1">${(q.options || []).map(o => `${o.key}: ${o.label} (${o.points ?? 0} pts)`).join(' | ') || (q.prompt || 'Question ouverte')}</div>
             <div class="mt-2 d-flex justify-content-end gap-2 flex-wrap">
-                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">\${'Prefill Vote'}</button>
-                <button class="btn btn-sm btn-info text-dark" onclick="prefillQuizFromBank(${idx})">\${'Prefill Quiz'}</button>
-                <button class="btn btn-sm btn-theme" onclick="openQuizFromBank(${idx})">\${'Broadcast Quiz'}</button>
+                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">Prefill Vote</button>
+                <button class="btn btn-sm btn-info text-dark" onclick="prefillQuizFromBank(${idx})">Prefill Quiz</button>
+                <button class="btn btn-sm btn-theme" onclick="openQuizFromBank(${idx})">Broadcast Quiz</button>
             </div>
         </div>
     `).join('');
@@ -868,7 +868,7 @@ function prefillVoteFromBank(index) {
 
     const info = document.getElementById('preparedVoteInfo');
     const notes = opts.map(opt => `${opt.key}: ${opt.note || ('no note')}`).join(' | ');
-    info.textContent = IS_EN ? `Preloaded question (\${opts.length} options). Guide: \${notes}` : `Question préchargée (\${opts.length} options). Guide: \${notes}`;
+    info.textContent = IS_EN ? `Preloaded question (${opts.length} options). Guide: ${notes}` : `Question préchargée (${opts.length} options). Guide: ${notes}`;
     document.getElementById('voteSecretSwitch').checked = question.secret === true;
 }
 
@@ -983,7 +983,7 @@ async function removePlayerAction(playerId) {}
 function updateMatrix(matrix) {
     const panel = document.getElementById('matrixPanel');
     if (!matrix) {
-        panel.innerHTML = `<div class="text-white-50 text-center py-4 small"><i class="bi bi-grid-3x3-gap me-2"></i>\${'No matrix for this phase'}</div>`;
+        panel.innerHTML = `<div class="text-white-50 text-center py-4 small"><i class="bi bi-grid-3x3-gap me-2"></i>No matrix for this phase</div>`;
         return;
     }
     const optColors = {A:'#ef4444', B:'#22c55e', C:'#f59e0b'};
@@ -1001,7 +1001,7 @@ function updateMatrix(matrix) {
     const injectsHtml = (matrix.injects ?? []).map(i => `<li style="font-size:.78rem;color:rgba(255,255,255,.55)">${i}</li>`).join('');
     panel.innerHTML = `
         <div class="matrix-panel">
-            <div class="matrix-header text-theme"><i class="bi bi-grid-3x3-gap me-2"></i>\${'DECISION MATRIX'}</div>
+            <div class="matrix-header text-theme"><i class="bi bi-grid-3x3-gap me-2"></i>DECISION MATRIX</div>
             ${matrix.context ? `<div class="matrix-context">${matrix.context}</div>` : ''}
             ${injectsHtml ? `<ul class="mb-0 ps-3 py-2" style="border-bottom:1px solid rgba(255,255,255,.06)">${injectsHtml}</ul>` : ''}
             ${optsHtml}
@@ -1046,7 +1046,7 @@ async function openVote() {
         showNotif('Unable to open vote', 'danger');
         return;
     }
-    showNotif(IS_EN ? `Vote opened\${isSecret ? ' (secret)' : ''}` : `Vote ouvert\${isSecret ? ' (secret)' : ''}`);
+    showNotif(IS_EN ? `Vote opened${isSecret ? ' (secret)' : ''}` : `Vote ouvert${isSecret ? ' (secret)' : ''}`);
     document.getElementById('preparedVoteInfo').textContent = 'Vote in progress...';
 }
 
@@ -1112,14 +1112,14 @@ async function openQuiz() {
 async function closeQuizWithScore() {
     const r = await api('quiz/close', 'POST');
     if (!r?.ok) return showNotif(r?.error || ('Error closing quiz'), 'danger');
-    showNotif(IS_EN ? `Quiz closed — \${r.answeredTeams || 0} teams scored` : `Quiz fermé — \${r.answeredTeams || 0} équipes scorées`, 'success');
+    showNotif(IS_EN ? `Quiz closed — ${r.answeredTeams || 0} teams scored` : `Quiz fermé — ${r.answeredTeams || 0} équipes scorées`, 'success');
 }
 
 function updateQuizTally(quiz) {
     const el = document.getElementById('quizTally');
     if (!el) return;
     if (!quiz) {
-        el.innerHTML = `<div class="small text-white-50">\${'No active quiz'}</div>`;
+        el.innerHTML = `<div class="small text-white-50">No active quiz</div>`;
         return;
     }
 
@@ -1131,7 +1131,7 @@ function updateQuizTally(quiz) {
     el.innerHTML = `
         <div class="small fw-bold text-info mb-1">${quiz.question || 'Quiz'} (${normalizeQuizType(quiz.type).replace('_',' ')})</div>
         <div class="mb-1">${rows}</div>
-        <div class="small text-white-50 mb-1">\${'Answers:'} ${quiz.answerCount || 0}</div>
+        <div class="small text-white-50 mb-1">Answers: ${quiz.answerCount || 0}</div>
         <div>${resultRows}</div>
     `;
 }
@@ -1256,12 +1256,12 @@ function renderDecisionsPanel() {
 
     const teamCount = new Set(filtered.map(d => d.teamType).filter(Boolean)).size;
     const answerCount = filtered.filter(d => d.type === 'question').length;
-    document.getElementById('decSummaryTeams').textContent = `\${teamCount} \${'teams'}`;
-    document.getElementById('decSummaryAnswers').textContent = `\${answerCount} \${'quiz answers'}`;
-    document.getElementById('decSummaryTotal').textContent = `\${filtered.length} \${'items'}`;
+    document.getElementById('decSummaryTeams').textContent = `${teamCount} teams`;
+    document.getElementById('decSummaryAnswers').textContent = `${answerCount} quiz answers`;
+    document.getElementById('decSummaryTotal').textContent = `${filtered.length} items`;
 
     if (filtered.length === 0) {
-        area.innerHTML = `<div class="text-white-50 text-center py-3 small">\${'No items for this filter.'}</div>`;
+        area.innerHTML = `<div class="text-white-50 text-center py-3 small">No items for this filter.</div>`;
         return;
     }
 
@@ -1303,7 +1303,7 @@ function renderDecisionsPanel() {
                         <button onclick="awardScore(${d.id})" class="btn btn-sm btn-success ld-award" ${isMentorDecision ? 'disabled' : ''}>
                             ${isMentorDecision ? ('Non-scored Mentor') : ('Validate / Adjust')}
                         </button>
-                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">\${'Current'}: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
+                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">Current: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
                     </div>
                 </div>
             `;
@@ -1383,14 +1383,14 @@ function escapeHtml(value) {
 async function awardScore(id) {
     const pts = parseInt(document.getElementById('award-'+id).value);
     await api(`decision/${id}/award`,'POST',{points:pts});
-    showNotif(IS_EN ? `Score validated: \${pts} pts` : `Score validé: \${pts} pts`,'success');
+    showNotif(IS_EN ? `Score validated: ${pts} pts` : `Score validé: ${pts} pts`,'success');
     delete pendingAwardEdits[id];
     decisionsSignature = '';
     await poll();
     const card = document.getElementById(`dec-${id}`);
     if (card) {
         const note = card.querySelector('.award-current');
-        if (note) note.textContent = `\${'Current'}: \${pts} pts`;
+        if (note) note.textContent = `Current: ${pts} pts`;
     }
 }
 

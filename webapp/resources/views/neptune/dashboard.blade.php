@@ -1163,7 +1163,6 @@ body.scenario-neptune_strike .hero-board {
 <script src="{{ asset('hud/js/app.min.js') }}"></script>
 
 <script>
-<script>
 const SESSION_CODE = '{{ $session->code }}';
 const TOTAL_PHASES = {{ count($scenario['phases']) }};
 const SCENARIO_KEY = '{{ $scenario['key'] }}';
@@ -1403,8 +1402,7 @@ function updateHUD() {
   const el=document.getElementById('ts-fill');if(el)el.style.width=d.pct+'%';
 }
 
-let lastBcId = 0, lastInjectId = 0, lastAtmo = '', endgameFired = false;
-let prevScores = {};
+
 
 // â”€â”€ Zoom & Pan Controls for Main Media â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let mediaScale = 1;
@@ -1505,7 +1503,7 @@ function handlePhaseContent(content) {
     const messages = Array.isArray(data.messages) ? data.messages : [];
 
     if (!media.length && !questions.length && !messages.length) {
-        root.innerHTML = `<div class="feed-item">\${'No phase content'}</div>`;
+        root.innerHTML = `<div class="feed-item">No phase content</div>`;
         renderMainMedia(null);
         return;
     }
@@ -1904,9 +1902,9 @@ function handleQuiz(quiz) {
     const mainChoices = document.getElementById('mainQuizChoices');
     if (!el) return;
     if (!quiz) {
-        el.innerHTML = `<div class="vote-q fst-italic" style="opacity:.5">\${'No question in progress'}</div>`;
+        el.innerHTML = `<div class="vote-q fst-italic" style="opacity:.5">No question in progress</div>`;
         if (mainQuestion) mainQuestion.textContent = 'Quiz question';
-        if (mainChoices) mainChoices.innerHTML = `<span class="hero-quiz-choice empty">\${'Answers will appear here'}</span>`;
+        if (mainChoices) mainChoices.innerHTML = `<span class="hero-quiz-choice empty">Answers will appear here</span>`;
         return;
     }
 
@@ -1932,7 +1930,7 @@ function handleQuiz(quiz) {
     if (mainChoices) {
         const heroChoices = (quiz.options || []).length
             ? (quiz.options || []).map(o => `<span class="hero-quiz-choice">${o.key}. ${o.label}</span>`).join('')
-            : `<span class="hero-quiz-choice empty">\${'Waiting for answer choices'}</span>`;
+            : `<span class="hero-quiz-choice empty">Waiting for answer choices</span>`;
         mainChoices.innerHTML = heroChoices;
     }
 }

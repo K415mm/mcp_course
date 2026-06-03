@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 @php
     $isEn = true;
+    $useThree = config('course.neptune_threejs', true);
 @endphp
 <html lang="en" data-bs-theme="dark">
 <head>
@@ -1036,6 +1037,99 @@ body.scenario-neptune_strike .hero-board {
         inset 0 1px 0 rgba(0,255,204,.15),
         inset 0 -1px 0 rgba(0,170,255,.2) !important;
 }
+/* --- Scene Info Modal Overlay --- */
+.scene-info-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 8, 16, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 15;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.scene-info-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+.scene-info-box {
+    background: rgba(0, 16, 32, 0.95);
+    border: 2px solid var(--cs-gold);
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+    max-width: 600px;
+    width: 100%;
+    padding: 24px;
+    position: relative;
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(255, 255, 255, 0.9);
+}
+.scene-info-box .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--cs-gold);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform 0.2s, color 0.2s;
+}
+.scene-info-box .close-btn:hover {
+    color: #fff;
+    transform: scale(1.2);
+}
+.scene-info-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--cs-gold);
+    border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+.scene-info-sub {
+    font-size: 0.9rem;
+    color: var(--cs-red);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+}
+.scene-info-desc {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.scene-info-footer {
+    text-align: right;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+.info-hint {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: rgba(0, 255, 204, 0.55);
+    background: rgba(0, 8, 16, 0.7);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 204, 0.25);
+    pointer-events: none;
+    z-index: 5;
+    animation: blinkGlow 2s infinite ease-in-out;
+}
+@keyframes blinkGlow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+}
 </style>
 </head>
 <body>
@@ -1175,6 +1269,7 @@ const SESSION_CODE = '{{ $session->code }}';
 const TOTAL_PHASES = {{ count($scenario['phases']) }};
 const SCENARIO_KEY = '{{ $scenario['key'] }}';
 const IS_EN = true;
+const USE_THREE = {{ var_export($useThree, true) }};
 document.body.classList.add('scenario-' + SCENARIO_KEY);
 
 let lastBcId = 0, lastInjectId = 0, lastAtmo = '', endgameFired = false;
@@ -1226,6 +1321,227 @@ function updateHUD() {
   setH('h-scada',d.scada); setH('h-ais',d.ais); setH('h-threat',d.threat); setH('h-apt',d.apt);
   setH('h-marsec',d.marsec);
   const el=document.getElementById('ts-fill');if(el)el.style.width=d.pct+'%';
+}
+
+// ── 2D Canvas Fallback Scene Engine ─────────────────────────────────────────
+let bgCv = null, mainCv = null, bgCtx = null, ctx = null, W = 800, H = 450;
+const stars = Array.from({length:60},()=>({x:Math.random(),y:Math.random()*.44,r:Math.random()*.85+.2,a:Math.random()*.7+.3,t:Math.random()*6.28}));
+const ships = [
+  {name:'MV OLYMPIA',x:.28,y:.62,spd:.00008,dir:1,col:'#1a4060',alert:false,lbl:'IMO CLASS 3',type:'cargo'},
+  {name:'MV ADRIATIC STAR',x:.63,y:.55,spd:.00006,dir:-1,col:'#1a3050',alert:true,lbl:'80,000T CRUDE',type:'tanker'},
+  {name:'MV SILVER HORIZON',x:.52,y:.71,spd:.00005,dir:1,col:'#102030',alert:false,lbl:'AIS DARK',type:'susp'},
+];
+const cables=[
+  {pts:[[.05,.82],[.2,.76],[.4,.8],[.6,.74],[.8,.78],[.95,.81]],name:'SEA-ME-WE 5'},
+  {pts:[[.1,.86],[.3,.84],[.5,.88],[.7,.85],[.9,.83]],name:'MEDEX-3'},
+];
+const cmdNodes=[
+  {lbl:'ANSSI\nCERT',x:.5,y:.38,col:'#00ffcc',ring:true},
+  {lbl:'MARINE\nNATIONALE',x:.2,y:.56,col:'#00aaff'},
+  {lbl:'PORT\nMARSEILLE',x:.78,y:.56,col:'#ffaa00'},
+  {lbl:'SGDSN',x:.35,y:.73,col:'#ff6688'},
+  {lbl:'EUNAVFOR\nNATO',x:.65,y:.73,col:'#aa88ff'},
+  {lbl:'ENISA',x:.12,y:.38,col:'#44ddaa'},
+  {lbl:'IMO',x:.88,y:.38,col:'#ffdd44'},
+];
+const cmdLinks=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,3],[2,4],[5,6]];
+
+function initCanvas() {
+  bgCv = document.getElementById('bg-cv');
+  mainCv = document.getElementById('main-cv');
+  const container = document.getElementById('neptuneCanvasContainer');
+  if (!bgCv || !mainCv || !container) return;
+  
+  W = container.clientWidth || 800;
+  H = container.clientHeight || 450;
+  bgCv.width = mainCv.width = W;
+  bgCv.height = mainCv.height = H;
+  
+  bgCtx = bgCv.getContext('2d');
+  ctx = mainCv.getContext('2d');
+  
+  const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      W = entry.contentRect.width;
+      H = entry.contentRect.height;
+      if (bgCv && mainCv) {
+        bgCv.width = mainCv.width = W;
+        bgCv.height = mainCv.height = H;
+      }
+    }
+  });
+  resizeObserver.observe(container);
+}
+
+function renderLoop() {
+  if (!animationLoopRunning) return;
+  G.t += .016; G.frame++;
+  drawBG(); drawScene(); updateHUD();
+  requestAnimationFrame(renderLoop);
+}
+
+function drawBG() {
+  if (!bgCtx) return;
+  bgCtx.clearRect(0,0,W,H);
+  const sc = G.cinScene;
+  if(sc==='ocean'||sc==='port'||sc==='cable') {
+    const sh = H*.42;
+    const sg = bgCtx.createLinearGradient(0,0,0,sh);
+    sg.addColorStop(0,'#000810'); sg.addColorStop(.5,'#001525'); sg.addColorStop(1,'#002035');
+    bgCtx.fillStyle=sg; bgCtx.fillRect(0,0,W,sh);
+    stars.forEach(s=>{s.t+=.007;const a=s.a*(.7+.3*Math.sin(s.t));bgCtx.beginPath();bgCtx.arc(s.x*W,s.y*sh,s.r,0,Math.PI*2);bgCtx.fillStyle=`rgba(255,255,255,${a})`;bgCtx.fill();});
+    bgCtx.beginPath();bgCtx.arc(W*.86,sh*.22,10,0,Math.PI*2);bgCtx.fillStyle='rgba(215,225,255,.78)';bgCtx.fill();
+    bgCtx.beginPath();bgCtx.arc(W*.86+4,sh*.22-2,9,0,Math.PI*2);bgCtx.fillStyle='#000810';bgCtx.fill();
+    const hg=bgCtx.createLinearGradient(0,sh-10,0,sh+15);hg.addColorStop(0,'rgba(0,180,120,.07)');hg.addColorStop(1,'transparent');bgCtx.fillStyle=hg;bgCtx.fillRect(0,sh-10,W,25);
+    const seaG=bgCtx.createLinearGradient(0,sh,0,H);seaG.addColorStop(0,'#002d50');seaG.addColorStop(.3,'#001c35');seaG.addColorStop(1,'#000d1a');bgCtx.fillStyle=seaG;bgCtx.fillRect(0,sh,W,H-sh);
+    for(let w=0;w<5;w++){const wy=sh+(H-sh)*(w/5)+Math.sin(G.t*.4+w)*2;bgCtx.beginPath();bgCtx.moveTo(0,wy);for(let x=0;x<=W;x+=8)bgCtx.lineTo(x,wy+Math.sin(x*.02+G.t*.5+w*.8)*3);bgCtx.strokeStyle=`rgba(0,255,204,${.025+w*.012})`;bgCtx.lineWidth=1;bgCtx.stroke();}
+  } else if(sc==='hack') {
+    bgCtx.fillStyle='#000004';bgCtx.fillRect(0,0,W,H);
+    bgCtx.font='10px Share Tech Mono';
+    for(let c=0;c<Math.floor(W/12);c++){for(let r=0;r<3;r++){const y=((G.frame*2+c*20+r*40)%(H+40))-20;bgCtx.fillStyle=`rgba(255,30,50,${.02+Math.random()*.03})`;bgCtx.fillText('01ABCDEF'[Math.floor(Math.random()*8)],c*12,y);}}
+  } else if(sc==='command') {
+    const g=bgCtx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.7);g.addColorStop(0,'#000d18');g.addColorStop(1,'#000004');bgCtx.fillStyle=g;bgCtx.fillRect(0,0,W,H);
+    bgCtx.strokeStyle='rgba(0,255,204,.04)';bgCtx.lineWidth=.5;
+    for(let x=0;x<W;x+=30){bgCtx.beginPath();bgCtx.moveTo(x,0);bgCtx.lineTo(x,H);bgCtx.stroke();}
+    for(let y=0;y<H;y+=30){bgCtx.beginPath();bgCtx.moveTo(0,y);bgCtx.lineTo(W,y);bgCtx.stroke();}
+  }
+}
+
+function drawShip(x,y,ship,flip=false) {
+  if (!ctx) return;
+  const sc=(ship.type==='tanker'?1.25:ship.type==='susp'?.78:1) * 0.9;
+  ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);ctx.scale(sc,sc);
+  ctx.beginPath();ctx.moveTo(-48,0);ctx.quadraticCurveTo(-53,8,-38,10);ctx.lineTo(38,10);ctx.quadraticCurveTo(53,8,56,0);ctx.quadraticCurveTo(53,-2,38,-3);ctx.lineTo(-38,-3);ctx.closePath();
+  ctx.fillStyle=ship.col;ctx.fill();ctx.strokeStyle=ship.type==='susp'?'rgba(255,100,0,.45)':'rgba(0,200,180,.18)';ctx.lineWidth=.7;ctx.stroke();
+  ctx.fillStyle='#0d2030';ctx.fillRect(-4,-15,22,12);ctx.fillRect(1,-24,13,10);ctx.fillRect(4,-32,7,9);
+  if(ship.type!=='susp'){ctx.beginPath();ctx.arc(56,-2,2,0,Math.PI*2);ctx.fillStyle=`rgba(255,240,150,${.65+.3*Math.sin(G.frame*.08)})`;ctx.fill();}
+  if(ship.alert){ctx.beginPath();ctx.arc(0,-24,3+2*Math.sin(G.frame*.12),0,Math.PI*2);ctx.strokeStyle=`rgba(255,50,80,${.45+.4*Math.sin(G.frame*.12)})`;ctx.lineWidth=1;ctx.stroke();}
+  ctx.restore();
+  ctx.font='9px Share Tech Mono';ctx.textAlign='center';
+  ctx.fillStyle=ship.type==='susp'?'rgba(255,140,0,.55)':'rgba(0,255,204,.4)';ctx.fillText(ship.name,x,y-19*sc-5);
+}
+
+function drawScene() {
+  if (!ctx) return;
+  ctx.clearRect(0,0,W,H);
+  const sc=G.cinScene, sh=H*.42;
+  if(sc==='ocean'||sc==='port'||sc==='cable') {
+    if(sc==='ocean'){
+      ships.forEach((s,i)=>{s.x+=s.spd*s.dir;if(s.x>1.1)s.x=-.1;if(s.x<-.1)s.x=1.1;drawShip(s.x*W,sh+(H-sh)*(.14+i*.22),s,s.dir<0);});
+      ctx.fillStyle='#0a1a28';ctx.fillRect(W*.05-2,sh-16,4,16);
+      ctx.beginPath();ctx.arc(W*.05,sh-16,3,0,Math.PI*2);ctx.fillStyle=`rgba(255,240,100,${.45+.45*Math.sin(G.frame*.05)})`;ctx.fill();
+      ctx.save();ctx.translate(W*.05,sh-16);ctx.rotate(G.frame*.012);const bg2=ctx.createLinearGradient(0,0,W*.22,0);bg2.addColorStop(0,'rgba(255,240,100,.1)');bg2.addColorStop(1,'transparent');ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(W*.22,-H*.05);ctx.lineTo(W*.22,H*.05);ctx.fillStyle=bg2;ctx.fill();ctx.restore();
+    }
+    if(sc==='port'){
+      ctx.fillStyle='#0a1520';ctx.fillRect(0,sh,W*.42,H-sh);ctx.fillStyle='#0d1e2e';ctx.fillRect(0,sh,W*.42,3);
+      [W*.08,W*.18,W*.29].forEach((cx,ci)=>{
+        ctx.fillStyle='#0a1820';ctx.fillRect(cx-2,sh-32,4,32);
+        ctx.beginPath();ctx.moveTo(cx,sh-32);ctx.lineTo(cx+26,sh-41);ctx.strokeStyle=`rgba(255,50,80,${.45+.4*Math.sin(G.frame*.12+ci)})`;ctx.lineWidth=1;ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx+26,sh-41);ctx.lineTo(cx+26,sh-13);ctx.strokeStyle=`rgba(255,50,80,${.35+.3*Math.sin(G.frame*.1+ci)})`;ctx.lineWidth=0.7;ctx.stroke();
+      });
+      for(let r=0;r<3;r++)for(let c=0;c<7;c++){ctx.fillStyle=['#1a3040','#0f2030','#162535','#0a1a28'][(r+c)%4];ctx.fillRect(2+c*25,sh+8+r*12,24,10);ctx.strokeStyle='rgba(0,100,150,.2)';ctx.lineWidth=.2;ctx.strokeRect(2+c*25,sh+8+r*12,24,10);}
+      ctx.fillStyle='#3a0810';ctx.fillRect(W*.05,sh+8,24,10);ctx.strokeStyle=`rgba(255,50,80,${.35+.35*Math.sin(G.frame*.1)})`;ctx.lineWidth=.4;ctx.strokeRect(W*.05,sh+8,24,10);
+      drawShip(W*.62,sh+(H-sh)*.36,ships[0]);
+      ctx.fillStyle=`rgba(255,20,40,${.015+.012*Math.sin(G.frame*.08)})`;ctx.fillRect(0,sh,W*.42,H-sh);
+    }
+    if(sc==='cable'){
+      const fg=ctx.createLinearGradient(0,H*.68,0,H);fg.addColorStop(0,'#001020');fg.addColorStop(1,'#000508');ctx.fillStyle=fg;ctx.fillRect(0,H*.68,W,H*.32);
+      cables.forEach((cable,ci)=>{
+        const pts=cable.pts.map(p=>[p[0]*W,p[1]*H]);
+        ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+        for(let i=1;i<pts.length;i++){const mx=(pts[i-1][0]+pts[i][0])/2,my=(pts[i-1][1]+pts[i][1])/2;ctx.quadraticCurveTo(pts[i-1][0],pts[i-1][1],mx,my);}
+        ctx.lineTo(pts[pts.length-1][0],pts[pts.length-1][1]);ctx.strokeStyle=`rgba(0,255,204,${.22+.08*Math.sin(G.frame*.05+ci)})`;ctx.lineWidth=1;ctx.stroke();
+        const pp=(G.frame*.007+ci*.45)%1,pi2=Math.floor(pp*(pts.length-1));
+        if(pi2<pts.length-1){const f=pp*(pts.length-1)-pi2,px2=pts[pi2][0]+(pts[pi2+1][0]-pts[pi2][0])*f,py2=pts[pi2][1]+(pts[pi2+1][1]-pts[pi2][1])*f;ctx.beginPath();ctx.arc(px2,py2,1.5,0,Math.PI*2);ctx.fillStyle='#00ffcc';ctx.fill();}
+      });
+      drawShip(W*.54,H*.44,ships[2]);
+      const rx=W*.54+Math.sin(G.frame*.016)*11,ry=H*.77;
+      ctx.save();ctx.translate(rx,ry);ctx.fillStyle='#0a1520';ctx.fillRect(-10,-4,20,8);ctx.strokeStyle='rgba(255,150,0,.6)';ctx.lineWidth=.4;ctx.strokeRect(-10,-4,20,8);ctx.beginPath();ctx.arc(10,0,1.1,0,Math.PI*2);ctx.fillStyle=`rgba(255,200,0,${.5+.4*Math.sin(G.frame*.2)})`;ctx.fill();ctx.beginPath();ctx.moveTo(0,-4);ctx.lineTo(0,-(H*.3));ctx.strokeStyle='rgba(180,140,60,.22)';ctx.lineWidth=.4;ctx.stroke();ctx.restore();
+    }
+  } else if(sc==='hack') {
+    const panels=[
+      {t:'VTMS ACCESS',bl:true},
+      {t:'SCADA BREACH',bl:false},
+      {t:'AIS SPOOFER',bl:true},
+      {t:'C2 BEACON',bl:false},
+      {t:'APT-POSEIDON',bl:true},
+      {t:'NETWORK MAP',bl:false},
+    ];
+    const cols=3,panW=(W-10)/cols,panH=(H-30)/2;
+    panels.forEach((p,i)=>{
+      const c=i%cols,r=Math.floor(i/cols),px=5+c*panW,py=15+r*panH*.72,pw=panW-3,ph=panH*.66;
+      const ba=p.bl?.48+.48*Math.sin(G.frame*.12+i):1;
+      ctx.fillStyle='rgba(20,5,8,.86)';ctx.fillRect(px,py,pw,ph);ctx.strokeStyle=`rgba(255,50,80,${ba*.5})`;ctx.lineWidth=.4;ctx.strokeRect(px,py,pw,ph);
+      ctx.font='bold 9px Share Tech Mono';ctx.fillStyle=`rgba(255,${p.bl?'80':'130'},100,${ba})`;ctx.textAlign='left';ctx.fillText('> '+p.t,px+4,py+10);
+    });
+  } else if(sc==='command') {
+    cmdLinks.forEach(([a2,b])=>{
+      const na=cmdNodes[a2],nb=cmdNodes[b];const ax=na.x*W,ay=na.y*H,bx=nb.x*W,by=nb.y*H;
+      const pr=((G.frame*.006+a2*.2)%1);const px2=ax+(bx-ax)*pr,py2=ay+(by-ay)*pr;
+      ctx.strokeStyle='rgba(0,200,160,.09)';ctx.lineWidth=.4;ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+      ctx.beginPath();ctx.arc(px2,py2,1,0,Math.PI*2);ctx.fillStyle=`rgba(0,255,200,${.3+.3*Math.sin(G.frame*.1+a2)})`;ctx.fill();
+    });
+    cmdNodes.forEach((nd,ni)=>{
+      const nx=nd.x*W,ny=nd.y*H,ic=ni===0,r=ic?22:15;
+      const h=nd.col ? parseInt(nd.col.slice(1),16) : 0,cr=(h>>16)&255,cg=(h>>8)&255,cb=h&255;
+      ctx.beginPath();ctx.arc(nx,ny,r,0,Math.PI*2);ctx.fillStyle=`rgba(${cr},${cg},${cb},.09)`;ctx.fill();ctx.strokeStyle=`rgba(${cr},${cg},${cb},.6)`;ctx.lineWidth=ic?0.8:0.6;ctx.stroke();
+      const lines=nd.lbl.split('\n');ctx.font='7px Share Tech Mono';ctx.textAlign='center';
+      lines.forEach((ln,li)=>{ctx.fillStyle=nd.col;ctx.fillText(ln,nx,ny-(lines.length-1)*3+li*6);});
+    });
+  }
+}
+
+// ── Scene Information and Briefings ────────────────────────────────────────
+const SCENE_DESCRIPTIONS = {
+  ocean: {
+    title: 'PHASE I · INITIAL DETECTION',
+    sub: 'SITUATION NOMINALE · MARITIME ROUTINE',
+    desc: 'During routine maritime monitoring, VTMIS registers telemetry anomalies in the Mediterranean. A suspicious cargo vessel, the MV Silver Horizon, goes dark by turning off its AIS transponder, triggering security alert protocols for hybrid crisis response.',
+    desc_fr: 'Lors de la surveillance maritime de routine, le VTMIS enregistre des anomalies de télémétrie en Méditerranée. Un cargo suspect, le MV Silver Horizon, éteint son transpondeur AIS, déclenchant les protocoles d\'alerte de sécurité.'
+  },
+  cable: {
+    title: 'PHASE II · HYBRID THREAT',
+    sub: 'MV SILVER HORIZON · ROV DETECTED',
+    desc: 'Underwater acoustic sensors and patrolling assets report an unidentified Remotely Operated Vehicle (ROV) operating in close proximity to critical submarine communication cables (e.g. SEA-ME-WE 5). Reconnaissance operations indicate active physical threat preparation.',
+    desc_fr: 'Les capteurs acoustiques sous-marins et les patrouilleurs signalent un véhicule sous-marin télécommandé (ROV) non identifié opérant à proximité immédiate de câbles de communication sous-marins critiques. Les opérations de reconnaissance indiquent une préparation active de menace physique.'
+  },
+  port: {
+    title: 'PHASE I-II · ATTACK ACTIVE',
+    sub: 'T+00:00 · SYSTEM FAILURE ACTIVE',
+    desc: 'A coordinated cyber-physical disruption hits the Marseille maritime terminal. The SCADA systems governing cargo crane operations are locked, causing terminal gridlock. General communication failures and system lockouts lock down port operations.',
+    desc_fr: 'Une perturbation cyber-physique coordonnée frappe le terminal maritime de Marseille. Les systèmes SCADA régissant le fonctionnement des portiques de fret sont verrouillés, provoquant un blocage du terminal.'
+  },
+  hack: {
+    title: 'PHASE III · ESCALATION',
+    sub: 'T+01:15 · MULTI-VECTOR ATTACK ACTIVE',
+    desc: 'The threat actor escalates operations into a full-scale digital offensive. Propagation of malware and active C2 (Command & Control) beacons are identified across the maritime operational technology (OT) network, targeting industrial control logic.',
+    desc_fr: 'L\'attaquant intensifie ses opérations en une offensive numérique à grande échelle. La propagation de logiciels malveillants et de balises C2 actives est identifiée sur le réseau OT maritime, ciblant la logique de contrôle industriel.'
+  },
+  command: {
+    title: 'PHASE IV · STRATEGIC RESPONSE',
+    sub: 'CRISIS COORDINATION CELL ACTIVATED',
+    desc: 'The Carthage Shield joint command and crisis response center is fully operational. Authorities coordinate with national cyber agency ANSSI and allied commands to isolate affected systems, route communications, and initialize attribution operations.',
+    desc_fr: 'Le commandement interarmées Carthage Shield et le centre de réponse aux crises sont pleinement opérationnels. Les autorités se coordonnent avec l\'ANSSI et les commandements alliés pour isoler les systèmes affectés et lancer les opérations d\'attribution.'
+  }
+};
+
+function openSceneInfo() {
+  const info = SCENE_DESCRIPTIONS[G.cinScene];
+  if (!info) return;
+  document.getElementById('infoTitle').textContent = info.title;
+  document.getElementById('infoSub').textContent = info.sub;
+  document.getElementById('infoDesc').innerHTML = `
+      <p style="margin-bottom: 12px; color: #fff; font-size: 0.9rem;">${info.desc}</p>
+      <p style="margin-bottom: 0; color: rgba(200,255,240,0.65); font-style: italic; font-size: 0.82rem; border-top: 1px solid rgba(0,255,204,0.15); padding-top: 10px;">${info.desc_fr}</p>
+  `;
+  document.getElementById('sceneInfoOverlay').classList.add('show');
+}
+
+function closeSceneInfo(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  document.getElementById('sceneInfoOverlay').classList.remove('show');
 }
 
 // ── Three.js Initialisation ────────────────────────────────────────────────
@@ -1628,41 +1944,104 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     
     if (SCENARIO_KEY === 'neptune_strike' && !preferred) {
         if (!document.getElementById('neptuneCanvasContainer')) {
-            stage.innerHTML = `
-                <div id="neptuneCanvasContainer" class="position-relative overflow-hidden w-100 h-100 rounded" style="background:#000810;">
-                    <div id="alert-ov" style="position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .1s;z-index:3;"></div>
-                    <div class="scanlines" style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:6;"></div>
-                    <div class="vignette" style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.72) 100%);pointer-events:none;z-index:6;"></div>
-                    <div id="hud" style="position:absolute;inset:0;pointer-events:none;z-index:7;font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(0,255,204,0.65);padding:12px;line-height:1.2">
-                        <div class="d-flex justify-content-between">
-                            <div>LAT: <span id="h-lat" class="hv">--</span> | LON: <span id="h-lon" class="hv">--</span></div>
-                            <div>TIME: <span id="h-time" class="hv">--</span></div>
+            if (USE_THREE) {
+                stage.innerHTML = `
+                    <div id="neptuneCanvasContainer" class="position-relative overflow-hidden w-100 h-100 rounded" style="background:#000810; cursor:pointer;" onclick="openSceneInfo()">
+                        <div id="alert-ov" style="position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .1s;z-index:3;"></div>
+                        <div class="scanlines" style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:6;"></div>
+                        <div class="vignette" style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.72) 100%);pointer-events:none;z-index:6;"></div>
+                        <div id="hud" style="position:absolute;inset:0;pointer-events:none;z-index:7;font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(0,255,204,0.65);padding:12px;line-height:1.2">
+                            <div class="d-flex justify-content-between">
+                                <div>LAT: <span id="h-lat" class="hv">--</span> | LON: <span id="h-lon" class="hv">--</span></div>
+                                <div>TIME: <span id="h-time" class="hv">--</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>VTMS: <span id="h-vtms" class="hv">--</span></div>
+                                <div>SCADA: <span id="h-scada" class="hv">--</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>AIS: <span id="h-ais" class="hv">--</span></div>
+                                <div>APT: <span id="h-apt" class="hv">--</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>THREAT: <span id="h-threat" class="hv">--</span></div>
+                                <div>MARSEC: <span id="h-marsec" class="hv">--</span></div>
+                            </div>
+                            <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#030c14;">
+                                <div id="ts-fill" style="height:100%;background:linear-gradient(90deg,#00ffcc,#ffaa00,#ff3355);transition:width .4s;width:0%;"></div>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div>VTMS: <span id="h-vtms" class="hv">--</span></div>
-                            <div>SCADA: <span id="h-scada" class="hv">--</span></div>
+                        <div id="scene-title" class="position-absolute text-center text-white" style="top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:8;opacity:0;transition:opacity .5s;">
+                            <div id="st-ph" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00ffcc;letter-spacing:2px;margin-bottom:4px;"></div>
+                            <div id="st-h" style="font-family:'Orbitron',monospace;font-weight:700;font-size:16px;letter-spacing:1px;text-shadow:0 0 20px rgba(0,255,204,0.5);text-transform:uppercase;"></div>
+                            <div id="st-s" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px;"></div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div>AIS: <span id="h-ais" class="hv">--</span></div>
-                            <div>APT: <span id="h-apt" class="hv">--</span></div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <div>THREAT: <span id="h-threat" class="hv">--</span></div>
-                            <div>MARSEC: <span id="h-marsec" class="hv">--</span></div>
-                        </div>
-                        <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#030c14;">
-                            <div id="ts-fill" style="height:100%;background:linear-gradient(90deg,#00ffcc,#ffaa00,#ff3355);transition:width .4s;width:0%;"></div>
+                        <div class="info-hint">[ CLICK SCENE FOR INFO ]</div>
+                        <div id="sceneInfoOverlay" class="scene-info-overlay" onclick="closeSceneInfo(event)">
+                            <div class="scene-info-box" onclick="event.stopPropagation()">
+                                <button class="close-btn" onclick="closeSceneInfo(event)">&times;</button>
+                                <div class="scene-info-title" id="infoTitle">--</div>
+                                <div class="scene-info-sub" id="infoSub">--</div>
+                                <div class="scene-info-desc" id="infoDesc">--</div>
+                                <div class="scene-info-footer">CARTHAGE SHIELD SECUR-OPS · SITUATION REPORT</div>
+                            </div>
                         </div>
                     </div>
-                    <div id="scene-title" class="position-absolute text-center text-white" style="top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:8;opacity:0;transition:opacity .5s;">
-                        <div id="st-ph" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00ffcc;letter-spacing:2px;margin-bottom:4px;"></div>
-                        <div id="st-h" style="font-family:'Orbitron',monospace;font-weight:700;font-size:16px;letter-spacing:1px;text-shadow:0 0 20px rgba(0,255,204,0.5);text-transform:uppercase;"></div>
-                        <div id="st-s" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px;"></div>
+                `;
+                const container = document.getElementById('neptuneCanvasContainer');
+                initThree(container);
+            } else {
+                stage.innerHTML = `
+                    <div id="neptuneCanvasContainer" class="position-relative overflow-hidden w-100 h-100 rounded" style="background:#000; cursor:pointer;" onclick="openSceneInfo()">
+                        <canvas id="bg-cv" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
+                        <canvas id="main-cv" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
+                        <div id="alert-ov" style="position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .1s;z-index:3;"></div>
+                        <div class="scanlines" style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:6;"></div>
+                        <div class="vignette" style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.72) 100%);pointer-events:none;z-index:6;"></div>
+                        <div id="hud" style="position:absolute;inset:0;pointer-events:none;z-index:7;font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(0,255,204,0.65);padding:12px;line-height:1.2">
+                            <div class="d-flex justify-content-between">
+                                <div>LAT: <span id="h-lat" class="hv">--</span> | LON: <span id="h-lon" class="hv">--</span></div>
+                                <div>TIME: <span id="h-time" class="hv">--</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>VTMS: <span id="h-vtms" class="hv">--</span></div>
+                                <div>SCADA: <span id="h-scada" class="hv">--</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>AIS: <span id="h-ais" class="hv">--</span></div>
+                                <div>APT: <span id="h-apt" class="hv">--</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>THREAT: <span id="h-threat" class="hv">--</span></div>
+                                <div>MARSEC: <span id="h-marsec" class="hv">--</span></div>
+                            </div>
+                            <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#030c14;">
+                                <div id="ts-fill" style="height:100%;background:linear-gradient(90deg,#00ffcc,#ffaa00,#ff3355);transition:width .4s;width:0%;"></div>
+                            </div>
+                        </div>
+                        <div id="scene-title" class="position-absolute text-center text-white" style="top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:8;opacity:0;transition:opacity .5s;">
+                            <div id="st-ph" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#00ffcc;letter-spacing:2px;margin-bottom:4px;"></div>
+                            <div id="st-h" style="font-family:'Orbitron',monospace;font-weight:700;font-size:16px;letter-spacing:1px;text-shadow:0 0 20px rgba(0,255,204,0.5);text-transform:uppercase;"></div>
+                            <div id="st-s" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px;"></div>
+                        </div>
+                        <div class="info-hint">[ CLICK SCENE FOR INFO ]</div>
+                        <div id="sceneInfoOverlay" class="scene-info-overlay" onclick="closeSceneInfo(event)">
+                            <div class="scene-info-box" onclick="event.stopPropagation()">
+                                <button class="close-btn" onclick="closeSceneInfo(event)">&times;</button>
+                                <div class="scene-info-title" id="infoTitle">--</div>
+                                <div class="scene-info-sub" id="infoSub">--</div>
+                                <div class="scene-info-desc" id="infoDesc">--</div>
+                                <div class="scene-info-footer">CARTHAGE SHIELD SECUR-OPS · SITUATION REPORT</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `;
-            const container = document.getElementById('neptuneCanvasContainer');
-            initThree(container);
+                `;
+                initCanvas();
+                if (!animationLoopRunning) {
+                    animationLoopRunning = true;
+                    renderLoop();
+                }
+            }
         }
         const sceneOrder = ['ocean', 'cable', 'port', 'hack', 'command'];
         const targetScene = sceneOrder[latestSessionPhaseIdx ?? 0] || 'ocean';

@@ -39,4 +39,12 @@ return [
     */
     'workshop_github_base_url' => env('WORKSHOP_GITHUB_BASE_URL', 'https://colab.research.google.com/github/K415mm/mcp_course_workshops/blob/main/'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Neptune Strike 3D (Three.js) Render Mode
+    |--------------------------------------------------------------------------
+    | Set to false to fallback to the legacy 2D Canvas scene animations.
+    */
+    'neptune_threejs' => env('NEPTUNE_THREEJS', true),
+
 ];

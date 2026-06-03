@@ -911,59 +911,65 @@ body.atmo-crisis .eg-label { color: #ef4444; }
 .eg-title { font-size: 4rem; font-weight: 900; margin-bottom: 60px; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; }
 body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,68,.6); }
 
-.podium { display: flex; align-items: flex-end; gap: 30px; justify-content: center; margin-bottom: 20px; }
-.podium-slot { text-align: center; width: 220px; display: flex; flex-direction: column; align-items: center; }
+.podium { display: flex; align-items: flex-end; gap: 24px; justify-content: center; margin-bottom: 20px; }
+.podium-slot { text-align: center; width: 240px; display: flex; flex-direction: column; align-items: center; }
 .pod-bar {
     width: 100%;
     border-radius: 16px 16px 0 0;
     display: flex; align-items: center; justify-content: flex-start; flex-direction: column;
-    padding: 30px 15px;
+    padding: 24px 14px 14px;
     backdrop-filter: blur(10px);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
 }
-.pod-bar::before { content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent); pointer-events:none; }
+.pod-bar::before { content:''; position:absolute; inset:0; border-radius: 16px 16px 0 0; background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent); pointer-events:none; }
 
 .p1 { z-index: 3; animation: floatWinner 4s ease-in-out infinite; }
 @keyframes floatWinner { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-.p1 .pod-bar { border: 2px solid #fbbf24; background: linear-gradient(180deg, rgba(245,158,11,.4) 0%, rgba(245,158,11,.05) 100%); height: 380px; box-shadow: 0 0 60px rgba(245,158,11,.3); }
+.p1 .pod-bar { border: 2px solid #fbbf24; background: linear-gradient(180deg, rgba(245,158,11,.4) 0%, rgba(245,158,11,.05) 100%); min-height: 420px; box-shadow: 0 0 60px rgba(245,158,11,.3); }
 .p2 { z-index: 2; animation: floatWinner 4s ease-in-out infinite 1s; }
-.p2 .pod-bar { border: 2px solid #94a3b8; background: linear-gradient(180deg, rgba(148,163,184,.3) 0%, rgba(148,163,184,.05) 100%); height: 280px; box-shadow: 0 0 40px rgba(148,163,184,.2); }
+.p2 .pod-bar { border: 2px solid #94a3b8; background: linear-gradient(180deg, rgba(148,163,184,.3) 0%, rgba(148,163,184,.05) 100%); min-height: 330px; box-shadow: 0 0 40px rgba(148,163,184,.2); }
 .p3 { z-index: 1; animation: floatWinner 4s ease-in-out infinite 2s; }
-.p3 .pod-bar { border: 2px solid #b45309; background: linear-gradient(180deg, rgba(180,83,9,.3) 0%, rgba(180,83,9,.05) 100%); height: 220px; box-shadow: 0 0 40px rgba(180,83,9,.2); }
+.p3 .pod-bar { border: 2px solid #b45309; background: linear-gradient(180deg, rgba(180,83,9,.3) 0%, rgba(180,83,9,.05) 100%); min-height: 270px; box-shadow: 0 0 40px rgba(180,83,9,.2); }
 
-.pod-icon { font-size: 4rem; margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
-.pod-icon img { width: 90px !important; height: 90px !important; object-fit: contain; }
-.pod-name { font-size: 2rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-.pod-score { font-family: 'Space Mono', monospace; font-size: 3.5rem; color: #fff; font-weight: 700; text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 20px; }
-.pod-badge { margin-top: auto; }
-.pod-badge img { width: 140px !important; height: 140px !important; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) !important; transition: transform 0.3s; }
-.p1 .pod-badge img { width: 180px !important; height: 180px !important; object-fit: contain; filter: drop-shadow(0 0 30px rgba(245,158,11,0.6)) !important; animation: pulseBadge 2s infinite; }
+.pod-icon { font-size: 3.5rem; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+.pod-icon img { width: 80px !important; height: 80px !important; object-fit: contain; }
+.pod-name {
+    font-size: 1.3rem; font-weight: 900; margin-bottom: 6px;
+    letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    word-break: break-word; white-space: normal; line-height: 1.2;
+    width: 100%; text-align: center;
+}
+.pod-score { font-family: 'Space Mono', monospace; font-size: 2.8rem; color: #fff; font-weight: 700; text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 12px; }
+.p2 .pod-score, .p3 .pod-score { font-size: 2.2rem; }
+.pod-badge { margin-top: auto; padding-top: 8px; }
+.pod-badge img { width: 110px !important; height: 110px !important; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) !important; transition: transform 0.3s; }
+.p1 .pod-badge img { width: 140px !important; height: 140px !important; object-fit: contain; filter: drop-shadow(0 0 30px rgba(245,158,11,0.6)) !important; animation: pulseBadge 2s infinite; }
 @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
 .pod-base {
     width: 100%;
-    background: rgba(255,255,255,.1); padding: 16px;
+    background: rgba(255,255,255,.1); padding: 14px 10px;
     border-radius: 0 0 16px 16px;
-    font-family: 'Space Mono', monospace; font-size: 1.4rem; color: #fff; font-weight: 800; letter-spacing: 3px;
+    font-family: 'Space Mono', monospace; font-size: 1.2rem; color: #fff; font-weight: 800; letter-spacing: 2px;
     box-shadow: inset 0 2px 0 rgba(255,255,255,0.2);
 }
 
-.others-row { display: flex; gap: 20px; margin-top: 50px; justify-content: center; flex-wrap: wrap; max-width: 1000px; }
+.others-row { display: flex; gap: 20px; margin-top: 40px; justify-content: center; flex-wrap: wrap; max-width: 1000px; }
 .other-tile {
-    text-align: center; padding: 20px 30px;
+    text-align: center; padding: 18px 28px;
     background: rgba(255,255,255,.05);
     border: 1px solid rgba(255,255,255,.15);
     border-radius: 12px;
     backdrop-filter: blur(5px);
     transition: transform 0.2s, background 0.2s;
-    min-width: 200px;
+    min-width: 180px;
 }
 .other-tile:hover { transform: translateY(-3px); background: rgba(255,255,255,.1); }
-.ot-rank { font-family: 'Space Mono', monospace; font-size: 1rem; color: rgba(255,255,255,.5); letter-spacing: 1px; margin-bottom: 8px; }
-.ot-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
-.ot-score { font-family: 'Space Mono', monospace; font-size: 1.8rem; color: var(--bs-theme); font-weight: bold; }
+.ot-rank { font-family: 'Space Mono', monospace; font-size: 0.9rem; color: rgba(255,255,255,.5); letter-spacing: 1px; margin-bottom: 8px; }
+.ot-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 5px; }
+.ot-score { font-family: 'Space Mono', monospace; font-size: 1.6rem; color: var(--bs-theme); font-weight: bold; }
 
 #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 960; }
 
@@ -1972,7 +1978,7 @@ function fireEndgame(teams, session) {
                     : t.badge.icon}</div>
                 <div class="pod-badge-name" style="font-size: 0.8rem; margin-top: 5px;">${t.badge.name}</div>
             </div>
-            <div class="pod-base">${ranks[ri]}</div>
+            <div class="pod-base">${ranks[ci]}</div>
         </div>`;
     }).join('');
 

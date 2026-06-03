@@ -565,25 +565,27 @@ let playersRosterCache = [];
 let assignableUsersCache = [];
 
 async function api(path, method='GET', body=null) {
-    const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json'}};
+    const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json','Accept':'application/json'}};
     if (body) opts.body = JSON.stringify(body);
     const r = await fetch(`/neptune/${CODE}/api/${path}`, opts);
-    return r.json();
+    if (!r.ok && r.status === 419) { location.reload(); return null; }
+    try { return await r.json(); } catch(e) { console.error('API parse error', r.status, path); return null; }
 }
 
 async function apiChecked(path, method='GET', body=null) {
-    const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json'}};
+    const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json','Accept':'application/json'}};
     if (body) opts.body = JSON.stringify(body);
     const r = await fetch(`/neptune/${CODE}/api/${path}`, opts);
     let data = {};
     try {
         data = await r.json();
     } catch (e) {
-        throw new Error('Réponse serveur invalide.');
+        if (r.status === 419) { location.reload(); return null; }
+        throw new Error('Reponse serveur invalide.');
     }
     if (!r.ok || data?.ok === false || data?.success === false) {
         const validationMessage = data?.errors ? Object.values(data.errors).flat()[0] : null;
-        throw new Error(data?.error || validationMessage || 'Opération refusée.');
+        throw new Error(data?.error || data?.message || validationMessage || 'Operation refusee.');
     }
     return data;
 }
@@ -591,10 +593,10 @@ async function apiChecked(path, method='GET', body=null) {
 async function apiUpload(path, formData) {
     const r = await fetch(`/neptune/${CODE}/api/${path}`, {
         method: 'POST',
-        headers: {'X-CSRF-TOKEN': CSRF},
+        headers: {'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json'},
         body: formData
     });
-    return r.json();
+    try { return await r.json(); } catch(e) { console.error('Upload parse error', r.status); return null; }
 }
 
 // ── POLL ───────────────────────────────────────────────────

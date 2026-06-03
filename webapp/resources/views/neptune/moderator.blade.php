@@ -520,6 +520,28 @@ body {
 </div>
 
 <script src="{{ asset('hud/js/vendor.min.js') }}"></script>
+<!-- SweetAlert2 for modern alerts and confirms -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.swalConfirm = function(message, callback) {
+        return Swal.fire({
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Confirmer',
+            cancelButtonText: 'Annuler',
+            background: '#1e293b',
+            color: '#f8fafc'
+        }).then((result) => {
+            if (result.isConfirmed && typeof callback === 'function') {
+                callback();
+            }
+            return result.isConfirmed;
+        });
+    };
+</script>
 <script>
 const CODE  = '{{ $session->code }}';
 const CSRF  = '{{ csrf_token() }}';

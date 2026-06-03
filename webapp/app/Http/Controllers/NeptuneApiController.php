@@ -87,12 +87,38 @@ class NeptuneApiController extends CsApiController
         $decisions = \App\Models\CsDecision::where('cs_session_id', $session->id)
             ->where('type', 'decision')
             ->get()
-            ->map(fn($d) => [
-                'team_type' => $d->team->type,
-                'inject_id' => $d->settings['inject_id'] ?? null,
-                'choice'    => $d->settings['choice'] ?? null,
-                'points'    => $d->settings['points'] ?? 0,
-            ])->all();
+            ->map(function($d) {
+                $injectId = null;
+                $choice = null;
+                $points = 0;
+
+                // 1. Try parsing structured format: "Inject: D-01 | Option: A chosen. (100 pts)"
+                if (preg_match('/Inject:\s*([A-Z0-9_\-]+)/i', $d->content, $m)) {
+                    $injectId = strtoupper($m[1]);
+                }
+                if (preg_match('/Option:\s*([A-D])/i', $d->content, $m)) {
+                    $choice = strtolower($m[1]);
+                } elseif (preg_match('/Option\s+([A-D])/i', $d->content, $m)) {
+                    // Fallback to legacy format: "Option A chosen."
+                    $choice = strtolower($m[1]);
+                }
+                if (preg_match('/\((\-?\d+)\s*pts\)/i', $d->content, $m)) {
+                    $points = (int)$m[1];
+                } else {
+                    $points = (int)($d->score_awarded ?? 0);
+                }
+
+                if (!$injectId) {
+                    $injectId = 'D-0' . ($d->phase_index ?? 1);
+                }
+
+                return [
+                    'team_type' => $d->team->type,
+                    'inject_id' => $injectId,
+                    'choice'    => $choice,
+                    'points'    => $points,
+                ];
+            })->all();
 
         $stateData['teamDecisions'] = $decisions;
 
@@ -154,12 +180,9 @@ class NeptuneApiController extends CsApiController
             'cs_team_id'    => $player->cs_team_id,
             'cs_player_id'  => $player->id,
             'type'          => 'decision',
-            'content'       => "Option " . strtoupper($choice) . " chosen.",
-            'settings'      => [
-                'inject_id' => $injectId,
-                'choice'    => $choice,
-                'points'    => $pts
-            ]
+            'phase_index'   => $session->current_phase_index,
+            'score_awarded' => max(0, $pts),
+            'content'       => "Inject: " . $injectId . " | Option: " . strtoupper($choice) . " chosen. (" . $pts . " pts)",
         ]);
 
         // Update team score in database

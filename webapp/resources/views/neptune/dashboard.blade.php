@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $scenario['title'] ?? 'NEPTUNE STRIKE' }} â€” Grand Screen</title>
+<title>{{ $scenario['title'] ?? 'NEPTUNE STRIKE' }} — Grand Screen</title>
 
 {{-- HUD theme assets (same as app layout) --}}
 <link href="{{ asset('hud/css/vendor.min.css') }}" rel="stylesheet">
@@ -970,7 +970,7 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
 
-/* â”€â”€ Neptune Strike Theme Overrides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Neptune Strike Theme Overrides ────────────────────── */
 body {
     --cs-gold:    #00ffcc;
     --cs-gold2:   #00ffcc;
@@ -1036,8 +1036,8 @@ body.scenario-neptune_strike .hero-board {
 
 {{-- PHANTOM overlay --}}
 <div class="phantom-ov" id="phantomOv" onclick="dismissPhantom()">
-    <div class="ph-label">INTERCEPTED MESSAGE â€” {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
-    <div class="ph-skull">{{ $scenario['attacker_icon'] ?? 'â˜ ï¸' }}</div>
+    <div class="ph-label">INTERCEPTED MESSAGE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="ph-skull">{{ $scenario['attacker_icon'] ?? '☠️' }}</div>
     <div class="ph-msg" id="phMsg" data-txt=""></div>
     <div class="ph-dismiss">CLICK TO CLOSE</div>
 </div>
@@ -1045,7 +1045,7 @@ body.scenario-neptune_strike .hero-board {
 {{-- ENDGAME overlay --}}
 <div class="endgame-ov" id="endgameOv">
     <canvas id="confettiCanvas"></canvas>
-    <div class="eg-label">END OF EXERCISE â€” {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="eg-label">END OF EXERCISE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
     <div class="eg-title">{{ $scenario['title'] ?? 'NEPTUNE STRIKE' }}</div>
     <div class="podium" id="podiumEl"></div>
     <div class="others-row" id="othersEl"></div>
@@ -1053,10 +1053,10 @@ body.scenario-neptune_strike .hero-board {
 
 {{-- DOMINATION OVERLAY (score/badge flash) --}}
 <div class="dom-overlay" id="domOverlay">
-    <span class="dom-corner tl">â–</span>
-    <span class="dom-corner tr">â–</span>
-    <span class="dom-corner bl">â–</span>
-    <span class="dom-corner br">â–</span>
+    <span class="dom-corner tl">❖</span>
+    <span class="dom-corner tr">❖</span>
+    <span class="dom-corner bl">❖</span>
+    <span class="dom-corner br">❖</span>
     <div class="dom-badge-img" id="domBadge" style="display:none"></div>
     <div class="dom-team-icon" id="domIcon"></div>
     <div class="dom-name" id="domName"></div>
@@ -1067,7 +1067,7 @@ body.scenario-neptune_strike .hero-board {
 {{-- MAIN LAYOUT --}}
 <div class="cs-layout">
 
-    {{-- â•â• HEADER â•â• --}}
+    {{-- ══ HEADER ══ --}}
     <div class="cs-header">
 
         {{-- LEFT: Title + Phase bar --}}
@@ -1080,7 +1080,7 @@ body.scenario-neptune_strike .hero-board {
                     @foreach($scenario['phases'] as $p)
                     <div class="ph-seg" id="ph-seg-{{ $p['index'] }}"></div>
                     @endforeach
-                    <span class="phase-label" id="phaseLabel">{{ $scenario['phases'][0]['name'] ?? 'â€”' }}</span>
+                    <span class="phase-label" id="phaseLabel">{{ $scenario['phases'][0]['name'] ?? '—' }}</span>
                 </div>
             </div>
             <div class="scenario-sub">{{ $scenario['title'] ?? '' }} &mdash; {{ $session->name }}</div>
@@ -1089,7 +1089,7 @@ body.scenario-neptune_strike .hero-board {
         {{-- CENTER: Protruding game medallion (absolute positioned) --}}
         <div class="cs-medallion">
             <div class="cs-medal-img d-flex align-items-center justify-content-center" style="width:110px;height:110px;border-radius:50%;background:rgba(0,255,204,0.1);border:2px solid #00ffcc;box-shadow:0 0 20px rgba(0,255,204,0.4)">
-                    <span style="font-size:3.5rem;color:#00ffcc;text-shadow:0 0 15px #00ffcc">âš“</span>
+                    <span style="font-size:3.5rem;color:#00ffcc;text-shadow:0 0 15px #00ffcc">⚓</span>
                 </div>
         </div>
 
@@ -1198,11 +1198,11 @@ const cmdNodes=[
 const cmdLinks=[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,3],[2,4],[5,6]];
 
 const HUD_BY_SCENE = {
-  ocean:  {lat:"43Â°17'N",lon:"005Â°22'E",time:'06:42:00',vtms:'NOMINAL',scada:'NOMINAL',ais:'ACTIVE',threat:'LOW',apt:'MONITORING',marsec:'BRAVO',pct:5},
-  port:   {lat:"43Â°18'N",lon:"005Â°21'E",time:'06:42:33',vtms:'OFFLINE',scada:'COMPROMISED',ais:'DISRUPTED',threat:'CRITICAL',apt:'73% MATCH',marsec:'CHARLIE',pct:80},
-  cable:  {lat:"43Â°09'N",lon:"005Â°55'E",time:'07:17:12',vtms:'DEGRADED',scada:'NOMINAL',ais:'DARK',threat:'HIGH',apt:'APT-POSEIDON',marsec:'CHARLIE',pct:50},
+  ocean:  {lat:"43°17'N",lon:"005°22'E",time:'06:42:00',vtms:'NOMINAL',scada:'NOMINAL',ais:'ACTIVE',threat:'LOW',apt:'MONITORING',marsec:'BRAVO',pct:5},
+  port:   {lat:"43°18'N",lon:"005°21'E",time:'06:42:33',vtms:'OFFLINE',scada:'COMPROMISED',ais:'DISRUPTED',threat:'CRITICAL',apt:'73% MATCH',marsec:'CHARLIE',pct:80},
+  cable:  {lat:"43°09'N",lon:"005°55'E",time:'07:17:12',vtms:'DEGRADED',scada:'NOMINAL',ais:'DARK',threat:'HIGH',apt:'APT-POSEIDON',marsec:'CHARLIE',pct:50},
   hack:   {lat:'--',lon:'--',time:'07:57:44',vtms:'OFFLINE',scada:'COMPROMISED',ais:'SPOOFED',threat:'EXTREME',apt:'CONFIRMED',marsec:'DELTA',pct:98},
-  command:{lat:"48Â°52'N",lon:"002Â°21'E",time:'09:12:00',vtms:'RESTORING',scada:'ISOLATED',ais:'MONITORED',threat:'MEDIUM',apt:'ATTRIBUTED',marsec:'CHARLIE',pct:45}
+  command:{lat:"48°52'N",lon:"002°21'E",time:'09:12:00',vtms:'RESTORING',scada:'ISOLATED',ais:'MONITORED',threat:'MEDIUM',apt:'ATTRIBUTED',marsec:'CHARLIE',pct:45}
 };
 
 const G = {
@@ -1218,17 +1218,17 @@ function setScene(sc) {
   if (el) {
     el.classList.remove('on');
     const scLabels = {
-      ocean: 'PHASE I Â· INITIAL DETECTION',
-      port: 'PHASE Iâ€“II Â· ATTACK ACTIVE',
-      cable: 'PHASE II Â· HYBRID THREAT',
-      hack: 'PHASE III Â· ESCALATION',
-      command: 'PHASE IV Â· STRATEGIC RESPONSE'
+      ocean: 'PHASE I · INITIAL DETECTION',
+      port: 'PHASE I–II · ATTACK ACTIVE',
+      cable: 'PHASE II · HYBRID THREAT',
+      hack: 'PHASE III · ESCALATION',
+      command: 'PHASE IV · STRATEGIC RESPONSE'
     };
     const scSubs = {
-      ocean: 'JUNE 9 2026 Â· 06:42 LOCAL Â· SITUATION NOMINALE',
-      port: 'T+00:00 Â· SYSTEM FAILURE ACTIVE',
-      cable: 'MV SILVER HORIZON Â· ROV DETECTED',
-      hack: 'T+01:15 Â· MULTI-VECTOR ATTACK ACTIVE',
+      ocean: 'JUNE 9 2026 · 06:42 LOCAL · SITUATION NOMINALE',
+      port: 'T+00:00 · SYSTEM FAILURE ACTIVE',
+      cable: 'MV SILVER HORIZON · ROV DETECTED',
+      hack: 'T+01:15 · MULTI-VECTOR ATTACK ACTIVE',
       command: 'CRISIS COORDINATION CELL ACTIVATED'
     };
     
@@ -1404,7 +1404,7 @@ function updateHUD() {
 
 
 
-// â”€â”€ Zoom & Pan Controls for Main Media â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Zoom & Pan Controls for Main Media ──
 let mediaScale = 1;
 let mediaX = 0;
 let mediaY = 0;
@@ -1465,16 +1465,16 @@ function resetMediaTransform() {
     mediaX = 0;
     mediaY = 0;
 }
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ────────────────────────────────────────────────────────
 
-// â”€â”€ Clock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Clock ───────────────────────────────────────────────
 setInterval(() => {
     const n = new Date();
     document.getElementById('clockSm').textContent =
         [n.getHours(), n.getMinutes(), n.getSeconds()].map(x => String(x).padStart(2,'0')).join(':');
 }, 1000);
 
-// â”€â”€ Poll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Poll ────────────────────────────────────────────────
 async function poll() {
     try {
         const d = await fetch(`/neptune/${SESSION_CODE}/api/state`).then(r => r.json());
@@ -1497,7 +1497,7 @@ function handlePhaseContent(content) {
     let media = Array.isArray(data.media) ? data.media : [];
     
     // Only show media if it's injected by moderator or if it's the national map
-    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des OpÃ©rations'))));
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
     
     const questions = Array.isArray(data.questions) ? data.questions : [];
     const messages = Array.isArray(data.messages) ? data.messages : [];
@@ -1527,7 +1527,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     if(stage.id === 'mainMediaStage') resetMediaTransform();
 
     let media = Array.isArray(content?.media) ? content.media : [];
-    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des OpÃ©rations'))));
+    media = media.filter(m => m && (m.isLive || (m.title && m.title.includes('Carte des Opérations'))));
     
     const preferred = media.find(m => m.isLive) || media[0] || null;
     
@@ -1594,7 +1594,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     stage.innerHTML = `<img src="${preferred.url}" alt="${preferred.title || 'media'}" style="pointer-events: none;">`;
 }
 
-// â”€â”€ Timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Timer ───────────────────────────────────────────────
 function updateTimer(timer, session) {
     let secs;
     if (timer.isRunning && timer.endsAt)
@@ -1615,11 +1615,11 @@ function updateTimer(timer, session) {
     }
 }
 
-// â”€â”€ Phase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Phase ───────────────────────────────────────────────
 function updatePhase(session) {
     const idx = session.currentPhaseIndex;
     latestSessionPhaseIdx = idx;
-    document.getElementById('phaseLabel').textContent = session.currentPhase?.name ?? 'â€”';
+    document.getElementById('phaseLabel').textContent = session.currentPhase?.name ?? '—';
     for (let i = 0; i < TOTAL_PHASES; i++) {
         const el = document.getElementById('ph-seg-' + i);
         if (!el) continue;
@@ -1627,7 +1627,7 @@ function updatePhase(session) {
     }
 }
 
-// â”€â”€ Atmosphere â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Atmosphere ──────────────────────────────────────────
 function updateAtmo(mode) {
     if (mode === lastAtmo) return;
     lastAtmo = mode;
@@ -1635,14 +1635,14 @@ function updateAtmo(mode) {
     if (mode && mode !== 'calm' && mode !== 'neutral') document.body.classList.add('atmo-' + mode);
     if (mode === 'crisis' || mode === 'hacked') document.body.classList.add('scanlines');
     addFeed(mode === 'crisis' ? 'alert' : mode === 'victory' ? 'success' : 'info',
-        IS_EN ? `ATMOSPHERE â†’ ${mode.toUpperCase()}` : `ATMOSPHÃˆRE â†’ ${mode.toUpperCase()}`);
+        IS_EN ? `ATMOSPHERE → ${mode.toUpperCase()}` : `ATMOSPHÈRE → ${mode.toUpperCase()}`);
         
     if (mode === 'crisis') playLocalSound('crisis');
     else if (mode === 'tension') playLocalSound('tension');
     else if (mode === 'hacked') playLocalSound('hacked');
 }
 
-// â”€â”€ Teams â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Teams ───────────────────────────────────────────────
 function badgeImgHtml(badge) {
     if (badge.image) {
         return `<img src="${badge.image}" alt="${badge.name}" style="max-height:60px; max-width:60px; width:auto; height:auto;" onerror="this.replaceWith(document.createTextNode('${badge.icon}'))">`;
@@ -1883,17 +1883,17 @@ function handleVote(vote) {
 
     if (isSecretOpen && !hasVisibleTally) {
         el.innerHTML = `
-            <div class="vote-q">${vote.question ?? 'Vote stratÃ©gique en cours'} ðŸ”’</div>
+            <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'} 🔒</div>
             <div style="font-size:.8rem;opacity:.7;text-align:center;padding:10px 0">Vote secret en cours. Les resultats seront visibles a la cloture.</div>`;
         return;
     }
 
     el.innerHTML = `
-        <div class="vote-q">${vote.question ?? 'Vote stratÃ©gique en cours'}${vote.isSecret ? ' ðŸ”’' : ''}</div>
+        <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'}${vote.isSecret ? ' 🔒' : ''}</div>
         <div class="vote-bars">${barsHtml}</div>
         ${winner ? `<div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:.8rem;color:#22c55e;font-weight:700">
-            âœ… RÃ‰SULTAT FINAL : ${winner}
-        </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} reÃ§us</div>`}`;
+            ✅ RÉSULTAT FINAL : ${winner}
+        </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} reçus</div>`}`;
 }
 
 function handleQuiz(quiz) {
@@ -1958,7 +1958,7 @@ function fireEndgame(teams, session) {
     // Podium order: silver, gold, bronze
     const order = [1, 0, 2];
     const classes = ['p2', 'p1', 'p3'];
-    const ranks = IS_EN ? ['ðŸ¥ˆ 2ND', 'ðŸ¥‡ 1ST', 'ðŸ¥‰ 3RD'] : ['ðŸ¥ˆ 2ÃˆME', 'ðŸ¥‡ 1ÃˆRE', 'ðŸ¥‰ 3ÃˆME'];
+    const ranks = IS_EN ? ['🥈 2ND', '🥇 1ST', '🥉 3RD'] : ['🥈 2ÈME', '🥇 1ÈRE', '🥉 3ÈME'];
 
     document.getElementById('podiumEl').innerHTML = order.map((ri, ci) => {
         const t = top3[ri]; if (!t) return '';

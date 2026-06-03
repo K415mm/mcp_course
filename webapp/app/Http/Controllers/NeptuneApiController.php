@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CsSession;
 use App\Models\CsPlayer;
+use App\Services\CsContentBankService;
+use App\Services\CsService;
 use App\Services\NeptuneContentBankService;
 use App\Services\NeptuneService;
 use Illuminate\Http\JsonResponse;
@@ -12,11 +14,15 @@ use Illuminate\Support\Facades\Auth;
 
 class NeptuneApiController extends CsApiController
 {
+    // NeptuneService extends CsService, so we accept it via the parent type.
+    // We do NOT redeclare $cs here — PHP forbids changing the declared type of
+    // an inherited property. The parent constructor stores it as CsService $cs,
+    // and since NeptuneService IS-A CsService this is fully type-safe.
     public function __construct(
-        NeptuneService $cs,
+        NeptuneService $neptune,
         NeptuneContentBankService $contentBank
     ) {
-        parent::__construct($cs, $contentBank);
+        parent::__construct($neptune, $contentBank);
     }
 
     // Override join to use neptune_player_ session key

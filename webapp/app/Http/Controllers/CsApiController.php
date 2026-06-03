@@ -506,7 +506,7 @@ class CsApiController extends Controller
             'options.*.key' => 'required|string|max:10',
             'options.*.label' => 'required|string|max:255',
             'options.*.color' => 'nullable|string|max:20',
-            'options.*.points' => 'nullable|integer|min:0|max:100',
+            'options.*.points' => 'nullable|integer|min:-999|max:999',
             'options.*.note' => 'nullable|string|max:1000',
             'is_secret' => 'nullable|boolean',
         ]);
@@ -623,10 +623,10 @@ class CsApiController extends Controller
             'options.*.key' => 'required|string|max:10',
             'options.*.label' => 'required|string|max:255',
             'options.*.color' => 'nullable|string|max:20',
-            'options.*.points' => 'nullable|integer|min:0|max:100',
+            'options.*.points' => 'nullable|integer|min:-999|max:999',
             'correct_answers' => 'nullable|array',
             'correct_answers.*' => 'nullable|string|max:500',
-            'base_points' => 'nullable|integer|min:0|max:100',
+            'base_points' => 'nullable|integer|min:-999|max:999',
         ]);
 
         $type = $this->normalizeQuizType((string) ($data['type'] ?? 'single_choice'));
@@ -799,7 +799,7 @@ class CsApiController extends Controller
         $decision = \App\Models\CsDecision::where('id', $decisionId)
             ->where('cs_session_id', $session->id)
             ->firstOrFail();
-        $data     = $request->validate(['points' => 'required|integer|min:0|max:100']);
+        $data     = $request->validate(['points' => 'required|integer|min:-999|max:999']);
         $this->cs->awardDecisionScore($decision, $data['points']);
         return response()->json(['ok' => true]);
     }

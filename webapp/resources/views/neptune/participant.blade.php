@@ -287,6 +287,8 @@ body {
 </div>
 
 <script src="{{ asset('hud/js/vendor.min.js') }}"></script>
+<!-- SweetAlert2 for modern alerts and confirms -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 const CODE = '{{ $session->code }}';
 const CSRF = '{{ csrf_token() }}';

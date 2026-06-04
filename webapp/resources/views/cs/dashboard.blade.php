@@ -981,7 +981,7 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 {{-- ENDGAME overlay --}}
 <div class="endgame-ov" id="endgameOv">
     <canvas id="confettiCanvas"></canvas>
-    <div class="eg-label">FIN DE L'EXERCICE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
+    <div class="eg-label">EXERCISE COMPLETE — {{ $scenario['attacker_name'] ?? 'PHANTOM GRID' }}</div>
     <div class="eg-title">{{ $scenario['title'] ?? 'CARTHAGE SHIELD' }}</div>
     <div class="podium" id="podiumEl"></div>
     <div class="others-row" id="othersEl"></div>
@@ -997,7 +997,7 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
     <div class="dom-team-icon" id="domIcon"></div>
     <div class="dom-name" id="domName"></div>
     <div class="dom-delta" id="domDelta"></div>
-    <div class="dom-label" id="domLabel">POINTS ATTRIBUÉS</div>
+    <div class="dom-label" id="domLabel">POINTS AWARDED</div>
 </div>
 
 {{-- MAIN LAYOUT --}}
@@ -1028,7 +1028,7 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
         {{-- RIGHT: Status + clock + big timer --}}
         <div class="cs-right">
             <div class="d-flex flex-column align-items-end gap-1">
-                <div class="status-badge" id="statusBadge">EN ATTENTE</div>
+                <div class="status-badge" id="statusBadge">WAITING</div>
                 <div class="clock-sm" id="clockSm">--:--:--</div>
             </div>
             <div class="timer-big" id="mainTimer">--:--</div>
@@ -1067,22 +1067,23 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
             <div class="feed-list" id="announceLog"></div>
         </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-hand-thumbs-up"></i>Vote Stratégique</div>
+            <div class="widget-hdr"><i class="bi bi-hand-thumbs-up"></i>Strategic Vote</div>
             <div id="voteWidget">
-                <div class="vote-q fst-italic">Aucun vote en cours</div>
+                <div class="vote-q fst-italic">No vote in progress</div>
             </div>
         </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-patch-question"></i>Question Quiz</div>
+            <div class="widget-hdr"><i class="bi bi-patch-question"></i>Quiz Question</div>
             <div id="quizWidget">
-                <div class="vote-q fst-italic">Aucune question en cours</div>
+                <div class="vote-q fst-italic">No question in progress</div>
             </div>
         </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-lightning-charge"></i>Injections Actives</div>
+            <div class="widget-hdr"><i class="bi bi-lightning-charge"></i>Active Injects</div>
             <div class="feed-list" id="injectLog"></div>
+        </div>
         <div class="widget">
-            <div class="widget-hdr"><i class="bi bi-collection-play"></i>Media & Quiz de Phase</div>
+            <div class="widget-hdr"><i class="bi bi-collection-play"></i>Media & Phase Quiz</div>
             <div class="feed-list" id="phaseMediaQuiz"></div>
         </div>
     </div>
@@ -1199,7 +1200,7 @@ function handlePhaseContent(content) {
     const messages = Array.isArray(data.messages) ? data.messages : [];
 
     if (!media.length && !questions.length && !messages.length) {
-        root.innerHTML = '<div class="feed-item">Aucun contenu de phase</div>';
+        root.innerHTML = '<div class="feed-item">No phase content</div>';
         renderMainMedia(null);
         return;
     }
@@ -1253,9 +1254,9 @@ function updateTimer(timer, session) {
     el.className = 'timer-big' + (secs <= 60 ? ' danger' : secs <= 180 ? ' warn' : '');
 
     if (timer.isRunning) {
-        sb.textContent = 'EN COURS'; sb.className = 'status-badge running';
+        sb.textContent = 'ACTIVE'; sb.className = 'status-badge running';
     } else {
-        sb.textContent = session.status === 'finished' ? 'TERMINÉ' : 'EN ATTENTE';
+        sb.textContent = session.status === 'finished' ? 'FINISHED' : 'WAITING';
         sb.className = 'status-badge';
     }
 }
@@ -1279,7 +1280,7 @@ function updateAtmo(mode) {
     if (mode && mode !== 'calm' && mode !== 'neutral') document.body.classList.add('atmo-' + mode);
     if (mode === 'crisis' || mode === 'hacked') document.body.classList.add('scanlines');
     addFeed(mode === 'crisis' ? 'alert' : mode === 'victory' ? 'success' : 'info',
-        `ATMOSPHÈRE → ${mode.toUpperCase()}`);
+        `ATMOSPHERE → ${mode.toUpperCase()}`);
         
     if (mode === 'crisis') playLocalSound('crisis');
     else if (mode === 'tension') playLocalSound('tension');
@@ -1308,7 +1309,7 @@ function fireDomination(t, delta, isBadge) {
     
     document.getElementById('domIcon').innerHTML = t.logoPath ? `<img src="${t.logoPath}" style="width:72px;height:72px;object-fit:contain">` : `<span style="font-size:3.5rem">${t.icon}</span>`;
     document.getElementById('domName').textContent = t.name;
-    document.getElementById('domLabel').textContent = isBadge ? "NOUVEAU BADGE DÉVERROUILLÉ !" : "POINTS ATTRIBUÉS";
+    document.getElementById('domLabel').textContent = isBadge ? "NEW BADGE UNLOCKED!" : "POINTS AWARDED";
     
     if (isBadge) {
         ov.classList.add('badge-dom');
@@ -1428,7 +1429,7 @@ function updateTeams(teams) {
                 const img = badgeEl.querySelector('img') || badgeEl.querySelector('span');
                 if (img) { img.classList.add('badge-unlocked'); }
                 // Log in feed
-                addFeed('success', `🏅 ${t.name} — Nouveau badge : <strong>${t.badge.name}</strong>`);
+                addFeed('success', `🏅 ${t.name} — New badge unlocked: <strong>${t.badge.name}</strong>`);
                 // Domination overlay for badge
                 fireDomination(t, 0, true);
             } else {
@@ -1466,7 +1467,11 @@ function handleActivity(broadcasts, injects) {
             d.className = 'feed-item alert';
             d.innerHTML = `<div class="fi-ts">${inj.tag}</div>${inj.content}`;
             const log = document.getElementById('injectLog');
-            log.insertBefore(d, log.firstChild);
+            if (log) log.insertBefore(d, log.firstChild);
+            
+            // Unified feed: also push inject to the announcements feed (announceLog)
+            addFeed('alert', `<strong>${inj.tag}:</strong> ${inj.content}`);
+
             playTone(220, .3, 'square', .15);
         }
     }
@@ -1488,7 +1493,7 @@ let lastVoteId = null, lastVoteOpen = null;
 function handleVote(vote) {
     const el = document.getElementById('voteWidget');
     if (!vote) {
-        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucun vote en cours</div>';
+        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">No vote in progress</div>';
         lastVoteId  = null;
         lastVoteOpen = null;
         return;
@@ -1503,7 +1508,7 @@ function handleVote(vote) {
 
     // Detect vote just closed → flash announcement
     if (lastVoteId === vote.id && lastVoteOpen === true && !isOpen && winner) {
-        addFeed('success', `🗳️ Vote fermé — Choix national: <strong>${winner}</strong>`);
+        addFeed('success', `🗳️ Vote closed — National choice: <strong>${winner}</strong>`);
         playTone(523, .4, 'triangle', .3);
     }
     lastVoteId   = vote.id;
@@ -1527,17 +1532,17 @@ function handleVote(vote) {
 
     if (isSecretOpen && !hasVisibleTally) {
         el.innerHTML = `
-            <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'} 🔒</div>
-            <div style="font-size:.8rem;opacity:.7;text-align:center;padding:10px 0">Vote secret en cours. Les resultats seront visibles a la cloture.</div>`;
+            <div class="vote-q">${vote.question ?? 'Strategic vote in progress'} 🔒</div>
+            <div style="font-size:.8rem;opacity:.7;text-align:center;padding:10px 0">Secret vote in progress. Results will be visible upon closing.</div>`;
         return;
     }
 
     el.innerHTML = `
-        <div class="vote-q">${vote.question ?? 'Vote stratégique en cours'}${vote.isSecret ? ' 🔒' : ''}</div>
+        <div class="vote-q">${vote.question ?? 'Strategic vote in progress'}${vote.isSecret ? ' 🔒' : ''}</div>
         <div class="vote-bars">${barsHtml}</div>
         ${winner ? `<div style="text-align:center;margin-top:8px;font-family:'Space Mono',monospace;font-size:.8rem;color:#22c55e;font-weight:700">
-            ✅ RÉSULTAT FINAL : ${winner}
-        </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} reçus</div>`}`;
+            ✅ FINAL RESULT: ${winner}
+        </div>` : `<div style="font-size:.72rem;opacity:.4;text-align:center;margin-top:4px">${total} vote${total>1?'s':''} received</div>`}`;
 }
 
 function handleQuiz(quiz) {
@@ -1546,7 +1551,7 @@ function handleQuiz(quiz) {
     const mainChoices = document.getElementById('mainQuizChoices');
     if (!el) return;
     if (!quiz) {
-        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">Aucune question en cours</div>';
+        el.innerHTML = '<div class="vote-q fst-italic" style="opacity:.5">No question in progress</div>';
         if (mainQuestion) mainQuestion.textContent = 'Quiz question';
         if (mainChoices) mainChoices.innerHTML = '<span class="hero-quiz-choice empty">Answers will appear here</span>';
         return;
@@ -1563,8 +1568,8 @@ function handleQuiz(quiz) {
     `).join('');
 
     el.innerHTML = `
-        <div class="vote-q">${quiz.question ?? 'Question Quiz'}</div>
-        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Réponses: ${quiz.answerCount || 0}</div>
+        <div class="vote-q">${quiz.question ?? 'Quiz Question'}</div>
+        <div style="font-size:.72rem;opacity:.65;margin-bottom:8px">Type: ${(quiz.type || 'single_choice').replace('_',' ')} · Answers: ${quiz.answerCount || 0}</div>
         <div class="vote-bars">${optionsHtml}</div>
         ${resultHtml ? `<div style="margin-top:8px">${resultHtml}</div>` : ''}
     `;
@@ -1602,7 +1607,7 @@ function fireEndgame(teams, session) {
     // Podium order: silver, gold, bronze
     const order = [1, 0, 2];
     const classes = ['p2', 'p1', 'p3'];
-    const ranks = ['🥈 2ÈME', '🥇 1ÈRE', '🥉 3ÈME'];
+    const ranks = ['🥈 2ND', '🥇 1ST', '🥉 3RD'];
 
     document.getElementById('podiumEl').innerHTML = order.map((ri, ci) => {
         const t = top3[ri]; if (!t) return '';
@@ -1623,7 +1628,7 @@ function fireEndgame(teams, session) {
     if (rest.length) {
         document.getElementById('othersEl').innerHTML = rest.map((t,i) =>
             `<div class="other-tile">
-                <div class="ot-rank">${i+4}ÈME</div>
+                <div class="ot-rank">${i+4}TH</div>
                 <div class="ot-name">${t.icon} ${t.name}</div>
                 <div class="ot-score">${t.score} pts</div>
             </div>`).join('');

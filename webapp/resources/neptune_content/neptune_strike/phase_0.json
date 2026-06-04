@@ -33,7 +33,7 @@
   "questions": [
     {
       "id": "p1-q1",
-      "type": "single_choice",
+      "type": "multi_choice",
       "secret": false,
       "question": "MARITIME CERT — IMMEDIATE RESPONSE DECISION (D-01)",
       "points": 100,

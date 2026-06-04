@@ -2291,7 +2291,11 @@ function handleActivity(broadcasts, injects) {
             d.className = 'feed-item alert';
             d.innerHTML = `<div class="fi-ts">${inj.tag}</div>${inj.content}`;
             const log = document.getElementById('injectLog');
-            log.insertBefore(d, log.firstChild);
+            if (log) log.insertBefore(d, log.firstChild);
+            
+            // Unified feed: also push inject to the announcements feed (announceLog)
+            addFeed('alert', `<strong>${inj.tag}:</strong> ${inj.content}`);
+
             playTone(220, .3, 'square', .15);
         }
     }

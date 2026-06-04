@@ -606,14 +606,17 @@
         };
 
         window.swalConfirm = function(message, callback) {
+            const isCs = window.location.pathname.includes('/cs');
+            const confirmText = isCs ? 'Confirm' : 'Confirmer';
+            const cancelText = isCs ? 'Cancel' : 'Annuler';
             return Swal.fire({
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Confirmer',
-                cancelButtonText: 'Annuler',
+                confirmButtonText: confirmText,
+                cancelButtonText: cancelText,
                 background: 'var(--bs-body-bg, #fff)',
                 color: 'var(--bs-body-color, #000)'
             }).then((result) => {
@@ -641,14 +644,17 @@
         window.confirmFormSubmit = function(event, message) {
             event.preventDefault();
             const form = event.target.closest('form') || event.target;
+            const isCs = window.location.pathname.includes('/cs');
+            const confirmText = isCs ? 'Confirm' : 'Confirmer';
+            const cancelText = isCs ? 'Cancel' : 'Annuler';
             Swal.fire({
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Confirmer',
-                cancelButtonText: 'Annuler',
+                confirmButtonText: confirmText,
+                cancelButtonText: cancelText,
                 background: 'var(--bs-body-bg, #fff)',
                 color: 'var(--bs-body-color, #000)'
             }).then((result) => {
@@ -662,14 +668,17 @@
         window.confirmLinkClick = function(event, message) {
             event.preventDefault();
             const href = event.currentTarget.getAttribute('href');
+            const isCs = window.location.pathname.includes('/cs');
+            const confirmText = isCs ? 'Confirm' : 'Confirmer';
+            const cancelText = isCs ? 'Cancel' : 'Annuler';
             Swal.fire({
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Confirmer',
-                cancelButtonText: 'Annuler',
+                confirmButtonText: confirmText,
+                cancelButtonText: cancelText,
                 background: 'var(--bs-body-bg, #fff)',
                 color: 'var(--bs-body-color, #000)'
             }).then((result) => {

@@ -534,10 +534,12 @@ function updateHUD() {
 }
 
 let selectedTeam = null, decisionType = 'decision';
-let lastBcId = 0, lastAtmo = '';
+let lastBcId = 0, lastInjectId = 0, lastAtmo = '';
 const teamStateById = {};
 let currentBroadcasts = [];
 let currentPhaseMessages = [];
+let currentInjects = [];
+let isPolledOnce = false;
 
 // ── API helper ─────────────────────────────────────────────
 async function api(path, method='GET', body=null) {
@@ -776,10 +778,12 @@ async function poll() {
         updatePhase(d.session);
         updateTeams(d.teams);
         updateBroadcasts(d.broadcasts);
+        updateInjects(d.injects);
         renderPhaseContent(d.phaseContent);
         updateVote(d.vote);
         updateQuiz(d.quiz);
         handleAtmo(d.session?.atmosphere);
+        isPolledOnce = true;
     } catch(e) {}
 }
 
@@ -902,11 +906,46 @@ function updateBroadcasts(bcs) {
     if (!Array.isArray(bcs)) return;
     const latest = bcs[0];
     if (latest && latest.id > lastBcId) {
+        if (isPolledOnce) {
+            if (latest.isPhantom) {
+                showPhantom(latest.message);
+            } else {
+                Swal.fire({
+                    title: 'Alerte Live Feed',
+                    html: `<div style="font-size:1.1rem; line-height:1.5;">${latest.message}</div>`,
+                    icon: 'info',
+                    confirmButtonText: 'Prendre note',
+                    confirmButtonColor: 'var(--bs-theme)',
+                    background: '#1a2a3a',
+                    color: '#fff'
+                });
+            }
+        }
         lastBcId = latest.id;
-        if (latest.isPhantom) showPhantom(latest.message);
-        else toast(latest.type || 'info', String(latest.message || '').substring(0, 80));
     }
     currentBroadcasts = bcs.filter(b => !b.isPhantom);
+    renderCommunications();
+}
+
+function updateInjects(injects) {
+    if (!Array.isArray(injects)) return;
+    const latest = injects[0];
+    if (latest && latest.id > lastInjectId) {
+        if (isPolledOnce) {
+            Swal.fire({
+                title: 'INJECT DE CRISE REÇU',
+                html: `<div style="font-size:1.05rem; line-height:1.5; color:#ef4444; font-family:'Space Mono',monospace;" class="mb-2"><strong>[${latest.tag}]</strong></div>
+                       <div style="font-size:0.95rem; line-height:1.5; text-align:left;">${latest.content}</div>`,
+                icon: 'warning',
+                confirmButtonText: 'Reconnaître la menace',
+                confirmButtonColor: '#ef4444',
+                background: '#1a2a3a',
+                color: '#fff'
+            });
+        }
+        lastInjectId = latest.id;
+    }
+    currentInjects = injects;
     renderCommunications();
 }
 
@@ -930,13 +969,27 @@ function renderCommunications() {
         source: 'White Cell',
     }));
 
-    const merged = [...mentorItems, ...phaseItems].slice(0, 30);
+    const injectItems = currentInjects.map(inj => ({
+        at: inj.at || null,
+        type: 'warn',
+        message: `<strong>[${inj.tag}]</strong> ${inj.content}`,
+        source: 'Operational Inject',
+    }));
+
+    const merged = [...mentorItems, ...phaseItems, ...injectItems];
+    merged.sort((a, b) => {
+        if (!a.at && !b.at) return 0;
+        if (!a.at) return 1;
+        if (!b.at) return -1;
+        return new Date(b.at) - new Date(a.at);
+    });
+
     if (!merged.length) {
-        feed.innerHTML = `<div class="text-white-50 text-center py-3 small">${'Awaiting communications...'}</div>`;
+        feed.innerHTML = '<div class="text-white-50 text-center py-3 small">En attente de communications...</div>';
         return;
     }
 
-    feed.innerHTML = merged.map(item => {
+    feed.innerHTML = merged.slice(0, 30).map(item => {
         const when = item.at ? new Date(item.at).toLocaleTimeString('fr', {hour:'2-digit', minute:'2-digit'}) : 'PHASE';
         const type = item.type || 'info';
         return `<div class="broadcast-item ${type}">

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'CARTHAGE SHIELD — Console Modérateur')
+@section('title', 'CARTHAGE SHIELD — Moderator Console')
 
 @push('head')
 <style>
@@ -98,7 +98,7 @@
             <div class="card-body py-3">
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <div>
-                        <div class="cs-title-sm text-theme">🛡️ CONSOLE MODÉRATEUR</div>
+                        <div class="cs-title-sm text-theme">🛡️ MODERATOR CONSOLE</div>
                         <div class="small text-white-50 mt-1">
                             {{ $session->name }}
                             &middot; <span class="cs-mono">{{ $session->code }}</span>
@@ -117,12 +117,12 @@
                                 <input type="number" id="timerMinInput" class="form-control form-control-sm" style="width:70px" value="20" min="1" max="120">
                                 <button onclick="setTimer()" class="btn btn-sm btn-outline-theme">Set (min)</button>
                                 <button onclick="api('phase/advance','POST')" class="btn btn-sm btn-outline-warning fw-bold">Phase ▶</button>
-                                <button onclick="confirmEnd()" class="btn btn-sm btn-outline-danger">⏹ FIN</button>
+                                <button onclick="confirmEnd()" class="btn btn-sm btn-outline-danger">⏹ END</button>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex gap-2 flex-wrap ms-2">
-                        <span class="small text-white-50">Atmosphère:</span>
+                        <span class="small text-white-50">Atmosphere:</span>
                         @foreach([['calm','#22c55e'],['tension','#f59e0b'],['crisis','#ef4444'],['hacked','#7c3aed'],['victory','#fbbf24']] as [$m,$cl])
                         <button class="atmo-btn" id="atmo-{{ $m }}" style="border-color:{{ $cl }};color:{{ $cl }}" onclick="setAtmo('{{ $m }}')">{{ strtoupper($m) }}</button>
                         @endforeach
@@ -137,7 +137,7 @@
                     </button>
                     @endforeach
                     <span class="small text-white-50 ms-2" id="phaseLabel">—</span>
-                    <span class="badge bg-dark ms-1 small" id="onlineCount">0 en ligne</span>
+                    <span class="badge bg-dark ms-1 small" id="onlineCount">0 online</span>
                 </div>
             </div>
         </div>
@@ -195,14 +195,14 @@
                         <h6 class="card-title mb-2"><i class="bi bi-broadcast me-2 text-theme"></i>Announcement</h6>
                         <select class="form-select form-select-sm mb-2" id="bcType">
                             <option value="info">Info</option>
-                            <option value="warn">Avertissement</option>
-                            <option value="alert">Alerte</option>
-                            <option value="success">Succès</option>
+                            <option value="warn">Warning</option>
+                            <option value="alert">Alert</option>
+                            <option value="success">Success</option>
                         </select>
                         <textarea class="form-control form-control-sm mb-2" id="bcMsg" rows="3" placeholder="Message..."></textarea>
                         <div class="d-flex gap-2">
-                            <button onclick="broadcast()" class="btn btn-sm btn-theme flex-fill fw-bold">Diffuser</button>
-                            <button onclick="phantom()" class="btn btn-sm btn-danger fw-bold" title="Message PHANTOM">☠️</button>
+                            <button onclick="broadcast()" class="btn btn-sm btn-theme flex-fill fw-bold">Broadcast</button>
+                            <button onclick="phantom()" class="btn btn-sm btn-danger fw-bold" title="PHANTOM message">☠️</button>
                         </div>
                     </div>
                 </div>
@@ -211,22 +211,22 @@
                 <div class="card h-100">
                     <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                     <div class="card-body">
-                        <h6 class="card-title mb-2"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Vote stratégique</h6>
+                        <h6 class="card-title mb-2"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Strategic Vote</h6>
                         <input class="form-control form-control-sm mb-2" id="voteQ" placeholder="Question...">
                         <textarea class="form-control form-control-sm mb-2 cs-mono" id="vOpt"
-                                  placeholder="Options manuelles (une ligne = A|Label|#00b4d8|20|Note)"
+                                  placeholder="Manual options (one line = A|Label|#00b4d8|20|Note)"
                                   rows="3"></textarea>
-                        <div id="preparedVoteInfo" class="bank-note mb-2">Aucune question préchargée depuis la bibliothèque.</div>
+                        <div id="preparedVoteInfo" class="bank-note mb-2">No question preloaded from the library.</div>
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="voteSecretSwitch">
-                            <label class="form-check-label small text-white-50" for="voteSecretSwitch">Vote secret</label>
+                            <label class="form-check-label small text-white-50" for="voteSecretSwitch">Secret vote</label>
                         </div>
-                        <button onclick="openVote()" class="btn btn-sm btn-warning text-dark fw-bold w-100 mb-2">Ouvrir</button>
-                        <button onclick="closeVoteWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Fermer & Scorer</button>
+                        <button onclick="openVote()" class="btn btn-sm btn-warning text-dark fw-bold w-100 mb-2">Open</button>
+                        <button onclick="closeVoteWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Close & Score</button>
                         <div class="mt-2" id="voteTally"></div>
                         <hr class="my-3" style="border-color:rgba(255,255,255,.1)">
-                        <h6 class="card-title mb-2"><i class="bi bi-patch-question me-2 text-info"></i>Question Quiz (évaluation)</h6>
-                        <input class="form-control form-control-sm mb-2" id="quizQ" placeholder="Question quiz...">
+                        <h6 class="card-title mb-2"><i class="bi bi-patch-question me-2 text-info"></i>Quiz Question (evaluation)</h6>
+                        <input class="form-control form-control-sm mb-2" id="quizQ" placeholder="Quiz question...">
                         <select class="form-select form-select-sm mb-2" id="quizType">
                             <option value="single_choice">Single choice</option>
                             <option value="multi_choice">Multi choice</option>
@@ -234,15 +234,15 @@
                             <option value="short_answer">Short response</option>
                         </select>
                         <textarea class="form-control form-control-sm mb-2 cs-mono" id="quizOpt"
-                                  placeholder="Choix requis (une ligne = A|Label|#00b4d8|20)"
+                                  placeholder="Choices required (one line = A|Label|#00b4d8|20)"
                                   rows="3"></textarea>
-                        <input class="form-control form-control-sm mb-2 cs-mono" id="quizCorrect" placeholder="Réponse(s) correcte(s): ex A ou A,C">
+                        <input class="form-control form-control-sm mb-2 cs-mono" id="quizCorrect" placeholder="Correct answer(s): e.g. A or A,C">
                         <div class="input-group input-group-sm mb-2">
                             <span class="input-group-text">Base points</span>
                             <input type="number" min="0" max="100" value="10" class="form-control" id="quizBasePoints">
                         </div>
-                        <button onclick="openQuiz()" class="btn btn-sm btn-info text-dark fw-bold w-100 mb-2">Ouvrir Quiz</button>
-                        <button onclick="closeQuizWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Fermer Quiz & Scorer</button>
+                        <button onclick="openQuiz()" class="btn btn-sm btn-info text-dark fw-bold w-100 mb-2">Open Quiz</button>
+                        <button onclick="closeQuizWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Close Quiz & Score</button>
                         <div class="mt-2" id="quizTally"></div>
                     </div>
                 </div>
@@ -258,25 +258,25 @@
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h6 class="card-title mb-2"><i class="bi bi-journal-text me-2 text-info"></i>Bibliothèque de scénario</h6>
+                <h6 class="card-title mb-2"><i class="bi bi-journal-text me-2 text-info"></i>Scenario Library</h6>
                 <div class="d-flex gap-2 mb-2">
                     <select id="bankPhaseSelect" class="form-select form-select-sm" onchange="loadBankForPhase(this.value)">
                         @foreach($scenario['phases'] as $p)
                             <option value="{{ $p['index'] }}">Phase {{ $p['index'] }} - {{ $p['name'] }}</option>
                         @endforeach
                     </select>
-                    <button class="btn btn-sm btn-outline-theme" onclick="refreshBank()">Rafraichir</button>
+                    <button class="btn btn-sm btn-outline-theme" onclick="refreshBank()">Refresh</button>
                 </div>
                 <div class="bank-block mb-2">
                     <div class="small fw-bold text-theme mb-2">Messages</div>
-                    <div id="bankMessages" class="small text-white-50">Chargement...</div>
+                    <div id="bankMessages" class="small text-white-50">Loading...</div>
                 </div>
                 <div class="bank-block mb-2">
-                    <div class="small fw-bold text-theme mb-2">Media de phase</div>
-                    <div id="bankMedia" class="small text-white-50">Chargement...</div>
+                    <div class="small fw-bold text-theme mb-2">Phase Media</div>
+                    <div id="bankMedia" class="small text-white-50">Loading...</div>
                 </div>
                 <div class="bank-block mb-2">
-                    <div class="small fw-bold text-theme mb-2">Controle Media Live</div>
+                    <div class="small fw-bold text-theme mb-2">Live Media Control</div>
                     <div class="row g-2">
                         <div class="col-4">
                             <select id="mediaType" class="form-select form-select-sm">
@@ -286,10 +286,10 @@
                             </select>
                         </div>
                         <div class="col-8">
-                            <input id="mediaTitle" class="form-control form-control-sm" placeholder="Titre du media">
+                            <input id="mediaTitle" class="form-control form-control-sm" placeholder="Media title">
                         </div>
                         <div class="col-12">
-                            <input id="mediaUrl" class="form-control form-control-sm" placeholder="URL media (https://...)">
+                            <input id="mediaUrl" class="form-control form-control-sm" placeholder="Media URL (https://...)">
                         </div>
                         <div class="col-12">
                             <textarea id="mediaCaption" class="form-control form-control-sm" rows="2" placeholder="Description / Caption"></textarea>
@@ -309,21 +309,21 @@
                             </label>
                         </div>
                         <div class="col-12 d-flex gap-2 flex-wrap">
-                            <button class="btn btn-sm btn-outline-theme" onclick="saveMediaToPhase()">Ajouter a la phase</button>
-                            <button class="btn btn-sm btn-theme" onclick="saveMediaToLive()">Injecter live</button>
+                            <button class="btn btn-sm btn-outline-theme" onclick="saveMediaToPhase()">Add to phase</button>
+                            <button class="btn btn-sm btn-theme" onclick="saveMediaToLive()">Inject live</button>
                         </div>
                         <div class="col-12">
                             <input type="file" id="mediaFile" class="form-control form-control-sm" accept="image/*,video/*,.gif,.webp">
                         </div>
                         <div class="col-12 d-flex gap-2 flex-wrap">
-                            <button class="btn btn-sm btn-outline-info" onclick="uploadMediaToPhase()">Upload vers phase</button>
+                            <button class="btn btn-sm btn-outline-info" onclick="uploadMediaToPhase()">Upload to phase</button>
                             <button class="btn btn-sm btn-info text-dark" onclick="uploadMediaToLive()">Upload & Inject live</button>
                         </div>
                     </div>
                 </div>
                 <div class="bank-block">
                     <div class="small fw-bold text-theme mb-2">Questions / Quiz</div>
-                    <div id="bankQuestions" class="small text-white-50">Chargement...</div>
+                    <div id="bankQuestions" class="small text-white-50">Loading...</div>
                 </div>
             </div>
         </div>
@@ -334,7 +334,7 @@
             <div class="card-body p-0">
                 <div id="matrixPanel">
                     <div class="text-white-50 text-center py-4 small">
-                        <i class="bi bi-grid-3x3-gap me-2"></i>Sélectionnez une phase pour voir la matrice
+                        <i class="bi bi-grid-3x3-gap me-2"></i>Select a phase to view the matrix
                     </div>
                 </div>
             </div>
@@ -344,10 +344,10 @@
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h6 class="card-title mb-3"><i class="bi bi-award me-2 text-warning"></i>Badges Bonus (+5 pts)</h6>
+                <h6 class="card-title mb-3"><i class="bi bi-award me-2 text-warning"></i>Bonus Badges (+5 pts)</h6>
                 <div class="mb-2">
                     <select class="form-select form-select-sm mb-2" id="badgeTeamSelect">
-                        <option value="">— Équipe —</option>
+                        <option value="">— Team —</option>
                         @foreach($teams as $t)
                         @if($t->badge_eligible)
                         <option value="{{ $t->id }}" data-color="{{ $t->color }}">{{ $t->icon }} {{ $t->name }}</option>
@@ -374,7 +374,7 @@
                     </div>
                 </div>
                 <div id="badgeLog" style="max-height:160px;overflow-y:auto;margin-top:10px">
-                    <div class="text-white-50 text-center small py-2">Aucun badge attribué</div>
+                    <div class="text-white-50 text-center small py-2">No badges awarded</div>
                 </div>
             </div>
         </div>
@@ -387,21 +387,21 @@
         {{-- Tabs --}}
         <div class="d-flex gap-1 mb-2">
             <button class="mod-tab active" id="tab-injects" onclick="switchTab('injects')"><i class="bi bi-lightning me-1"></i>Injects <span id="injectCount" class="badge bg-dark ms-1">{{ $injects->count() }}</span></button>
-            <button class="mod-tab" id="tab-decisions" onclick="switchTab('decisions')"><i class="bi bi-clipboard-check me-1"></i>Décisions <span id="decCount" class="badge bg-dark ms-1">0</span></button>
+            <button class="mod-tab" id="tab-decisions" onclick="switchTab('decisions')"><i class="bi bi-clipboard-check me-1"></i>Decisions <span id="decCount" class="badge bg-dark ms-1">0</span></button>
         </div>
 
         <div class="mb-3">
             <a href="{{ route('cs.managePlayers', $session->code) }}" class="btn btn-outline-info w-100 mb-2" target="_blank">
-                <i class="bi bi-people-fill me-2"></i>Gestion des Joueurs <span id="usersCount" class="badge bg-dark ms-1">0</span>
+                <i class="bi bi-people-fill me-2"></i>Player Management <span id="usersCount" class="badge bg-dark ms-1">0</span>
             </a>
             <a href="{{ route('cs.show', $session->code) }}" class="btn btn-outline-theme w-100 mb-2" target="_blank">
-                <i class="bi bi-person-workspace me-2"></i>Vue Participant (Jeu)
+                <i class="bi bi-person-workspace me-2"></i>Participant View (Game)
             </a>
             <a href="{{ route('cs.dashboard', $session->code) }}" class="btn btn-outline-secondary w-100 mb-2" target="_blank">
-                <i class="bi bi-display me-2"></i>Grand Écran (Podium)
+                <i class="bi bi-display me-2"></i>Grand Screen (Podium)
             </a>
             <button onclick="copyJoinLink()" class="btn btn-outline-warning w-100">
-                <i class="bi bi-clipboard me-2"></i>Copier le Lien d'Invitation
+                <i class="bi bi-clipboard me-2"></i>Copy Join Link
             </button>
         </div>
 
@@ -413,11 +413,11 @@
                     {{-- Inject target filter --}}
                     <div class="mb-2">
                         <select class="form-select form-select-sm" id="injectTargetFilter" onchange="filterInjects()">
-                            <option value="">Tous les injects</option>
+                            <option value="">All injects</option>
                             @foreach($teams as $t)
                             <option value="{{ $t->type }}">{{ $t->icon }} {{ $t->name }}</option>
                             @endforeach
-                            <option value="__global">🌐 Global uniquement</option>
+                            <option value="__global">🌐 Global only</option>
                         </select>
                     </div>
                     <div style="max-height:calc(100vh - 300px);overflow-y:auto" id="injectsContainer">
@@ -431,11 +431,11 @@
                             <div class="text-white-50 mt-1" style="font-size:.72rem">
                                 {{ $inj->color === 'red' ? '🔴' : ($inj->is_surprise ? '⚡' : '🟡') }}
                                 {{ $inj->is_surprise ? 'Surprise' : 'Standard' }}
-                                @if($inj->target_team_type) &middot; <span class="text-warning">Ciblé</span> @endif
+                                @if($inj->target_team_type) &middot; <span class="text-warning">Targeted</span> @endif
                             </div>
                         </div>
                         @empty
-                        <div class="text-white-50 text-center py-3 small">Aucun inject disponible</div>
+                        <div class="text-white-50 text-center py-3 small">No injects available</div>
                         @endforelse
                     </div>
                 </div>
@@ -449,25 +449,25 @@
                 <div class="card-body p-2">
                     <div class="decision-toolbar">
                         <div class="d-flex gap-2 align-items-center mb-2">
-                            <span id="decSummaryTeams" class="badge bg-dark">0 équipes</span>
-                            <span id="decSummaryAnswers" class="badge bg-info text-dark">0 réponses quiz</span>
-                            <span id="decSummaryTotal" class="badge bg-secondary">0 éléments</span>
+                            <span id="decSummaryTeams" class="badge bg-dark">0 teams</span>
+                            <span id="decSummaryAnswers" class="badge bg-info text-dark">0 quiz answers</span>
+                            <span id="decSummaryTotal" class="badge bg-secondary">0 items</span>
                         </div>
                         <div class="d-flex gap-2">
                             <select class="form-select form-select-sm" id="decTypeFilter" onchange="renderDecisionsPanel()">
-                                <option value="all">Tous</option>
-                                <option value="question">Quiz uniquement</option>
-                                <option value="decision">Décisions stratégiques</option>
+                                <option value="all">All</option>
+                                <option value="question">Quiz only</option>
+                                <option value="decision">Strategic decisions</option>
                                 <option value="communication">Communications</option>
-                                <option value="escalade">Escalades</option>
+                                <option value="escalade">Escalations</option>
                             </select>
                             <select class="form-select form-select-sm" id="decTeamFilter" onchange="renderDecisionsPanel()">
-                                <option value="all">Toutes les équipes</option>
+                                <option value="all">All teams</option>
                             </select>
                         </div>
                     </div>
                     <div style="max-height:calc(100vh - 240px);overflow-y:auto" id="decisionsArea">
-                        <div class="text-white-50 text-center py-3 small">En attente de décisions...</div>
+                        <div class="text-white-50 text-center py-3 small">Waiting for decisions...</div>
                     </div>
                 </div>
             </div>
@@ -614,7 +614,7 @@ async function loadBankForPhase(phaseIndex) {
     } catch (e) {
         // Fallback server-rendered payload, avoids hard failure if API bank is blocked in prod.
         currentBank = INITIAL_BANK_BY_PHASE?.[idx] ?? { messages: [], questions: [], media: [] };
-        showNotif('Bibliotheque chargee via fallback local', 'warn');
+        showNotif('Library loaded via local fallback', 'warn');
     }
 
     renderBankMessages();
@@ -626,7 +626,7 @@ function renderBankMessages() {
     const root = document.getElementById('bankMessages');
     if (!root) return;
     if (!currentBank.messages.length) {
-        root.innerHTML = '<div class="text-white-50">Aucun message disponible pour cette phase.</div>';
+        root.innerHTML = '<div class="text-white-50">No messages available for this phase.</div>';
         return;
     }
 
@@ -635,7 +635,7 @@ function renderBankMessages() {
             <p>${m.content || ''}</p>
             <div class="mt-2 d-flex justify-content-between align-items-center">
                 <span class="badge bg-dark">${(m.type || 'info').toUpperCase()}${m.stage ? ` · ${m.stage}` : ''}</span>
-                <button class="btn btn-sm btn-outline-theme" onclick="sendBankMessage(${idx})">Envoyer au live feed</button>
+                <button class="btn btn-sm btn-outline-theme" onclick="sendBankMessage(${idx})">Send to live feed</button>
             </div>
         </div>
     `).join('');
@@ -645,7 +645,7 @@ function renderBankMedia() {
     const root = document.getElementById('bankMedia');
     if (!root) return;
     if (!currentBank.media?.length) {
-        root.innerHTML = '<div class="text-white-50">Aucun media disponible pour cette phase.</div>';
+        root.innerHTML = '<div class="text-white-50">No media available for this phase.</div>';
         return;
     }
 
@@ -654,10 +654,10 @@ function renderBankMedia() {
             <p class="fw-bold mb-1">${m.title || m.id || 'Media'} ${m.isLive ? '<span class="badge bg-danger ms-1">LIVE</span>' : ''}</p>
             <div class="bank-note">${(m.type || 'image').toUpperCase()}${m.stage ? ` · ${m.stage}` : ''}${m.scope ? ` · ${String(m.scope).toUpperCase()}` : ''}</div>
             <div class="small text-white-50 mt-1">${m.caption || ''}</div>
-            <div class="small mt-1"><a href="${m.url || '#'}" target="_blank" rel="noopener">Ouvrir le media</a></div>
+            <div class="small mt-1"><a href="${m.url || '#'}" target="_blank" rel="noopener">Open media</a></div>
             <div class="mt-2 d-flex gap-2 flex-wrap">
-                <button class="btn btn-sm btn-theme" onclick="pushMediaLive(${idx})">Injecter live</button>
-                ${m.isEditable ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteMedia(${idx})">Supprimer</button>` : ''}
+                <button class="btn btn-sm btn-theme" onclick="pushMediaLive(${idx})">Inject live</button>
+                ${m.isEditable ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteMedia(${idx})">Delete</button>` : ''}
             </div>
         </div>
     `).join('');
@@ -678,7 +678,7 @@ function mediaPayloadFromForm() {
 async function saveMediaToPhase() {
     const payload = mediaPayloadFromForm();
     if (!payload.url) {
-        showNotif('URL media requise', 'warn');
+        showNotif('Media URL required', 'warn');
         return;
     }
     const phaseIndex = parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0;
@@ -687,18 +687,18 @@ async function saveMediaToPhase() {
         phase_index: phaseIndex,
         ...payload
     });
-    showNotif('Media ajoute a la phase', 'success');
+    showNotif('Media added to phase', 'success');
     await refreshBank();
 }
 
 async function saveMediaToLive() {
     const payload = mediaPayloadFromForm();
     if (!payload.url) {
-        showNotif('URL media requise', 'warn');
+        showNotif('Media URL required', 'warn');
         return;
     }
     await api('media/save', 'POST', { scope: 'live', ...payload, context: 'manual_live' });
-    showNotif('Media injecte en live', 'success');
+    showNotif('Media injected live', 'success');
     await refreshBank();
 }
 
@@ -706,7 +706,7 @@ async function uploadMediaToPhase() {
     const input = document.getElementById('mediaFile');
     const file = input?.files?.[0];
     if (!file) {
-        showNotif('Selectionner un fichier media', 'warn');
+        showNotif('Select a media file', 'warn');
         return;
     }
     const payload = mediaPayloadFromForm();
@@ -722,11 +722,11 @@ async function uploadMediaToPhase() {
     fd.append('muted', payload.muted ? '1' : '0');
     const res = await apiUpload('media/upload', fd);
     if (!res?.ok) {
-        showNotif(res?.error || 'Upload media echoue', 'warn');
+        showNotif(res?.error || 'Upload media failed', 'warn');
         return;
     }
     input.value = '';
-    showNotif('Upload media termine', 'success');
+    showNotif('Upload media completed', 'success');
     await refreshBank();
 }
 
@@ -734,7 +734,7 @@ async function uploadMediaToLive() {
     const input = document.getElementById('mediaFile');
     const file = input?.files?.[0];
     if (!file) {
-        showNotif('Selectionner un fichier media', 'warn');
+        showNotif('Select a media file', 'warn');
         return;
     }
     const payload = mediaPayloadFromForm();
@@ -750,11 +750,11 @@ async function uploadMediaToLive() {
     fd.append('context', 'upload_live');
     const res = await apiUpload('media/upload', fd);
     if (!res?.ok) {
-        showNotif(res?.error || 'Upload media live echoue', 'warn');
+        showNotif(res?.error || 'Upload media live failed', 'warn');
         return;
     }
     input.value = '';
-    showNotif('Media live injecte', 'success');
+    showNotif('Media live injected', 'success');
     await refreshBank();
 }
 
@@ -762,23 +762,23 @@ async function pushMediaLive(index) {
     const media = currentBank.media?.[index];
     if (!media?.url) return;
     await api('media/inject', 'POST', { media, context: 'bank_push' });
-    showNotif('Media diffuse sur dashboards', 'success');
+    showNotif('Media broadcasted to dashboards', 'success');
     await refreshBank();
 }
 
 async function deleteMedia(index) {
     const media = currentBank.media?.[index];
     if (!media?.id || !media?.scope || media.scope === 'bank') {
-        showNotif('Ce media n est pas supprimable', 'warn');
+        showNotif('This media cannot be deleted', 'warn');
         return;
     }
-    if (!await swalConfirm('Supprimer ce media ?')) return;
+    if (!await swalConfirm('Delete this media?')) return;
     await api('media/delete', 'POST', {
         scope: media.scope,
         id: media.id,
         phase_index: parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0
     });
-    showNotif('Media supprime', 'success');
+    showNotif('Media deleted', 'success');
     await refreshBank();
 }
 
@@ -786,19 +786,19 @@ function renderBankQuestions() {
     const root = document.getElementById('bankQuestions');
     if (!root) return;
     if (!currentBank.questions.length) {
-        root.innerHTML = '<div class="text-white-50">Aucune question disponible pour cette phase.</div>';
+        root.innerHTML = '<div class="text-white-50">No questions available for this phase.</div>';
         return;
     }
 
     root.innerHTML = currentBank.questions.map((q, idx) => `
         <div class="bank-item">
-            <p class="fw-bold">${idx + 1}. ${q.question || 'Question sans titre'}</p>
+            <p class="fw-bold">${idx + 1}. ${q.question || 'Untitled question'}</p>
             <div class="bank-note mt-1">Type: ${normalizeQuizType(q.type).toUpperCase()}${q.points ? ` · ${q.points} pts` : ''}${q.time_limit ? ` · ${q.time_limit}s` : ''}</div>
-            <div class="bank-note mt-1">${(q.options || []).map(o => `${o.key}: ${o.label} (${o.points ?? 0} pts)`).join(' | ') || (q.prompt || 'Question ouverte')}</div>
+            <div class="bank-note mt-1">${(q.options || []).map(o => `${o.key}: ${o.label} (${o.points ?? 0} pts)`).join(' | ') || (q.prompt || 'Open question')}</div>
             <div class="mt-2 d-flex justify-content-end gap-2 flex-wrap">
-                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">Pre-remplir le vote</button>
-                <button class="btn btn-sm btn-info text-dark" onclick="prefillQuizFromBank(${idx})">Pre-remplir Quiz</button>
-                <button class="btn btn-sm btn-theme" onclick="openQuizFromBank(${idx})">Diffuser Quiz</button>
+                <button class="btn btn-sm btn-warning text-dark" onclick="prefillVoteFromBank(${idx})">Prefill Vote</button>
+                <button class="btn btn-sm btn-info text-dark" onclick="prefillQuizFromBank(${idx})">Prefill Quiz</button>
+                <button class="btn btn-sm btn-theme" onclick="openQuizFromBank(${idx})">Broadcast Quiz</button>
             </div>
         </div>
     `).join('');
@@ -807,15 +807,16 @@ function renderBankQuestions() {
 async function sendBankMessage(index) {
     const msg = currentBank.messages[index];
     if (!msg?.content) return;
+    if (!await swalConfirm('Send this message to the live feed?')) return;
     await api('broadcast', 'POST', { message: msg.content, type: msg.type || 'info' });
-    showNotif('Message de la bibliotheque diffuse', 'success');
+    showNotif('Library message broadcasted', 'success');
 }
 
 function prefillVoteFromBank(index) {
     const question = currentBank.questions[index];
     if (!question) return;
     if ((question.type || 'single_choice') !== 'single_choice') {
-        showNotif('Ce quiz n est pas un vote simple. Prefill uniquement pour single-choice.', 'warn');
+        showNotif('This quiz is not a single choice vote. Prefill only for single-choice.', 'warn');
         return;
     }
 
@@ -825,8 +826,8 @@ function prefillVoteFromBank(index) {
     document.getElementById('vOpt').value = opts.map(opt => `${opt.key}|${opt.label}|${opt.color||'#00b4d8'}|${opt.points||0}|${opt.note||''}`).join('\n');
 
     const info = document.getElementById('preparedVoteInfo');
-    const notes = opts.map(opt => `${opt.key}: ${opt.note || 'pas de note'}`).join(' | ');
-    info.textContent = `Question préchargée (${opts.length} options). Guide: ${notes}`;
+    const notes = opts.map(opt => `${opt.key}: ${opt.note || 'no note'}`).join(' | ');
+    info.textContent = `Preloaded question (${opts.length} options). Guide: ${notes}`;
     document.getElementById('voteSecretSwitch').checked = question.secret === true;
 }
 
@@ -840,7 +841,7 @@ function prefillQuizFromBank(index) {
     document.getElementById('quizOpt').value = opts.map(opt => `${opt.key}|${opt.label}|${opt.color||'#00b4d8'}|${opt.points||0}`).join('\n');
     document.getElementById('quizCorrect').value = (question.acceptable_answers || question.correct_order || []).join(',');
     document.getElementById('quizBasePoints').value = question.points || 10;
-    showNotif('Quiz pré-rempli depuis la bibliothèque', 'success');
+    showNotif('Quiz prefilled from library', 'success');
 }
 
 async function openQuizFromBank(index) {
@@ -850,7 +851,7 @@ async function openQuizFromBank(index) {
 
 // ── ONLINE COUNT ────────────────────────────────────────────
 function updateOnlineCount(players) {
-    document.getElementById('onlineCount').textContent = `${players.length} en ligne`;
+    document.getElementById('onlineCount').textContent = `${players.length} online`;
 }
 
 // ── TEAMS ───────────────────────────────────────────────────
@@ -879,7 +880,7 @@ function updateTeams(teams) {
 
 async function adjustScore(teamId, delta) {
     if (teamsById[teamId] && !teamsById[teamId].isScored) {
-        showNotif('Equipe mentor non-scoree', 'warn');
+        showNotif('Mentor team is not scored', 'warn');
         return;
     }
     await api(`score/${teamId}`, 'POST', {delta: parseInt(delta)});
@@ -941,7 +942,7 @@ async function removePlayerAction(playerId) {}
 function updateMatrix(matrix) {
     const panel = document.getElementById('matrixPanel');
     if (!matrix) {
-        panel.innerHTML = '<div class="text-white-50 text-center py-4 small"><i class="bi bi-grid-3x3-gap me-2"></i>Pas de matrice pour cette phase</div>';
+        panel.innerHTML = '<div class="text-white-50 text-center py-4 small"><i class="bi bi-grid-3x3-gap me-2"></i>No matrix for this phase</div>';
         return;
     }
     const optColors = {A:'#ef4444', B:'#22c55e', C:'#f59e0b'};
@@ -959,7 +960,7 @@ function updateMatrix(matrix) {
     const injectsHtml = (matrix.injects ?? []).map(i => `<li style="font-size:.78rem;color:rgba(255,255,255,.55)">${i}</li>`).join('');
     panel.innerHTML = `
         <div class="matrix-panel">
-            <div class="matrix-header text-theme"><i class="bi bi-grid-3x3-gap me-2"></i>MATRICE DE DÉCISION</div>
+            <div class="matrix-header text-theme"><i class="bi bi-grid-3x3-gap me-2"></i>DECISION MATRIX</div>
             ${matrix.context ? `<div class="matrix-context">${matrix.context}</div>` : ''}
             ${injectsHtml ? `<ul class="mb-0 ps-3 py-2" style="border-bottom:1px solid rgba(255,255,255,.06)">${injectsHtml}</ul>` : ''}
             ${optsHtml}
@@ -974,38 +975,38 @@ async function broadcast() {
     if (!msg) return;
     await api('broadcast','POST',{message:msg, type});
     document.getElementById('bcMsg').value = '';
-    showNotif('Diffusé !');
+    showNotif('Broadcasted!');
 }
 async function phantom() {
     const msg = document.getElementById('bcMsg').value.trim() || 'PHANTOM GRID HAS BREACHED YOUR NETWORK.';
     await api('phantom','POST',{message:msg});
     document.getElementById('bcMsg').value = '';
-    showNotif('☠️ Message PHANTOM envoyé');
+    showNotif('☠️ PHANTOM message sent');
 }
 
 // ── VOTE ────────────────────────────────────────────────────
 async function openVote() {
     const q = document.getElementById('voteQ').value.trim();
     if (!q) {
-        showNotif('Question requise', 'danger');
+        showNotif('Question required', 'danger');
         return;
     }
 
     const options = parseManualOptions(document.getElementById('vOpt').value);
 
     if (!options || options.length < 2) {
-        showNotif('Au moins 2 options sont requises', 'danger');
+        showNotif('At least 2 options are required', 'danger');
         return;
     }
 
     const isSecret = document.getElementById('voteSecretSwitch').checked;
     const response = await api('vote/open', 'POST', { question: q, options, is_secret: isSecret });
     if (!response?.ok) {
-        showNotif('Impossible d ouvrir le vote', 'danger');
+        showNotif('Unable to open vote', 'danger');
         return;
     }
-    showNotif(`Vote ouvert${isSecret ? ' (secret)' : ''}`);
-    document.getElementById('preparedVoteInfo').textContent = 'Vote en cours...';
+    showNotif(`Vote opened${isSecret ? ' (secret)' : ''}`);
+    document.getElementById('preparedVoteInfo').textContent = 'Vote in progress...';
 }
 
 function parseManualOptions(raw) {
@@ -1047,9 +1048,9 @@ async function openQuiz() {
     const q = document.getElementById('quizQ').value.trim();
     const type = normalizeQuizType(document.getElementById('quizType').value);
     const options = parseManualOptions(document.getElementById('quizOpt').value);
-    if (!q) return showNotif('Question quiz requise', 'danger');
+    if (!q) return showNotif('Quiz question required', 'danger');
     if (['single_choice', 'multi_choice', 'order'].includes(type) && (!options || options.length < 2)) {
-        return showNotif('Ce type de quiz doit contenir au moins 2 choix', 'danger');
+        return showNotif('This quiz type must contain at least 2 choices', 'danger');
     }
 
     const correctRaw = (document.getElementById('quizCorrect').value || '').trim();
@@ -1063,21 +1064,21 @@ async function openQuiz() {
         correct_answers,
         base_points,
     });
-    if (!r?.ok) return showNotif(r?.error || 'Impossible d ouvrir le quiz', 'danger');
-    showNotif('Quiz ouvert', 'success');
+    if (!r?.ok) return showNotif(r?.error || 'Unable to open quiz', 'danger');
+    showNotif('Quiz opened', 'success');
 }
 
 async function closeQuizWithScore() {
     const r = await api('quiz/close', 'POST');
-    if (!r?.ok) return showNotif(r?.error || 'Erreur fermeture quiz', 'danger');
-    showNotif(`Quiz fermé — ${r.answeredTeams || 0} équipes scorées`, 'success');
+    if (!r?.ok) return showNotif(r?.error || 'Error closing quiz', 'danger');
+    showNotif(`Quiz closed — ${r.answeredTeams || 0} teams scored`, 'success');
 }
 
 function updateQuizTally(quiz) {
     const el = document.getElementById('quizTally');
     if (!el) return;
     if (!quiz) {
-        el.innerHTML = '<div class="small text-white-50">Aucun quiz en cours</div>';
+        el.innerHTML = '<div class="small text-white-50">No active quiz</div>';
         return;
     }
 
@@ -1089,7 +1090,7 @@ function updateQuizTally(quiz) {
     el.innerHTML = `
         <div class="small fw-bold text-info mb-1">${quiz.question || 'Quiz'} (${normalizeQuizType(quiz.type).replace('_',' ')})</div>
         <div class="mb-1">${rows}</div>
-        <div class="small text-white-50 mb-1">Réponses: ${quiz.answerCount || 0}</div>
+        <div class="small text-white-50 mb-1">Answers: ${quiz.answerCount || 0}</div>
         <div>${resultRows}</div>
     `;
 }
@@ -1106,13 +1107,13 @@ async function closeVoteWithScore() {
     const d = await api('vote/close','POST');
     if (d.ok) {
         const msg = d.isTie
-            ? `Vote fermé — Egalite (${(d.tiedKeys || []).join(', ')}) — aucun point attribue`
+            ? `Vote closed — Tie (${(d.tiedKeys || []).join(', ')}) — no points awarded`
             : (d.awardedPoints > 0
-                ? `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts attribues`
-                : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner}`);
+                ? `Vote closed — Winner: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts awarded`
+                : `Vote closed — Winner: ${d.winnerLabel || d.winner}`);
         showNotif(msg, 'success');
     } else {
-        showNotif(d.error || 'Erreur', 'danger');
+        showNotif(d.error || 'Error', 'danger');
     }
 }
 function updateVoteTally(vote) {
@@ -1140,9 +1141,9 @@ function updateVoteTally(vote) {
 
 // ── INJECT ──────────────────────────────────────────────────
 async function triggerInject(id) {
-    if (!await swalConfirm('Déclencher cet inject ?')) return;
+    if (!await swalConfirm('Trigger this inject?')) return;
     await api(`inject/${id}`,'POST');
-    showNotif('Inject déclenché','success');
+    showNotif('Inject triggered','success');
 }
 function filterInjects() {
     const val = document.getElementById('injectTargetFilter').value;
@@ -1194,7 +1195,7 @@ function populateDecisionTeamFilter(decisions) {
     if (!el) return;
     const current = el.value || 'all';
     const teams = Array.from(new Set(decisions.map(d => d.teamType).filter(Boolean)));
-    const opts = ['<option value="all">Toutes les équipes</option>'];
+    const opts = ['<option value="all">All teams</option>'];
     teams.forEach(tt => {
         opts.push(`<option value="${escapeHtml(tt)}">${escapeHtml(teamNameMap[tt] || tt)}</option>`);
     });
@@ -1214,12 +1215,12 @@ function renderDecisionsPanel() {
 
     const teamCount = new Set(filtered.map(d => d.teamType).filter(Boolean)).size;
     const answerCount = filtered.filter(d => d.type === 'question').length;
-    document.getElementById('decSummaryTeams').textContent = `${teamCount} équipes`;
-    document.getElementById('decSummaryAnswers').textContent = `${answerCount} réponses quiz`;
-    document.getElementById('decSummaryTotal').textContent = `${filtered.length} éléments`;
+    document.getElementById('decSummaryTeams').textContent = `${teamCount} teams`;
+    document.getElementById('decSummaryAnswers').textContent = `${answerCount} quiz answers`;
+    document.getElementById('decSummaryTotal').textContent = `${filtered.length} items`;
 
     if (filtered.length === 0) {
-        area.innerHTML = '<div class="text-white-50 text-center py-3 small">Aucun élément pour ce filtre.</div>';
+        area.innerHTML = '<div class="text-white-50 text-center py-3 small">No items for this filter.</div>';
         return;
     }
 
@@ -1240,7 +1241,7 @@ function renderDecisionsPanel() {
     const html = teamKeys.map((teamKey, idx) => {
         const items = grouped[teamKey].sort((a, b) => b.id - a.id);
         const color = teamColorMap[teamKey] || '#aaa';
-        const teamName = teamNameMap[teamKey] || items[0]?.teamName || 'Équipe';
+        const teamName = teamNameMap[teamKey] || items[0]?.teamName || 'Team';
         const quizCount = items.filter(x => x.type === 'question').length;
         const collapseId = `dec-team-${teamKey.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
         const entriesHtml = items.map(d => {
@@ -1252,16 +1253,16 @@ function renderDecisionsPanel() {
                 <div id="dec-${d.id}" class="decision-review ${d.id === lastDecId ? 'dec-new' : ''}">
                     <div class="d-flex align-items-center gap-2 mb-1">
                         <span class="dr-type">${typeIcons[d.type]||'📋'} ${escapeHtml((d.type||'').toUpperCase())}</span>
-                        <span class="ms-auto decision-meta">${new Date(d.at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})}</span>
+                        <span class="ms-auto decision-meta">${new Date(d.at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</span>
                     </div>
                     ${answerBlock}
                     <div class="d-flex gap-1 mt-2 align-items-center" ${isMentorDecision ? 'style="opacity:.5"' : ''}>
                         <span class="small text-white-50">Score:</span>
                         <input type="number" id="award-${d.id}" value="${pendingAwardEdits[d.id] ?? (Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0)}" min="0" max="100" class="form-control form-control-sm" style="width:70px" oninput="setPendingAward(${d.id}, this.value)" ${isMentorDecision ? 'disabled' : ''}>
                         <button onclick="awardScore(${d.id})" class="btn btn-sm btn-success ld-award" ${isMentorDecision ? 'disabled' : ''}>
-                            ${isMentorDecision ? 'Mentor non-score' : 'Valider / Ajuster'}
+                            ${isMentorDecision ? 'Non-scored Mentor' : 'Validate / Adjust'}
                         </button>
-                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">Actuel: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
+                        ${!isMentorDecision ? `<span class="small text-white-50 award-current">Current: ${Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0} pts</span>` : ''}
                     </div>
                 </div>
             `;
@@ -1274,7 +1275,7 @@ function renderDecisionsPanel() {
                         <span class="dr-team" style="background:${color}22;color:${color}">${escapeHtml(teamName)}</span>
                         <span class="badge bg-dark">${items.length}</span>
                         <span class="badge bg-info text-dark">${quizCount} quiz</span>
-                        <span class="ms-auto decision-meta">${items[0]?.at ? new Date(items[0].at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                        <span class="ms-auto decision-meta">${items[0]?.at ? new Date(items[0].at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
                     </button>
                 </h2>
                 <div id="${collapseId}" class="collapse ${idx === 0 ? 'show' : ''}">
@@ -1293,7 +1294,8 @@ function setPendingAward(id, value) {
 
 function parseQuizDecisionContent(content) {
     const raw = String(content || '');
-    const m = raw.match(/^Quiz\s*\(([^)]+)\)\s*:\s*(.*?)\s*\|\s*Réponse\s*:\s*(.*)$/i);
+    // Support English and French regex matching for Answer/Réponse
+    const m = raw.match(/^Quiz\s*\(([^)]+)\)\s*:\s*(.*?)\s*\|\s*(?:Réponse|Answer)\s*:\s*(.*)$/i);
     if (!m) return null;
     const quizType = normalizeQuizType((m[1] || '').trim());
     const question = (m[2] || '').trim();
@@ -1324,7 +1326,7 @@ function renderQuizAnswerBlock(q) {
             <span class="ms-1">${escapeHtml(q.question || 'Quiz')}</span>
         </div>
         <div style="font-size:.83rem">
-            <span class="text-white-50">Réponse:</span> ${escapeHtml(answer)}
+            <span class="text-white-50">Answer:</span> ${escapeHtml(answer)}
         </div>
     `;
 }
@@ -1341,24 +1343,24 @@ function escapeHtml(value) {
 async function awardScore(id) {
     const pts = parseInt(document.getElementById('award-'+id).value);
     await api(`decision/${id}/award`,'POST',{points:pts});
-    showNotif(`Score validé: ${pts} pts`,'success');
+    showNotif(`Score validated: ${pts} pts`,'success');
     delete pendingAwardEdits[id];
     decisionsSignature = '';
     await poll();
     const card = document.getElementById(`dec-${id}`);
     if (card) {
         const note = card.querySelector('.award-current');
-        if (note) note.textContent = `Actuel: ${pts} pts`;
+        if (note) note.textContent = `Current: ${pts} pts`;
     }
 }
 
 // ── BONUS BADGES ────────────────────────────────────────────
 async function awardBadge(type) {
     const teamId = document.getElementById('badgeTeamSelect').value;
-    if (!teamId) { showNotif('Sélectionnez une équipe d\'abord','danger'); return; }
+    if (!teamId) { showNotif('Select a team first','danger'); return; }
     const d = await api(`badge/${teamId}`,'POST',{badge_type: type});
     if (d.ok) showNotif(`${d.badge} → +${d.points} pts`,'success');
-    else showNotif(d.error || 'Erreur badge','danger');
+    else showNotif(d.error || 'Badge error','danger');
 }
 
 function updateBadgeLog(badges) {
@@ -1402,18 +1404,18 @@ function switchTab(name) {
 function copyJoinLink() {
     const url = window.location.origin + '/cs/' + CODE;
     navigator.clipboard.writeText(url).then(() => {
-        showNotif('Lien d\'invitation copié !', 'success');
+        showNotif('Join link copied!', 'success');
     }).catch(err => {
         console.error('Failed to copy: ', err);
-        showNotif('Erreur lors de la copie', 'danger');
+        showNotif('Error copying link', 'danger');
     });
 }
 
 // ── END ─────────────────────────────────────────────────────
 async function confirmEnd() {
-    if (!await swalConfirm('Terminer l\'exercice ? Cette action est irréversible.')) return;
+    if (!await swalConfirm('End the exercise? This action is irreversible.')) return;
     await api('end','POST');
-    showNotif('Exercice terminé !','success');
+    showNotif('Exercise finished!','success');
 }
 
 // ── NOTIF ───────────────────────────────────────────────────

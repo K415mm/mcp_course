@@ -17,7 +17,7 @@
   "questions": [
     {
       "id": "p4-q1",
-      "type": "single_choice",
+      "type": "multi_choice",
       "secret": false,
       "question": "EU/NATO + POLITICAL CELL — REGIONAL ARCHITECTURE (D-04)",
       "points": 100,

@@ -873,6 +873,7 @@ function renderBankQuestions() {
 async function sendBankMessage(index) {
     const msg = currentBank.messages[index];
     if (!msg?.content) return;
+    if (!await swalConfirm('Send this message to the live feed?')) return;
     await api('broadcast', 'POST', { message: msg.content, type: msg.type || 'info' });
     showNotif('Library message broadcasted', 'success');
 }

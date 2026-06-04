@@ -51,10 +51,10 @@
 
 {{-- PHANTOM Modal --}}
 <div class="phantom-modal" id="phantomModal" onclick="closePhantom()">
-    <div class="phantom-label">MESSAGE INTERCEPTÉ — {{ $scenario['attacker_name'] ?? 'MENACE' }}</div>
+    <div class="phantom-label">INTERCEPTED MESSAGE — {{ $scenario['attacker_name'] ?? 'THREAT' }}</div>
     <div class="phantom-icon">{{ $scenario['attacker_icon'] ?? '☠️' }}</div>
     <div class="phantom-msg" id="phantomMsgEl"></div>
-    <p class="text-white-50 mt-4 small" style="letter-spacing:3px;font-family:'Space Mono',monospace">CLIQUER POUR FERMER</p>
+    <p class="text-white-50 mt-4 small" style="letter-spacing:3px;font-family:'Space Mono',monospace">CLICK TO CLOSE</p>
 </div>
 
 {{-- TOAST container --}}
@@ -95,13 +95,13 @@
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-person-plus me-2 text-theme"></i>Rejoindre l'exercice</h5>
+                <h5 class="card-title mb-3"><i class="bi bi-person-plus me-2 text-theme"></i>Join the Exercise</h5>
                 <div class="mb-3">
-                    <label class="form-label small text-white-50">Votre nom d'affichage</label>
-                    <input class="form-control" id="displayName" value="{{ Auth::user()->name ?? '' }}" placeholder="Nom de participant" maxlength="80">
+                    <label class="form-label small text-white-50">Your Display Name</label>
+                    <input class="form-control" id="displayName" value="{{ Auth::user()->name ?? '' }}" placeholder="Participant name" maxlength="80">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label small text-white-50 d-block mb-2">Choisir votre équipe</label>
+                    <label class="form-label small text-white-50 d-block mb-2">Choose Your Team</label>
                     <div class="d-flex flex-wrap gap-2" id="teamPicker">
                         @foreach($teams as $t)
                         <div class="team-btn" id="tp-{{ $t->id }}" style="--team-color:{{ $t->color }};--team-rgb:0,180,216" onclick="pickTeam('{{ $t->type }}',this)">
@@ -113,7 +113,7 @@
                     </div>
                 </div>
                 <button onclick="joinSession()" class="btn btn-theme w-100 fw-bold">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>REJOINDRE
+                    <i class="bi bi-box-arrow-in-right me-2"></i>JOIN
                 </button>
             </div>
         </div>
@@ -129,10 +129,10 @@
                         <div class="small text-white-50">{{ $player->team->name ?? '—' }} &middot; {{ $player->team->role_label ?? '' }}</div>
                     </div>
                     <div class="ms-auto text-end">
-                        <span class="small"><span class="online-dot"></span><span class="text-white-50">En ligne</span></span>
+                        <span class="small"><span class="online-dot"></span><span class="text-white-50">Online</span></span>
                         <div class="small text-white-50 mt-1">
                             @if($player && !$player->team->is_scored)
-                                Rôle: <strong class="text-warning">Mentor non-score</strong>
+                                Role: <strong class="text-warning">Mentor (non-scorable)</strong>
                             @else
                                 Score: <strong class="text-theme" id="myScore">{{ $player->team->score ?? 0 }}</strong>
                             @endif
@@ -146,15 +146,15 @@
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Carte des Opérations Nationale</h5>
-                <div id="phaseSituationMedia" class="small text-white-50">Aucun visuel pour la phase en cours.</div>
+                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>National Operations Map</h5>
+                <div id="phaseSituationMedia" class="small text-white-50">No visual content for the current phase.</div>
             </div>
         </div>
 
         <div class="card mb-3" id="quizCard" style="display:none!important">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-1"><i class="bi bi-patch-question me-2 text-info"></i>Question Quiz</h5>
+                <h5 class="card-title mb-1"><i class="bi bi-patch-question me-2 text-info"></i>Quiz Question</h5>
                 <p class="small text-white-50 mb-2" id="quizQuestion"></p>
                 <div id="quizOptions" class="d-flex flex-wrap gap-2"></div>
                 <div id="quizMeta" class="small text-white-50 mt-2"></div>
@@ -165,20 +165,20 @@
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-send me-2 text-theme"></i>Soumettre une action</h5>
+                <h5 class="card-title mb-3"><i class="bi bi-send me-2 text-theme"></i>Submit an Action</h5>
                 <div class="d-flex flex-wrap gap-2 mb-3" id="decisionTypes">
-                    @foreach([['decision','Décision','danger'],['escalade','Escalade','warning'],['communication','Communication','theme'],['question','Question','info']] as [$v,$l,$c])
+                    @foreach([['decision','Decision','danger'],['escalade','Escalation','warning'],['communication','Communication','theme'],['question','Question','info']] as [$v,$l,$c])
                     <button class="decision-type-btn {{ $loop->first ? 'active' : '' }}" onclick="setDType('{{ $v }}',this)">
                         {{ $l }}
                     </button>
                     @endforeach
                 </div>
-                <textarea class="form-control mb-3" id="decisionContent" rows="4" placeholder="Décrivez votre décision, escalade ou question..."></textarea>
+                <textarea class="form-control mb-3" id="decisionContent" rows="4" placeholder="Describe your decision, escalation, or question..."></textarea>
                 <button onclick="submitDecision()" class="btn btn-theme fw-bold" id="submitDecBtn" @if(!$player) disabled @endif>
-                    <i class="bi bi-send me-2"></i>Soumettre
+                    <i class="bi bi-send me-2"></i>Submit
                 </button>
                 @if(!$player)
-                <span class="text-white-50 small ms-2">Rejoignez une équipe d'abord</span>
+                <span class="text-white-50 small ms-2">Join a team first</span>
                 @endif
             </div>
         </div>
@@ -187,7 +187,7 @@
         <div class="card" id="voteCard" style="display:none!important">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-1"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Vote en cours</h5>
+                <h5 class="card-title mb-1"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Active Vote</h5>
                 <p class="small text-white-50 mb-3" id="voteQuestion"></p>
                 <div id="voteOptions" class="d-flex flex-wrap gap-2"></div>
             </div>
@@ -204,7 +204,7 @@
             <div class="card-body">
                 <h5 class="card-title mb-3"><i class="bi bi-broadcast me-2 text-theme"></i>Communications</h5>
                 <div id="broadcastFeed" style="max-height:220px;overflow-y:auto">
-                    <div class="text-white-50 text-center py-3 small">En attente de communications...</div>
+                    <div class="text-white-50 text-center py-3 small">Waiting for communications...</div>
                 </div>
             </div>
         </div>
@@ -213,7 +213,7 @@
         <div class="card">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-bar-chart me-2 text-theme"></i>Tableau des scores</h5>
+                <h5 class="card-title mb-3"><i class="bi bi-bar-chart me-2 text-theme"></i>Scoreboard</h5>
                 <div id="teamsScore">
                     @foreach($teams as $t)
                     <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)" id="tr-{{ $t->id }}">
@@ -248,10 +248,12 @@ const PLAYER_ID = {{ $player?->id ?? 'null' }};
 const TEAM_ID   = {{ $player?->cs_team_id ?? 'null' }};
 
 let selectedTeam = null, decisionType = 'decision';
-let lastBcId = 0, lastAtmo = '';
+let lastBcId = 0, lastInjectId = 0, lastAtmo = '';
 const teamStateById = {};
 let currentBroadcasts = [];
 let currentPhaseMessages = [];
+let currentInjects = [];
+let isPolledOnce = false;
 
 // ── API helper ─────────────────────────────────────────────
 async function api(path, method='GET', body=null) {
@@ -269,11 +271,11 @@ function pickTeam(type, el) {
 }
 async function joinSession() {
     const name = document.getElementById('displayName').value.trim();
-    if (!name) { toast('warn','Entrez votre nom d\'affichage'); return; }
-    if (!selectedTeam) { toast('warn','Choisissez une équipe'); return; }
+    if (!name) { toast('warn','Enter your display name'); return; }
+    if (!selectedTeam) { toast('warn','Choose a team'); return; }
     const d = await api('join','POST',{team_type:selectedTeam, display_name:name});
     if (d.success) location.reload();
-    else toast('danger', d.message ?? 'Erreur');
+    else toast('danger', d.message ?? 'Error');
 }
 
 // ── DECISION ───────────────────────────────────────────────
@@ -285,25 +287,25 @@ function setDType(type, el) {
 async function submitDecision() {
     if (!PLAYER_ID) return;
     const content = document.getElementById('decisionContent').value.trim();
-    if (!content) { toast('warn','Rédigez votre décision'); return; }
+    if (!content) { toast('warn','Write your decision first'); return; }
 
     const confirmResult = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: 'Cette action ne peut pas être annulée.',
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, envoyer',
-        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
         background: '#1a2a3a',
         color: '#fff'
     });
     if (!confirmResult.isConfirmed) return;
 
     const d = await api('decision','POST',{type:decisionType, content, player_id:PLAYER_ID});
-    if (d.ok) { document.getElementById('decisionContent').value=''; toast('success','Décision soumise !'); }
-    else toast('danger', d.error??'Erreur');
+    if (d.ok) { document.getElementById('decisionContent').value=''; toast('success','Decision submitted!'); }
+    else toast('danger', d.error??'Error');
 }
 
 // ── VOTE ───────────────────────────────────────────────────
@@ -311,14 +313,14 @@ async function castVote(key) {
     if (!TEAM_ID) return;
 
     const confirmResult = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: 'Cette action ne peut pas être annulée.',
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, voter',
-        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Yes, vote',
+        cancelButtonText: 'Cancel',
         background: '#1a2a3a',
         color: '#fff'
     });
@@ -326,9 +328,9 @@ async function castVote(key) {
 
     const res = await api('vote/submit','POST',{choice:key, team_id:TEAM_ID});
     if (res.ok) {
-        toast('success','Vote enregistré');
+        toast('success','Vote cast');
     } else {
-        toast('warn', res.error || 'Vote non pris en compte');
+        toast('warn', res.error || 'Vote rejected');
     }
 }
 
@@ -349,22 +351,22 @@ async function castQuiz(key) {
     if (!TEAM_ID) return;
 
     const confirmResult = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: 'Cette action ne peut pas être annulée.',
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, soumettre',
-        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
         background: '#1a2a3a',
         color: '#fff'
     });
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
-    if (res.ok) toast('success','Réponse quiz enregistrée');
-    else toast('warn', res.error || 'Réponse quiz non prise en compte');
+    if (res.ok) toast('success','Quiz response submitted');
+    else toast('warn', res.error || 'Quiz response rejected');
 }
 
 function toggleMultiChoice(key) {
@@ -379,19 +381,19 @@ function toggleMultiChoice(key) {
 async function submitMultiChoice() {
     if (!TEAM_ID) return;
     if (multiChoiceSelection.length === 0) {
-        toast('warn', 'Veuillez sélectionner au moins une réponse');
+        toast('warn', 'Please select at least one response');
         return;
     }
 
     const confirmResult = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: 'Cette action ne peut pas être annulée.',
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, soumettre',
-        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
         background: '#1a2a3a',
         color: '#fff'
     });
@@ -399,10 +401,10 @@ async function submitMultiChoice() {
 
     const res = await api('quiz/submit','POST',{choice: multiChoiceSelection, team_id:TEAM_ID});
     if (res.ok) {
-        toast('success','Réponses quiz enregistrées');
+        toast('success','Quiz responses submitted');
         multiChoiceSelection = [];
     }
-    else toast('warn', res.error || 'Réponse quiz non prise en compte');
+    else toast('warn', res.error || 'Quiz responses rejected');
 }
 
 function toggleOrderChoice(key) {
@@ -422,19 +424,19 @@ function resetOrderChoice() {
 async function submitOrderChoice() {
     if (!TEAM_ID) return;
     if (orderSelection.length < 2) {
-        toast('warn', 'Définissez un ordre avec au moins 2 choix');
+        toast('warn', 'Define an order with at least 2 choices');
         return;
     }
 
     const confirmResult = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: 'Cette action ne peut pas être annulée.',
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, soumettre',
-        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
         background: '#1a2a3a',
         color: '#fff'
     });
@@ -442,10 +444,10 @@ async function submitOrderChoice() {
 
     const res = await api('quiz/submit', 'POST', {choice: orderSelection, team_id: TEAM_ID});
     if (res.ok) {
-        toast('success', 'Ordre quiz enregistré');
+        toast('success', 'Quiz order submitted');
         orderSelection = [];
     } else {
-        toast('warn', res.error || 'Réponse quiz non prise en compte');
+        toast('warn', res.error || 'Quiz order rejected');
     }
 }
 
@@ -455,27 +457,27 @@ async function submitShortAnswer() {
     if (!field) return;
     const text = field.value.trim();
     if (!text) {
-        toast('warn', 'Veuillez saisir votre réponse');
+        toast('warn', 'Please enter your response');
         return;
     }
 
     const confirmResult = await Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: 'Cette action ne peut pas être annulée.',
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, soumettre',
-        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
         background: '#1a2a3a',
         color: '#fff'
     });
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('quiz/submit', 'POST', {answer_text: text, team_id: TEAM_ID});
-    if (res.ok) toast('success', 'Réponse texte enregistrée');
-    else toast('warn', res.error || 'Réponse quiz non prise en compte');
+    if (res.ok) toast('success', 'Text answer submitted');
+    else toast('warn', res.error || 'Quiz response rejected');
 }
 
 function redrawCurrentQuiz() {
@@ -490,10 +492,12 @@ async function poll() {
         updatePhase(d.session);
         updateTeams(d.teams);
         updateBroadcasts(d.broadcasts);
+        updateInjects(d.injects);
         renderPhaseContent(d.phaseContent);
         updateVote(d.vote);
         updateQuiz(d.quiz);
         handleAtmo(d.session?.atmosphere);
+        isPolledOnce = true;
     } catch(e) {}
 }
 
@@ -519,7 +523,7 @@ function renderPhaseContent(content) {
         }
         return `<div class="mb-2"><div class="fw-bold">${m.title || 'Image'}</div><img src="${m.url}" class="w-100 rounded mt-1" alt="${m.title || 'image'}"><div class="text-white-50 small">${m.caption || ''}</div></div>`;
     }).join('');
-    mediaRoot.innerHTML = mediaHtml || '<div class="text-white-50">Aucun visuel pour la phase en cours.</div>';
+    mediaRoot.innerHTML = mediaHtml || '<div class="text-white-50">No visual content for the current phase.</div>';
 }
 setInterval(poll, 2000); poll();
 
@@ -564,11 +568,46 @@ function updateBroadcasts(bcs) {
     if (!Array.isArray(bcs)) return;
     const latest = bcs[0];
     if (latest && latest.id > lastBcId) {
+        if (isPolledOnce) {
+            if (latest.isPhantom) {
+                showPhantom(latest.message);
+            } else {
+                Swal.fire({
+                    title: 'New Broadcast Alert',
+                    html: `<div style="font-size:1.1rem; line-height:1.5;">${latest.message}</div>`,
+                    icon: 'info',
+                    confirmButtonText: 'Acknowledge',
+                    confirmButtonColor: 'var(--bs-theme)',
+                    background: '#1a2a3a',
+                    color: '#fff'
+                });
+            }
+        }
         lastBcId = latest.id;
-        if (latest.isPhantom) showPhantom(latest.message);
-        else toast(latest.type || 'info', String(latest.message || '').substring(0, 80));
     }
     currentBroadcasts = bcs.filter(b => !b.isPhantom);
+    renderCommunications();
+}
+
+function updateInjects(injects) {
+    if (!Array.isArray(injects)) return;
+    const latest = injects[0];
+    if (latest && latest.id > lastInjectId) {
+        if (isPolledOnce) {
+            Swal.fire({
+                title: 'CRITICAL INJECT RECEIVED',
+                html: `<div style="font-size:1.05rem; line-height:1.5; color:#ef4444; font-family:'Space Mono',monospace;" class="mb-2"><strong>[${latest.tag}]</strong></div>
+                       <div style="font-size:0.95rem; line-height:1.5; text-align:left;">${latest.content}</div>`,
+                icon: 'warning',
+                confirmButtonText: 'Acknowledge Threat',
+                confirmButtonColor: '#ef4444',
+                background: '#1a2a3a',
+                color: '#fff'
+            });
+        }
+        lastInjectId = latest.id;
+    }
+    currentInjects = injects;
     renderCommunications();
 }
 
@@ -592,14 +631,28 @@ function renderCommunications() {
         source: 'Mentor Injector',
     }));
 
-    const merged = [...mentorItems, ...phaseItems].slice(0, 30);
+    const injectItems = currentInjects.map(inj => ({
+        at: inj.at || null,
+        type: 'warn',
+        message: `<strong>[${inj.tag}]</strong> ${inj.content}`,
+        source: 'Operational Inject',
+    }));
+
+    const merged = [...mentorItems, ...phaseItems, ...injectItems];
+    merged.sort((a, b) => {
+        if (!a.at && !b.at) return 0;
+        if (!a.at) return 1;
+        if (!b.at) return -1;
+        return new Date(b.at) - new Date(a.at);
+    });
+
     if (!merged.length) {
-        feed.innerHTML = '<div class="text-white-50 text-center py-3 small">En attente de communications...</div>';
+        feed.innerHTML = '<div class="text-white-50 text-center py-3 small">Waiting for communications...</div>';
         return;
     }
 
-    feed.innerHTML = merged.map(item => {
-        const when = item.at ? new Date(item.at).toLocaleTimeString('fr', {hour:'2-digit', minute:'2-digit'}) : 'PHASE';
+    feed.innerHTML = merged.slice(0, 30).map(item => {
+        const when = item.at ? new Date(item.at).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) : 'PHASE';
         const type = item.type || 'info';
         return `<div class="broadcast-item ${type}">
             <div class="small text-white-50 mb-1">${when} · ${item.source}</div>
@@ -616,7 +669,7 @@ function updateVote(vote) {
     const teamInfo = teamStateById[TEAM_ID] || null;
     const canVote = !!(teamInfo && teamInfo.canVote);
     const isSecretOpen = !!(vote.isSecret && (vote.is_open ?? vote.isOpen));
-    document.getElementById('voteQuestion').textContent = `${vote.question ?? ''}${isSecretOpen ? ' (vote secret)' : ''}`;
+    document.getElementById('voteQuestion').textContent = `${vote.question ?? ''}${isSecretOpen ? ' (secret vote)' : ''}`;
     const myChoice = vote.myChoice ?? null;
     const opts = document.getElementById('voteOptions');
     opts.innerHTML = (vote.options||[]).map(o => {
@@ -633,7 +686,7 @@ function updateVote(vote) {
         </button>`;
     }).join('');
     if (!canVote) {
-        opts.innerHTML += `<div class="small text-warning mt-2 w-100">Votre equipe a un role mentor et ne vote pas.</div>`;
+        opts.innerHTML += `<div class="small text-warning mt-2 w-100">Your team has a mentor role and does not vote.</div>`;
     }
 }
 
@@ -665,11 +718,11 @@ function updateQuiz(quiz) {
         }).join('');
         
         if (!alreadyAnswered) {
-            html += `<div class="w-100 mt-2"><button onclick="submitMultiChoice()" class="btn btn-sm btn-primary w-100 fw-bold">Valider les réponses multiples</button></div>`;
+            html += `<div class="w-100 mt-2"><button onclick="submitMultiChoice()" class="btn btn-sm btn-primary w-100 fw-bold">Submit multiple choices</button></div>`;
         }
     } else if (currentQuizType === 'order') {
         const answeredOrder = alreadyAnswered ? myAnswer.split(',').filter(Boolean) : orderSelection;
-        html = `<div class="small text-white-50 w-100 mb-2">Ordre actuel: ${answeredOrder.length ? answeredOrder.join(' > ') : '—'}</div>`;
+        html = `<div class="small text-white-50 w-100 mb-2">Current order: ${answeredOrder.length ? answeredOrder.join(' > ') : '—'}</div>`;
         html += (quiz.options || []).map(o => {
             const selectedIdx = answeredOrder.indexOf(o.key);
             const selected = selectedIdx !== -1;
@@ -682,15 +735,15 @@ function updateQuiz(quiz) {
         }).join('');
         if (!alreadyAnswered) {
             html += `<div class="w-100 mt-2 d-flex gap-2">
-                <button onclick="submitOrderChoice()" class="btn btn-sm btn-primary flex-fill fw-bold">Valider l'ordre</button>
-                <button onclick="resetOrderChoice()" class="btn btn-sm btn-outline-light">Réinitialiser</button>
+                <button onclick="submitOrderChoice()" class="btn btn-sm btn-primary flex-fill fw-bold">Submit order</button>
+                <button onclick="resetOrderChoice()" class="btn btn-sm btn-outline-light">Reset</button>
             </div>`;
         }
     } else if (currentQuizType === 'short_answer') {
         const safeText = (alreadyAnswered ? (myAnswerText || '') : '');
-        html = `<textarea id="quizShortAnswer" class="form-control form-control-sm mb-2" rows="3" placeholder="Saisissez votre réponse..." ${alreadyAnswered ? 'disabled' : ''}>${safeText}</textarea>`;
+        html = `<textarea id="quizShortAnswer" class="form-control form-control-sm mb-2" rows="3" placeholder="Enter your response..." ${alreadyAnswered ? 'disabled' : ''}>${safeText}</textarea>`;
         if (!alreadyAnswered) {
-            html += `<button onclick="submitShortAnswer()" class="btn btn-sm btn-primary w-100 fw-bold">Valider la réponse texte</button>`;
+            html += `<button onclick="submitShortAnswer()" class="btn btn-sm btn-primary w-100 fw-bold">Submit text answer</button>`;
         }
     } else {
         html = (quiz.options || []).map(o => {
@@ -705,16 +758,15 @@ function updateQuiz(quiz) {
 
     opts.innerHTML = html;
     const prompt = (quiz.prompt || '').trim();
-    document.getElementById('quizMeta').textContent = `Type: ${currentQuizType.replace('_',' ')} · Réponses reçues: ${quiz.answerCount || 0}${prompt ? ' · ' + prompt : ''}`;
+    document.getElementById('quizMeta').textContent = `Type: ${currentQuizType.replace('_',' ')} · Answers received: ${quiz.answerCount || 0}${prompt ? ' · ' + prompt : ''}`;
 }
 
 // ── ATMOSPHERE ─────────────────────────────────────────────
 function handleAtmo(atmo) {
     if (atmo === lastAtmo) return;
     lastAtmo = atmo;
-    // Let the main app layout handle background naturally
-    if (atmo === 'victory') toast('success', '🏆 Exercice terminé — Résultats en cours...');
-    if (atmo === 'crisis') toast('danger', '🚨 ÉTAT DE CRISE DÉCLARÉ');
+    if (atmo === 'victory') toast('success', '🏆 Exercise complete — Results incoming...');
+    if (atmo === 'crisis') toast('danger', '🚨 STATE OF CRISIS DECLARED');
 }
 
 // ── PHANTOM ────────────────────────────────────────────────

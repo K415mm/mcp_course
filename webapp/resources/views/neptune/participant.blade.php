@@ -542,6 +542,7 @@ let currentBroadcasts = [];
 let currentPhaseMessages = [];
 let currentInjects = [];
 let isPolledOnce = false;
+let lastRenderedMediaStr = '';
 
 // ── API helper ─────────────────────────────────────────────
 async function api(path, method='GET', body=null) {
@@ -803,6 +804,7 @@ function renderPhaseContent(content) {
     renderCommunications();
 
     if (SCENARIO_KEY === 'neptune_strike' && !media.some(m => m.isLive)) {
+        lastRenderedMediaStr = 'canvas';
         if (!document.getElementById('neptuneCanvasContainer')) {
             mediaRoot.innerHTML = `
                 <div id="neptuneCanvasContainer" class="position-relative overflow-hidden w-100 rounded" style="aspect-ratio: 16/9; background: #000;">
@@ -853,9 +855,15 @@ function renderPhaseContent(content) {
         return;
     }
 
+    const mediaStr = media.map(m => `${m.id || ''}:${m.url || ''}:${m.title || ''}:${m.isLive || ''}:${m.autoplay || ''}:${m.loop || ''}:${m.muted || ''}`).join('|');
+    if (mediaStr === lastRenderedMediaStr) {
+        return;
+    }
+    lastRenderedMediaStr = mediaStr;
+
     const mediaHtml = media.map((m) => {
         if (m.type === 'video') {
-            return `<div class="mb-2"><div class="fw-bold">${m.title || 'Video'}</div><video src="${m.url}" class="w-100 rounded mt-1" controls ${m.muted ? 'muted' : ''} ${m.loop ? 'loop' : ''}></video><div class="text-white-50 small">${m.caption || ''}</div></div>`;
+            return `<div class="mb-2"><div class="fw-bold">${m.title || 'Video'}</div><video src="${m.url}" class="w-100 rounded mt-1" controls ${m.autoplay ? 'autoplay' : ''} ${m.muted ? 'muted' : ''} ${m.loop ? 'loop' : ''} playsinline></video><div class="text-white-50 small">${m.caption || ''}</div></div>`;
         }
         if (m.type === 'animation') {
             return `<div class="mb-2"><div class="fw-bold">${m.title || 'Animation'}</div><img src="${m.url}" class="w-100 rounded mt-1" alt="${m.title || 'animation'}"><div class="text-white-50 small">${m.caption || ''}</div></div>`;

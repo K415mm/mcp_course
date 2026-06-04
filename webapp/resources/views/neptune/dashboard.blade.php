@@ -1821,6 +1821,7 @@ let mediaX = 0;
 let mediaY = 0;
 let isDraggingMedia = false;
 let startDragX = 0, startDragY = 0;
+let lastRenderedMediaStr = '';
 
 document.addEventListener('DOMContentLoaded', () => {
     const stage = document.getElementById('mainMediaStage');
@@ -1943,6 +1944,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     const preferred = media.find(m => m.isLive) || media[0] || null;
     
     if (SCENARIO_KEY === 'neptune_strike' && !preferred) {
+        lastRenderedMediaStr = 'canvas';
         if (!document.getElementById('neptuneCanvasContainer')) {
             if (USE_THREE) {
                 stage.innerHTML = `
@@ -2052,9 +2054,16 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
     }
     
     if (!preferred || !preferred.url) {
+        lastRenderedMediaStr = 'empty';
         stage.innerHTML = `<div class="media-stage-empty">${emptyLabel}</div>`;
         return;
     }
+
+    const mediaStr = `${preferred.id || ''}:${preferred.url || ''}:${preferred.title || ''}:${preferred.autoplay || ''}:${preferred.loop || ''}:${preferred.muted || ''}`;
+    if (mediaStr === lastRenderedMediaStr) {
+        return;
+    }
+    lastRenderedMediaStr = mediaStr;
 
     if ((preferred.type || 'image') === 'video') {
         stage.innerHTML = `<video src="${preferred.url}" ${preferred.autoplay ? 'autoplay' : ''} ${preferred.loop ? 'loop' : ''} ${preferred.muted !== false ? 'muted' : ''} playsinline controls></video>`;

@@ -572,6 +572,21 @@ async function submitDecision() {
     if (!PLAYER_ID) return;
     const content = document.getElementById('decisionContent').value.trim();
     if (!content) { toast('warn', 'Write your decision'); return; }
+
+    const confirmResult = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const d = await api('decision','POST',{type:decisionType, content, player_id:PLAYER_ID});
     if (d.ok) { document.getElementById('decisionContent').value=''; toast('success', 'Decision submitted!'); }
     else toast('danger', d.error??('Error'));
@@ -580,6 +595,21 @@ async function submitDecision() {
 // ── VOTE ───────────────────────────────────────────────────
 async function castVote(key) {
     if (!TEAM_ID) return;
+
+    const confirmResult = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, vote',
+        cancelButtonText: 'Cancel',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('vote/submit','POST',{choice:key, team_id:TEAM_ID});
     if (res.ok) {
         toast('success', 'Vote recorded');
@@ -603,6 +633,21 @@ function normalizeQuizType(type) {
 
 async function castQuiz(key) {
     if (!TEAM_ID) return;
+
+    const confirmResult = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
     if (res.ok) toast('success', 'Quiz answer recorded');
     else toast('warn', res.error || ('Quiz answer not registered'));
@@ -623,6 +668,21 @@ async function submitMultiChoice() {
         toast('warn', 'Please select at least one response');
         return;
     }
+
+    const confirmResult = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit','POST',{choice: multiChoiceSelection, team_id:TEAM_ID});
     if (res.ok) {
         toast('success', 'Quiz answers recorded');
@@ -651,6 +711,21 @@ async function submitOrderChoice() {
         toast('warn', 'Define an order with at least 2 choices');
         return;
     }
+
+    const confirmResult = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit', 'POST', {choice: orderSelection, team_id: TEAM_ID});
     if (res.ok) {
         toast('success', 'Quiz order recorded');
@@ -669,6 +744,21 @@ async function submitShortAnswer() {
         toast('warn', 'Please enter your response');
         return;
     }
+
+    const confirmResult = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, submit',
+        cancelButtonText: 'Cancel',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit', 'POST', {answer_text: text, team_id: TEAM_ID});
     if (res.ok) toast('success', 'Short answer recorded');
     else toast('warn', res.error || ('Quiz answer not registered'));

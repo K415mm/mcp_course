@@ -286,6 +286,21 @@ async function submitDecision() {
     if (!PLAYER_ID) return;
     const content = document.getElementById('decisionContent').value.trim();
     if (!content) { toast('warn','Rédigez votre décision'); return; }
+
+    const confirmResult = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: 'Cette action ne peut pas être annulée.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, envoyer',
+        cancelButtonText: 'Annuler',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const d = await api('decision','POST',{type:decisionType, content, player_id:PLAYER_ID});
     if (d.ok) { document.getElementById('decisionContent').value=''; toast('success','Décision soumise !'); }
     else toast('danger', d.error??'Erreur');
@@ -294,6 +309,21 @@ async function submitDecision() {
 // ── VOTE ───────────────────────────────────────────────────
 async function castVote(key) {
     if (!TEAM_ID) return;
+
+    const confirmResult = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: 'Cette action ne peut pas être annulée.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, voter',
+        cancelButtonText: 'Annuler',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('vote/submit','POST',{choice:key, team_id:TEAM_ID});
     if (res.ok) {
         toast('success','Vote enregistré');
@@ -317,6 +347,21 @@ function normalizeQuizType(type) {
 
 async function castQuiz(key) {
     if (!TEAM_ID) return;
+
+    const confirmResult = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: 'Cette action ne peut pas être annulée.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, soumettre',
+        cancelButtonText: 'Annuler',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
     if (res.ok) toast('success','Réponse quiz enregistrée');
     else toast('warn', res.error || 'Réponse quiz non prise en compte');
@@ -337,6 +382,21 @@ async function submitMultiChoice() {
         toast('warn', 'Veuillez sélectionner au moins une réponse');
         return;
     }
+
+    const confirmResult = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: 'Cette action ne peut pas être annulée.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, soumettre',
+        cancelButtonText: 'Annuler',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit','POST',{choice: multiChoiceSelection, team_id:TEAM_ID});
     if (res.ok) {
         toast('success','Réponses quiz enregistrées');
@@ -365,6 +425,21 @@ async function submitOrderChoice() {
         toast('warn', 'Définissez un ordre avec au moins 2 choix');
         return;
     }
+
+    const confirmResult = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: 'Cette action ne peut pas être annulée.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, soumettre',
+        cancelButtonText: 'Annuler',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit', 'POST', {choice: orderSelection, team_id: TEAM_ID});
     if (res.ok) {
         toast('success', 'Ordre quiz enregistré');
@@ -383,6 +458,21 @@ async function submitShortAnswer() {
         toast('warn', 'Veuillez saisir votre réponse');
         return;
     }
+
+    const confirmResult = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: 'Cette action ne peut pas être annulée.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, soumettre',
+        cancelButtonText: 'Annuler',
+        background: '#1a2a3a',
+        color: '#fff'
+    });
+    if (!confirmResult.isConfirmed) return;
+
     const res = await api('quiz/submit', 'POST', {answer_text: text, team_id: TEAM_ID});
     if (res.ok) toast('success', 'Réponse texte enregistrée');
     else toast('warn', res.error || 'Réponse quiz non prise en compte');

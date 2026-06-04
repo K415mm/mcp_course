@@ -19,7 +19,7 @@
       "id": "p3-q1",
       "type": "single_choice",
       "secret": false,
-      "question": "ALL ROLES — PARALLEL CRISIS RESPONSE (D-03)",
+      "question": "[QUIZ] ALL ROLES — PARALLEL CRISIS RESPONSE (D-03)",
       "points": 120,
       "time_limit": 60,
       "options": [
@@ -28,7 +28,125 @@
         {"key": "C", "label": "C → Activate parallel cells — simultaneous dual response", "color": "#00ffcc", "points": 120},
         {"key": "D", "label": "D → Request EU reinforcements before acting (30-min delay)", "color": "#ff3355", "points": -80}
       ],
-      "note": "Multi-vector crises require parallel cell activation. Sequential response is catastrophic."
+      "note": "Multi-vector crises require parallel cell activation. Sequential response is catastrophic.",
+      "acceptable_answers": ["C"]
+    },
+    {
+      "id": "p3-q2",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] CROSS COMMAND — GPS SPOOFING MITIGATION",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Instruct the captain to switch navigation to visual radar and manual depth sounding", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Wait for satellite operators to reset GPS signal integrity", "color": "#ef4444", "points": -120},
+        {"key": "C", "label": "C → Dispatch a helicopter to drop a portable GPS receiver on board", "color": "#ff3355", "points": -50},
+        {"key": "D", "label": "D → Guide the vessel using transponder AIS coordinates exclusively", "color": "#ffaa00", "points": -30}
+      ],
+      "note": "Visual radar, dead reckoning, and echo-sounders are the primary out-of-band backups when satellite navigation fails.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p3-q3",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] LNG TERMINAL — SCADA FAIL-SAFE ACTIVATION",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Activate mechanical isolation valves manually at the local manifold", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Run a network threat sweep to terminate the malicious connections", "color": "#ff3355", "points": -40},
+        {"key": "C", "label": "C → Shut down the entire LNG terminal's electrical power grid", "color": "#ffaa00", "points": 30},
+        {"key": "D", "label": "D → Re-program PLC threshold logic live on the infected network", "color": "#ef4444", "points": -100}
+      ],
+      "note": "Local mechanical override is the only absolute protection against cyber-induced physical overpressure/hazards.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p3-q4",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] MEDIA CELL — TOXIC LEAK RUMOR CONTROL",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Issue a single, authoritative statement confirming localized containment under military watch", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Deny all rumors and decline to comment on operational matters", "color": "#ff3355", "points": -60},
+        {"key": "C", "label": "C → Publish the full technical incident report to demonstrate transparency", "color": "#ffaa00", "points": -30},
+        {"key": "D", "label": "D → Force BFM TV to suspend broadcasting under state emergency powers", "color": "#ef4444", "points": -150}
+      ],
+      "note": "Factual, calm containment statements by a single spokesperson prevent mass evacuation panic without feeding rumors.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p3-v1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — SHIPPING TRAFFIC REDIRECTION",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Yes: Divert all inbound ships immediately to ensure regional supply chain continuity", "color": "#00ffcc", "points": 100, "note": "Protects supply lines but causes massive domestic economic impact"},
+        {"key": "B", "label": "B → No: Keep vessels in holding anchorage until port cyber integrity is verified", "color": "#ffaa00", "points": 50, "note": "Saves national port revenues but risks complete channel blockage"},
+        {"key": "C", "label": "C → Enforce local port fees on idle ships to offset loss", "color": "#ff3355", "points": -100, "note": "Extremely hostile business move, damages long-term reputation"},
+        {"key": "D", "label": "D → Outsource decisions to shipping alliance cartels", "color": "#ef4444", "points": -50, "note": "Loss of sovereign control over vital national waters"}
+      ],
+      "note": "Diverting shipping to allied terminals preserves supply chain throughput during critical local disruptions."
+    },
+    {
+      "id": "p3-v2",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — CIVILIAN AREA SAFEGUARDS",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Declare Red Alert: Evacuate a 5km radius around the LNG terminal", "color": "#ffaa00", "points": 40, "note": "Ensures physical safety but triggers massive panic and disruption"},
+        {"key": "B", "label": "B → Sheltering-in-place order: Advise staying indoors with closed ventilation", "color": "#00ffcc", "points": 100, "note": "Optimal balance for minor leaks while keeping access routes clear"},
+        {"key": "C", "label": "C → Delay evacuation decision until physical sensors confirm leakage", "color": "#ff3355", "points": -60, "note": "High-risk delay if catastrophic breach is imminent"},
+        {"key": "D", "label": "D → Deploy civilian volunteers to monitor perimeter boundaries", "color": "#ef4444", "points": -80, "note": "Dangerous exposure of untrained personnel to hazardous gas"}
+      ],
+      "note": "A shelter-in-place order ensures safety while keeping emergency access lanes clear for responders."
+    },
+    {
+      "id": "p3-v3",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — DEFENSE ESCALATION",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Yes: Formally request NATO collective defense consultations", "color": "#00ffcc", "points": 100, "note": "Strong deterrent signal, but escalates regional tensions"},
+        {"key": "B", "label": "B → No: Treat as a criminal national event and manage domestically", "color": "#ffaa00", "points": 60, "note": "De-escalates international conflict but limits support resources"},
+        {"key": "C", "label": "C → Deploy offensive cyber countermeasures against identified source servers", "color": "#ff3355", "points": -50, "note": "Risks international war if attribution is spoofed/inaccurate"},
+        {"key": "D", "label": "D → Propose a regional ceasefire with the suspected threat actor", "color": "#ef4444", "points": -120, "note": "Weak posture, yields strategic initiative to criminals"}
+      ],
+      "note": "Requesting NATO Article 4 consultations provides international options without immediate military commitment."
+    },
+    {
+      "id": "p3-o1",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — CIVILIAN-MILITARY ESCALATION PROTOCOL",
+      "points": 10,
+      "prompt": "How do you resolve command priority conflicts between the Maritime Prefect (military) and the Port Director (civilian)?"
+    },
+    {
+      "id": "p3-o2",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — TACTICAL RESOURCE PRIORITIZATION",
+      "points": 10,
+      "prompt": "With both a drifting tanker and an LNG SCADA threat, how do you prioritize limited elite navy diving and cyber teams?"
+    },
+    {
+      "id": "p3-o3",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — KINETIC TRANSITION TRIGGERS",
+      "points": 10,
+      "prompt": "What specific physical event in the port would trigger your transition from a cyber defense posture to kinetic defense operations?"
     }
   ]
 }

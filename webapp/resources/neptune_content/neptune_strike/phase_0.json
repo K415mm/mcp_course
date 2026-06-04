@@ -35,7 +35,7 @@
       "id": "p1-q1",
       "type": "multi_choice",
       "secret": false,
-      "question": "MARITIME CERT — IMMEDIATE RESPONSE DECISION (D-01)",
+      "question": "[QUIZ] MARITIME CERT — IMMEDIATE RESPONSE DECISION (D-01)",
       "points": 100,
       "time_limit": 60,
       "options": [
@@ -44,7 +44,124 @@
         {"key": "C", "label": "C → Alert port authorities first — await confirmation", "color": "#ffaa00", "points": -30},
         {"key": "D", "label": "D → Activate BCP — switch to manual degraded mode", "color": "#00aaff", "points": 80}
       ],
-      "note": "OT/IT isolation limits lateral movement, preserves forensic integrity. switch to manual BCP mode ensures safety."
+      "note": "OT/IT isolation limits lateral movement, preserves forensic integrity. switch to manual BCP mode ensures safety.",
+      "acceptable_answers": ["A", "D"]
+    },
+    {
+      "id": "p1-q2",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] PORT AUTHORITY — EMERGENCY DOCKING DIRECTIVE",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Command the vessel to drop anchor immediately in the approach channel", "color": "#ff3355", "points": -40},
+        {"key": "B", "label": "B → Authorise emergency tug boarding and manual override mooring", "color": "#00ffcc", "points": 100},
+        {"key": "C", "label": "C → Order vessel to return to open sea to clear the harbor entrance", "color": "#ffaa00", "points": 30},
+        {"key": "D", "label": "D → Keep the vessel at Quay J4 and wait for auxiliary generator boot", "color": "#ef4444", "points": -100}
+      ],
+      "note": "Tug assistance with manual mooring prevents channel obstruction and quay impact during power failures.",
+      "acceptable_answers": ["B"]
+    },
+    {
+      "id": "p1-q3",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] SECURITY CELL — VTMS TRACK VERIFICATION",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Cross-reference tracks using optical/thermal surveillance cameras", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Reboot VTMS radar servers immediately to clear cached state", "color": "#ff3355", "points": -60},
+        {"key": "C", "label": "C → Rely entirely on transponder reports from vessels in area", "color": "#ef4444", "points": -100},
+        {"key": "D", "label": "D → Suspend all port traffic until GPS signals normalize", "color": "#ffaa00", "points": 40}
+      ],
+      "note": "Visual/optical confirmation is the ultimate out-of-band truth verification when digital sensors conflict.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p1-q4",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] CERT LEAD — PLC FIRMWARE ANOMALY",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Execute clean firmware re-flash from an offline gold image", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Ignore the alert as a false positive from routine updates", "color": "#ef4444", "points": -100},
+        {"key": "C", "label": "C → Perform a live memory dump of active PLCs over the network", "color": "#ff3355", "points": -30},
+        {"key": "D", "label": "D → Power-cycle the PLCs to clear volatile memory", "color": "#ffaa00", "points": 20}
+      ],
+      "note": "Firmware re-flash from validated offline media is the only reliable way to clear hardware-level implants.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p1-v1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — CRISIS COMMAND LEADERSHIP",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Port Authority (operational focus)", "color": "#ffaa00", "points": 60, "note": "Ensures commerce flow but lacks security resources"},
+        {"key": "B", "label": "B → Military Joint Command (sovereignty focus)", "color": "#00aaff", "points": 80, "note": "Strong assets but civilian friction potential"},
+        {"key": "C", "label": "C → Inter-ministerial Crisis Cell (policy focus)", "color": "#00ffcc", "points": 100, "note": "Optimal for strategic and national coordination"},
+        {"key": "D", "label": "D → Private terminal operators (business focus)", "color": "#ff3355", "points": -50, "note": "Severe conflict of interest in crisis command"}
+      ],
+      "note": "Inter-ministerial crisis cells balance public safety, military intelligence, and economic sovereignty."
+    },
+    {
+      "id": "p1-v2",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — PUBLIC INFORMATION POSTURE",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Complete blackout: deny any cyber incident", "color": "#ff3355", "points": -60, "note": "Destroys credibility when leaks occur"},
+        {"key": "B", "label": "B → Confirm minor technical issues — scenario under control", "color": "#ffaa00", "points": 50, "note": "Buys time but risks appearing dismissive"},
+        {"key": "C", "label": "C → Factual confirmation of cyber disruption — no attribution details", "color": "#00ffcc", "points": 100, "note": "Maintains trust without releasing sensitive data"},
+        {"key": "D", "label": "D → Accuse hostile state actors immediately to preempt media speculation", "color": "#ef4444", "points": -100, "note": "Dangerous escalatory move without full evidence"}
+      ],
+      "note": "Sovereign communication must remain factual, avoiding premature attribution to protect sources."
+    },
+    {
+      "id": "p1-v3",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — HARBOR SUSPENSION",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Yes: Full commercial shut-down to preserve digital forensic state", "color": "#ffaa00", "points": 40, "note": "High security, catastrophic economic impact"},
+        {"key": "B", "label": "B → No: Keep unaffected terminals open under visual observation", "color": "#00ffcc", "points": 100, "note": "Balances security risks with regional economic survival"},
+        {"key": "C", "label": "C → Delegate the decision to individual shipping companies", "color": "#ff3355", "points": -50, "note": "Abdication of authority during national crisis"}
+      ],
+      "note": "Keeping commercial operations active under out-of-band surveillance mitigates economic paralysis."
+    },
+    {
+      "id": "p1-o1",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — CIVILIAN-MILITARY COMMAND TRANSITIONS",
+      "points": 10,
+      "prompt": "Identify the primary strategic gap between the Port's emergency response plan and the Navy's rules of engagement."
+    },
+    {
+      "id": "p1-o2",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — UNILATERAL VESSEL REDIRECTION",
+      "points": 10,
+      "prompt": "What legal authority permits the unilateral redirection of commercial vessels in the exclusive economic zone during a suspected cyber incident?"
+    },
+    {
+      "id": "p1-o3",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — ECONOMIC IMPACT MITIGATION",
+      "points": 10,
+      "prompt": "How will your role group mitigate the supply-chain ripple effect of a 12-hour complete shutdown of Marseille-Fos terminal operations?"
     }
   ]
 }

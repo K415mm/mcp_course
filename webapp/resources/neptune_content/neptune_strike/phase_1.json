@@ -25,7 +25,7 @@
       "id": "p2-q1",
       "type": "single_choice",
       "secret": false,
-      "question": "POLITICAL CELL — ATTRIBUTION STRATEGY (D-02)",
+      "question": "[QUIZ] POLITICAL CELL — ATTRIBUTION STRATEGY (D-02)",
       "points": 100,
       "time_limit": 60,
       "options": [
@@ -34,7 +34,125 @@
         {"key": "C", "label": "C → Request 48h delay to confirm attribution with certainty", "color": "#ffaa00", "points": 60},
         {"key": "D", "label": "D → File IMO complaint + invoke NATO Article 5 immediately", "color": "#00aaff", "points": -50}
       ],
-      "note": "TLP:RED sharing preserves operational discretion while activating collective response. Premature public attribution compromises intelligence sources."
+      "note": "TLP:RED sharing preserves operational discretion while activating collective response. Premature public attribution compromises intelligence sources.",
+      "acceptable_answers": ["B"]
+    },
+    {
+      "id": "p2-q2",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] CERT LEAD — PROTOCOL EXPLOITATION",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → DNP3 (Distributed Network Protocol) encapsulation zero-day", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Modbus TCP cleartext session hijack", "color": "#ffaa00", "points": 30},
+        {"key": "C", "label": "C → HTTPS certificate spoofing on the administrative server", "color": "#ff3355", "points": -40},
+        {"key": "D", "label": "D → Physical USB rubber ducky injection in Port Control", "color": "#ef4444", "points": -80}
+      ],
+      "note": "APT-POSEIDON exploited a DNP3 protocol implementation flaw to send control commands over wide area telemetry networks.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p2-q3",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] NAVAL COMMAND — HYBRID VESSEL TRANSIT",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Intercept and board under suspicion of hybrid undersea sabotage", "color": "#ffaa00", "points": 80},
+        {"key": "B", "label": "B → Monitor electronically and record telemetry from a safe distance", "color": "#00ffcc", "points": 100},
+        {"key": "C", "label": "C → Request the vessel to self-report their position via VHF radio", "color": "#ff3355", "points": -60},
+        {"key": "D", "label": "D → Fire warning shots across the bow to force immediate departure", "color": "#ef4444", "points": -120}
+      ],
+      "note": "Visual and electronic monitoring avoids diplomatic incidents while collecting critical acoustic/SIGINT evidence.",
+      "acceptable_answers": ["B"]
+    },
+    {
+      "id": "p2-q4",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[QUIZ] EU COORD — TRANS-BOUNDARY DISCLOSURE TIMELINE",
+      "points": 100,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → An early warning within 24 hours of becoming aware of the incident", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → A comprehensive report only after full mitigation (within 30 days)", "color": "#ef4444", "points": -30},
+        {"key": "C", "label": "C → Within 72 hours with initial assessment of severity", "color": "#ffaa00", "points": 70},
+        {"key": "D", "label": "D → Only if requested directly by neighboring affected nations", "color": "#ff3355", "points": -100}
+      ],
+      "note": "NIS2 enforces a strict two-stage notification protocol: 24h early warning, followed by a 72h incident notification.",
+      "acceptable_answers": ["A"]
+    },
+    {
+      "id": "p2-v1",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — INTELLIGENCE DECLASSIFICATION",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Declassify fully to build international support", "color": "#ffaa00", "points": 50, "note": "Exposes sensitive collection capabilities"},
+        {"key": "B", "label": "B → Keep classified; share exclusively via secure diplomatic channels", "color": "#00ffcc", "points": 100, "note": "Protects collection methods while coordinating ally responses"},
+        {"key": "C", "label": "C → Leak the intelligence anonymously to mainstream media outlets", "color": "#ff3355", "points": -80, "note": "Undermines official state credibility and control"},
+        {"key": "D", "label": "D → Deny any knowledge of foreign state involvement", "color": "#ef4444", "points": -40, "note": "Weak posture that weakens deterrent capability"}
+      ],
+      "note": "Keeping intelligence classified while sharing securely protects collection methods and options."
+    },
+    {
+      "id": "p2-v2",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — SUBMARINE CABLE PROTECTIVE INFRASTRUCTURE",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Establish a permanent naval surveillance corridor along key routes", "color": "#ffaa00", "points": 80, "note": "Highly visible, extremely costly to maintain"},
+        {"key": "B", "label": "B → Implement a unified regional monitoring network using fiber-optic acoustic sensors", "color": "#00ffcc", "points": 100, "note": "Advanced, scalable, passive warning detection system"},
+        {"key": "C", "label": "C → Mandate cable routing through territorial waters only", "color": "#ff3355", "points": -50, "note": "Geographically impossible and economically unviable"},
+        {"key": "D", "label": "D → Delegate cable security entirely to private telecom consortia", "color": "#ef4444", "points": -100, "note": "Severe national security risk for critical infrastructure"}
+      ],
+      "note": "A unified fiber-optic regional monitoring network offers cost-effective, scalable detection capabilities."
+    },
+    {
+      "id": "p2-v3",
+      "type": "single_choice",
+      "secret": false,
+      "question": "[VOTE] STRATEGIC VOTE — TRANS-MEDITERRANEAN COOPERATION",
+      "points": 10,
+      "time_limit": 60,
+      "options": [
+        {"key": "A", "label": "A → Full integration in the operational crisis cell", "color": "#ff3355", "points": -50, "note": "High risk of leaks and operational compromise"},
+        {"key": "B", "label": "B → Separate information sharing cell with sanitized data reports", "color": "#00ffcc", "points": 100, "note": "Maintains diplomatic trust while safeguarding sensitive intel"},
+        {"key": "C", "label": "C → Complete exclusion of non-EU/NATO states from all disclosures", "color": "#ffaa00", "points": 20, "note": "Creates security gaps in the wider Mediterranean basin"},
+        {"key": "D", "label": "D → Outsource coordination entirely to the United Nations", "color": "#ef4444", "points": -100, "note": "Ineffective and slow reaction during active cyber crisis"}
+      ],
+      "note": "Establishing a separate sanitized information-sharing cell coordinates region-wide defense securely."
+    },
+    {
+      "id": "p2-o1",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — ATTRIBUTION THRESHOLD",
+      "points": 10,
+      "prompt": "What threshold of technical and geopolitical proof must be met before your command authorizes retaliatory diplomatic action?"
+    },
+    {
+      "id": "p2-o2",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — INTERNATIONAL WATERS SABOTAGE",
+      "points": 10,
+      "prompt": "In the event of physical cable damage in international waters, what military options exist to deter hybrid naval assets?"
+    },
+    {
+      "id": "p2-o3",
+      "type": "short_answer",
+      "secret": false,
+      "question": "[OPEN] OPEN SITREP — DIPLOMATIC ALIGNMENT DISCORD",
+      "points": 10,
+      "prompt": "How do you manage the diplomatic backlash if your attribution to a state-linked group is contested by key allies?"
     }
   ]
 }

@@ -136,6 +136,37 @@ class NeptuneApiController extends CsApiController
     {
         $session = CsSession::where('code', $code)->where('scenario_key', 'neptune_strike')->firstOrFail();
 
+        if (!$request->has('choice')) {
+            $data = $request->validate([
+                'type'      => 'required|in:decision,escalade,communication,question',
+                'content'   => 'required|string|max:1000',
+                'player_id' => 'required|integer',
+            ]);
+
+            $resolved = $this->resolvePlayer($request, $session);
+            if (!$resolved || (int) $resolved->id !== (int) $data['player_id']) {
+                return response()->json(['ok' => false, 'error' => 'Invalid player session context.'], 403);
+            }
+            if ($resolved->is_banned) {
+                return response()->json(['ok' => false, 'error' => 'Player is banned from this session.'], 403);
+            }
+
+            $player = CsPlayer::where('id', $data['player_id'])
+                ->where('cs_session_id', $session->id)
+                ->with('team')
+                ->firstOrFail();
+
+            $decision = $this->cs->submitDecision(
+                $session,
+                $player->team,
+                $player,
+                $data['type'],
+                $data['content']
+            );
+
+            return response()->json(['ok' => true, 'id' => $decision->id]);
+        }
+
         $data = $request->validate([
             'choice'    => 'required|string|in:a,b,c,d,A,B,C,D',
             'inject_id' => 'required|string',

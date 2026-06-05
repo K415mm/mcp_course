@@ -224,6 +224,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/phantom',          [NeptuneApiController::class, 'phantom'])->name('phantom');
             Route::post('/inject/{injectId}',[NeptuneApiController::class, 'inject'])->name('inject');
             Route::post('/atmosphere',       [NeptuneApiController::class, 'atmosphere'])->name('atmosphere');
+            Route::post('/settings',         [NeptuneApiController::class, 'updateSettings'])->name('settings');
             Route::post('/vote/open',        [NeptuneApiController::class, 'voteOpen'])->name('vote.open');
             Route::post('/vote/close',       [NeptuneApiController::class, 'voteClose'])->name('vote.close');
             Route::post('/vote/submit',      [NeptuneApiController::class, 'voteSubmit'])->name('vote.submit');

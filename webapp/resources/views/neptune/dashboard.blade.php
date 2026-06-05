@@ -1495,33 +1495,28 @@ function drawScene() {
 const SCENE_DESCRIPTIONS = {
   ocean: {
     title: 'PHASE I · INITIAL DETECTION',
-    sub: 'SITUATION NOMINALE · MARITIME ROUTINE',
-    desc: 'During routine maritime monitoring, VTMIS registers telemetry anomalies in the Mediterranean. A suspicious cargo vessel, the MV Silver Horizon, goes dark by turning off its AIS transponder, triggering security alert protocols for hybrid crisis response.',
-    desc_fr: 'Lors de la surveillance maritime de routine, le VTMIS enregistre des anomalies de télémétrie en Méditerranée. Un cargo suspect, le MV Silver Horizon, éteint son transpondeur AIS, déclenchant les protocoles d\'alerte de sécurité.'
+    sub: 'June 9, 2026 · 06:42 Local Time · Routine Routine / Initial Detection',
+    desc: 'During routine maritime monitoring at 06:42 on June 9, 2026, VTMIS registers telemetry anomalies in the Mediterranean. A suspicious cargo vessel, the MV Silver Horizon, goes dark by turning off its AIS transponder, triggering security alert protocols. Simultaneously, a critical OT system failure hits Port Marseille-Fos, freezing SCADA controls for Terminal J cranes and immobilizing MV Olympia (carrying hazardous IMO Class 3 cargo) at Quay J4.'
   },
   cable: {
-    title: 'PHASE II · HYBRID THREAT',
-    sub: 'MV SILVER HORIZON · ROV DETECTED',
-    desc: 'Underwater acoustic sensors and patrolling assets report an unidentified Remotely Operated Vehicle (ROV) operating in close proximity to critical submarine communication cables (e.g. SEA-ME-WE 5). Reconnaissance operations indicate active physical threat preparation.',
-    desc_fr: 'Les capteurs acoustiques sous-marins et les patrouilleurs signalent un véhicule sous-marin télécommandé (ROV) non identifié opérant à proximité immédiate de câbles de communication sous-marins critiques. Les opérations de reconnaissance indiquent une préparation active de menace physique.'
+    title: 'PHASE II · THREAT ANALYSIS',
+    sub: 'June 9, 2026 · 07:07 Local Time (T+00:25)',
+    desc: 'At 07:07 on June 9, 2026, forensic teams reveal initial findings: a 4-stage attack vector is active (Trojanised Kongsberg update PDF, CVE-2024-28921 pivot, Siemens S7-1500 firmware implant). Meanwhile, underwater acoustic sensors report an unidentified Remotely Operated Vehicle (ROV) operating near the MEDEX-3 and SEA-ME-WE 5 submarine cables, indicating active physical threat preparation by state-linked APT-POSEIDON.'
   },
   port: {
-    title: 'PHASE I-II · ATTACK ACTIVE',
-    sub: 'T+00:00 · SYSTEM FAILURE ACTIVE',
-    desc: 'A coordinated cyber-physical disruption hits the Marseille maritime terminal. The SCADA systems governing cargo crane operations are locked, causing terminal gridlock. General communication failures and system lockouts lock down port operations.',
-    desc_fr: 'Une perturbation cyber-physique coordonnée frappe le terminal maritime de Marseille. Les systèmes SCADA régissant le fonctionnement des portiques de fret sont verrouillés, provoquant un blocage du terminal.'
+    title: 'PHASE III · ESCALATION',
+    sub: 'June 9, 2026 · 07:57 Local Time (T+01:15)',
+    desc: 'At 07:57 on June 9, 2026, the crisis escalates with physical safety threats. GPS spoofing is active in the Marseille approach. The crude oil tanker MV Adriatic Star is drifting and broadcasting corrupted distress signals, while Fos LNG terminal valves receive unauthorized open commands. In parallel, BFM TV launches a live broadcast about the French port cyberattacks, causing media panic.'
   },
   hack: {
-    title: 'PHASE III · ESCALATION',
-    sub: 'T+01:15 · MULTI-VECTOR ATTACK ACTIVE',
-    desc: 'The threat actor escalates operations into a full-scale digital offensive. Propagation of malware and active C2 (Command & Control) beacons are identified across the maritime operational technology (OT) network, targeting industrial control logic.',
-    desc_fr: 'L\'attaquant intensifie ses opérations en une offensive numérique à grande échelle. La propagation de logiciels malveillants et de balises C2 actives est identifiée sur le réseau OT maritime, ciblant la logique de contrôle industriel.'
+    title: 'PHASE IV · STRATEGIC RESPONSE',
+    sub: 'June 9, 2026 · 09:12 Local Time (T+02:30)',
+    desc: 'At 09:12 on June 9, 2026, the physical crisis is contained. The Neptune Strike joint command and crisis response center is fully operational. Authorities coordinate with national cyber agency ANSSI and allied commands to isolate affected systems and initialize attribution operations. Mediterranean regional governance architecture and binding IMO standards are being debated.'
   },
   command: {
-    title: 'PHASE IV · STRATEGIC RESPONSE',
-    sub: 'CRISIS COORDINATION CELL ACTIVATED',
-    desc: 'The Carthage Shield joint command and crisis response center is fully operational. Authorities coordinate with national cyber agency ANSSI and allied commands to isolate affected systems, route communications, and initialize attribution operations.',
-    desc_fr: 'Le commandement interarmées Carthage Shield et le centre de réponse aux crises sont pleinement opérationnels. Les autorités se coordonnent avec l\'ANSSI et les commandements alliés pour isoler les systèmes affectés et lancer les opérations d\'attribution.'
+    title: 'PHASE V · DEBRIEF',
+    sub: 'June 9, 2026 · 10:00 Local Time',
+    desc: 'The tabletop simulation is complete. Five critical systemic gaps have been identified (delay in CERT notification, no BCP testing, lack of regional IoC sharing, UNCLOS and SOLAS gaps). Teams conduct a hot debrief to formulate concrete recommendations for the Forum policy deliverables.'
   }
 };
 
@@ -1531,8 +1526,7 @@ function openSceneInfo() {
   document.getElementById('infoTitle').textContent = info.title;
   document.getElementById('infoSub').textContent = info.sub;
   document.getElementById('infoDesc').innerHTML = `
-      <p style="margin-bottom: 12px; color: #fff; font-size: 0.9rem;">${info.desc}</p>
-      <p style="margin-bottom: 0; color: rgba(200,255,240,0.65); font-style: italic; font-size: 0.82rem; border-top: 1px solid rgba(0,255,204,0.15); padding-top: 10px;">${info.desc_fr}</p>
+      <p style="margin-bottom: 0; color: #fff; font-size: 0.9rem;">${info.desc}</p>
   `;
   document.getElementById('sceneInfoOverlay').classList.add('show');
 }
@@ -1985,7 +1979,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
                                 <div class="scene-info-title" id="infoTitle">--</div>
                                 <div class="scene-info-sub" id="infoSub">--</div>
                                 <div class="scene-info-desc" id="infoDesc">--</div>
-                                <div class="scene-info-footer">CARTHAGE SHIELD SECUR-OPS · SITUATION REPORT</div>
+                                <div class="scene-info-footer">NEPTUNE STRIKE SECUR-OPS · SITUATION REPORT</div>
                             </div>
                         </div>
                     </div>
@@ -2033,7 +2027,7 @@ function renderMediaStage(stage, content, emptyLabel = 'MEDIA') {
                                 <div class="scene-info-title" id="infoTitle">--</div>
                                 <div class="scene-info-sub" id="infoSub">--</div>
                                 <div class="scene-info-desc" id="infoDesc">--</div>
-                                <div class="scene-info-footer">CARTHAGE SHIELD SECUR-OPS · SITUATION REPORT</div>
+                                <div class="scene-info-footer">NEPTUNE STRIKE SECUR-OPS · SITUATION REPORT</div>
                             </div>
                         </div>
                     </div>
@@ -2094,6 +2088,7 @@ function updateTimer(timer, session) {
 }
 
 // ── Phase ───────────────────────────────────────────────
+let lastAutoOpenedPhaseIdx = null;
 function updatePhase(session) {
     const idx = session.currentPhaseIndex;
     latestSessionPhaseIdx = idx;
@@ -2102,6 +2097,16 @@ function updatePhase(session) {
         const el = document.getElementById('ph-seg-' + i);
         if (!el) continue;
         el.className = 'ph-seg' + (i < idx ? ' done' : i === idx ? ' active' : '');
+    }
+    
+    // Automatically trigger scene info overlay when phase changes
+    if (lastAutoOpenedPhaseIdx === null || lastAutoOpenedPhaseIdx !== idx) {
+        lastAutoOpenedPhaseIdx = idx;
+        if (session.status === 'active') {
+            setTimeout(() => {
+                openSceneInfo();
+            }, 1000);
+        }
     }
 }
 

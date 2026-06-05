@@ -84,6 +84,8 @@ class NeptuneApiController extends CsApiController
             ->with(['teams.players', 'moderator'])
             ->firstOrFail();
 
+        $this->checkAndTriggerAutoInjects($session);
+
         $player = $this->resolvePlayer($request, $session);
 
         $stateData = $this->isModerator($session)
@@ -135,6 +137,13 @@ class NeptuneApiController extends CsApiController
     public function decision(Request $request, string $code): JsonResponse
     {
         $session = CsSession::where('code', $code)->where('scenario_key', 'neptune_strike')->firstOrFail();
+
+        if ($session->status !== 'active') {
+            return response()->json(['ok' => false, 'error' => 'Action rejected: The simulation is not active.'], 422);
+        }
+        if ($session->timerRemainingSeconds() <= 0) {
+            return response()->json(['ok' => false, 'error' => 'Action rejected: Phase time has expired.'], 422);
+        }
 
         if (!$request->has('choice')) {
             $data = $request->validate([
@@ -233,5 +242,75 @@ class NeptuneApiController extends CsApiController
             'points' => $pts,
             'team_score' => $team->score
         ]);
+    }
+
+    protected function checkAndTriggerAutoInjects(CsSession $session): void
+    {
+        if (!$session->isActive() || !$session->timerIsRunning()) {
+            return;
+        }
+
+        $settings = $session->settings ?? [];
+        $enabled = $settings['auto_inject_enabled'] ?? true;
+        $interval = (int) ($settings['auto_inject_interval'] ?? 120);
+
+        if (!$enabled || $interval <= 0) {
+            return;
+        }
+
+        $currentPhase = $session->currentPhase();
+        if (!$currentPhase) {
+            return;
+        }
+        $duration = (int) ($currentPhase['duration_seconds'] ?? 540);
+        $remaining = $session->timerRemainingSeconds();
+        if ($remaining === null) {
+            return;
+        }
+        $elapsed = $duration - $remaining;
+
+        // Get standard injects for current phase
+        $phaseHint = (string) ($session->current_phase_index + 1);
+        $injects = \App\Models\CsInject::where('scenario_key', $session->scenario_key)
+            ->where('phase_hint', $phaseHint)
+            ->where('is_surprise', false)
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
+        // Get already triggered injects in this phase
+        $triggeredIds = \App\Models\CsSessionInject::where('cs_session_id', $session->id)
+            ->where('phase_index', $session->current_phase_index)
+            ->pluck('cs_inject_id')
+            ->toArray();
+
+        foreach ($injects as $index => $inject) {
+            if (in_array($inject->id, $triggeredIds)) {
+                continue;
+            }
+
+            $requiredElapsed = $index * $interval;
+
+            if ($elapsed >= $requiredElapsed) {
+                $this->cs->triggerInject($session, $inject);
+            }
+        }
+    }
+
+    public function updateSettings(Request $request, string $code): JsonResponse
+    {
+        $session = $this->getModeratorSession($code);
+
+        $data = $request->validate([
+            'auto_inject_enabled'  => 'required|boolean',
+            'auto_inject_interval' => 'required|integer|min:10|max:3600',
+        ]);
+
+        $settings = $session->settings ?? [];
+        $settings['auto_inject_enabled']  = $data['auto_inject_enabled'];
+        $settings['auto_inject_interval'] = $data['auto_inject_interval'];
+        $session->settings = $settings;
+        $session->save();
+
+        return response()->json(['ok' => true, 'settings' => $session->settings]);
     }
 }

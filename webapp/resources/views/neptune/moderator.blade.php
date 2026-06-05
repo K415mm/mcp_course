@@ -235,13 +235,13 @@ body {
                         <h6 class="card-title mb-2"><i class="bi bi-broadcast me-2 text-theme"></i>Announcement</h6>
                         <select class="form-select form-select-sm mb-2" id="bcType">
                             <option value="info">Info</option>
-                            <option value="warn">Avertissement</option>
-                            <option value="alert">Alerte</option>
-                            <option value="success">Succès</option>
+                            <option value="warn">Warning</option>
+                            <option value="alert">Alert</option>
+                            <option value="success">Success</option>
                         </select>
                         <textarea class="form-control form-control-sm mb-2" id="bcMsg" rows="3" placeholder="Message..."></textarea>
                         <div class="d-flex gap-2">
-                            <button onclick="broadcast()" class="btn btn-sm btn-theme flex-fill fw-bold">Diffuser</button>
+                            <button onclick="broadcast()" class="btn btn-sm btn-theme flex-fill fw-bold">Broadcast</button>
                             <button onclick="phantom()" class="btn btn-sm btn-danger fw-bold" title="Message PHANTOM">☠️</button>
                         </div>
                     </div>
@@ -251,22 +251,22 @@ body {
                 <div class="card h-100">
                     <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                     <div class="card-body">
-                        <h6 class="card-title mb-2"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Vote stratégique</h6>
+                        <h6 class="card-title mb-2"><i class="bi bi-hand-thumbs-up me-2 text-warning"></i>Strategic Vote</h6>
                         <input class="form-control form-control-sm mb-2" id="voteQ" placeholder="Question...">
                         <textarea class="form-control form-control-sm mb-2 cs-mono" id="vOpt"
-                                  placeholder="Options manuelles (une ligne = A|Label|#00b4d8|20|Note)"
+                                  placeholder="Manual options (one line = A|Label|#00b4d8|20|Note)"
                                   rows="3"></textarea>
-                        <div id="preparedVoteInfo" class="bank-note mb-2">Aucune question préchargée depuis la bibliothèque.</div>
+                        <div id="preparedVoteInfo" class="bank-note mb-2">No preloaded question from library.</div>
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="voteSecretSwitch">
-                            <label class="form-check-label small text-white-50" for="voteSecretSwitch">Vote secret</label>
+                            <label class="form-check-label small text-white-50" for="voteSecretSwitch">Secret Vote</label>
                         </div>
-                        <button onclick="openVote()" class="btn btn-sm btn-warning text-dark fw-bold w-100 mb-2">Ouvrir</button>
-                        <button onclick="closeVoteWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Fermer & Scorer</button>
+                        <button onclick="openVote()" class="btn btn-sm btn-warning text-dark fw-bold w-100 mb-2">Open</button>
+                        <button onclick="closeVoteWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Close & Score</button>
                         <div class="mt-2" id="voteTally"></div>
                         <hr class="my-3" style="border-color:rgba(255,255,255,.1)">
-                        <h6 class="card-title mb-2"><i class="bi bi-patch-question me-2 text-info"></i>Question Quiz (évaluation)</h6>
-                        <input class="form-control form-control-sm mb-2" id="quizQ" placeholder="Question quiz...">
+                        <h6 class="card-title mb-2"><i class="bi bi-patch-question me-2 text-info"></i>Quiz Question (Evaluation)</h6>
+                        <input class="form-control form-control-sm mb-2" id="quizQ" placeholder="Quiz question...">
                         <select class="form-select form-select-sm mb-2" id="quizType">
                             <option value="single_choice">Single choice</option>
                             <option value="multi_choice">Multi choice</option>
@@ -274,15 +274,15 @@ body {
                             <option value="short_answer">Short response</option>
                         </select>
                         <textarea class="form-control form-control-sm mb-2 cs-mono" id="quizOpt"
-                                  placeholder="Choix requis (une ligne = A|Label|#00b4d8|20)"
+                                  placeholder="Choices required (one line = A|Label|#00b4d8|20)"
                                   rows="3"></textarea>
-                        <input class="form-control form-control-sm mb-2 cs-mono" id="quizCorrect" placeholder="Réponse(s) correcte(s): ex A ou A,C">
+                        <input class="form-control form-control-sm mb-2 cs-mono" id="quizCorrect" placeholder="Correct answer(s): e.g. A or A,C">
                         <div class="input-group input-group-sm mb-2">
                             <span class="input-group-text">Base points</span>
                             <input type="number" min="0" max="100" value="10" class="form-control" id="quizBasePoints">
                         </div>
-                        <button onclick="openQuiz()" class="btn btn-sm btn-info text-dark fw-bold w-100 mb-2">Ouvrir Quiz</button>
-                        <button onclick="closeQuizWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Fermer Quiz & Scorer</button>
+                        <button onclick="openQuiz()" class="btn btn-sm btn-info text-dark fw-bold w-100 mb-2">Open Quiz</button>
+                        <button onclick="closeQuizWithScore()" class="btn btn-sm btn-danger fw-bold w-100">Close Quiz & Score</button>
                         <div class="mt-2" id="quizTally"></div>
                     </div>
                 </div>
@@ -298,25 +298,25 @@ body {
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h6 class="card-title mb-2"><i class="bi bi-journal-text me-2 text-info"></i>Bibliothèque de scénario</h6>
+                <h6 class="card-title mb-2"><i class="bi bi-journal-text me-2 text-info"></i>Scenario Library</h6>
                 <div class="d-flex gap-2 mb-2">
                     <select id="bankPhaseSelect" class="form-select form-select-sm" onchange="loadBankForPhase(this.value)">
                         @foreach($scenario['phases'] as $p)
                             <option value="{{ $p['index'] }}">Phase {{ $p['index'] }} - {{ $p['name'] }}</option>
                         @endforeach
                     </select>
-                    <button class="btn btn-sm btn-outline-theme" onclick="refreshBank()">Rafraichir</button>
+                    <button class="btn btn-sm btn-outline-theme" onclick="refreshBank()">Refresh</button>
                 </div>
                 <div class="bank-block mb-2">
                     <div class="small fw-bold text-theme mb-2">Messages</div>
-                    <div id="bankMessages" class="small text-white-50">Chargement...</div>
+                    <div id="bankMessages" class="small text-white-50">Loading...</div>
                 </div>
                 <div class="bank-block mb-2">
-                    <div class="small fw-bold text-theme mb-2">Media de phase</div>
-                    <div id="bankMedia" class="small text-white-50">Chargement...</div>
+                    <div class="small fw-bold text-theme mb-2">Phase Media</div>
+                    <div id="bankMedia" class="small text-white-50">Loading...</div>
                 </div>
                 <div class="bank-block mb-2">
-                    <div class="small fw-bold text-theme mb-2">Controle Media Live</div>
+                    <div class="small fw-bold text-theme mb-2">Live Media Control</div>
                     <div class="row g-2">
                         <div class="col-4">
                             <select id="mediaType" class="form-select form-select-sm">
@@ -326,10 +326,10 @@ body {
                             </select>
                         </div>
                         <div class="col-8">
-                            <input id="mediaTitle" class="form-control form-control-sm" placeholder="Titre du media">
+                            <input id="mediaTitle" class="form-control form-control-sm" placeholder="Media title">
                         </div>
                         <div class="col-12">
-                            <input id="mediaUrl" class="form-control form-control-sm" placeholder="URL media (https://...)">
+                            <input id="mediaUrl" class="form-control form-control-sm" placeholder="Media URL (https://...)">
                         </div>
                         <div class="col-12">
                             <textarea id="mediaCaption" class="form-control form-control-sm" rows="2" placeholder="Description / Caption"></textarea>
@@ -349,21 +349,21 @@ body {
                             </label>
                         </div>
                         <div class="col-12 d-flex gap-2 flex-wrap">
-                            <button class="btn btn-sm btn-outline-theme" onclick="saveMediaToPhase()">Ajouter a la phase</button>
-                            <button class="btn btn-sm btn-theme" onclick="saveMediaToLive()">Injecter live</button>
+                            <button class="btn btn-sm btn-outline-theme" onclick="saveMediaToPhase()">Add to phase</button>
+                            <button class="btn btn-sm btn-theme" onclick="saveMediaToLive()">Inject live</button>
                         </div>
                         <div class="col-12">
                             <input type="file" id="mediaFile" class="form-control form-control-sm" accept="image/*,video/*,.gif,.webp">
                         </div>
                         <div class="col-12 d-flex gap-2 flex-wrap">
-                            <button class="btn btn-sm btn-outline-info" onclick="uploadMediaToPhase()">Upload vers phase</button>
+                            <button class="btn btn-sm btn-outline-info" onclick="uploadMediaToPhase()">Upload to phase</button>
                             <button class="btn btn-sm btn-info text-dark" onclick="uploadMediaToLive()">Upload & Inject live</button>
                         </div>
                     </div>
                 </div>
                 <div class="bank-block">
                     <div class="small fw-bold text-theme mb-2">Questions / Quiz</div>
-                    <div id="bankQuestions" class="small text-white-50">Chargement...</div>
+                    <div id="bankQuestions" class="small text-white-50">Loading...</div>
                 </div>
             </div>
         </div>
@@ -374,7 +374,7 @@ body {
             <div class="card-body p-0">
                 <div id="matrixPanel">
                     <div class="text-white-50 text-center py-4 small">
-                        <i class="bi bi-grid-3x3-gap me-2"></i>Sélectionnez une phase pour voir la matrice
+                        <i class="bi bi-grid-3x3-gap me-2"></i>Select a phase to view the matrix
                     </div>
                 </div>
             </div>
@@ -384,10 +384,10 @@ body {
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h6 class="card-title mb-3"><i class="bi bi-award me-2 text-warning"></i>Badges Bonus (+5 pts)</h6>
+                <h6 class="card-title mb-3"><i class="bi bi-award me-2 text-warning"></i>Bonus Badges (+5 pts)</h6>
                 <div class="mb-2">
                     <select class="form-select form-select-sm mb-2" id="badgeTeamSelect">
-                        <option value="">— Équipe —</option>
+                        <option value="">— Team —</option>
                         @foreach($teams as $t)
                         @if($t->badge_eligible)
                         <option value="{{ $t->id }}" data-color="{{ $t->color }}">{{ $t->icon }} {{ $t->name }}</option>
@@ -414,7 +414,7 @@ body {
                     </div>
                 </div>
                 <div id="badgeLog" style="max-height:160px;overflow-y:auto;margin-top:10px">
-                    <div class="text-white-50 text-center small py-2">Aucun badge attribué</div>
+                    <div class="text-white-50 text-center small py-2">No badges awarded</div>
                 </div>
             </div>
         </div>
@@ -427,7 +427,7 @@ body {
         {{-- Tabs --}}
         <div class="d-flex gap-1 mb-2">
             <button class="mod-tab active" id="tab-injects" onclick="switchTab('injects')"><i class="bi bi-lightning me-1"></i>Injects <span id="injectCount" class="badge bg-dark ms-1">{{ $injects->count() }}</span></button>
-            <button class="mod-tab" id="tab-decisions" onclick="switchTab('decisions')"><i class="bi bi-clipboard-check me-1"></i>Décisions <span id="decCount" class="badge bg-dark ms-1">0</span></button>
+            <button class="mod-tab" id="tab-decisions" onclick="switchTab('decisions')"><i class="bi bi-clipboard-check me-1"></i>Decisions <span id="decCount" class="badge bg-dark ms-1">0</span></button>
         </div>
 
         <div class="mb-3">
@@ -450,14 +450,29 @@ body {
             <div class="card">
                 <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
                 <div class="card-body p-2">
+                    {{-- Auto Injects Control --}}
+                    <div class="p-2 mb-2 rounded" style="background:rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.1);">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <label class="form-check-label small fw-bold text-white" for="autoInjectCheckbox">
+                                <i class="bi bi-robot me-1 text-theme"></i>Auto Injects
+                            </label>
+                            <div class="form-check form-switch p-0 m-0">
+                                <input class="form-check-input" type="checkbox" id="autoInjectCheckbox" onchange="saveAutoSettings()" checked style="margin-left:0; cursor:pointer">
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <span class="small text-white-50" style="font-size:0.75rem">Interval (s):</span>
+                            <input type="number" id="autoInjectInterval" class="form-control form-control-sm py-0 px-2" style="width:70px; height:22px; font-size:0.75rem" value="120" min="10" max="3600" onchange="saveAutoSettings()">
+                        </div>
+                    </div>
                     {{-- Inject target filter --}}
                     <div class="mb-2">
                         <select class="form-select form-select-sm" id="injectTargetFilter" onchange="filterInjects()">
-                            <option value="">Tous les injects</option>
+                            <option value="">All Injects</option>
                             @foreach($teams as $t)
                             <option value="{{ $t->type }}">{{ $t->icon }} {{ $t->name }}</option>
                             @endforeach
-                            <option value="__global">🌐 Global uniquement</option>
+                            <option value="__global">🌐 Global Only</option>
                         </select>
                     </div>
                     <div style="max-height:calc(100vh - 300px);overflow-y:auto" id="injectsContainer">
@@ -475,7 +490,7 @@ body {
                             </div>
                         </div>
                         @empty
-                        <div class="text-white-50 text-center py-3 small">Aucun inject disponible</div>
+                        <div class="text-white-50 text-center py-3 small">No injects available</div>
                         @endforelse
                     </div>
                 </div>
@@ -489,25 +504,25 @@ body {
                 <div class="card-body p-2">
                     <div class="decision-toolbar">
                         <div class="d-flex gap-2 align-items-center mb-2">
-                            <span id="decSummaryTeams" class="badge bg-dark">0 équipes</span>
-                            <span id="decSummaryAnswers" class="badge bg-info text-dark">0 réponses quiz</span>
-                            <span id="decSummaryTotal" class="badge bg-secondary">0 éléments</span>
+                            <span id="decSummaryTeams" class="badge bg-dark">0 teams</span>
+                            <span id="decSummaryAnswers" class="badge bg-info text-dark">0 quiz answers</span>
+                            <span id="decSummaryTotal" class="badge bg-secondary">0 items</span>
                         </div>
                         <div class="d-flex gap-2">
                             <select class="form-select form-select-sm" id="decTypeFilter" onchange="renderDecisionsPanel()">
-                                <option value="all">Tous</option>
-                                <option value="question">Quiz uniquement</option>
-                                <option value="decision">Décisions stratégiques</option>
+                                <option value="all">All</option>
+                                <option value="question">Quiz Only</option>
+                                <option value="decision">Strategic Decisions</option>
                                 <option value="communication">Communications</option>
-                                <option value="escalade">Escalades</option>
+                                <option value="escalade">Escalations</option>
                             </select>
                             <select class="form-select form-select-sm" id="decTeamFilter" onchange="renderDecisionsPanel()">
-                                <option value="all">Toutes les équipes</option>
+                                <option value="all">All Teams</option>
                             </select>
                         </div>
                     </div>
                     <div style="max-height:calc(100vh - 240px);overflow-y:auto" id="decisionsArea">
-                        <div class="text-white-50 text-center py-3 small">En attente de décisions...</div>
+                        <div class="text-white-50 text-center py-3 small">Awaiting decisions...</div>
                     </div>
                 </div>
             </div>
@@ -530,8 +545,8 @@ body {
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Confirmer',
-            cancelButtonText: 'Annuler',
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
             background: '#1e293b',
             color: '#f8fafc'
         }).then((result) => {
@@ -581,11 +596,11 @@ async function apiChecked(path, method='GET', body=null) {
         data = await r.json();
     } catch (e) {
         if (r.status === 419) { location.reload(); return null; }
-        throw new Error('Reponse serveur invalide.');
+        throw new Error('Invalid server response.');
     }
     if (!r.ok || data?.ok === false || data?.success === false) {
         const validationMessage = data?.errors ? Object.values(data.errors).flat()[0] : null;
-        throw new Error(data?.error || data?.message || validationMessage || 'Operation refusee.');
+        throw new Error(data?.error || data?.message || validationMessage || 'Operation denied.');
     }
     return data;
 }
@@ -632,6 +647,37 @@ function setTimer() {
 }
 
 // ── PHASE ───────────────────────────────────────────────────
+let settingsSynced = false;
+function syncSettings(settings) {
+    if (settingsSynced || !settings) return;
+    const autoEnabled = settings.auto_inject_enabled !== false;
+    const autoInterval = settings.auto_inject_interval || 120;
+    
+    const checkbox = document.getElementById('autoInjectCheckbox');
+    const intervalInput = document.getElementById('autoInjectInterval');
+    if (checkbox) checkbox.checked = autoEnabled;
+    if (intervalInput) intervalInput.value = autoInterval;
+    
+    settingsSynced = true;
+}
+
+async function saveAutoSettings() {
+    const checkbox = document.getElementById('autoInjectCheckbox');
+    const intervalInput = document.getElementById('autoInjectInterval');
+    const enabled = checkbox ? checkbox.checked : true;
+    const interval = intervalInput ? parseInt(intervalInput.value, 10) : 120;
+
+    const res = await api('settings', 'POST', {
+        auto_inject_enabled: enabled,
+        auto_inject_interval: interval
+    });
+    if (res?.ok) {
+        showNotif('Auto-inject settings saved', 'success');
+    } else {
+        showNotif(res?.error || 'Failed to save settings', 'danger');
+    }
+}
+
 function updatePhase(s) {
     latestSessionState = s || null;
     const idx = s.currentPhaseIndex ?? 0;
@@ -655,6 +701,10 @@ function updatePhase(s) {
         const phaseSelect = document.getElementById('bankPhaseSelect');
         if (phaseSelect) phaseSelect.value = String(idx);
         loadBankForPhase(idx);
+    }
+
+    if (s.settings) {
+        syncSettings(s.settings);
     }
 
     renderAssignmentControls();
@@ -681,7 +731,7 @@ async function loadBankForPhase(phaseIndex) {
     } catch (e) {
         // Fallback server-rendered payload, avoids hard failure if API bank is blocked in prod.
         currentBank = INITIAL_BANK_BY_PHASE?.[idx] ?? { messages: [], questions: [], media: [] };
-        showNotif('Bibliotheque chargee via fallback local', 'warn');
+        showNotif('Library loaded via local fallback', 'warn');
     }
 
     renderBankMessages();
@@ -693,7 +743,7 @@ function renderBankMessages() {
     const root = document.getElementById('bankMessages');
     if (!root) return;
     if (!currentBank.messages.length) {
-        root.innerHTML = '<div class="text-white-50">Aucun message disponible pour cette phase.</div>';
+        root.innerHTML = '<div class="text-white-50">No messages available for this phase.</div>';
         return;
     }
 
@@ -702,7 +752,7 @@ function renderBankMessages() {
             <p>${m.content || ''}</p>
             <div class="mt-2 d-flex justify-content-between align-items-center">
                 <span class="badge bg-dark">${(m.type || 'info').toUpperCase()}${m.stage ? ` · ${m.stage}` : ''}</span>
-                <button class="btn btn-sm btn-outline-theme" onclick="sendBankMessage(${idx})">Envoyer au live feed</button>
+                <button class="btn btn-sm btn-outline-theme" onclick="sendBankMessage(${idx})">Send to live feed</button>
             </div>
         </div>
     `).join('');
@@ -712,7 +762,7 @@ function renderBankMedia() {
     const root = document.getElementById('bankMedia');
     if (!root) return;
     if (!currentBank.media?.length) {
-        root.innerHTML = '<div class="text-white-50">Aucun media disponible pour cette phase.</div>';
+        root.innerHTML = '<div class="text-white-50">No media available for this phase.</div>';
         return;
     }
 
@@ -721,10 +771,10 @@ function renderBankMedia() {
             <p class="fw-bold mb-1">${m.title || m.id || 'Media'} ${m.isLive ? '<span class="badge bg-danger ms-1">LIVE</span>' : ''}</p>
             <div class="bank-note">${(m.type || 'image').toUpperCase()}${m.stage ? ` · ${m.stage}` : ''}${m.scope ? ` · ${String(m.scope).toUpperCase()}` : ''}</div>
             <div class="small text-white-50 mt-1">${m.caption || ''}</div>
-            <div class="small mt-1"><a href="${m.url || '#'}" target="_blank" rel="noopener">Ouvrir le media</a></div>
+            <div class="small mt-1"><a href="${m.url || '#'}" target="_blank" rel="noopener">Open media</a></div>
             <div class="mt-2 d-flex gap-2 flex-wrap">
-                <button class="btn btn-sm btn-theme" onclick="pushMediaLive(${idx})">Injecter live</button>
-                ${m.isEditable ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteMedia(${idx})">Supprimer</button>` : ''}
+                <button class="btn btn-sm btn-theme" onclick="pushMediaLive(${idx})">Inject live</button>
+                ${m.isEditable ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteMedia(${idx})">Delete</button>` : ''}
             </div>
         </div>
     `).join('');
@@ -745,7 +795,7 @@ function mediaPayloadFromForm() {
 async function saveMediaToPhase() {
     const payload = mediaPayloadFromForm();
     if (!payload.url) {
-        showNotif('URL media requise', 'warn');
+        showNotif('Media URL required', 'warn');
         return;
     }
     const phaseIndex = parseInt(document.getElementById('bankPhaseSelect')?.value || currentPhaseIndex || 0, 10) || 0;
@@ -754,18 +804,18 @@ async function saveMediaToPhase() {
         phase_index: phaseIndex,
         ...payload
     });
-    showNotif('Media ajoute a la phase', 'success');
+    showNotif('Media added to phase', 'success');
     await refreshBank();
 }
 
 async function saveMediaToLive() {
     const payload = mediaPayloadFromForm();
     if (!payload.url) {
-        showNotif('URL media requise', 'warn');
+        showNotif('Media URL required', 'warn');
         return;
     }
     await api('media/save', 'POST', { scope: 'live', ...payload, context: 'manual_live' });
-    showNotif('Media injecte en live', 'success');
+    showNotif('Media injected live', 'success');
     await refreshBank();
 }
 
@@ -773,7 +823,7 @@ async function uploadMediaToPhase() {
     const input = document.getElementById('mediaFile');
     const file = input?.files?.[0];
     if (!file) {
-        showNotif('Selectionner un fichier media', 'warn');
+        showNotif('Select a media file', 'warn');
         return;
     }
     const payload = mediaPayloadFromForm();
@@ -789,11 +839,11 @@ async function uploadMediaToPhase() {
     fd.append('muted', payload.muted ? '1' : '0');
     const res = await apiUpload('media/upload', fd);
     if (!res?.ok) {
-        showNotif(res?.error || 'Upload media echoue', 'warn');
+        showNotif(res?.error || 'Media upload failed', 'warn');
         return;
     }
     input.value = '';
-    showNotif('Upload media termine', 'success');
+    showNotif('Media upload completed', 'success');
     await refreshBank();
 }
 
@@ -801,7 +851,7 @@ async function uploadMediaToLive() {
     const input = document.getElementById('mediaFile');
     const file = input?.files?.[0];
     if (!file) {
-        showNotif('Selectionner un fichier media', 'warn');
+        showNotif('Select a media file', 'warn');
         return;
     }
     const payload = mediaPayloadFromForm();
@@ -816,11 +866,11 @@ async function uploadMediaToLive() {
     fd.append('muted', payload.muted ? '1' : '0');
     const res = await apiUpload('media/upload', fd);
     if (!res?.ok) {
-        showNotif(res?.error || 'Upload media echoue', 'warn');
+        showNotif(res?.error || 'Media upload failed', 'warn');
         return;
     }
     input.value = '';
-    showNotif('Upload media termine', 'success');
+    showNotif('Media upload completed', 'success');
     await refreshBank();
 }
 
@@ -917,7 +967,7 @@ async function openQuizFromBank(index) {
 
 // ── ONLINE COUNT ────────────────────────────────────────────
 function updateOnlineCount(players) {
-    document.getElementById('onlineCount').textContent = `${players.length} ${IS_EN ? 'online' : 'en ligne'}`;
+    document.getElementById('onlineCount').textContent = `${players.length} online`;
 }
 
 // ── TEAMS ───────────────────────────────────────────────────
@@ -1136,8 +1186,8 @@ async function openQuiz() {
 
 async function closeQuizWithScore() {
     const r = await api('quiz/close', 'POST');
-    if (!r?.ok) return showNotif(r?.error || ('Error closing quiz'), 'danger');
-    showNotif(IS_EN ? `Quiz closed — ${r.answeredTeams || 0} teams scored` : `Quiz fermé — ${r.answeredTeams || 0} équipes scorées`, 'success');
+    if (!r?.ok) return showNotif(r?.error || 'Error closing quiz', 'danger');
+    showNotif(`Quiz closed — ${r.answeredTeams || 0} teams scored`, 'success');
 }
 
 function updateQuizTally(quiz) {
@@ -1173,13 +1223,13 @@ async function closeVoteWithScore() {
     const d = await api('vote/close','POST');
     if (d.ok) {
         const msg = d.isTie
-            ? (IS_EN ? `Vote closed — Tie (${(d.tiedKeys || []).join(', ')}) — no points awarded` : `Vote fermé — Egalite (${(d.tiedKeys || []).join(', ')}) — aucun point attribue`)
+            ? `Vote closed — Tie (${(d.tiedKeys || []).join(', ')}) — no points awarded`
             : (d.awardedPoints > 0
-                ? (IS_EN ? `Vote closed — Winner: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts awarded` : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts attribues`)
-                : (IS_EN ? `Vote closed — Winner: ${d.winnerLabel || d.winner}` : `Vote fermé — Vainqueur: ${d.winnerLabel || d.winner}`));
+                ? `Vote closed — Winner: ${d.winnerLabel || d.winner} — ${d.awardedPoints} pts awarded`
+                : `Vote closed — Winner: ${d.winnerLabel || d.winner}`);
         showNotif(msg, 'success');
     } else {
-        showNotif(d.error || ('Error'), 'danger');
+        showNotif(d.error || 'Error', 'danger');
     }
 }
 function updateVoteTally(vote) {
@@ -1261,7 +1311,7 @@ function populateDecisionTeamFilter(decisions) {
     if (!el) return;
     const current = el.value || 'all';
     const teams = Array.from(new Set(decisions.map(d => d.teamType).filter(Boolean)));
-    const opts = ['<option value="all">Toutes les équipes</option>'];
+    const opts = ['<option value="all">All Teams</option>'];
     teams.forEach(tt => {
         opts.push(`<option value="${escapeHtml(tt)}">${escapeHtml(teamNameMap[tt] || tt)}</option>`);
     });
@@ -1307,7 +1357,7 @@ function renderDecisionsPanel() {
     const html = teamKeys.map((teamKey, idx) => {
         const items = grouped[teamKey].sort((a, b) => b.id - a.id);
         const color = teamColorMap[teamKey] || '#aaa';
-        const teamName = teamNameMap[teamKey] || items[0]?.teamName || 'Équipe';
+        const teamName = teamNameMap[teamKey] || items[0]?.teamName || 'Team';
         const quizCount = items.filter(x => x.type === 'question').length;
         const collapseId = `dec-team-${teamKey.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
         const entriesHtml = items.map(d => {
@@ -1319,7 +1369,7 @@ function renderDecisionsPanel() {
                 <div id="dec-${d.id}" class="decision-review ${d.id === lastDecId ? 'dec-new' : ''}">
                     <div class="d-flex align-items-center gap-2 mb-1">
                         <span class="dr-type">${typeIcons[d.type]||'📋'} ${escapeHtml((d.type||'').toUpperCase())}</span>
-                        <span class="ms-auto decision-meta">${new Date(d.at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'})}</span>
+                        <span class="ms-auto decision-meta">${new Date(d.at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'})}</span>
                     </div>
                     ${answerBlock}
                     <div class="d-flex gap-1 mt-2 align-items-center" ${isMentorDecision ? 'style="opacity:.5"' : ''}>
@@ -1341,7 +1391,7 @@ function renderDecisionsPanel() {
                         <span class="dr-team" style="background:${color}22;color:${color}">${escapeHtml(teamName)}</span>
                         <span class="badge bg-dark">${items.length}</span>
                         <span class="badge bg-info text-dark">${quizCount} quiz</span>
-                        <span class="ms-auto decision-meta">${items[0]?.at ? new Date(items[0].at).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                        <span class="ms-auto decision-meta">${items[0]?.at ? new Date(items[0].at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
                     </button>
                 </h2>
                 <div id="${collapseId}" class="collapse ${idx === 0 ? 'show' : ''}">
@@ -1360,7 +1410,7 @@ function setPendingAward(id, value) {
 
 function parseQuizDecisionContent(content) {
     const raw = String(content || '');
-    const m = raw.match(/^Quiz\s*\(([^)]+)\)\s*:\s*(.*?)\s*\|\s*Réponse\s*:\s*(.*)$/i);
+    const m = raw.match(/^Quiz\s*\(([^)]+)\)\s*:\s*(.*?)\s*\|\s*(?:Answer|Réponse)\s*:\s*(.*)$/i);
     if (!m) return null;
     const quizType = normalizeQuizType((m[1] || '').trim());
     const question = (m[2] || '').trim();
@@ -1391,7 +1441,7 @@ function renderQuizAnswerBlock(q) {
             <span class="ms-1">${escapeHtml(q.question || 'Quiz')}</span>
         </div>
         <div style="font-size:.83rem">
-            <span class="text-white-50">Réponse:</span> ${escapeHtml(answer)}
+            <span class="text-white-50">Answer:</span> ${escapeHtml(answer)}
         </div>
     `;
 }
@@ -1408,7 +1458,7 @@ function escapeHtml(value) {
 async function awardScore(id) {
     const pts = parseInt(document.getElementById('award-'+id).value);
     await api(`decision/${id}/award`,'POST',{points:pts});
-    showNotif(IS_EN ? `Score validated: ${pts} pts` : `Score validé: ${pts} pts`,'success');
+    showNotif(`Score validated: ${pts} pts`,'success');
     delete pendingAwardEdits[id];
     decisionsSignature = '';
     await poll();

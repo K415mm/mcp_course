@@ -786,6 +786,7 @@ class CsService
                 'currentPhase'     => $currentPhase,
                 'totalPhases'      => count($phases),
                 'phases'           => $phases,
+                'settings'         => $session->settings,
             ],
             'timer' => [
                 'remainingSeconds' => $session->timerRemainingSeconds(),

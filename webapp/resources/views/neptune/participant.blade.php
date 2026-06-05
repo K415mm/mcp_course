@@ -194,7 +194,12 @@ body {
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
-                <h5 class="card-title mb-3"><i class="bi bi-collection-play me-2 text-info"></i>Operations Map</h5>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="card-title mb-0"><i class="bi bi-collection-play me-2 text-info"></i>Operations Map</h5>
+                    <button onclick="if(latestSessionPhaseIdx!==null) showScenarioAlert(latestSessionPhaseIdx)" class="btn btn-outline-info btn-xs py-0 px-2" style="font-size:0.75rem; height:22px;">
+                        <i class="bi bi-info-circle me-1"></i>Phase Info
+                    </button>
+                </div>
                 <div id="phaseSituationMedia" class="small text-white-50">No media for the current phase.</div>
             </div>
         </div>
@@ -300,6 +305,52 @@ const SCENARIO_KEY = '{{ $scenario['key'] }}';
 const IS_EN = true;
 let animationLoopRunning = false;
 let latestSessionPhaseIdx = null;
+let latestSessionState = null;
+let latestTimerState = null;
+let latestRemainingSeconds = 0;
+
+const PHASE_DESCRIPTIONS = [
+    {
+        title: 'PHASE I · INITIAL DETECTION',
+        sub: 'June 9, 2026 · 06:42 Local Time',
+        desc: 'At 06:42 on June 9, 2026, routine system checks on Marseilles maritime server infrastructure reveal anomalous network traffic and CPU spikes. System logs indicate unauthorized administrative access. Local ports report minor container sorting errors.'
+    },
+    {
+        title: 'PHASE II · THREAT ANALYSIS',
+        sub: 'June 9, 2026 · 07:07 Local Time (T+00:25)',
+        desc: 'At 07:07 on June 9, 2026, forensic teams reveal initial findings: a 4-stage attack vector is active (Trojanised Kongsberg update PDF, CVE-2024-28921 pivot, Siemens S7-1500 firmware implant). Meanwhile, underwater acoustic sensors report an unidentified Remotely Operated Vehicle (ROV) operating near the MEDEX-3 and SEA-ME-WE 5 submarine cables, indicating active physical threat preparation by state-linked APT-POSEIDON.'
+    },
+    {
+        title: 'PHASE III · ESCALATION',
+        sub: 'June 9, 2026 · 07:57 Local Time (T+01:15)',
+        desc: 'At 07:57 on June 9, 2026, the crisis escalates with physical safety threats. GPS spoofing is active in the Marseille approach. The crude oil tanker MV Adriatic Star is drifting and broadcasting corrupted distress signals, while Fos LNG terminal valves receive unauthorized open commands. In parallel, BFM TV launches a live broadcast about the French port cyberattacks, causing media panic.'
+    },
+    {
+        title: 'PHASE IV · STRATEGIC RESPONSE',
+        sub: 'June 9, 2026 · 09:12 Local Time (T+02:30)',
+        desc: 'At 09:12 on June 9, 2026, the physical crisis is contained. The Neptune Strike joint command and crisis response center is fully operational. Authorities coordinate with national cyber agency ANSSI and allied commands to isolate affected systems and initialize attribution operations. Mediterranean regional governance architecture and binding IMO standards are being debated.'
+    },
+    {
+        title: 'PHASE V · DEBRIEF',
+        sub: 'June 9, 2026 · 10:00 Local Time',
+        desc: 'The tabletop simulation is complete. Five critical systemic gaps have been identified (delay in CERT notification, no BCP testing, lack of regional IoC sharing, UNCLOS and SOLAS gaps). Teams conduct a hot debrief to formulate concrete recommendations for the Forum policy deliverables.'
+    }
+];
+
+function showScenarioAlert(phaseIndex) {
+    const info = PHASE_DESCRIPTIONS[phaseIndex];
+    if (!info) return;
+    Swal.fire({
+        title: `<div style="font-family:'Orbitron',sans-serif;font-weight:700;color:var(--bs-theme);letter-spacing:1px;font-size:1.1rem">${info.title}</div>`,
+        html: `<div style="font-family:'Share Tech Mono',monospace;color:rgba(255,255,255,0.6);font-size:0.75rem;margin-bottom:12px">${info.sub}</div>
+               <div style="font-family:'Space Mono',monospace;color:#fff;font-size:0.83rem;line-height:1.5;text-align:left;border-top:1px solid rgba(0,255,204,0.15);padding-top:10px">${info.desc}</div>`,
+        confirmButtonText: 'Acknowledge Scenario',
+        confirmButtonColor: 'var(--bs-theme)',
+        background: '#0a1a2e',
+        color: '#fff',
+        width: '500px'
+    });
+}
 
 // Canvas refs
 let bgCv, mainCv, bgCtx, ctx, W, H;
@@ -575,6 +626,28 @@ function setDType(type, el) {
 }
 async function submitDecision() {
     if (!PLAYER_ID) return;
+    if (!latestSessionState || latestSessionState.status !== 'active') {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'The simulation is currently paused or inactive.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
+    if (latestRemainingSeconds <= 0) {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'Phase time has expired.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
     const content = document.getElementById('decisionContent').value.trim();
     if (!content) { toast('warn', 'Write your decision'); return; }
 
@@ -600,6 +673,28 @@ async function submitDecision() {
 // ── VOTE ───────────────────────────────────────────────────
 async function castVote(key) {
     if (!TEAM_ID) return;
+    if (!latestSessionState || latestSessionState.status !== 'active') {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'The simulation is currently paused or inactive.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
+    if (latestRemainingSeconds <= 0) {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'Phase time has expired.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
 
     const confirmResult = await Swal.fire({
         title: 'Are you sure?',
@@ -638,6 +733,28 @@ function normalizeQuizType(type) {
 
 async function castQuiz(key) {
     if (!TEAM_ID) return;
+    if (!latestSessionState || latestSessionState.status !== 'active') {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'The simulation is currently paused or inactive.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
+    if (latestRemainingSeconds <= 0) {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'Phase time has expired.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
 
     const confirmResult = await Swal.fire({
         title: 'Are you sure?',
@@ -671,6 +788,28 @@ async function submitMultiChoice() {
     if (!TEAM_ID) return;
     if (multiChoiceSelection.length === 0) {
         toast('warn', 'Please select at least one response');
+        return;
+    }
+    if (!latestSessionState || latestSessionState.status !== 'active') {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'The simulation is currently paused or inactive.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
+    if (latestRemainingSeconds <= 0) {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'Phase time has expired.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
         return;
     }
 
@@ -716,6 +855,28 @@ async function submitOrderChoice() {
         toast('warn', 'Define an order with at least 2 choices');
         return;
     }
+    if (!latestSessionState || latestSessionState.status !== 'active') {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'The simulation is currently paused or inactive.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
+    if (latestRemainingSeconds <= 0) {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'Phase time has expired.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
 
     const confirmResult = await Swal.fire({
         title: 'Are you sure?',
@@ -749,6 +910,28 @@ async function submitShortAnswer() {
         toast('warn', 'Please enter your response');
         return;
     }
+    if (!latestSessionState || latestSessionState.status !== 'active') {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'The simulation is currently paused or inactive.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
+    if (latestRemainingSeconds <= 0) {
+        Swal.fire({
+            title: 'Action Blocked',
+            text: 'Phase time has expired.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444',
+            background: '#1a2a3a',
+            color: '#fff'
+        });
+        return;
+    }
 
     const confirmResult = await Swal.fire({
         title: 'Are you sure?',
@@ -777,6 +960,8 @@ function redrawCurrentQuiz() {
 async function poll() {
     try {
         const d = await api('state');
+        latestSessionState = d.session;
+        latestTimerState = d.timer;
         updateTimer(d.timer, d.session);
         updatePhase(d.session);
         updateTeams(d.teams);
@@ -881,12 +1066,14 @@ function updateTimer(timer, s) {
     let secs = 0;
     if (timer.isRunning && timer.endsAt) secs = Math.max(0, Math.round((new Date(timer.endsAt) - Date.now()) / 1000));
     else secs = timer.remainingSeconds ?? 0;
+    latestRemainingSeconds = secs;
     const el = document.getElementById('mainTimer');
     el.textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
     el.className = 'timer-display' + (secs<=60?' danger':secs<=180?' warn':'');
 }
 
 // ── PHASE ──────────────────────────────────────────────────
+let lastAutoAlertPhaseIdx = null;
 function updatePhase(s) {
     const idx = s.currentPhaseIndex ?? 0;
     latestSessionPhaseIdx = idx;
@@ -895,6 +1082,14 @@ function updatePhase(s) {
         const d = document.getElementById('pdot-'+i);
         if (!d) continue;
         d.className = 'pdot' + (i<idx?' done':i===idx?' active':'');
+    }
+    
+    // Automatically trigger scenario popup on active phase transition for players
+    if (PLAYER_ID && s.status === 'active' && (lastAutoAlertPhaseIdx === null || lastAutoAlertPhaseIdx !== idx)) {
+        lastAutoAlertPhaseIdx = idx;
+        setTimeout(() => {
+            showScenarioAlert(idx);
+        }, 1000);
     }
 }
 
@@ -921,10 +1116,10 @@ function updateBroadcasts(bcs) {
                 showPhantom(latest.message);
             } else {
                 Swal.fire({
-                    title: 'Alerte Live Feed',
+                    title: 'Live Feed Alert',
                     html: `<div style="font-size:1.1rem; line-height:1.5;">${latest.message}</div>`,
                     icon: 'info',
-                    confirmButtonText: 'Prendre note',
+                    confirmButtonText: 'Acknowledge',
                     confirmButtonColor: 'var(--bs-theme)',
                     background: '#1a2a3a',
                     color: '#fff'
@@ -943,11 +1138,11 @@ function updateInjects(injects) {
     if (latest && latest.id > lastInjectId) {
         if (isPolledOnce) {
             Swal.fire({
-                title: 'INJECT DE CRISE REÇU',
+                title: 'CRISIS INJECT RECEIVED',
                 html: `<div style="font-size:1.05rem; line-height:1.5; color:#ef4444; font-family:'Space Mono',monospace;" class="mb-2"><strong>[${latest.tag}]</strong></div>
                        <div style="font-size:0.95rem; line-height:1.5; text-align:left;">${latest.content}</div>`,
                 icon: 'warning',
-                confirmButtonText: 'Reconnaître la menace',
+                confirmButtonText: 'Acknowledge Threat',
                 confirmButtonColor: '#ef4444',
                 background: '#1a2a3a',
                 color: '#fff'
@@ -995,12 +1190,12 @@ function renderCommunications() {
     });
 
     if (!merged.length) {
-        feed.innerHTML = '<div class="text-white-50 text-center py-3 small">En attente de communications...</div>';
+        feed.innerHTML = '<div class="text-white-50 text-center py-3 small">Awaiting communications...</div>';
         return;
     }
 
     feed.innerHTML = merged.slice(0, 30).map(item => {
-        const when = item.at ? new Date(item.at).toLocaleTimeString('fr', {hour:'2-digit', minute:'2-digit'}) : 'PHASE';
+        const when = item.at ? new Date(item.at).toLocaleTimeString('en', {hour:'2-digit', minute:'2-digit'}) : 'PHASE';
         const type = item.type || 'info';
         return `<div class="broadcast-item ${type}">
             <div class="small text-white-50 mb-1">${when} · ${item.source}</div>
@@ -1083,7 +1278,7 @@ function updateQuiz(quiz) {
         }).join('');
         if (!alreadyAnswered) {
             html += `<div class="w-100 mt-2 d-flex gap-2">
-                <button onclick="submitOrderChoice()" class="btn btn-sm btn-primary flex-fill fw-bold">${IS_EN ? 'Validate order' : "Valider l'ordre"}</button>
+                <button onclick="submitOrderChoice()" class="btn btn-sm btn-primary flex-fill fw-bold">Validate order</button>
                 <button onclick="resetOrderChoice()" class="btn btn-sm btn-outline-light">${'Reset'}</button>
             </div>`;
         }

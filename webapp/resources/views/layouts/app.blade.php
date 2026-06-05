@@ -607,8 +607,31 @@
 
         window.swalConfirm = function(message, callback) {
             const isCs = window.location.pathname.includes('/cs');
-            const confirmText = isCs ? 'Confirm' : 'Confirmer';
-            const cancelText = isCs ? 'Cancel' : 'Annuler';
+            const isNeptune = window.location.pathname.includes('/neptune');
+            const confirmText = (isCs || isNeptune) ? 'Confirm' : 'Confirmer';
+            const cancelText = (isCs || isNeptune) ? 'Cancel' : 'Annuler';
+            
+            if (isNeptune) {
+                return Swal.fire({
+                    title: '<span style="font-family:\'Orbitron\',sans-serif;font-size:1.6rem;color:#00ffcc;font-weight:700">Confirm Action</span>',
+                    html: `<div style="font-family:\'Space Mono\',monospace;font-size:1.3rem;color:#fff;margin-top:15px">${message}</div>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: confirmText,
+                    cancelButtonText: cancelText,
+                    background: '#0a1a2e',
+                    color: '#fff',
+                    width: '650px'
+                }).then((result) => {
+                    if (result.isConfirmed && typeof callback === 'function') {
+                        callback();
+                    }
+                    return result.isConfirmed;
+                });
+            }
+            
             return Swal.fire({
                 text: message,
                 icon: 'warning',
@@ -628,6 +651,25 @@
         };
 
         window.swalPrompt = async function(message, defaultValue = '') {
+            const isNeptune = window.location.pathname.includes('/neptune');
+            if (isNeptune) {
+                const result = await Swal.fire({
+                    title: `<span style="font-family:\'Orbitron\',sans-serif;font-size:1.6rem;color:#00ffcc;font-weight:700">${message}</span>`,
+                    input: 'text',
+                    inputValue: defaultValue,
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--bs-theme, #0d6efd)',
+                    cancelButtonColor: '#6c757d',
+                    background: '#0a1a2e',
+                    color: '#fff',
+                    width: '650px',
+                    customClass: {
+                        input: 'bg-dark text-white border-secondary'
+                    }
+                });
+                return result.isConfirmed ? result.value : null;
+            }
+            
             const result = await Swal.fire({
                 text: message,
                 input: 'text',
@@ -645,8 +687,31 @@
             event.preventDefault();
             const form = event.target.closest('form') || event.target;
             const isCs = window.location.pathname.includes('/cs');
-            const confirmText = isCs ? 'Confirm' : 'Confirmer';
-            const cancelText = isCs ? 'Cancel' : 'Annuler';
+            const isNeptune = window.location.pathname.includes('/neptune');
+            const confirmText = (isCs || isNeptune) ? 'Confirm' : 'Confirmer';
+            const cancelText = (isCs || isNeptune) ? 'Cancel' : 'Annuler';
+            
+            if (isNeptune) {
+                Swal.fire({
+                    title: '<span style="font-family:\'Orbitron\',sans-serif;font-size:1.6rem;color:#00ffcc;font-weight:700">Confirm Action</span>',
+                    html: `<div style="font-family:\'Space Mono\',monospace;font-size:1.3rem;color:#fff;margin-top:15px">${message}</div>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: confirmText,
+                    cancelButtonText: cancelText,
+                    background: '#0a1a2e',
+                    color: '#fff',
+                    width: '650px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+                return;
+            }
+            
             Swal.fire({
                 text: message,
                 icon: 'warning',
@@ -669,8 +734,31 @@
             event.preventDefault();
             const href = event.currentTarget.getAttribute('href');
             const isCs = window.location.pathname.includes('/cs');
-            const confirmText = isCs ? 'Confirm' : 'Confirmer';
-            const cancelText = isCs ? 'Cancel' : 'Annuler';
+            const isNeptune = window.location.pathname.includes('/neptune');
+            const confirmText = (isCs || isNeptune) ? 'Confirm' : 'Confirmer';
+            const cancelText = (isCs || isNeptune) ? 'Cancel' : 'Annuler';
+            
+            if (isNeptune) {
+                Swal.fire({
+                    title: '<span style="font-family:\'Orbitron\',sans-serif;font-size:1.6rem;color:#00ffcc;font-weight:700">Confirm Action</span>',
+                    html: `<div style="font-family:\'Space Mono\',monospace;font-size:1.3rem;color:#fff;margin-top:15px">${message}</div>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: confirmText,
+                    cancelButtonText: cancelText,
+                    background: '#0a1a2e',
+                    color: '#fff',
+                    width: '650px'
+                }).then((result) => {
+                    if (result.isConfirmed && href) {
+                        window.location.href = href;
+                    }
+                });
+                return;
+            }
+            
             Swal.fire({
                 text: message,
                 icon: 'warning',

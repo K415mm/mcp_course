@@ -540,15 +540,17 @@ body {
 <script>
     window.swalConfirm = function(message, callback) {
         return Swal.fire({
-            text: message,
+            title: '<span style="font-family:\'Orbitron\',sans-serif;font-size:1.6rem;color:#00ffcc;font-weight:700">Confirm Action</span>',
+            html: `<div style="font-family:\'Space Mono\',monospace;font-size:1.3rem;color:#fff;margin-top:15px">${message}</div>`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#6c757d',
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
-            background: '#1e293b',
-            color: '#f8fafc'
+            background: '#0a1a2e',
+            color: '#fff',
+            width: '650px'
         }).then((result) => {
             if (result.isConfirmed && typeof callback === 'function') {
                 callback();

@@ -337,18 +337,46 @@ const PHASE_DESCRIPTIONS = [
     }
 ];
 
+function showActionBlockedAlert(reason) {
+    Swal.fire({
+        title: '<span style="font-family:\'Orbitron\',sans-serif;font-size:1.7rem;color:#ef4444;font-weight:700">Action Blocked</span>',
+        html: `<div style="font-family:\'Space Mono\',monospace;font-size:1.35rem;color:#fff;margin-top:15px">${reason}</div>`,
+        icon: 'error',
+        confirmButtonColor: '#ef4444',
+        background: '#0a1a2e',
+        color: '#fff',
+        width: '650px'
+    });
+}
+
+function showConfirmAlert(titleText, htmlText, confirmText = 'Yes, submit') {
+    return Swal.fire({
+        title: `<span style="font-family:\'Orbitron\',sans-serif; font-size:1.6rem; font-weight:700">${titleText}</span>`,
+        html: `<div style="font-size:1.3rem; font-family:\'Space Mono\',monospace; color:rgba(255,255,255,0.7); margin-top:10px">${htmlText}</div>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: confirmText,
+        cancelButtonText: 'Cancel',
+        background: '#0a1a2e',
+        color: '#fff',
+        width: '650px'
+    });
+}
+
 function showScenarioAlert(phaseIndex) {
     const info = PHASE_DESCRIPTIONS[phaseIndex];
     if (!info) return;
     Swal.fire({
-        title: `<div style="font-family:'Orbitron',sans-serif;font-weight:700;color:var(--bs-theme);letter-spacing:1px;font-size:1.1rem">${info.title}</div>`,
-        html: `<div style="font-family:'Share Tech Mono',monospace;color:rgba(255,255,255,0.6);font-size:0.75rem;margin-bottom:12px">${info.sub}</div>
-               <div style="font-family:'Space Mono',monospace;color:#fff;font-size:0.83rem;line-height:1.5;text-align:left;border-top:1px solid rgba(0,255,204,0.15);padding-top:10px">${info.desc}</div>`,
+        title: `<div style="font-family:'Orbitron',sans-serif;font-weight:700;color:var(--bs-theme);letter-spacing:1px;font-size:2rem;margin-bottom:15px">${info.title}</div>`,
+        html: `<div style="font-family:'Share Tech Mono',monospace;color:rgba(255,255,255,0.6);font-size:1.15rem;margin-bottom:15px">${info.sub}</div>
+               <div style="font-family:'Space Mono',monospace;color:#fff;font-size:1.35rem;line-height:1.7;text-align:left;border-top:1px solid rgba(0,255,204,0.15);padding-top:15px">${info.desc}</div>`,
         confirmButtonText: 'Acknowledge Scenario',
         confirmButtonColor: 'var(--bs-theme)',
         background: '#0a1a2e',
         color: '#fff',
-        width: '500px'
+        width: '900px'
     });
 }
 
@@ -627,42 +655,17 @@ function setDType(type, el) {
 async function submitDecision() {
     if (!PLAYER_ID) return;
     if (!latestSessionState || latestSessionState.status !== 'active') {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'The simulation is currently paused or inactive.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('The simulation is currently paused or inactive.');
         return;
     }
     if (latestRemainingSeconds <= 0) {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'Phase time has expired.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('Phase time has expired.');
         return;
     }
     const content = document.getElementById('decisionContent').value.trim();
     if (!content) { toast('warn', 'Write your decision'); return; }
 
-    const confirmResult = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, submit',
-        cancelButtonText: 'Cancel',
-        background: '#1a2a3a',
-        color: '#fff'
-    });
+    const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.');
     if (!confirmResult.isConfirmed) return;
 
     const d = await api('decision','POST',{type:decisionType, content, player_id:PLAYER_ID});
@@ -674,40 +677,15 @@ async function submitDecision() {
 async function castVote(key) {
     if (!TEAM_ID) return;
     if (!latestSessionState || latestSessionState.status !== 'active') {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'The simulation is currently paused or inactive.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('The simulation is currently paused or inactive.');
         return;
     }
     if (latestRemainingSeconds <= 0) {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'Phase time has expired.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('Phase time has expired.');
         return;
     }
 
-    const confirmResult = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, vote',
-        cancelButtonText: 'Cancel',
-        background: '#1a2a3a',
-        color: '#fff'
-    });
+    const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.', 'Yes, vote');
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('vote/submit','POST',{choice:key, team_id:TEAM_ID});
@@ -734,40 +712,15 @@ function normalizeQuizType(type) {
 async function castQuiz(key) {
     if (!TEAM_ID) return;
     if (!latestSessionState || latestSessionState.status !== 'active') {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'The simulation is currently paused or inactive.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('The simulation is currently paused or inactive.');
         return;
     }
     if (latestRemainingSeconds <= 0) {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'Phase time has expired.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('Phase time has expired.');
         return;
     }
 
-    const confirmResult = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, submit',
-        cancelButtonText: 'Cancel',
-        background: '#1a2a3a',
-        color: '#fff'
-    });
+    const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.');
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('quiz/submit','POST',{choice:key, team_id:TEAM_ID});
@@ -791,40 +744,15 @@ async function submitMultiChoice() {
         return;
     }
     if (!latestSessionState || latestSessionState.status !== 'active') {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'The simulation is currently paused or inactive.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('The simulation is currently paused or inactive.');
         return;
     }
     if (latestRemainingSeconds <= 0) {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'Phase time has expired.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('Phase time has expired.');
         return;
     }
 
-    const confirmResult = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, submit',
-        cancelButtonText: 'Cancel',
-        background: '#1a2a3a',
-        color: '#fff'
-    });
+    const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.');
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('quiz/submit','POST',{choice: multiChoiceSelection, team_id:TEAM_ID});
@@ -856,40 +784,15 @@ async function submitOrderChoice() {
         return;
     }
     if (!latestSessionState || latestSessionState.status !== 'active') {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'The simulation is currently paused or inactive.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('The simulation is currently paused or inactive.');
         return;
     }
     if (latestRemainingSeconds <= 0) {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'Phase time has expired.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('Phase time has expired.');
         return;
     }
 
-    const confirmResult = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, submit',
-        cancelButtonText: 'Cancel',
-        background: '#1a2a3a',
-        color: '#fff'
-    });
+    const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.');
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('quiz/submit', 'POST', {choice: orderSelection, team_id: TEAM_ID});
@@ -911,40 +814,15 @@ async function submitShortAnswer() {
         return;
     }
     if (!latestSessionState || latestSessionState.status !== 'active') {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'The simulation is currently paused or inactive.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('The simulation is currently paused or inactive.');
         return;
     }
     if (latestRemainingSeconds <= 0) {
-        Swal.fire({
-            title: 'Action Blocked',
-            text: 'Phase time has expired.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444',
-            background: '#1a2a3a',
-            color: '#fff'
-        });
+        showActionBlockedAlert('Phase time has expired.');
         return;
     }
 
-    const confirmResult = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, submit',
-        cancelButtonText: 'Cancel',
-        background: '#1a2a3a',
-        color: '#fff'
-    });
+    const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.');
     if (!confirmResult.isConfirmed) return;
 
     const res = await api('quiz/submit', 'POST', {answer_text: text, team_id: TEAM_ID});
@@ -1116,13 +994,14 @@ function updateBroadcasts(bcs) {
                 showPhantom(latest.message);
             } else {
                 Swal.fire({
-                    title: 'Live Feed Alert',
-                    html: `<div style="font-size:1.1rem; line-height:1.5;">${latest.message}</div>`,
+                    title: '<span style="font-family:\'Orbitron\',sans-serif; font-size:1.8rem; color:var(--bs-theme); font-weight:700">Live Feed Alert</span>',
+                    html: `<div style="font-size:1.4rem; line-height:1.7; font-family:\'Space Mono\',monospace; text-align:left; color:#fff; border-top:1px solid rgba(0,255,204,0.15); padding-top:15px; margin-top:10px">${latest.message}</div>`,
                     icon: 'info',
                     confirmButtonText: 'Acknowledge',
                     confirmButtonColor: 'var(--bs-theme)',
-                    background: '#1a2a3a',
-                    color: '#fff'
+                    background: '#0a1a2e',
+                    color: '#fff',
+                    width: '800px'
                 });
             }
         }
@@ -1138,14 +1017,15 @@ function updateInjects(injects) {
     if (latest && latest.id > lastInjectId) {
         if (isPolledOnce) {
             Swal.fire({
-                title: 'CRISIS INJECT RECEIVED',
-                html: `<div style="font-size:1.05rem; line-height:1.5; color:#ef4444; font-family:'Space Mono',monospace;" class="mb-2"><strong>[${latest.tag}]</strong></div>
-                       <div style="font-size:0.95rem; line-height:1.5; text-align:left;">${latest.content}</div>`,
+                title: '<span style="font-family:\'Orbitron\',sans-serif; font-size:2rem; color:#ef4444; font-weight:700; letter-spacing:1px">CRISIS INJECT RECEIVED</span>',
+                html: `<div style="font-size:1.45rem; line-height:1.6; color:#ef4444; font-family:'Space Mono',monospace; font-weight:700;" class="mb-3"><strong>[${latest.tag}]</strong></div>
+                       <div style="font-size:1.35rem; line-height:1.7; text-align:left; color:#fff; font-family:\'Space Mono\',monospace; border-top:1px solid rgba(239,68,68,0.25); padding-top:15px">${latest.content}</div>`,
                 icon: 'warning',
                 confirmButtonText: 'Acknowledge Threat',
                 confirmButtonColor: '#ef4444',
-                background: '#1a2a3a',
-                color: '#fff'
+                background: '#0a1a2e',
+                color: '#fff',
+                width: '850px'
             });
         }
         lastInjectId = latest.id;

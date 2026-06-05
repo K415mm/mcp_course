@@ -11,11 +11,15 @@ class CsInject extends Model
     protected $fillable = [
         'scenario_key', 'tag', 'content', 'color', 'phase_hint',
         'is_surprise', 'sort_order', 'target_team_type',
+        'requires_action', 'expected_action_type',
     ];
 
     protected function casts(): array
     {
-        return ['is_surprise' => 'boolean'];
+        return [
+            'is_surprise' => 'boolean',
+            'requires_action' => 'boolean',
+        ];
     }
 
     public function scopeForScenario($q, string $key)

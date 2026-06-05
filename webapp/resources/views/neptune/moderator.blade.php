@@ -571,6 +571,7 @@ document.body.classList.add('scenario-' + SCENARIO_KEY);
 const SCENARIO_PHASES = @json($scenario['phases']);
 const INITIAL_BANK_BY_PHASE = @json($initialBankByPhase ?? []);
 
+
 let lastDecId = 0, lastBadgeId = 0, lastDecCount = 0;
 let currentPhaseIndex = null;
 let currentBank = { messages: [], questions: [], media: [] };
@@ -580,6 +581,7 @@ const pendingAwardEdits = {};
 let latestSessionState = null;
 let playersRosterCache = [];
 let assignableUsersCache = [];
+let injectCatalogCache = [];
 
 async function api(path, method='GET', body=null) {
     const opts = {method, headers:{'X-CSRF-TOKEN':CSRF,'Content-Type':'application/json','Accept':'application/json'}};
@@ -620,6 +622,7 @@ async function apiUpload(path, formData) {
 async function poll() {
     try {
         const d = await api('state');
+        injectCatalogCache = d.injectCatalog ?? [];
         updateTimer(d.timer);
         updatePhase(d.session);
         updateTeams(d.teams);
@@ -1367,6 +1370,36 @@ function renderDecisionsPanel() {
             const isMentorDecision = !teamIsScored;
             const quizInfo = d.type === 'question' ? parseQuizDecisionContent(d.content || '') : null;
             const answerBlock = quizInfo ? renderQuizAnswerBlock(quizInfo) : `<div style="font-size:.83rem">${escapeHtml(d.content || '')}</div>`;
+            
+            // Find linked inject if any
+            const inject = d.csInjectId ? (injectCatalogCache.find(inj => inj.id === d.csInjectId) || null) : null;
+            let injectInfoHtml = '';
+            let actionTypeDropdownHtml = '';
+            
+            if (inject) {
+                injectInfoHtml = `
+                    <div class="mt-2 mb-2 p-2 rounded small text-start" style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05)">
+                        <div class="fw-bold text-white-50" style="font-size:0.75rem"><i class="bi bi-lightning-fill text-warning"></i> Responding to Inject: [${escapeHtml(inject.tag)}]</div>
+                        <div style="font-size:0.72rem; color:rgba(255,255,255,0.7); font-style:italic" class="mt-1">${escapeHtml(inject.content)}</div>
+                    </div>
+                `;
+                
+                if (inject.requiresAction) {
+                    const currentExpected = d.expectedActionType || inject.expectedActionType || 'decision';
+                    actionTypeDropdownHtml = `
+                        <div class="mb-2 mt-2 text-start">
+                            <label class="small text-white-50 me-2" for="expected-type-${d.id}" style="font-size:0.72rem">Expected Action:</label>
+                            <select id="expected-type-${d.id}" class="form-select form-select-sm d-inline-block w-auto py-0 px-1" style="height:22px; font-size:0.7rem; line-height:1; vertical-align:middle" onchange="onExpectedTypeChange(${d.id}, '${d.type}')">
+                                <option value="decision" ${currentExpected === 'decision' ? 'selected' : ''}>Decision</option>
+                                <option value="escalade" ${currentExpected === 'escalade' ? 'selected' : ''}>Escalation</option>
+                                <option value="communication" ${currentExpected === 'communication' ? 'selected' : ''}>Communication</option>
+                            </select>
+                            <span id="grading-warning-${d.id}" class="ms-2 small fw-bold" style="font-size:0.72rem"></span>
+                        </div>
+                    `;
+                }
+            }
+
             return `
                 <div id="dec-${d.id}" class="decision-review ${d.id === lastDecId ? 'dec-new' : ''}">
                     <div class="d-flex align-items-center gap-2 mb-1">
@@ -1374,6 +1407,8 @@ function renderDecisionsPanel() {
                         <span class="ms-auto decision-meta">${new Date(d.at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'})}</span>
                     </div>
                     ${answerBlock}
+                    ${injectInfoHtml}
+                    ${actionTypeDropdownHtml}
                     <div class="d-flex gap-1 mt-2 align-items-center" ${isMentorDecision ? 'style="opacity:.5"' : ''}>
                         <span class="small text-white-50">Score:</span>
                         <input type="number" id="award-${d.id}" value="${pendingAwardEdits[d.id] ?? (Number.isFinite(parseInt(d.scoreAwarded,10)) ? parseInt(d.scoreAwarded,10) : 0)}" min="0" max="100" class="form-control form-control-sm" style="width:70px" oninput="setPendingAward(${d.id}, this.value)" ${isMentorDecision ? 'disabled' : ''}>
@@ -1404,11 +1439,19 @@ function renderDecisionsPanel() {
     }).join('');
 
     area.innerHTML = html;
+
+    // Trigger initial state sync for expected types on any action-required injects
+    filtered.forEach(d => {
+        if (d.csInjectId) {
+            const inject = injectCatalogCache.find(inj => inj.id === d.csInjectId);
+            if (inject && inject.requiresAction) {
+                onExpectedTypeChange(d.id, d.type);
+            }
+        }
+    });
 }
 
-function setPendingAward(id, value) {
-    pendingAwardEdits[id] = value;
-}
+
 
 function parseQuizDecisionContent(content) {
     const raw = String(content || '');
@@ -1457,17 +1500,75 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
+function setPendingAward(id, value) {
+    pendingAwardEdits[id] = value;
+    const expectedSelect = document.getElementById(`expected-type-${id}`);
+    if (expectedSelect) {
+        const warningSpan = document.getElementById(`grading-warning-${id}`);
+        if (warningSpan) {
+            const val = parseInt(value, 10);
+            if (isNaN(val)) {
+                warningSpan.textContent = "⚠️ Input a valid number";
+                warningSpan.style.color = "#ffbe76";
+            } else if (val < 10 || val > 30) {
+                warningSpan.textContent = `⚠️ Warning: Out of range 10-30 (will clamp to ${val < 10 ? 10 : 30})`;
+                warningSpan.style.color = "#ffbe76";
+            } else {
+                warningSpan.textContent = "✅ Match: Allowed range 10-30";
+                warningSpan.style.color = "#2ecc71";
+            }
+        }
+    }
+}
+
 async function awardScore(id) {
     const pts = parseInt(document.getElementById('award-'+id).value);
-    await api(`decision/${id}/award`,'POST',{points:pts});
-    showNotif(`Score validated: ${pts} pts`,'success');
+    const body = { points: pts };
+    const expectedSelect = document.getElementById('expected-type-' + id);
+    if (expectedSelect) {
+        body.expected_action_type = expectedSelect.value;
+    }
+    
+    const res = await api(`decision/${id}/award`,'POST',body);
+    const awarded = res && typeof res.points_awarded !== 'undefined' ? res.points_awarded : pts;
+    showNotif(`Score validated: ${awarded} pts`,'success');
     delete pendingAwardEdits[id];
     decisionsSignature = '';
     await poll();
     const card = document.getElementById(`dec-${id}`);
     if (card) {
         const note = card.querySelector('.award-current');
-        if (note) note.textContent = `Current: ${pts} pts`;
+        if (note) note.textContent = `Current: ${awarded} pts`;
+        const input = document.getElementById('award-'+id);
+        if (input) input.value = awarded;
+    }
+}
+
+function onExpectedTypeChange(decisionId, teamSubmittedType) {
+    const expectedSelect = document.getElementById(`expected-type-${decisionId}`);
+    const scoreInput = document.getElementById(`award-${decisionId}`);
+    const warningSpan = document.getElementById(`grading-warning-${decisionId}`);
+    if (!expectedSelect || !scoreInput || !warningSpan) return;
+
+    const expectedType = expectedSelect.value;
+    if (teamSubmittedType !== expectedType) {
+        scoreInput.value = 0;
+        scoreInput.disabled = true;
+        warningSpan.textContent = "⚠️ Mismatch: Force 0 points";
+        warningSpan.style.color = "#ff4d4d";
+        pendingAwardEdits[decisionId] = 0;
+    } else {
+        scoreInput.disabled = false;
+        let val = parseInt(scoreInput.value, 10) || 0;
+        if (val < 10) {
+            val = 10;
+        } else if (val > 30) {
+            val = 30;
+        }
+        scoreInput.value = val;
+        warningSpan.textContent = "✅ Match: Allowed range 10-30";
+        warningSpan.style.color = "#2ecc71";
+        pendingAwardEdits[decisionId] = val;
     }
 }
 

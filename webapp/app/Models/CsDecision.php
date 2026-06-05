@@ -10,6 +10,7 @@ class CsDecision extends Model
     protected $fillable = [
         'cs_session_id', 'cs_team_id', 'cs_player_id',
         'type', 'content', 'phase_index', 'score_awarded',
+        'cs_inject_id', 'expected_action_type',
     ];
 
     protected function casts(): array
@@ -30,5 +31,10 @@ class CsDecision extends Model
     public function player(): BelongsTo
     {
         return $this->belongsTo(CsPlayer::class, 'cs_player_id');
+    }
+
+    public function inject(): BelongsTo
+    {
+        return $this->belongsTo(CsInject::class, 'cs_inject_id');
     }
 }

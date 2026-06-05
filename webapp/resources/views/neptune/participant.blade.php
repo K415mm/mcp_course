@@ -214,11 +214,24 @@ body {
             </div>
         </div>
 
+
+
         {{-- DECISION SUBMISSION --}}
         <div class="card mb-3">
             <div class="card-arrow"><div class="card-arrow-top-left"></div><div class="card-arrow-top-right"></div><div class="card-arrow-bottom-left"></div><div class="card-arrow-bottom-right"></div></div>
             <div class="card-body">
                 <h5 class="card-title mb-3"><i class="bi bi-send me-2 text-theme"></i>Submit an Action</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label small text-white-50">Related Inject</label>
+                    <select class="form-select form-select-sm" id="decisionInjectId" onchange="onRelatedInjectChange()">
+                        <option value="">-- General Action (Not related to a specific inject) --</option>
+                    </select>
+                    <div id="injectRequiredAlertText" class="small text-danger mt-1 fw-bold" style="display:none">
+                        <i class="bi bi-exclamation-triangle-fill"></i> This inject requires a Decision, Escalation, or Communication action.
+                    </div>
+                </div>
+
                 <div class="d-flex flex-wrap gap-2 mb-3" id="decisionTypes">
                     @foreach([['decision','Decision','danger'],['escalade','Escalation','warning'],['communication','Communication','theme'],['question','Question','info']] as [$v,$l,$c])
                     <button class="decision-type-btn {{ $loop->first ? 'active' : '' }}" onclick="setDType('{{ $v }}',this)">
@@ -652,6 +665,8 @@ function setDType(type, el) {
     el.classList.add('active');
     decisionType = type;
 }
+
+
 async function submitDecision() {
     if (!PLAYER_ID) return;
     if (!latestSessionState || latestSessionState.status !== 'active') {
@@ -665,12 +680,48 @@ async function submitDecision() {
     const content = document.getElementById('decisionContent').value.trim();
     if (!content) { toast('warn', 'Write your decision'); return; }
 
+    const select = document.getElementById('decisionInjectId');
+    const csInjectId = select ? select.value : null;
+    const opt = select ? select.options[select.selectedIndex] : null;
+
+    if (opt && opt.dataset.requiresAction === '1') {
+        if (decisionType === 'question') {
+            showActionBlockedAlert('This inject requires a Decision, Escalation, or Communication. You cannot submit a question for it.');
+            return;
+        }
+    }
+
     const confirmResult = await showConfirmAlert('Are you sure?', 'This action cannot be undone.');
     if (!confirmResult.isConfirmed) return;
 
-    const d = await api('decision','POST',{type:decisionType, content, player_id:PLAYER_ID});
-    if (d.ok) { document.getElementById('decisionContent').value=''; toast('success', 'Decision submitted!'); }
-    else toast('danger', d.error??('Error'));
+    const d = await api('decision','POST',{
+        type: decisionType,
+        content,
+        player_id: PLAYER_ID,
+        cs_inject_id: csInjectId ? parseInt(csInjectId) : null
+    });
+    
+    if (d.ok) {
+        document.getElementById('decisionContent').value = '';
+        if (select) select.value = '';
+        onRelatedInjectChange();
+        toast('success', 'Decision submitted!');
+    } else {
+        toast('danger', d.error ?? 'Error');
+    }
+}
+
+function onRelatedInjectChange() {
+    const select = document.getElementById('decisionInjectId');
+    const alertEl = document.getElementById('injectRequiredAlertText');
+    if (!select || !alertEl) return;
+
+    const opt = select.options[select.selectedIndex];
+    if (opt && opt.dataset.requiresAction === '1') {
+        alertEl.style.display = 'block';
+    } else {
+        alertEl.style.display = 'none';
+    }
 }
 
 // ── VOTE ───────────────────────────────────────────────────
@@ -1011,6 +1062,8 @@ function updateBroadcasts(bcs) {
     renderCommunications();
 }
 
+
+
 function updateInjects(injects) {
     if (!Array.isArray(injects)) return;
     const latest = injects[0];
@@ -1031,7 +1084,44 @@ function updateInjects(injects) {
         lastInjectId = latest.id;
     }
     currentInjects = injects;
+    populateInjectsDropdown(injects);
     renderCommunications();
+}
+
+function populateInjectsDropdown(injects) {
+    const select = document.getElementById('decisionInjectId');
+    if (!select) return;
+    const currentVal = select.value;
+    
+    select.innerHTML = '<option value="">-- General Action (Not related to a specific inject) --</option>';
+    
+    const uniqueInjects = [];
+    const seen = new Set();
+    injects.forEach(inj => {
+        const id = inj.injectId;
+        if (!id || seen.has(id)) return;
+        seen.add(id);
+        uniqueInjects.push(inj);
+    });
+
+    uniqueInjects.forEach(inj => {
+        const option = document.createElement('option');
+        option.value = inj.injectId;
+        
+        let label = `[${inj.tag}] ${inj.content.substring(0, 60)}...`;
+        if (inj.requiresAction) {
+            label = `⚠️ [ACTION REQUIRED] [${inj.tag}] ${inj.content.substring(0, 50)}...`;
+        }
+        option.textContent = label;
+        option.dataset.requiresAction = inj.requiresAction ? '1' : '0';
+        option.dataset.expectedType = inj.expectedActionType || '';
+        select.appendChild(option);
+    });
+    
+    if (currentVal && seen.has(parseInt(currentVal))) {
+        select.value = currentVal;
+    }
+    onRelatedInjectChange();
 }
 
 function renderCommunications() {

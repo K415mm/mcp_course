@@ -568,7 +568,9 @@ class CsService
         CsTeam $team,
         CsPlayer $player,
         string $type,
-        string $content
+        string $content,
+        ?int $csInjectId = null,
+        ?string $expectedActionType = null
     ): CsDecision {
         return CsDecision::create([
             'cs_session_id' => $session->id,
@@ -577,6 +579,8 @@ class CsService
             'type'          => $type,
             'content'       => $content,
             'phase_index'   => $session->current_phase_index,
+            'cs_inject_id'  => $csInjectId,
+            'expected_action_type' => $expectedActionType,
         ]);
     }
 
@@ -700,6 +704,9 @@ class CsService
                 'isSuprise'     => (bool) $si->inject->is_surprise,
                 'sort_order'    => (int) $si->inject->sort_order,
                 'targetTeam'    => $si->inject->target_team_type,
+                'requiresAction' => (bool) $si->inject->requires_action,
+                'expectedActionType' => $si->inject->expected_action_type,
+                'injectId'      => $si->inject->id,
                 'at'            => $si->triggered_at->toIso8601String(),
             ])->values()->all();
 
@@ -768,6 +775,8 @@ class CsService
                 'id'      => $d->id,
                 'type'    => $d->type,
                 'content' => $d->content,
+                'csInjectId' => $d->cs_inject_id,
+                'expectedActionType' => $d->expected_action_type,
                 'at'      => $d->created_at->toIso8601String(),
             ])->values()->all() : [];
 
@@ -830,6 +839,8 @@ class CsService
                 'content'      => $d->content,
                 'phaseIndex'   => $d->phase_index,
                 'scoreAwarded' => $d->score_awarded,
+                'csInjectId'   => $d->cs_inject_id,
+                'expectedActionType' => $d->expected_action_type,
                 'at'           => $d->created_at->toIso8601String(),
             ])->values()->all();
 
@@ -842,6 +853,8 @@ class CsService
                 'color'      => $i->color,
                 'phaseHint'  => $i->phase_hint,
                 'isSurprise' => (bool) $i->is_surprise,
+                'requiresAction' => (bool) $i->requires_action,
+                'expectedActionType' => $i->expected_action_type,
             ])->values()->all();
 
         // Phantom messages from scenario

@@ -147,9 +147,10 @@ class NeptuneApiController extends CsApiController
 
         if (!$request->has('choice')) {
             $data = $request->validate([
-                'type'      => 'required|in:decision,escalade,communication,question',
-                'content'   => 'required|string|max:1000',
-                'player_id' => 'required|integer',
+                'type'         => 'required|in:decision,escalade,communication,question',
+                'content'      => 'required|string|max:1000',
+                'player_id'    => 'required|integer',
+                'cs_inject_id' => 'nullable|integer',
             ]);
 
             $resolved = $this->resolvePlayer($request, $session);
@@ -165,12 +166,28 @@ class NeptuneApiController extends CsApiController
                 ->with('team')
                 ->firstOrFail();
 
+            $csInjectId = $data['cs_inject_id'] ?? null;
+            $expectedActionType = null;
+            if ($csInjectId) {
+                $inject = \App\Models\CsInject::find($csInjectId);
+                if ($inject) {
+                    if ($inject->requires_action) {
+                        if ($data['type'] === 'question') {
+                            return response()->json(['ok' => false, 'error' => 'A question cannot be submitted for this inject. You must submit a Decision, Escalation, or Communication.'], 422);
+                        }
+                        $expectedActionType = $inject->expected_action_type;
+                    }
+                }
+            }
+
             $decision = $this->cs->submitDecision(
                 $session,
                 $player->team,
                 $player,
                 $data['type'],
-                $data['content']
+                $data['content'],
+                $csInjectId,
+                $expectedActionType
             );
 
             return response()->json(['ok' => true, 'id' => $decision->id]);
@@ -312,5 +329,41 @@ class NeptuneApiController extends CsApiController
         $session->save();
 
         return response()->json(['ok' => true, 'settings' => $session->settings]);
+    }
+
+    public function awardScore(Request $request, string $code, int $decisionId): JsonResponse
+    {
+        $session  = $this->getModeratorSession($code);
+        $decision = \App\Models\CsDecision::where('id', $decisionId)
+            ->where('cs_session_id', $session->id)
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'points' => 'required|integer|min:-999|max:999',
+            'expected_action_type' => 'nullable|string|in:decision,escalade,communication',
+        ]);
+
+        if ($request->has('expected_action_type')) {
+            $decision->expected_action_type = $data['expected_action_type'];
+            $decision->save();
+        }
+
+        $points = $data['points'];
+
+        if ($decision->cs_inject_id) {
+            $inject = $decision->inject;
+            if ($inject && $inject->requires_action) {
+                if ($decision->type !== $decision->expected_action_type) {
+                    $points = 0;
+                } else {
+                    if ($points < 10) $points = 10;
+                    if ($points > 30) $points = 30;
+                }
+            }
+        }
+
+        $this->cs->awardDecisionScore($decision, $points);
+
+        return response()->json(['ok' => true, 'points_awarded' => $points]);
     }
 }

@@ -680,7 +680,9 @@ body.scanlines::after {
 .widget {
     background: rgba(13,27,46,.8);
     border: 1px solid rgba(255,255,255,.08);
-    border-radius: 10px; padding: 12px 14px; overflow: hidden;
+    border-radius: 10px; 
+    padding: 12px 0 12px 14px; /* Removed right padding so scrollbar sits against card edge */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -692,6 +694,7 @@ body.scanlines::after {
     padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,.06);
     display: flex; align-items: center; gap: 6px;
     flex-shrink: 0;
+    padding-right: 14px; /* Added right padding to keep header aligned */
 }
 #voteWidget, #quizWidget, #phaseMediaQuiz {
     display: flex;
@@ -699,15 +702,27 @@ body.scanlines::after {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    padding-right: 14px; /* Inner padding keeps content clear of scrollbar */
 }
 .widget-hdr i { color: var(--bs-theme); font-size: .8rem; }
 
-.feed-list { display: flex; flex-direction: column; gap: 4px; flex: 1; min-height: 0; overflow-y: auto; }
+.feed-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px; 
+    flex: 1; 
+    min-height: 0; 
+    overflow-y: auto; 
+    padding-right: 14px; /* Inner padding keeps content clear of scrollbar */
+}
 .feed-item {
     padding: 6px 9px; border-radius: 5px;
     border-left: 3px solid rgba(255,255,255,.1);
     background: rgba(255,255,255,.03);
     font-size: 0.95rem; line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 .feed-item.info    { border-color: var(--bs-theme); }
 .feed-item.warn    { border-color: #f59e0b; }
@@ -717,12 +732,30 @@ body.scanlines::after {
 
 /* Vote bars */
 .vote-bars { display: flex; flex-direction: column; gap: 7px; }
-.vote-bar-row { display: flex; align-items: center; gap: 8px; }
-.vb-lbl { display:flex; align-items:flex-start; gap:8px; min-width:0; max-width:none; flex:1; }
-.vb-key { font-family: 'Space Mono', monospace; font-size: 1.1rem; font-weight: 700; min-width:26px; text-align:center; }
+.vote-bar-row { 
+    display: grid; 
+    grid-template-areas: 
+        "label label"
+        "track count";
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+.vb-lbl { 
+    grid-area: label;
+    display: flex; 
+    align-items: flex-start; 
+    gap: 8px; 
+    min-width: 0; 
+    max-width: none; 
+    flex: 1; 
+}
+.vb-key { font-family: 'Space Mono', monospace; font-size: 1.1rem; font-weight: 700; min-width: 26px; text-align: center; }
 .vb-text { font-size: 0.95rem; color: rgba(255,255,255,.9); white-space: normal; overflow: visible; text-overflow: unset; word-break: break-word; }
 .vb-track {
-    flex: 1; height: 18px;
+    grid-area: track;
+    height: 12px;
     background: rgba(255,255,255,.07); border-radius: 4px; overflow: hidden;
 }
 .vb-fill {
@@ -730,7 +763,13 @@ body.scanlines::after {
     transition: width .5s ease;
     background: var(--bs-theme);
 }
-.vb-count { font-family: 'Space Mono', monospace; font-size: 0.9rem; min-width:64px; text-align: right; }
+.vb-count { 
+    grid-area: count;
+    font-family: 'Space Mono', monospace; 
+    font-size: 0.85rem; 
+    min-width: 64px; 
+    text-align: right; 
+}
 .vote-q {
     font-family: 'Space Mono', monospace;
     font-size: 1rem;
@@ -985,8 +1024,30 @@ body.atmo-crisis .eg-title { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,6
 
 #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 960; }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); }
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 204, 0.55) rgba(0, 12, 24, 0.5);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 12, 24, 0.5);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 204, 0.55);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 204, 0.25);
+    box-shadow: inset 0 0 4px rgba(0, 255, 204, 0.3);
+    transition: background 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 204, 0.85);
+    box-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+}
 
 /* ── Neptune Strike Theme Overrides ────────────────────── */
 body {

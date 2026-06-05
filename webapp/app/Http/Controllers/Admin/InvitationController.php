@@ -37,6 +37,10 @@ class InvitationController extends Controller
 
         $invitation = $this->createAndSend($data['email'], $data['name'] ?? null);
 
+        if (isset($invitation->mail_failed) && $invitation->mail_failed) {
+            return back()->with('success', "Invitation saved in database for {$invitation->email}, but notification email failed to send (Error: {$invitation->mail_error}). You can manually copy the link below.");
+        }
+
         return back()->with('success', "Invitation sent to {$invitation->email}.");
     }
 
@@ -63,6 +67,7 @@ class InvitationController extends Controller
         }
 
         $sent = 0;
+        $mailErrors = 0;
         $skipped = 0;
         $errors = [];
 
@@ -76,11 +81,15 @@ class InvitationController extends Controller
                 $skipped++;
                 continue;
             }
-            $this->createAndSend($email);
-            $sent++;
+            $invitation = $this->createAndSend($email);
+            if (isset($invitation->mail_failed) && $invitation->mail_failed) {
+                $mailErrors++;
+            } else {
+                $sent++;
+            }
         }
 
-        $msg = "Sent: {$sent}. Skipped (already invited): {$skipped}.";
+        $msg = "Bulk processing complete. Total invitations saved: " . ($sent + $mailErrors) . " (Emails delivered: {$sent}, Emails failed: {$mailErrors}). Skipped: {$skipped}.";
         if ($errors) {
             $msg .= ' Errors: ' . implode(', ', $errors);
         }
@@ -105,8 +114,13 @@ class InvitationController extends Controller
             'token'      => Str::random(48),
             'expires_at' => now()->addDays(7),
         ]);
-        Mail::to($invitation->email)->send(new InvitationMail($invitation));
-        return back()->with('success', "Invitation resent to {$invitation->email}.");
+        try {
+            Mail::to($invitation->email)->send(new InvitationMail($invitation));
+            return back()->with('success', "Invitation resent to {$invitation->email}.");
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to resend invitation to {$invitation->email}: " . $e->getMessage());
+            return back()->withErrors(['error' => "Failed to deliver email: " . $e->getMessage()]);
+        }
     }
 
     // ── Private helpers ────────────────────────────────────────────
@@ -120,7 +134,13 @@ class InvitationController extends Controller
             'expires_at' => now()->addDays(7),
         ]);
 
-        Mail::to($email)->send(new InvitationMail($invitation));
+        try {
+            Mail::to($email)->send(new InvitationMail($invitation));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error("Mail delivery failed for invitation to {$email}: " . $e->getMessage());
+            $invitation->mail_failed = true;
+            $invitation->mail_error = $e->getMessage();
+        }
 
         return $invitation;
     }

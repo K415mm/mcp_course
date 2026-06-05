@@ -17,6 +17,14 @@
             </nav>
             <h4 class="fw-bold mb-0 text-inverse"><i class="bi bi-people text-theme me-2"></i>User Management</h4>
         </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="bi bi-person-plus me-1"></i> Add User
+            </button>
+            <button class="btn btn-outline-theme" data-bs-toggle="modal" data-bs-target="#bulkUserModal">
+                <i class="bi bi-people me-1"></i> Add Bulk Users
+            </button>
+        </div>
     </div>
 
     @if(session('success'))
@@ -240,6 +248,141 @@
 
                                 </div>
 @endforeach
+
+{{-- Add User Modal --}}
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-bottom border-secondary">
+                <h6 class="modal-title text-inverse"><i class="bi bi-person-plus me-2 text-theme"></i>Add Single User</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ route('admin.users.store') }}">
+                @csrf
+                <div class="modal-body text-start">
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px">Full Name *</label>
+                        <input type="text" name="name" class="form-control bg-dark border-secondary text-inverse" placeholder="e.g. Alice Smith" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px">Email Address *</label>
+                        <input type="email" name="email" class="form-control bg-dark border-secondary text-inverse" placeholder="user@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px">Initial Password *</label>
+                        <input type="password" name="password" class="form-control bg-dark border-secondary text-inverse" placeholder="Min 8 characters" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px">User Role *</label>
+                        <select name="role" class="form-select bg-dark border-secondary text-inverse" required>
+                            @foreach(\App\Models\User::ROLES as $role)
+                                <option value="{{ $role }}" {{ $role === 'student' ? 'selected' : '' }}>
+                                    {{ match ($role) {
+                                        'guest' => 'Guest',
+                                        'preenrol' => 'Pre-Enrolled',
+                                        'student' => 'Student',
+                                        'cstudent' => 'Certified Student',
+                                        'mentor' => 'Mentor',
+                                        'admin' => 'Admin',
+                                        default => ucfirst($role)
+                                    } }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="verify_email" id="verifyEmailCheck" value="1" checked>
+                        <label class="form-check-label text-muted fs-12px" for="verifyEmailCheck">
+                            Mark email address as verified automatically
+                        </label>
+                    </div>
+
+                    <hr class="border-secondary my-4">
+                    <h6 class="text-theme fs-13px text-uppercase fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>Entitlements Overrides (Optional)</h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px">Max Enrolled Courses Override</label>
+                        <input type="number" name="caps[max_courses]" class="form-control bg-dark border-secondary text-inverse" placeholder="e.g. 5, or -1 for unlimited">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px">Workshops Override</label>
+                        <select name="caps[workshops_enabled]" class="form-select bg-dark border-secondary text-inverse">
+                            <option value="">-- Use Role Default --</option>
+                            <option value="1">Force Enabled</option>
+                            <option value="0">Force Disabled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-theme">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Add Bulk Users Modal --}}
+<div class="modal fade" id="bulkUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-bottom border-secondary">
+                <h6 class="modal-title text-inverse"><i class="bi bi-people me-2 text-theme"></i>Add Users in Bulk</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ route('admin.users.bulk') }}">
+                @csrf
+                <div class="modal-body text-start">
+                    <div class="mb-3">
+                        <label class="form-label text-muted fs-12px fw-bold">Enter User Details (Comma Separated, One User Per Line)</label>
+                        <p class="text-muted fs-11px mb-2">
+                            Supported formats:<br>
+                            - <code>Name, Email</code> (defaults to password <em>Defensy123!</em> and default role below)<br>
+                            - <code>Name, Email, Password</code> (defaults to default role below)<br>
+                            - <code>Name, Email, Password, Role</code> (Role must be one of: guest, preenrol, student, cstudent, mentor, admin)
+                        </p>
+                        <textarea name="users_data" class="form-control bg-dark border-secondary text-inverse" rows="8" placeholder="e.g.&#10;Alice Smith, alice@example.com, pass1234, student&#10;Bob Jones, bob@example.com&#10;Charlie Brown, charlie@example.com, pass5678" required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted fs-12px">Default Role (if not specified in line)</label>
+                            <select name="default_role" class="form-select bg-dark border-secondary text-inverse" required>
+                                @foreach(\App\Models\User::ROLES as $role)
+                                    <option value="{{ $role }}" {{ $role === 'student' ? 'selected' : '' }}>
+                                        {{ match ($role) {
+                                            'guest' => 'Guest',
+                                            'preenrol' => 'Pre-Enrolled',
+                                            'student' => 'Student',
+                                            'cstudent' => 'Certified Student',
+                                            'mentor' => 'Mentor',
+                                            'admin' => 'Admin',
+                                            default => ucfirst($role)
+                                        } }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center mb-3">
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" name="verify_email" id="verifyEmailCheckBulk" value="1" checked>
+                                <label class="form-check-label text-muted fs-12px" for="verifyEmailCheckBulk">
+                                    Mark email addresses as verified automatically
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-theme">Create Users in Bulk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection
 

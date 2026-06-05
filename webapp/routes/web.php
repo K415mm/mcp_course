@@ -298,6 +298,8 @@ Route::middleware('auth')->group(function () {
         // Users
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [AdminUsers::class, 'index'])->name('index');
+            Route::post('/', [AdminUsers::class, 'store'])->name('store');
+            Route::post('/bulk', [AdminUsers::class, 'storeBulk'])->name('bulk');
             Route::post('/{user}/role', [AdminUsers::class, 'updateRole'])->name('role');
             Route::put('/{user}', [AdminUsers::class, 'update'])->name('update');
             Route::post('/{user}/password', [AdminUsers::class, 'updatePassword'])->name('password');       

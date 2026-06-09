@@ -155,7 +155,9 @@ body {
                         <div class="team-btn" id="tp-{{ $t->id }}" style="--team-color:{{ $t->color }};--team-rgb:0,180,216" onclick="pickTeam('{{ $t->type }}',this)">
                             <span class="team-icon">{{ $t->icon }}</span>
                             <div class="team-nm">{{ $t->name }}</div>
+                            @if(!empty($t->role_label))
                             <div class="small text-white-50" style="font-size:.7rem">{{ $t->role_label }}</div>
+                            @endif
                         </div>
                         @endforeach
                     </div>
@@ -174,7 +176,7 @@ body {
                     <div style="font-size:2.5rem">{{ $player->team->icon ?? '🛡️' }}</div>
                     <div>
                         <div class="fw-bold">{{ $player->display_name }}</div>
-                        <div class="small text-white-50">{{ $player->team->name ?? '—' }} &middot; {{ $player->team->role_label ?? '' }}</div>
+                        <div class="small text-white-50">{{ $player->team->name ?? '—' }}@if(!empty($player->team->role_label)) &middot; {{ $player->team->role_label }}@endif</div>
                     </div>
                     <div class="ms-auto text-end">
                         <span class="small"><span class="online-dot"></span><span class="text-white-50">Online</span></span>
@@ -286,7 +288,9 @@ body {
                         <span style="font-size:1.3rem">{{ $t->icon }}</span>
                         <div class="flex-grow-1">
                             <div class="small fw-bold">{{ $t->name }}</div>
+                            @if(!empty($t->role_label))
                             <div class="small text-white-50">{{ $t->role_label }}</div>
+                            @endif
                         </div>
                         <div class="text-end">
                             <div class="fw-bold" style="font-family:'Space Mono',monospace;color:{{ $t->color }}" id="sc-{{ $t->id }}">{{ $t->is_scored ? $t->score : 'MENTOR' }}</div>

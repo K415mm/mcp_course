@@ -11,7 +11,7 @@
       "type": "intel",
       "stage": "inject",
       "tag": "MEDIA CRISIS",
-      "content": "BFM TV Live: 'Cyberattaque sur les ports français'. Frozen cranes, shipping companies diverting, French maritime stocks down 2.3%."
+      "content": "News TV Live: 'Cyberattack on regional ports'. Frozen cranes, shipping companies diverting, local maritime stocks down 2.3%."
     }
   ],
   "questions": [
@@ -74,7 +74,7 @@
         {"key": "A", "label": "A → Issue a single, authoritative statement confirming localized containment under military watch", "color": "#00ffcc", "points": 100},
         {"key": "B", "label": "B → Deny all rumors and decline to comment on operational matters", "color": "#ff3355", "points": -60},
         {"key": "C", "label": "C → Publish the full technical incident report to demonstrate transparency", "color": "#ffaa00", "points": -30},
-        {"key": "D", "label": "D → Force BFM TV to suspend broadcasting under state emergency powers", "color": "#ef4444", "points": -150}
+        {"key": "D", "label": "D → Force News TV to suspend broadcasting under state emergency powers", "color": "#ef4444", "points": -150}
       ],
       "note": "Factual, calm containment statements by a single spokesperson prevent mass evacuation panic without feeding rumors.",
       "acceptable_answers": ["A"]
@@ -117,12 +117,12 @@
       "points": 10,
       "time_limit": 60,
       "options": [
-        {"key": "A", "label": "A → Yes: Formally request NATO collective defense consultations", "color": "#00ffcc", "points": 100, "note": "Strong deterrent signal, but escalates regional tensions"},
+        {"key": "A", "label": "A → Yes: Formally request regional collective defense consultations", "color": "#00ffcc", "points": 100, "note": "Strong deterrent signal, but escalates regional tensions"},
         {"key": "B", "label": "B → No: Treat as a criminal national event and manage domestically", "color": "#ffaa00", "points": 60, "note": "De-escalates international conflict but limits support resources"},
         {"key": "C", "label": "C → Deploy offensive cyber countermeasures against identified source servers", "color": "#ff3355", "points": -50, "note": "Risks international war if attribution is spoofed/inaccurate"},
         {"key": "D", "label": "D → Propose a regional ceasefire with the suspected threat actor", "color": "#ef4444", "points": -120, "note": "Weak posture, yields strategic initiative to criminals"}
       ],
-      "note": "Requesting NATO Article 4 consultations provides international options without immediate military commitment."
+      "note": "Requesting regional collective defense consultations provides international options without immediate military commitment."
     },
     {
       "id": "p3-o1",

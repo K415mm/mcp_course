@@ -195,7 +195,9 @@ body {
                         <span class="team-icon-big">{{ $t->icon }}</span>
                         <div>
                             <div class="fw-bold" style="font-size:.9rem">{{ $t->name }}</div>
+                            @if(!empty($t->role_label))
                             <div class="small text-white-50" style="font-size:.72rem">{{ $t->role_label }}</div>
+                            @endif
                         </div>
                         <div class="ms-auto text-end">
                             <div class="score-val" id="msc-{{ $t->id }}">{{ $t->is_scored ? $t->score : 'MENTOR' }}</div>

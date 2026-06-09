@@ -15,7 +15,7 @@ class NeptuneInjectSeeder extends Seeder
             [
                 'scenario_key' => 'neptune_strike',
                 'tag'          => 'CRITICAL ALERT',
-                'content'      => 'Simultaneous OT System Failure — Port Marseille-Fos. SCADA system controlling Terminal J cranes frozen. MV Olympia with IMO Class 3 hazardous cargo immobilized at Quay J4. Remote connection from UAE/Romania. [ACTION REQUIRED: Decision needed]',
+                'content'      => 'Simultaneous OT System Failure — Port Marseille-Fos. SCADA system controlling Terminal J cranes frozen. MV Olympia with IMO Class 3 hazardous cargo immobilized at Quay J4. Remote connection detected. [ACTION REQUIRED: Decision needed]',
                 'color'        => 'red',
                 'phase_hint'   => '1',
                 'is_surprise'  => false,
@@ -59,7 +59,7 @@ class NeptuneInjectSeeder extends Seeder
             [
                 'scenario_key' => 'neptune_strike',
                 'tag'          => 'POLITICAL DECISION',
-                'content'      => 'Attribution Decision Required. Threat intelligence points to state-linked APT-POSEIDON. France must decide: public attribution or confidential coordination? [ACTION REQUIRED: Decision needed]',
+                'content'      => 'Attribution Decision Required. Threat intelligence points to state-linked APT-POSEIDON. The command cell must decide: public attribution or confidential coordination? [ACTION REQUIRED: Decision needed]',
                 'color'        => 'red',
                 'phase_hint'   => '2',
                 'is_surprise'  => false,
@@ -92,7 +92,7 @@ class NeptuneInjectSeeder extends Seeder
             [
                 'scenario_key' => 'neptune_strike',
                 'tag'          => 'MEDIA CRISIS',
-                'content'      => 'BFM TV Live: "Cyberattaque sur les ports français". Frozen cranes, vessels diverted to Genoa/Barcelona, stocks down 2.3%. [ACTION REQUIRED: Communication needed]',
+                'content'      => 'News TV Live: "Cyberattack on regional ports". Frozen cranes, vessels diverted to Genoa/Barcelona, local maritime stocks down 2.3%. [ACTION REQUIRED: Communication needed]',
                 'color'        => 'amber',
                 'phase_hint'   => '3',
                 'is_surprise'  => false,
@@ -103,7 +103,7 @@ class NeptuneInjectSeeder extends Seeder
             [
                 'scenario_key' => 'neptune_strike',
                 'tag'          => 'STRATEGIC COORD',
-                'content'      => 'ENISA activated, Italy & Spain confirm incidents, IMO emergency session in 72h. Mediterranean regional governance architecture is the central question.',
+                'content'      => 'ENISA activated, regional partners confirm incidents, IMO emergency session in 72h. Mediterranean regional governance architecture is the central question.',
                 'color'        => 'purple',
                 'phase_hint'   => '4',
                 'is_surprise'  => false,
@@ -137,7 +137,7 @@ class NeptuneInjectSeeder extends Seeder
             [
                 'scenario_key' => 'neptune_strike',
                 'tag'          => 'HOSTILE ACTION',
-                'content'      => 'HOSTILE ACTION: Suspect vessel has fired on a French patrol boat. One crew member wounded. Rules of engagement? [ACTION REQUIRED: Decision needed]',
+                'content'      => 'HOSTILE ACTION: Suspect vessel has fired on a patrol boat. One crew member wounded. Rules of engagement? [ACTION REQUIRED: Decision needed]',
                 'color'        => 'red',
                 'phase_hint'   => null,
                 'is_surprise'  => true,

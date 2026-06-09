@@ -39,11 +39,11 @@ class NeptuneScenario
             'attacker_icon'    => '⚓',
             'language'         => 'en',
             'teams' => [
-                ['type' => 'political', 'name' => 'Political Cell',      'role_label' => 'Ministry / SGDSN',          'color' => '#ff3355', 'icon' => '🏛️', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
-                ['type' => 'naval',     'name' => 'Naval Command',       'role_label' => 'Marine Nationale / NATO',   'color' => '#00aaff', 'icon' => '⚓', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
-                ['type' => 'cert',      'name' => 'Maritime CERT',       'role_label' => 'ANSSI / Cyber Command',     'color' => '#00ffcc', 'icon' => '🛡️', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
-                ['type' => 'port',      'name' => 'Port Authority',      'role_label' => 'Grand Port Maritime',       'color' => '#ffaa00', 'icon' => '🚢', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
-                ['type' => 'eunatocc',  'name' => 'EU/NATO Coord',       'role_label' => 'EUNAVFOR / ENISA',          'color' => '#aa88ff', 'icon' => '🌐', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'political', 'name' => 'Political Cell',      'role_label' => '',          'color' => '#ff3355', 'icon' => '🏛️', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'naval',     'name' => 'Naval Command',       'role_label' => '',          'color' => '#00aaff', 'icon' => '⚓', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'cert',      'name' => 'Maritime CERT',       'role_label' => '',          'color' => '#00ffcc', 'icon' => '🛡️', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'port',      'name' => 'Port Authority',      'role_label' => '',          'color' => '#ffaa00', 'icon' => '🚢', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
+                ['type' => 'eunatocc',  'name' => 'EU Coord',            'role_label' => '',          'color' => '#aa88ff', 'icon' => '🌐', 'is_scored' => true,  'can_vote' => true,  'badge_eligible' => true,  'show_in_ranking' => true,  'role_mode' => 'participant'],
             ],
             'phantom_messages' => [
                 'APT-POSEIDON has breached the maritime corridor.',

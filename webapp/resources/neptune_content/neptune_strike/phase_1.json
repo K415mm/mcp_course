@@ -11,7 +11,7 @@
       "type": "intel",
       "stage": "inject",
       "tag": "POLITICAL DECISION",
-      "content": "Attribution Decision Required. Threat intelligence points to state-linked APT-POSEIDON. France must decide: public attribution or confidential coordination? Allies and markets are watching."
+      "content": "Attribution Decision Required. Threat intelligence points to state-linked APT-POSEIDON. The command cell must decide: public attribution or confidential coordination? Allies and markets are watching."
     },
     {
       "type": "intel",
@@ -30,9 +30,9 @@
       "time_limit": 60,
       "options": [
         {"key": "A", "label": "A → Immediate public attribution for deterrence", "color": "#ff3355", "points": 20},
-        {"key": "B", "label": "B → Confidential IoC sharing with EU/NATO — no public attribution yet", "color": "#00ffcc", "points": 100},
+        {"key": "B", "label": "B → Confidential IoC sharing with EU partners — no public attribution yet", "color": "#00ffcc", "points": 100},
         {"key": "C", "label": "C → Request 48h delay to confirm attribution with certainty", "color": "#ffaa00", "points": 60},
-        {"key": "D", "label": "D → File IMO complaint + invoke NATO Article 5 immediately", "color": "#00aaff", "points": -50}
+        {"key": "D", "label": "D → File IMO complaint + invoke mutual defense articles immediately", "color": "#00aaff", "points": -50}
       ],
       "note": "TLP:RED sharing preserves operational discretion while activating collective response. Premature public attribution compromises intelligence sources.",
       "acceptable_answers": ["B"]
@@ -125,7 +125,7 @@
       "options": [
         {"key": "A", "label": "A → Full integration in the operational crisis cell", "color": "#ff3355", "points": -50, "note": "High risk of leaks and operational compromise"},
         {"key": "B", "label": "B → Separate information sharing cell with sanitized data reports", "color": "#00ffcc", "points": 100, "note": "Maintains diplomatic trust while safeguarding sensitive intel"},
-        {"key": "C", "label": "C → Complete exclusion of non-EU/NATO states from all disclosures", "color": "#ffaa00", "points": 20, "note": "Creates security gaps in the wider Mediterranean basin"},
+        {"key": "C", "label": "C → Complete exclusion of non-EU partners from all disclosures", "color": "#ffaa00", "points": 20, "note": "Creates security gaps in the wider Mediterranean basin"},
         {"key": "D", "label": "D → Outsource coordination entirely to the United Nations", "color": "#ef4444", "points": -100, "note": "Ineffective and slow reaction during active cyber crisis"}
       ],
       "note": "Establishing a separate sanitized information-sharing cell coordinates region-wide defense securely."

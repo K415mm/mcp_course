@@ -13,7 +13,7 @@
       "id": "p4-q1",
       "type": "multi_choice",
       "secret": false,
-      "question": "[QUIZ] EU/NATO + POLITICAL CELL — REGIONAL ARCHITECTURE (D-04)",
+      "question": "[QUIZ] EU + POLITICAL CELL — REGIONAL ARCHITECTURE (D-04)",
       "points": 100,
       "time_limit": 60,
       "options": [
@@ -65,7 +65,7 @@
       "points": 100,
       "time_limit": 60,
       "options": [
-        {"key": "A", "label": "A → Create a joint Maritime Cyber Hub under neutral third-party facilitation (e.g. IMO or NATO Hub)", "color": "#00ffcc", "points": 100},
+        {"key": "A", "label": "A → Create a joint Maritime Cyber Hub under neutral third-party facilitation (e.g. IMO or regional Hub)", "color": "#00ffcc", "points": 100},
         {"key": "B", "label": "B → Require full integration into EU command networks as a condition for trade", "color": "#ef4444", "points": -100},
         {"key": "C", "label": "C → Limit cooperation to commercial technology export licenses only", "color": "#ff3355", "points": -40},
         {"key": "D", "label": "D → Avoid cooperation due to persistent geopolitical trust deficits", "color": "#ffaa00", "points": -80}
@@ -81,7 +81,7 @@
       "points": 10,
       "time_limit": 60,
       "options": [
-        {"key": "A", "label": "A → Direct EU / NATO defense budget reallocation", "color": "#00ffcc", "points": 100, "note": "Secures strategic funding but subject to political approval delays"},
+        {"key": "A", "label": "A → Direct EU regional defense budget reallocation", "color": "#00ffcc", "points": 100, "note": "Secures strategic funding but subject to political approval delays"},
         {"key": "B", "label": "B → Public-private cost-sharing with commercial terminal operators", "color": "#ffaa00", "points": 80, "note": "Balances responsibility but risks fragmented implementation"},
         {"key": "C", "label": "C → Mandate a 'cyber security levy' on all commercial cargo tonnage", "color": "#ff3355", "points": 60, "note": "Reliable funds but fiercely opposed by shipping lobbies"},
         {"key": "D", "label": "D → Rely on volunteer contributions from member states", "color": "#ef4444", "points": -100, "note": "Highly unstable, fails to secure critical operations"}
@@ -96,12 +96,12 @@
       "points": 10,
       "time_limit": 60,
       "options": [
-        {"key": "A", "label": "A → Wait for unanimous EU/NATO intelligence consensus", "color": "#00ffcc", "points": 100, "note": "High legitimacy, protects alliance cohesion but slows response"},
+        {"key": "A", "label": "A → Wait for unanimous EU intelligence consensus", "color": "#00ffcc", "points": 100, "note": "High legitimacy, protects alliance cohesion but slows response"},
         {"key": "B", "label": "B → Unilateral actions: immediate diplomatic and financial countermeasures to show resolve", "color": "#ffaa00", "points": 40, "note": "Deterrence signal but risks major trade fallout if wrong"},
-        {"key": "C", "label": "C → Pursue unilateral sanctions immediately without ally coordination", "color": "#ff3355", "points": -60, "note": "Isolates France and weakens collective security posture"},
+        {"key": "C", "label": "C → Pursue unilateral sanctions immediately without ally coordination", "color": "#ff3355", "points": -60, "note": "Isolates the coordination center and weakens collective security posture"},
         {"key": "D", "label": "D → Refer the case to the International Court of Justice", "color": "#ef4444", "points": -50, "note": "Takes years, completely useless for active crisis containment"}
       ],
-      "note": "Waiting for unanimous EU/NATO consensus ensures high international legitimacy and sanction alignment."
+      "note": "Waiting for unanimous EU consensus ensures high international legitimacy and sanction alignment."
     },
     {
       "id": "p4-v3",
